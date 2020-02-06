@@ -17,7 +17,7 @@ import random
 def log_write_act(index: int, agent, act) -> None:
     with open("TESTLOG.log", "a+") as file:
         time = str(datetime.now().isoformat())
-        file.write(f"{time}\t{index:2}\t{act}")
+        file.write(f"{time}\t{index:2}\t{act}\n")
 
 
 class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
