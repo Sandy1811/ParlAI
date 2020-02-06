@@ -9,8 +9,15 @@ from joblib import Parallel, delayed
 from parlai.tasks.dealnodeal.agents import NegotiationTeacher
 from parlai.tasks.dealnodeal.agents import get_tag
 from parlai.tasks.dealnodeal.agents import WELCOME_MESSAGE
+from datetime import datetime
 
 import random
+
+
+def log_write_act(index: int, agent, act) -> None:
+    with open("TESTLOG.log", "a+") as file:
+        time = str(datetime.now().isoformat())
+        file.write(f"{time}\t{index:2}\t{act}")
 
 
 class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
@@ -88,6 +95,8 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
                     if other_agent != agent:
                         other_agent.observe(validate(act))
 
+                log_write_act(_index, agent, act)
+
                 if act["text"].startswith("<selection>") and self.turns > 1:
                     # Making a choice
                     self.choices[agent] = act["text"]
@@ -95,7 +104,7 @@ class MTurkDealNoDealDialogWorld(MTurkTaskWorld):
                     if len(self.choices) == len(self.agents):
                         self.first_turn = True
                         self.episodeDone = True
-                elif act['episode_done']:
+                elif act.get('episode_done', False):
                     # Action is not selection but episode ended due to
                     # disconnection or timeout or returned hit
                     self.episodeDone = True
