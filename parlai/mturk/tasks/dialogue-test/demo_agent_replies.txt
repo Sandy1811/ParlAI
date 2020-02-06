@@ -1,0 +1,2 @@
+<selection> item0=0 item1=0 item2=0
+I have no idea!
