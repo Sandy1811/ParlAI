@@ -1,15 +1,13 @@
 #!/usr/bin/env python3
 
-# Copyright (c) Facebook, Inc. and its affiliates.
-# This source code is licensed under the MIT license found in the
-# LICENSE file in the root directory of this source tree.
+import os
+
 from parlai.agents.random_candidate.random_candidate import RandomCandidateAgent
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai.mturk.tasks.dealnodeal.worlds import MTurkDealNoDealDialogWorld
-from parlai.agents.local_human.local_human import LocalHumanAgent
-from parlai.core.agents import create_agent
-from task_config import task_config
+from parlai.mturk.tasks.dialoguetest.task_config import task_config
+
+from parlai.mturk.tasks.dialoguetest.worlds import MTurkWOZWorld
 
 
 def main():
@@ -21,7 +19,7 @@ def main():
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
     argparser.add_argument(
-        '--two_mturk_agents',
+        '--two-mturk-agents',
         dest='two_mturk_agents',
         action='store_true',
         help='data collection mode ' 'with converations between two MTurk agents',
@@ -32,13 +30,13 @@ def main():
     opt['datatype'] = 'valid'
     opt.update(task_config)
 
-    local_agent_1_id = 'local_1'
-    mturk_agent_ids = ['mturk_agent_1']
+    wizard_id = "dummy_wizard"
+    user_id = "user"
+    mturk_agent_ids = [user_id]
     # if opt['two_mturk_agents']:
     #     mturk_agent_ids.append('mturk_agent_2')
 
-    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
-
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=[user_id])
     mturk_manager.setup_server()
 
     try:
@@ -56,23 +54,16 @@ def main():
                 worker.id = mturk_agent_ids[index % len(mturk_agent_ids)]
 
         def run_conversation(mturk_manager, opt, workers):
-            agents = workers[:]
+            user_agent = workers[0]
 
             # Create a local agent
-            if not opt['two_mturk_agents']:
-                if 'model' in opt:
-                    local_agent = create_agent(opt)
-                else:
-                    # local_agent = LocalHumanAgent(opt=None)
-                    opt["label_candidates_file"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/dialogue-test/demo_agent_replies.txt"
-                    local_agent = RandomCandidateAgent(opt=opt)
-
-                local_agent.id = local_agent_1_id
-                agents.append(local_agent)
+            opt["label_candidates_file"] = "../tasks/dialoguetest/demo_agent_replies.txt"
+            wizard_agent = RandomCandidateAgent(opt=opt)
+            wizard_agent.id = wizard_id
 
             opt["batchindex"] = mturk_manager.started_conversations
 
-            world = MTurkDealNoDealDialogWorld(opt=opt, agents=agents)
+            world = MTurkWOZWorld(opt=opt, user_agent=user_agent, wizard_agent=wizard_agent)
 
             while not world.episode_done():
                 world.parley()
