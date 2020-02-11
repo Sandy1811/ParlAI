@@ -13,7 +13,7 @@ from parlai.mturk.tasks.dialoguetest.task_config import task_config
 from parlai.mturk.tasks.dialoguetest.worlds import MTurkWOZWorld
 
 
-def main() -> None:
+def main(use_dummy_user: bool = True, use_dummy_wizard: bool = False) -> None:
     """
     This task consists of one agent, model or MTurk worker, talking to an MTurk worker
     to negotiate a deal.
@@ -27,14 +27,31 @@ def main() -> None:
     opt["datatype"] = "valid"
     opt.update(task_config)
 
-    wizard_id = "dummy_wizard"
-    user_id = "user"
-    mturk_agent_ids = [user_id]
-    # if opt['two_mturk_agents']:
-    #     mturk_agent_ids.append('mturk_agent_2')
+    assert not (use_dummy_user and use_dummy_wizard)
 
-    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=[user_id])
+    mturk_agent_ids = []
+    if use_dummy_user:
+        user_id = "dummy_user"
+    else:
+        user_id = "mturk_user"
+        mturk_agent_ids += [user_id]
+
+    if use_dummy_wizard:
+        wizard_id = "dummy_wizard"
+    else:
+        wizard_id = "mturk_wizard"
+        mturk_agent_ids += [wizard_id]
+
+    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
     mturk_manager.setup_server()
+
+    def create_dummy_agent(
+        identification: Text, reply_file_name: Text = "demo_agent_replies.txt"
+    ):
+        opt["label_candidates_file"] = f"../tasks/dialoguetest/{reply_file_name}"
+        agent = RandomCandidateAgent(opt=opt)
+        agent.id = identification
+        return agent
 
     try:
         mturk_manager.start_new_run()
@@ -53,14 +70,14 @@ def main() -> None:
         def run_conversation(
             mturk_manager: MTurkManager, opt: Opt, workers: List[Agent]
         ) -> None:
-            user_agent = workers[0]
+            print(f"{len(workers)} worker(s) ready")
 
-            # Create a local agent
-            opt[
-                "label_candidates_file"
-            ] = "../tasks/dialoguetest/demo_agent_replies.txt"
-            wizard_agent = RandomCandidateAgent(opt=opt)
-            wizard_agent.id = wizard_id
+            user_agent = (
+                create_dummy_agent(user_id) if use_dummy_user else workers.pop()
+            )
+            wizard_agent = (
+                create_dummy_agent(wizard_id) if use_dummy_wizard else workers.pop()
+            )
 
             opt["batchindex"] = mturk_manager.started_conversations
 
@@ -87,4 +104,4 @@ def main() -> None:
 
 
 if __name__ == '__main__':
-    main()
+    main(use_dummy_user=True, use_dummy_wizard=False)

@@ -33,13 +33,17 @@ class MTurkWOZWorld(MTurkTaskWorld):
 
         self.episodeDone = False
 
-        self.num_turns = 0
+        self.num_turns = -1
         self.max_turns = 3
 
-    def parley(self):
+    def parley(self) -> None:
         """
         Let the user and the wizard have a turn each.
         """
+        if self.num_turns < 0:
+            self.setup_interface()
+            return
+
         self.num_turns += 1
 
         user_message = self.user_agent.act()
@@ -51,6 +55,24 @@ class MTurkWOZWorld(MTurkTaskWorld):
 
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
+
+    def setup_interface(self):
+        for agent in [self.user_agent, self.wizard_agent]:
+            action = {
+                'text': "Here is a welcome message...",
+                'items': {
+                    "book_cnt": 2,
+                    "book_val": 2,
+                    "hat_cnt": 3,
+                    "hat_val": 2,
+                    "ball_cnt": 2,
+                    "ball_val": 1,
+                },
+            }
+
+            agent.observe(action)
+
+        self.num_turns = 0
 
     def episode_done(self):
         return self.episodeDone
