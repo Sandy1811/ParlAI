@@ -234,16 +234,16 @@ $("button#id_no_deal_button").on('click', function () {
 
 function send_deal(selection) {
       // Disable the send button
-      enable_button($("button#id_no_deal_button"), false);
-      enable_button($("button#id_send_msg_button"), false);
-      enable_button($("button#id_send_deal_button"), false);
+      // enable_button($("button#id_no_deal_button"), false);
+      // enable_button($("button#id_send_msg_button"), false);
+      // enable_button($("button#id_send_deal_button"), false);
 
       new_message_id = uuidv4();
-      your_selection = selection;
-      completion_message(your_selection, their_selection);
-      if (!their_selection) {
-        $('#response-type-text-input').html("Waiting for your partner to enter the deal...");
-      }
+      // your_selection = selection;
+      // completion_message(your_selection, their_selection);
+      // if (!their_selection) {
+      //   $('#response-type-text-input').html("Waiting for your partner to enter the deal...");
+      // }
 
       // Send a packet
       send_packet(

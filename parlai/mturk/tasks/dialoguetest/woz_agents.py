@@ -12,28 +12,19 @@ class WOZKnowledgeBaseAgent(Agent):
 
     @staticmethod
     def add_cmdline_args(parser: ParlaiParser) -> None:
-        """
-        Add command line arguments for this agent.
-        """
+        """Add command line arguments for this agent."""
         pass
 
     def __init__(self, opt: Opt, shared: Optional[bool] = None):
-        """
-        Initialize this agent.
-        """
+        """Initialize this agent."""
         super().__init__(opt)
+        self.role = "KnowledgeBase"
 
     def act(self) -> Dict[Text, Any]:
-        """
-        Generate response to last seen observation.
+        """Generates a response to the last observation.
 
-        Replies with a randomly selected candidate if label_candidates or a
-        candidate file are available.
-        Otherwise, replies with the label if they are available.
-        Oterhwise, replies with generic hardcoded responses if the agent has
-        not observed any messages or if there are no replies to suggest.
-
-        :returns: message dict with reply
+        Returns:
+            Message with reply
         """
         observation = self.observation
 
@@ -45,9 +36,48 @@ class WOZKnowledgeBaseAgent(Agent):
         if not text:
             return {"text": "Knowledge base invoked with empty text."}
 
-        if not text.startswith("? "):
-            return {"text": "Knowledge base queries must start with a '?'."}
+        reply = {"id": self.getID(), "text": f"A reply from the KB to your message '{observation}'."}
 
-        reply = {"id": self.getID(), 'text': "A reply from the KB."}
+        return reply
+
+
+class DummyAgent(Agent):
+    """Agent returns a random response."""
+
+    @staticmethod
+    def add_cmdline_args(parser) -> None:
+        """Add command line arguments for this agent."""
+        parser = parser.add_argument_group('DummyAgent arguments')
+        parser.add_argument(
+            "--dummy-responses",
+            type=str,
+            default=None,
+            help="File of candidate responses to choose from",
+        )
+
+    def __init__(self, opt: Opt, role: Text) -> None:
+        """Initialize this agent."""
+        super().__init__(opt)
+        self.id = "DummyAgent"
+        self.role = role
+        self._num_messages_sent = 0
+        if opt.get("dummy_responses"):
+            with open(opt.get("dummy_responses"), "r", encoding="utf-8") as file:
+                self.response_candidates = file.read().split("\n")
+        else:
+            self.response_candidates = None
+
+    def act(self) -> Dict[Text, Any]:
+        """Generates a response to the last observation.
+
+        Returns:
+            Message with reply
+        """
+        if not self.response_candidates:
+            return {"id": self.getID(), "text": "DUMMY: No response candidates.", "role": self.role}
+
+        self._num_messages_sent += 1
+        index = self._num_messages_sent % len(self.response_candidates)
+        reply = {"id": self.getID(), "text": self.response_candidates[index], "role": self.role}
 
         return reply

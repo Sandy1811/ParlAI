@@ -1,9 +1,7 @@
 #!/usr/bin/env python3
 
-import os
-from typing import List, Dict, Text, Any
+from typing import List, Text
 
-from parlai.agents.random_candidate.random_candidate import RandomCandidateAgent
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
@@ -11,7 +9,7 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.dialoguetest.task_config import task_config
 
 from parlai.mturk.tasks.dialoguetest.worlds import MTurkWOZWorld
-from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent
+from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent, DummyAgent
 
 
 def main(use_dummy_user: bool = True, use_dummy_wizard: bool = False) -> None:
@@ -22,6 +20,7 @@ def main(use_dummy_user: bool = True, use_dummy_wizard: bool = False) -> None:
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
+    WOZKnowledgeBaseAgent.add_cmdline_args(argparser)
 
     opt = argparser.parse_args()
     opt["task"] = "dialoguetest"
@@ -49,8 +48,8 @@ def main(use_dummy_user: bool = True, use_dummy_wizard: bool = False) -> None:
     def create_dummy_agent(
         identification: Text, reply_file_name: Text = "demo_agent_replies.txt"
     ):
-        opt["label_candidates_file"] = f"../tasks/dialoguetest/{reply_file_name}"
-        agent = RandomCandidateAgent(opt=opt)
+        opt["dummy_responses"] = f"../tasks/dialoguetest/{reply_file_name}"
+        agent = DummyAgent(opt=opt, role="Dummy")
         agent.id = identification
         return agent
 
