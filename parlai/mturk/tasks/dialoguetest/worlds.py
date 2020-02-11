@@ -50,6 +50,16 @@ class MTurkWOZWorld(MTurkTaskWorld):
         log_write_act(self.num_turns, "user", user_message)
         self.wizard_agent.observe(user_message)
         wizard_message = self.wizard_agent.act()
+
+        # Handle communication between the wizard and the knowledge base
+        while wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("? "):
+            log_write_act(self.num_turns, "wizard", wizard_message)
+            self.kb_agent.observe(wizard_message)
+            kb_message = self.kb_agent.act()
+            log_write_act(self.num_turns, "kb", kb_message)
+            self.wizard_agent.observe(kb_message)
+            wizard_message = self.wizard_agent.act()
+
         log_write_act(self.num_turns, "wizard", wizard_message)
         self.user_agent.observe(wizard_message)
 

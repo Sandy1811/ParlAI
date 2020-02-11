@@ -11,6 +11,7 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.dialoguetest.task_config import task_config
 
 from parlai.mturk.tasks.dialoguetest.worlds import MTurkWOZWorld
+from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent
 
 
 def main(use_dummy_user: bool = True, use_dummy_wizard: bool = False) -> None:
@@ -78,11 +79,15 @@ def main(use_dummy_user: bool = True, use_dummy_wizard: bool = False) -> None:
             wizard_agent = (
                 create_dummy_agent(wizard_id) if use_dummy_wizard else workers.pop()
             )
+            kb_agent = WOZKnowledgeBaseAgent(opt=opt)
 
             opt["batchindex"] = mturk_manager.started_conversations
 
             world = MTurkWOZWorld(
-                opt=opt, user_agent=user_agent, wizard_agent=wizard_agent
+                opt=opt,
+                user_agent=user_agent,
+                wizard_agent=wizard_agent,
+                kb_agent=kb_agent,
             )
 
             while not world.episode_done():
