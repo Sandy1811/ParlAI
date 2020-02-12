@@ -1,111 +1,152 @@
 #!/usr/bin/env python3
 
-from typing import List, Text
-
-from parlai.core.agents import Agent
-from parlai.core.opt import Opt
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
+
+import os
+
 from parlai.mturk.tasks.dialoguetest.task_config import task_config
+from parlai.mturk.tasks.dialoguetest.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld, log_write
+from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent
 
-from parlai.mturk.tasks.dialoguetest.worlds import MTurkWOZWorld
-from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent, DummyAgent
 
-
-def main(use_dummy_user: bool = True, use_dummy_wizard: bool = False) -> None:
+def main():
     """
-    This task consists of one agent, model or MTurk worker, talking to an MTurk worker
-    to negotiate a deal.
+    Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
+    and configuring it for the qa_data_collection task.
     """
+
+    log_write("NEW RUN")
+
+    # Get relevant arguments
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
-    WOZKnowledgeBaseAgent.add_cmdline_args(argparser)
-
     opt = argparser.parse_args()
-    opt["task"] = "dialoguetest"
-    opt["datatype"] = "valid"
+
+    # Set the task name to be the folder name
+    opt["task"] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
+
+    # append the contents of task_config.py to the configuration
     opt.update(task_config)
 
-    assert not (use_dummy_user and use_dummy_wizard)
+    # Select an agent_id that worker agents will be assigned in their world
+    mturk_agent_roles = ["Wizard", "User"]
 
-    mturk_agent_ids = []
-    if use_dummy_user:
-        user_id = "dummy_user"
-    else:
-        user_id = "mturk_user"
-        mturk_agent_ids += [user_id]
+    # Instantiate an MTurkManager with the given options and a maximum number
+    # of agents per world of 1 (based on the length of mturk_agent_ids)
+    mturk_manager = MTurkManager(
+        opt=opt, mturk_agent_ids=mturk_agent_roles, use_db=True
+    )
 
-    if use_dummy_wizard:
-        wizard_id = "dummy_wizard"
-    else:
-        wizard_id = "mturk_wizard"
-        mturk_agent_ids += [wizard_id]
+    mturk_manager.setup_server(
+        task_directory_path=os.path.dirname(os.path.abspath(__file__))
+    )
 
-    mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids)
-    mturk_manager.setup_server()
+    role_index = 0
 
-    def create_dummy_agent(
-        identification: Text, reply_file_name: Text = "demo_agent_replies.txt"
-    ):
-        opt["dummy_responses"] = f"../tasks/dialoguetest/{reply_file_name}"
-        agent = DummyAgent(opt=opt, role="Dummy")
-        agent.id = identification
-        return agent
+    # Create an onboard_function, which will be run for workers who have
+    # accepted your task and must be completed before they are put in the
+    # queue for a task world.
+    def run_onboard(worker):
+        nonlocal role_index
+        role = mturk_agent_roles[role_index % 2]
+        role_index += 1
+        worker.update_agent_id(f"Onboarding {role}")
+        worker.demo_role = role
+        log_write(f"Onboarding {role}")
+        if role == "Wizard":
+            world = WizardOnboardingWorld(opt=opt, mturk_agent=worker)
+        elif role == "User":
+            world = UserOnboardingWorld(opt=opt, mturk_agent=worker)
+        else:
+            raise ValueError(f"Unknown role '{role}'")
+
+        while not world.episode_done():
+            log_write(f"BEFORE episode_done == {world.episode_done()} for role {role_index}")
+            world.parley()
+            log_write(f"AFTER  episode_done == {world.episode_done()} for role {role_index}")
+
+        world.shutdown()
+        return world.prep_save_data([worker])
+
+    mturk_manager.set_onboard_function(onboard_function=run_onboard)
 
     try:
+        # Initialize run information
         mturk_manager.start_new_run()
 
-        mturk_manager.set_onboard_function(onboard_function=None)
+        # Set up the sockets and threads to receive workers
         mturk_manager.ready_to_accept_workers()
+
+        # Create the hits as specified by command line arguments
         mturk_manager.create_hits()
 
-        def check_worker_eligibility(worker: Agent) -> bool:
-            return True
+        # Check workers eligiblity acts as a filter, and should return
+        # the list of all workers currently eligible to work on the task
+        # Can be used to pair workers that meet certain criterea
+        def check_workers_eligibility(workers):
+            filled_roles = []
+            use_workers = []
+            for worker in workers:
+                if worker.demo_role not in filled_roles:
+                    use_workers.append(worker)
+                    filled_roles.append(worker.demo_role)
+            return use_workers
 
-        def assign_worker_roles(workers: List[Agent]) -> None:
-            for index, worker in enumerate(workers):
-                worker.id = mturk_agent_ids[index % len(mturk_agent_ids)]
+        eligibility_function = {"func": check_workers_eligibility, "multiple": True}
 
-        def run_conversation(
-            mturk_manager: MTurkManager, opt: Opt, workers: List[Agent]
-        ) -> None:
-            print(f"{len(workers)} worker(s) ready")
+        # Assign worker roles is used to determine what the role each worker
+        # in the given worker list will play. Setting `id` to None will return
+        # the worker to the pool rather than putting them in a given task,
+        # which is useful for having tasks with different possible worker
+        # counts.
+        def assign_worker_roles(workers):
+            for worker in workers:
+                log_write(f"Assigning {worker.demo_role}")
+                worker.id = worker.demo_role
 
-            user_agent = (
-                create_dummy_agent(user_id) if use_dummy_user else workers.pop()
-            )
-            wizard_agent = (
-                create_dummy_agent(wizard_id) if use_dummy_wizard else workers.pop()
-            )
-            kb_agent = WOZKnowledgeBaseAgent(opt=opt)
+        # Define the task function, which will be run with workers that are
+        # as the main task.
+        global run_conversation
 
-            opt["batchindex"] = mturk_manager.started_conversations
+        def run_conversation(mturk_manager, opt, workers):
 
-            world = MTurkWOZWorld(
-                opt=opt,
-                user_agent=user_agent,
-                wizard_agent=wizard_agent,
-                kb_agent=kb_agent,
-            )
+            # kb_agent = WOZKnowledgeBaseAgent(opt=opt)
+            # workers += [kb_agent]
 
+            # Create the task world
+            world = WOZWorld(opt=opt, agents=workers)
+            # run the world to completion
             while not world.episode_done():
                 world.parley()
 
+            # shutdown and review the work
             world.shutdown()
+            world.review_work()
 
+            # Return the contents for saving
+            return world.prep_save_data(workers)
+
+        # Begin the task, allowing mturk_manager to start running the task
+        # world on any workers who connect
         mturk_manager.start_task(
-            eligibility_function=check_worker_eligibility,
+            eligibility_function=eligibility_function,
             assign_role_function=assign_worker_roles,
             task_function=run_conversation,
         )
-
     except BaseException:
         raise
     finally:
+        # Any hits that aren't claimed or completed have to be shut down. Must
+        # keep the world running until that point.
         mturk_manager.expire_all_unassigned_hits()
+        # Shutdown the manager and free all related resources
         mturk_manager.shutdown()
 
 
 if __name__ == '__main__':
-    main(use_dummy_user=True, use_dummy_wizard=False)
+    main()

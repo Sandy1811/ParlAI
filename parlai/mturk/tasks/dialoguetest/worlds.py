@@ -1,66 +1,128 @@
 #!/usr/bin/env python3
 
-from typing import Optional, Text
-
-from parlai.core.agents import Agent
-from parlai.mturk.core.worlds import MTurkTaskWorld
-from joblib import Parallel, delayed
+# Copyright (c) Facebook, Inc. and its affiliates.
+# This source code is licensed under the MIT license found in the
+# LICENSE file in the root directory of this source tree.
 from datetime import datetime
+from typing import Text
+
+from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
+import threading
 
 
 def log_write_act(index: int, agent_name: Text, act) -> None:
-    with open("TESTLOG.log", "a+") as file:
+    with open("/Users/johannes/TESTLOG.log", "a+") as file:
         time = str(datetime.now().isoformat())
         file.write(f"{time}\t{index:2}\t{agent_name}\t{act}\n")
 
 
-class MTurkWOZWorld(MTurkTaskWorld):
+def log_write(message: Text) -> None:
+    with open("/Users/johannes/TESTLOG.log", "a+") as file:
+        time = str(datetime.now().isoformat())
+        file.write(f"{time}\t{message}\n")
+
+
+class WizardOnboardingWorld(MTurkOnboardWorld):
     """
-    World where two agents have a dialogue, and a third represents a knowledge base.
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
     """
 
-    def __init__(
-        self,
-        opt,
-        user_agent: Agent,
-        wizard_agent: Agent,
-        kb_agent: Optional[Agent] = None,
-    ):
-        super(MTurkWOZWorld, self).__init__(opt, None)
-        self.user_agent = user_agent
-        self.wizard_agent = wizard_agent
-        self.kb_agent = kb_agent
+    def parley(self):
+        ad = {
+            'id': 'System',
+            'text': f"Welcome wizard: '{self.mturk_agent.id}'",
+        }
+        log_write_act(-2, self.mturk_agent.id, "parley")
+        self.mturk_agent.observe(ad)
+        log_write_act(-2, self.mturk_agent.id, "observed")
+        # response = self.mturk_agent.act()
+        # log_write_act(-2, self.mturk_agent.id, response)
+        self.episodeDone = True
 
+
+class UserOnboardingWorld(MTurkOnboardWorld):
+    """
+    Example onboarding world.
+
+    Sends a message from the world to the worker and then exits as complete after the
+    worker uses the interface
+    """
+
+    def parley(self):
+        ad = {
+            'id': 'System',
+            'text': f"Welcome user: '{self.mturk_agent.id}'",
+        }
+        log_write_act(-2, self.mturk_agent.id, "parley")
+        self.mturk_agent.observe(ad)
+        log_write_act(-2, self.mturk_agent.id, "observed")
+        # response = self.mturk_agent.act()
+        # log_write_act(-1, self.mturk_agent.id, response)
+        self.episodeDone = True
+
+
+class WOZWorld(MTurkTaskWorld):
+    """
+    World to demonstrate workers with assymetric roles.
+
+    This task amounts to three rounds and then an evaluation step. It is purposefully
+    created as a task to demo multiple views and has no other purpose.
+    """
+
+    collector_agent_id = 'Moderator'
+
+    def __init__(self, opt, agents):
+        self.mturk_agents = agents
+        self.kb_agent = None
+        log_write(f"Initializing world with agents: {agents}")
+        for agent in agents:
+            if agent.demo_role == 'User':
+                self.user_agent = agent
+            elif agent.demo_role == 'Wizard':
+                self.wizard_agent = agent
+            else:  # Knowledge Base
+                self.kb_agent = agent
         self.episodeDone = False
+        self.turns = 0
+        self.questions = []
+        self.answers = []
 
         self.num_turns = -1
         self.max_turns = 3
 
-    def parley(self) -> None:
+    def parley(self):
         """
         Let the user and the wizard have a turn each.
         """
+        log_write_act(0, "None", "world started")
+
         if self.num_turns < 0:
             self.setup_interface()
             return
 
+        if self.num_turns == 0:
+            ad = {'id': 'System', 'text': "Go user!"}
+            self.user_agent.observe(ad)
+            ad = {'id': 'System', 'text': "Go wizard!"}
+            self.wizard_agent.observe(ad)
+
         self.num_turns += 1
 
         user_message = self.user_agent.act()
-        log_write_act(self.num_turns, "user", user_message)
         self.wizard_agent.observe(user_message)
         wizard_message = self.wizard_agent.act()
 
-        # Handle communication between the wizard and the knowledge base
-        while wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<selection>"):
-            log_write_act(self.num_turns, "wizard", wizard_message)
-            self.kb_agent.observe(wizard_message)
-            kb_message = self.kb_agent.act()
-            log_write_act(self.num_turns, "kb", kb_message)
-            self.wizard_agent.observe(kb_message)
-            wizard_message = self.wizard_agent.act()
+        if self.kb_agent:
+            # Handle communication between the wizard and the knowledge base
+            while wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<selection>"):
+                self.kb_agent.observe(wizard_message)
+                kb_message = self.kb_agent.act()
+                self.wizard_agent.observe(kb_message)
+                wizard_message = self.wizard_agent.act()
 
-        log_write_act(self.num_turns, "wizard", wizard_message)
         self.user_agent.observe(wizard_message)
 
         if self.num_turns >= self.max_turns:
@@ -69,7 +131,7 @@ class MTurkWOZWorld(MTurkTaskWorld):
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
             action = {
-                'text': "Here is a welcome message...",
+                'text': f"Here is a welcome message for {agent.id}...",
                 'items': {
                     "book_cnt": 2,
                     "book_val": 2,
@@ -87,24 +149,31 @@ class MTurkWOZWorld(MTurkTaskWorld):
     def episode_done(self):
         return self.episodeDone
 
-    def get_task_agent(self):
-        super(MTurkWOZWorld, self).get_task_agent()
-
-    # noinspection PyGlobalUndefined
     def shutdown(self):
-        """
-        Shutdown all mturk agents in parallel, otherwise if one mturk agent is
-        disconnected then it could prevent other mturk agents from completing.
-        """
-        global shutdown_agent
-
+        # Parallel shutdown of agents
         def shutdown_agent(agent):
             try:
                 agent.shutdown(timeout=None)
             except Exception:
                 agent.shutdown()  # not MTurkAgent
 
-        Parallel(n_jobs=2, backend='threading')(
-            delayed(shutdown_agent)(agent)
-            for agent in [self.user_agent, self.wizard_agent]
-        )
+        threads = []
+        for agent in self.mturk_agents:
+            t = threading.Thread(target=shutdown_agent, args=(agent,))
+            t.start()
+            threads.append(t)
+        for t in threads:
+            t.join()
+
+    def review_work(self):
+        # Can review the work here to accept or reject it
+        pass
+
+    def get_custom_task_data(self):
+        # brings important data together for the task, to later be used for
+        # creating the dataset. If data requires pickling, put it in a field
+        # called 'needs-pickle'.
+        return {
+            'questions': self.questions,
+            'answers': self.answers,
+        }
