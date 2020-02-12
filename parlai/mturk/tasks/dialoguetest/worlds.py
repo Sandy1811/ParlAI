@@ -117,7 +117,7 @@ class WOZWorld(MTurkTaskWorld):
 
         if self.kb_agent:
             # Handle communication between the wizard and the knowledge base
-            while wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<selection>"):
+            while wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<query>"):
                 self.kb_agent.observe(wizard_message)
                 kb_message = self.kb_agent.act()
                 self.wizard_agent.observe(kb_message)
@@ -132,14 +132,7 @@ class WOZWorld(MTurkTaskWorld):
         for agent in [self.user_agent, self.wizard_agent]:
             action = {
                 'text': f"Here is a welcome message for {agent.id}...",
-                'items': {
-                    "book_cnt": 2,
-                    "book_val": 2,
-                    "hat_cnt": 3,
-                    "hat_val": 2,
-                    "ball_cnt": 2,
-                    "ball_val": 1,
-                },
+                'info': "MY INFO TEXT",
             }
 
             agent.observe(action)

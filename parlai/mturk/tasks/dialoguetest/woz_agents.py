@@ -19,6 +19,7 @@ class WOZKnowledgeBaseAgent(Agent):
         """Initialize this agent."""
         super().__init__(opt)
         self.role = "KnowledgeBase"
+        self.demo_role = "KnowledgeBase"
 
     def act(self) -> Dict[Text, Any]:
         """Generates a response to the last observation.

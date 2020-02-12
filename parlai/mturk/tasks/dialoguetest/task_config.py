@@ -44,8 +44,8 @@ If you are ready, please click "Accept HIT" to start this task.
 
 <div id="input"></div>
 <div float="right">
-  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_no_deal_button">No Agreement</button>
-  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_deal_button">Deal Agreed</button>
+  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_no_deal_button">Done</button>
+  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_deal_button">Query KB</button>
 </div>
 
 <script type="text/javascript">
@@ -75,51 +75,10 @@ function enable_button(button, enable) {
     }
 }
 
-function makeInput(items) {
+function makeInput(info) {
   $('#preview').html("");
-
-  var table = $('#input');
-    table.append('<h1>Divide these items between you and your partner. </h1>');
-    table.append('<p><i>Your partner sees the <b>SAME ITEMS</b> but with <b>DIFFERENT VALUES</b></i></p>');
-    table.append('<p><i>You get some items, and your partner will get the rest</i></p>');
-    table.append('<p><i>Please try hard to negotiate a good deal for you!</i></p><hr>');
-    table.append('<table>');
-    table.append('<tr><td colspan="4"><b>Items you BOTH see</b></td><td style="padding:0 15px 0 15px;"><b>Value Each to <i>You</i></b></td><td><b>Number You Get</b></td></tr><br><hr>');
-    var item = 0;
-
-    items.forEach(count_value => {
-        var number = count_value[0];
-        var value = count_value[1];
-        values[item] = value;
-        counts[item] = number;
-
-        var string = '';
-
-        string += '<tr>';
-        for (var i=0; i<4; i++) {
-          string += '<td>';
-            if (i < number) {
-              string += '<img width=75px src="' + image_path + '/' + image_names[item] + '.png"></img>';
-            }
-          string += '</td>';
-        }
-        string += '<td align="center" valign="middle"><p style="font-size:20px">' + value + "</p></td>";
-        string += '<td valign="middle">';
-        string += '<select id="item' + item + '">';
-          for (var i=0; i<=number; i++) {
-            string += '<option value="' + i + '">You get ' + i + ', they get ' + (number - i) + '</option>';
-          }
-        string += '</select>';
-        string += '</td></tr>';
-        table.append(string);
-
-        item++;
-
-    });
-    numberOfItemTypes = item;
-    table.append('</table>');
-    $("button#id_send_deal_button").show();
-    enable_button($("button#id_send_deal_button"), false);
+  $("button#id_send_deal_button").show();
+  enable_button($("button#id_send_deal_button"), false);
 }
 
 (function() {
@@ -129,7 +88,7 @@ function makeInput(items) {
         var message = arguments[1];
         var agent_id = message.id;
         var text = message.text;
-        var items = message.items;
+        var info = message.info;
         var was_this_agent = (agent_id == cur_agent_id);
 
         if (displayed_messages.indexOf(new_message_id) !== -1) {
@@ -141,23 +100,12 @@ function makeInput(items) {
         log('New message, ' + new_message_id + ' from agent ' + agent_id, 1);
         displayed_messages.push(new_message_id);
 
-        if (message.items) {
-            makeInput([[items.book_cnt, items.book_val], [items.hat_cnt, items.hat_val], [items.ball_cnt, items.ball_val]]);
-        } else if (text.startsWith('<selection>')) {
-            enable_button($("button#id_send_deal_button"), !was_this_agent && your_selection == "");
-            enable_button($("button#id_no_deal_button"), !was_this_agent && your_selection == "");
-            if (!was_this_agent) {
-                if (your_selection == "") {
-                    $("button#id_no_deal_button").show();
-                }
-                $('#response-type-text-input').html("Your partner said a deal was agreed. " +
-                    "Please enter the the agreed deal, or 'no agreement' if you don't think you agreed a deal.");
-                their_selection = text;
-            } else {
-                your_selection = text;
-            }
-
-            completion_message(your_selection, their_selection);
+        if (message.info) {
+            makeInput(info);
+        } else if (text.startsWith('<query>')) {
+            message.id = (was_this_agent ? "YOU:" : "THEM:");
+            var agent_id = message.id;
+            add_message_to_conversation(was_this_agent ? "YOU" : "THEM", text, was_this_agent);
         } else {
             num_messages++;
             if (num_messages >= 2) {
@@ -170,9 +118,7 @@ function makeInput(items) {
             }
 
             message.id = (was_this_agent ? "YOU:" : "THEM:");
-
             var agent_id = message.id;
-
             add_message_to_conversation(was_this_agent ? "YOU" : "THEM", text, was_this_agent);
         }
     };
@@ -227,11 +173,6 @@ function completion_message(your_selection, their_selection) {
 }
 
 
-$("button#id_no_deal_button").on('click', function () {
-    send_deal("<selection> item0=0 item1=0 item2=0");
-});
-
-
 function send_deal(selection) {
       // Disable the send button
       // enable_button($("button#id_no_deal_button"), false);
@@ -262,25 +203,11 @@ function send_deal(selection) {
 }
 
 $("button#id_send_deal_button").on('click', function () {
-  var score = 0;
-  var selection = '<selection>';
-  var max = 0;
-  var num_items = 0;
+  send_deal('<query> some question');
+});
 
-  for (var i=0; i<counts.length; i++) {
-    var e = document.getElementById("item" + i);
-    var num = e.options[e.selectedIndex].value;
-    score += values[i] * num;
-    max += values[i] * counts[i];
-    selection += ' item' + i + '=' + num;
-    num_items += counts[i];
-  }
-
-  if (num_items == 0) {
-    return ;
-  }
-
-  send_deal(selection);
+$("button#id_no_deal_button").on('click', function () {
+  send_deal("<query> another question");
 });
 
 </script>

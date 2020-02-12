@@ -115,8 +115,8 @@ def main():
 
         def run_conversation(mturk_manager, opt, workers):
 
-            # kb_agent = WOZKnowledgeBaseAgent(opt=opt)
-            # workers += [kb_agent]
+            kb_agent = WOZKnowledgeBaseAgent(opt=opt)
+            workers += [kb_agent]
 
             # Create the task world
             world = WOZWorld(opt=opt, agents=workers)
