@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from datetime import datetime
+from random import random
 from typing import Text
 
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
@@ -32,12 +33,10 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
 
     def parley(self):
         ad = {
-            'id': 'System',
-            'text': f"Welcome wizard: '{self.mturk_agent.id}'",
+            'id': 'MTurk System',
+            'text': f"Please wait for the user to join the conversation...",
         }
-        log_write_act(-2, self.mturk_agent.id, "parley")
         self.mturk_agent.observe(ad)
-        log_write_act(-2, self.mturk_agent.id, "observed")
         # response = self.mturk_agent.act()
         # log_write_act(-2, self.mturk_agent.id, response)
         self.episodeDone = True
@@ -104,9 +103,16 @@ class WOZWorld(MTurkTaskWorld):
             return
 
         if self.num_turns == 0:
-            ad = {'id': 'System', 'text': "Go user!"}
+            ad = {
+                'id': 'MTurk System',
+                'text': "The assistant is ready. Go ahead, say hello!",
+            }
             self.user_agent.observe(ad)
-            ad = {'id': 'System', 'text': "Go wizard!"}
+            ad = {
+                'id': 'MTurk System',
+                'text': "A user has joined the chat. "
+                "Please wait for him/her to start the conversation.",
+            }
             self.wizard_agent.observe(ad)
 
         self.num_turns += 1
@@ -117,7 +123,11 @@ class WOZWorld(MTurkTaskWorld):
 
         if self.kb_agent:
             # Handle communication between the wizard and the knowledge base
-            while wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<query>"):
+            while (
+                wizard_message
+                and wizard_message.get("text")
+                and wizard_message.get("text").startswith("?")
+            ):
                 self.kb_agent.observe(wizard_message)
                 kb_message = self.kb_agent.act()
                 self.wizard_agent.observe(kb_message)
@@ -128,13 +138,17 @@ class WOZWorld(MTurkTaskWorld):
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
 
+    def setup_intro(self):
+        for agent in [self.user_agent, self.wizard_agent]:
+            action = {'text': "", 'info': f"prolog", "id": agent.id}
+
+            agent.observe(action)
+
+        self.num_turns = 0
+
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
-            action = {
-                'text': f"Here is a welcome message for {agent.id}...",
-                'info': f"The {agent.id}'s info text.",
-                "id": agent.id
-            }
+            action = {'text': "", 'info': f"start", "id": agent.id}
 
             agent.observe(action)
 

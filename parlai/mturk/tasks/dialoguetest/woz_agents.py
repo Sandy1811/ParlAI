@@ -4,6 +4,7 @@ from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.shared_utils import AssignState
+import parlai.mturk.tasks.dialoguetest.api as api
 
 
 class WOZKnowledgeBaseAgent(Agent):
@@ -39,7 +40,13 @@ class WOZKnowledgeBaseAgent(Agent):
         if not text:
             return {"text": "Knowledge base invoked with empty text."}
 
-        reply = {"id": self.getID(), "text": f"A reply from the KB to your message '{observation}'."}
+        try:
+            constraints = eval(text.strip("? "))
+            apartment, count = api.call_api("apartment_search", constraints=constraints)
+            reply = {"id": "KnowledgeBase", "text": f"Found {count} apartments. Example: {apartment}."}
+        except Exception as e:
+            reply = {"id": "KnowledgeBase", "text": f"Could not interpret your query: {e}"}
+
         self._messages.append(reply)
 
         return reply
@@ -100,10 +107,18 @@ class DummyAgent(Agent):
             Message with reply
         """
         if not self.response_candidates:
-            return {"id": self.getID(), "text": "DUMMY: No response candidates.", "role": self.role}
+            return {
+                "id": self.getID(),
+                "text": "DUMMY: No response candidates.",
+                "role": self.role,
+            }
 
         self._num_messages_sent += 1
         index = self._num_messages_sent % len(self.response_candidates)
-        reply = {"id": self.getID(), "text": self.response_candidates[index], "role": self.role}
+        reply = {
+            "id": self.getID(),
+            "text": self.response_candidates[index],
+            "role": self.role,
+        }
 
         return reply

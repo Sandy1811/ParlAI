@@ -72,17 +72,19 @@ function makeInput(info, agent_id) {
   var div_todo_user = document.getElementById("todo_user");
   var div_todo_wizard = document.getElementById("todo_wizard");
   if (agent_id.startsWith("Wizard")) {
-    $("button#kb_button").show();
+    <!--    $("button#kb_button").show();-->
+    $("button#done_button").show();
     enable_button($("button#kb_button"), false);
     div_intro_user.style.display = "none"
     div_todo_user.style.display = "none"
     div_intro_wizard.style.display = "block"
     div_todo_wizard.style.display = "block"
   } else {
-    $('#intro_user').show();
-    $('#todo_user').show();
-    $('#intro_wizard').hide();
-    $('#todo_wizard').hide();
+    $("button#done_button").show();
+    div_intro_user.style.display = "block"
+    div_todo_user.style.display = "block"
+    div_intro_wizard.style.display = "none"
+    div_todo_wizard.style.display = "none"
   }
 }
 
