@@ -61,6 +61,9 @@ class WOZKnowledgeBaseAgent(Agent):
     def is_final(self):
         return AssignState.STATUS_DONE
 
+    def get_status(self):
+        return AssignState.STATUS_DONE
+
     @property
     def worker_id(self):
         return None

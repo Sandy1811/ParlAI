@@ -4,7 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from datetime import datetime
-from random import random
 from typing import Text
 
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
@@ -53,11 +52,9 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     def parley(self):
         ad = {
             'id': 'System',
-            'text': f"Welcome user: '{self.mturk_agent.id}'",
+            'text': "Please wait for the virtual assistant to join the conversation...",
         }
-        log_write_act(-2, self.mturk_agent.id, "parley")
         self.mturk_agent.observe(ad)
-        log_write_act(-2, self.mturk_agent.id, "observed")
         # response = self.mturk_agent.act()
         # log_write_act(-1, self.mturk_agent.id, response)
         self.episodeDone = True
