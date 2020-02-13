@@ -3,6 +3,7 @@ from typing import Dict, Text, Any, Optional, List
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
+from parlai.mturk.core.shared_utils import AssignState
 
 
 class WOZKnowledgeBaseAgent(Agent):
@@ -49,6 +50,9 @@ class WOZKnowledgeBaseAgent(Agent):
 
     def clear_messages(self) -> None:
         pass  # ToDo: Implement
+
+    def is_final(self):
+        return AssignState.STATUS_DONE
 
     @property
     def worker_id(self):
