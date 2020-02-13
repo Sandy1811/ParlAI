@@ -1,4 +1,4 @@
-from typing import Dict, Text, Any, Optional
+from typing import Dict, Text, Any, Optional, List
 
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
@@ -20,6 +20,7 @@ class WOZKnowledgeBaseAgent(Agent):
         super().__init__(opt)
         self.role = "KnowledgeBase"
         self.demo_role = "KnowledgeBase"
+        self._messages = []
 
     def act(self) -> Dict[Text, Any]:
         """Generates a response to the last observation.
@@ -38,8 +39,28 @@ class WOZKnowledgeBaseAgent(Agent):
             return {"text": "Knowledge base invoked with empty text."}
 
         reply = {"id": self.getID(), "text": f"A reply from the KB to your message '{observation}'."}
+        self._messages.append(reply)
 
         return reply
+
+    def get_messages(self) -> List[Dict[Text, Any]]:
+        # Note: Messages must contain a 'text' field
+        return self._messages
+
+    def clear_messages(self) -> None:
+        pass  # ToDo: Implement
+
+    @property
+    def worker_id(self):
+        return None
+
+    @property
+    def assignment_id(self):
+        return None  # ToDo: Implement
+
+    @property
+    def feedback(self):
+        return None  # ToDo: Implement
 
 
 class DummyAgent(Agent):

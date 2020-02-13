@@ -132,7 +132,8 @@ class WOZWorld(MTurkTaskWorld):
         for agent in [self.user_agent, self.wizard_agent]:
             action = {
                 'text': f"Here is a welcome message for {agent.id}...",
-                'info': "MY INFO TEXT",
+                'info': f"The {agent.id}'s info text.",
+                "id": agent.id
             }
 
             agent.observe(action)

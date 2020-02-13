@@ -10,17 +10,19 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = 'Negotiate a deal with another user!'
+task_config['hit_title'] = 'Find a new apartment by chatting to a virtual assistant.'
 
 
 """A description includes detailed information about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT description appears in the expanded
 view of search results, and in the HIT and assignment screens.
 """
-task_config['hit_description'] = (
-    'You will have a conversation with another user to agree how to divide some objects'
-    'between you. Negotiate hard to get a deal worth as many points as possible!'
-)
+task_config[
+    'hit_description'
+] = "You recently started a new job in Berlin and need to find an apartment to live in. " \
+    "For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. " \
+    "A friend of yours recommended the virtual assistant that you are about to talk to now. " \
+    "Maybe it can help you find something you like?"
 
 
 """One or more words or phrases that describe the HIT, separated by commas.
@@ -35,35 +37,28 @@ and on the left side of the chat page. Supports HTML formatting.
 task_config[
     'task_description'
 ] = '''
-<div id="preview">
-You will have a conversation with another user to agree how to divide some objects between you. Negotiate hard to
-get a deal worth as many points as possible<br><br>
+<div id="intro">
+You recently started a new job in Berlin and need to find an apartment to live in. 
+For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. 
+A friend of yours recommended the virtual assistant that you are about to talk to now. 
+Maybe it can help you find something you like?<br><br>
+</div>
 
-If you are ready, please click "Accept HIT" to start this task.
+<div id="ask_accept">
+If you are ready, please click "Accept HIT" to start this task.<br>
 </div>
 
 <div id="input"></div>
 <div float="right">
-  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_no_deal_button">Done</button>
-  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="id_send_deal_button">Query KB</button>
+  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="kb_button">KB Query</button>
 </div>
 
 <script type="text/javascript">
 
-var values = [0, 0, 0];
-var counts = [0, 0, 0];
-
 var num_messages = 0;
 var numberOfItemTypes;
 
-var your_selection = "";
-var their_selection = "";
-
-var image_path = "https://github.com/facebookresearch/end-to-end-negotiator/raw/master/src/images/";
-var image_names = ["book", "hat", "ball"];
-
-$("button#id_send_deal_button").hide();
-$("button#id_no_deal_button").hide();
+$("button#kb_button").hide();
 
 function enable_button(button, enable) {
     if (enable) {
@@ -75,10 +70,12 @@ function enable_button(button, enable) {
     }
 }
 
-function makeInput(info) {
-  $('#preview').html("");
-  $("button#id_send_deal_button").show();
-  enable_button($("button#id_send_deal_button"), false);
+function makeInput(info, agent_id) {
+  $('#ask_accept').html("You are the " + agent_id);
+  if (agent_id.startsWith("Wizard")) {
+    $("button#kb_button").show();
+    enable_button($("button#kb_button"), false);
+  }
 }
 
 (function() {
@@ -101,92 +98,26 @@ function makeInput(info) {
         displayed_messages.push(new_message_id);
 
         if (message.info) {
-            makeInput(info);
+            makeInput(message.info, agent_id);
         } else if (text.startsWith('<query>')) {
-            message.id = (was_this_agent ? "YOU:" : "THEM:");
-            var agent_id = message.id;
-            add_message_to_conversation(was_this_agent ? "YOU" : "THEM", text, was_this_agent);
+            message.id = (was_this_agent ? "YOU" : agent_id);
+            // add_message_to_conversation(was_this_agent ? "YOU" : "THEM", text, was_this_agent);
+            add_message_to_conversation(was_this_agent ? "YOU" : agent_id, text, was_this_agent);
         } else {
             num_messages++;
             if (num_messages >= 2) {
-                enable_button($("button#id_send_deal_button"), !was_this_agent);
+                enable_button($("button#kb_button"), !was_this_agent);
             }
 
-            if (num_messages >= 10) {
-                $("button#id_no_deal_button").show();
-                enable_button($("button#id_no_deal_button"), !was_this_agent);
-            }
-
-            message.id = (was_this_agent ? "YOU:" : "THEM:");
-            var agent_id = message.id;
-            add_message_to_conversation(was_this_agent ? "YOU" : "THEM", text, was_this_agent);
+            message.id = (was_this_agent ? "YOU" : agent_id);
+            add_message_to_conversation(was_this_agent ? "YOU" : agent_id, text, was_this_agent);
         }
     };
 })();
 
-function completion_message(your_selection, their_selection) {
-    if (your_selection == "" || their_selection == "") {
-        // Haven't both entered deal
-        return ;
-    }
 
-    var your_counts = your_selection.match(/\d+/g);
-    var their_counts = their_selection.match(/\d+/g);
-    var agree = true;
-    var all_zero = true;
-    var score = 0;
-
-    for (var i=0; i<counts.length; i++) {
-        var your_count = parseInt(your_counts[2 * i + 1]);
-        var their_count = parseInt(their_counts[2 * i + 1]);
-
-        all_zero = all_zero && your_count == 0;
-        all_zero = all_zero && their_count == 0;
-        agree = agree && ((your_count + their_count) == counts[i]);
-        score += your_count * values[i];
-    }
-
-    if (!agree) {
-        score = 0;
-    }
-
-    var msg = "";
-    msg += "<br><h1> Your score: " + score + "/10</h1>";
-
-    if (all_zero) {
-        msg += "Please try to reach agreements with your partner in future.";
-    } else if (!agree) {
-        msg += "You and your partner entered <b>different deals</b>. " +
-                "Please try to carefully agree deals in future, or your work may be rejected.";
-    } else if (score < 5) {
-        msg += "Please <b>negotiate harder</b> in future to get good deals or your work may be rejected.";
-    } else if (score < 7 && num_messages < 4) {
-        msg += "Please <b>negotiate harder</b> in future to get good deals or your work may be rejected.";
-    } else if (score == 9 || score == 10) {
-        msg += "You got a <b>great deal</b>, keep up the good work!";
-    } else {
-        msg += "Thanks for successfully agreeing a deal.";
-    }
-
-    $('#input').html(msg);
-
-}
-
-
-function send_deal(selection) {
-      // Disable the send button
-      // enable_button($("button#id_no_deal_button"), false);
-      // enable_button($("button#id_send_msg_button"), false);
-      // enable_button($("button#id_send_deal_button"), false);
-
+function send_query(selection) {
       new_message_id = uuidv4();
-      // your_selection = selection;
-      // completion_message(your_selection, their_selection);
-      // if (!their_selection) {
-      //   $('#response-type-text-input').html("Waiting for your partner to enter the deal...");
-      // }
-
-      // Send a packet
       send_packet(
         TYPE_MESSAGE,
         {
@@ -202,12 +133,9 @@ function send_deal(selection) {
       );
 }
 
-$("button#id_send_deal_button").on('click', function () {
-  send_deal('<query> some question');
-});
 
-$("button#id_no_deal_button").on('click', function () {
-  send_deal("<query> another question");
+$("button#kb_button").on('click', function () {
+  send_query('<query> some question');
 });
 
 </script>

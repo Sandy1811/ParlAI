@@ -25,6 +25,7 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
+    WOZKnowledgeBaseAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
 
     # Set the task name to be the folder name
