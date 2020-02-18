@@ -43,6 +43,7 @@ If you are ready, please click "Accept HIT" to start this task.<br>
 <div id="input"></div>
 <div float="right">
   <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="done_button">Done</button>
+  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="complete_button">Ready!</button>
   <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="kb_button">KB Query</button>
 </div>
 
@@ -53,6 +54,7 @@ var numberOfItemTypes;
 
 $("button#kb_button").hide();
 $("button#done_button").hide();
+$("button#complete_button").hide();
 
 function enable_button(button, enable) {
     if (enable) {
@@ -79,18 +81,45 @@ function process_parlai_command(command, agent_id) {
   if (command == "setup") {
     if (agent_id.startsWith("Wizard")) {
       <!--    $("button#kb_button").show();-->
-      $("button#done_button").show();
       enable_button($("button#kb_button"), false);
       div_intro_user.style.display = "none"
       div_todo_user.style.display = "none"
       div_intro_wizard.style.display = "block"
       div_todo_wizard.style.display = "block"
+      $("button#complete_button").show();
     } else {
-      $("button#done_button").show();
       div_intro_user.style.display = "block"
       div_todo_user.style.display = "block"
       div_intro_wizard.style.display = "none"
       div_todo_wizard.style.display = "none"
+    }
+  } else if (command == "review") {
+    console.log("JJJ: command is review");
+    if (agent_id.startsWith("Wizard")) {
+      console.log("JJJ: agent is wizard");
+      review_form = "Thank you for the conversation. <br>";
+      review_form += "Did the user... <br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_found\" name=\"ch_user_found\" value=\"ok_user_found\"><label for=\"ch_user_found\"> find an apartment?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_demands\" name=\"ch_user_demands\" value=\"ok_user_demands\"><label for=\"ch_user_demands\"> require at least 4 specific criteria?</label><br>";
+      review_form += "If you are unsure, then don't place a check mark.";
+
+      div_intro_wizard.style.display = "block";
+      div_intro_wizard.innerHTML = review_form;
+      $("button#done_button").show();
+      $("button#complete_button").hide();
+    } else {
+      console.log("JJJ: agent is user");
+      review_form = "Thank you for the conversation. <br>";
+      review_form += "Did the assistant... <br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_found\" name=\"ch_user_found\" value=\"ok_user_found\"><label for=\"ch_user_found\"> ...find an apartment for you?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_demands\" name=\"ch_user_demands\" value=\"ok_user_demands\"><label for=\"ch_user_demands\"> ...say goodbye at the end of the dialogue?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_demands\" name=\"ch_user_demands\" value=\"ok_user_demands\"><label for=\"ch_user_demands\"> ...stay polite and patient throughout the dialogue?</label><br>";
+      review_form += "If you are unsure, then don't place a check mark.";
+
+      div_intro_user.style.display = "block";
+      div_todo_user.innerHTML = review_form;
+      $("button#done_button").show();
+      $("button#complete_button").hide();
     }
   }
 }
@@ -123,7 +152,7 @@ function process_parlai_command(command, agent_id) {
         } else {
             num_messages++;
             if (num_messages >= 2) {
-                enable_button($("button#done_button"), !was_this_agent);
+                enable_button($("button#complete_button"), !was_this_agent);
             }
 
             message.id = (was_this_agent ? "YOU" : agent_id);
@@ -157,6 +186,10 @@ $("button#kb_button").on('click', function () {
 
 $("button#done_button").on('click', function () {
   send_query('<done>');
+});
+
+$("button#complete_button").on('click', function () {
+  send_query('<complete>');
 });
 
 </script>

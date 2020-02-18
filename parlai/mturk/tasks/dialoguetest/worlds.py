@@ -120,6 +120,14 @@ class WOZWorld(MTurkTaskWorld):
         self.wizard_agent.observe(user_message)
         wizard_message = self.wizard_agent.act()
 
+        if wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<complete>"):
+            self.wizard_agent.observe({"text": "", "id": self.wizard_agent.id, "command": "review"})
+            self.user_agent.observe({"text": "", "id": self.user_agent.id, "command": "review"})
+
+        if wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<done>"):
+            self.episodeDone = True
+            return
+
         if self.kb_agent:
             # Handle communication between the wizard and the knowledge base
             while (
