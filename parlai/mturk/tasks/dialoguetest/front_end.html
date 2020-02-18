@@ -185,7 +185,15 @@ $("button#kb_button").on('click', function () {
 });
 
 $("button#done_button").on('click', function () {
-  send_query('<done>');
+  var result = "{";
+  result += "\"ch_user_demands\": ";
+  if (ch_user_demands.checked == true) {
+    result += "True,";
+  } else {
+    result += "False,";
+  }
+  result += "}";
+  send_query('<done> ' + result);
 });
 
 $("button#complete_button").on('click', function () {
