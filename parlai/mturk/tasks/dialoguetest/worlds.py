@@ -32,8 +32,9 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
 
     def parley(self):
         ad = {
-            'id': 'MTurk System',
-            'text': f"Please wait for the user to join the conversation...",
+            "id": 'MTurk System',
+            "text": f"Please wait for the user to join the conversation...",
+            "command": "setup",
         }
         self.mturk_agent.observe(ad)
         # response = self.mturk_agent.act()
@@ -51,8 +52,9 @@ class UserOnboardingWorld(MTurkOnboardWorld):
 
     def parley(self):
         ad = {
-            'id': 'System',
-            'text': "Please wait for the virtual assistant to join the conversation...",
+            "id": 'MTurk System',
+            "text": "Please wait for the virtual assistant to join the conversation...",
+            "command": "setup",
         }
         self.mturk_agent.observe(ad)
         # response = self.mturk_agent.act()
@@ -135,20 +137,9 @@ class WOZWorld(MTurkTaskWorld):
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
 
-    def setup_intro(self):
-        for agent in [self.user_agent, self.wizard_agent]:
-            action = {'text': "", 'info': f"prolog", "id": agent.id}
-
-            agent.observe(action)
-
-        self.num_turns = 0
-
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
-            action = {'text': "", 'info': f"start", "id": agent.id}
-
-            agent.observe(action)
-
+            agent.observe({"text": "", "id": agent.id, "command": "setup"})
         self.num_turns = 0
 
     def episode_done(self):
