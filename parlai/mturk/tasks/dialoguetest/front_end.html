@@ -17,13 +17,14 @@
     <li>You have <b>changed your mind about what you want at least once</b> during the conversation</li>
     <li>You said <b>goodbye</b> (or similar) at the end of your dialogue</li>
   </ul>
-  At the end of this dialogue, you will have to judge if the wizard fulfilled his/her task.<br>
+  At the end of this dialogue, you will have to judge if the assistant fulfilled his/her task.<br>
 </div>
 <div id="intro_wizard" style="display: none">
   You play the role of a <b>virtual assistant</b> that helps people find an apartment in Sydney.
   The user that you talk to may sometimes change his/her mind and may not be sure what he/she wants.
   Your task is to be as helpful to the user as possible in any case, but <b>you cannot do anything but searching and discussing apartments</b>.
   So if the user wants you to make coffee, you should explain that you cannot do this.
+  If you feel like you should provide the user with an example apartment, <b>just make up a description</b>.
 
   Users may even be rude or uncooperative, but you are beyond this and <b>always keep a patient, level tone</b>.
   <br><br>
@@ -106,6 +107,7 @@ function process_parlai_command(command, agent_id) {
       div_intro_wizard.style.display = "block";
       div_intro_wizard.innerHTML = review_form;
       div_intro_user.style.display = "none";
+      div_todo_user.style.display = "none";
       $("button#done_button").show();
       $("button#complete_button").hide();
     } else {
@@ -120,6 +122,7 @@ function process_parlai_command(command, agent_id) {
       div_intro_user.style.display = "block";
       div_todo_user.innerHTML = review_form;
       div_intro_wizard.style.display = "none";
+      div_todo_wizard.style.display = "none";
       $("button#done_button").show();
       $("button#complete_button").hide();
     }
