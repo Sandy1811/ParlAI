@@ -31,7 +31,9 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     """
 
     def parley(self):
-        self.mturk_agent.observe({"id": self.mturk_agent.id, "text": "", "command": "setup"})
+        self.mturk_agent.observe(
+            {"id": self.mturk_agent.id, "text": "", "command": "setup"}
+        )
         ad = {
             "id": 'MTurk System',
             "text": f"Please wait for the user to join the conversation...",
@@ -51,7 +53,9 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     """
 
     def parley(self):
-        self.mturk_agent.observe({"id": self.mturk_agent.id, "text": "", "command": "setup"})
+        self.mturk_agent.observe(
+            {"id": self.mturk_agent.id, "text": "", "command": "setup"}
+        )
         ad = {
             "id": 'MTurk System',
             "text": "Please wait for the virtual assistant to join the conversation...",
@@ -121,14 +125,17 @@ class WOZWorld(MTurkTaskWorld):
         self.wizard_agent.observe(user_message)
         wizard_message = self.wizard_agent.act()
 
-        if wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<complete>"):
-            self.wizard_agent.observe({"text": "", "id": self.wizard_agent.id, "command": "review"})
-            self.user_agent.observe({"text": "", "id": self.user_agent.id, "command": "review"})
-
-        if wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<done>"):
-            self.wizard_agent.observe({"id": "MTurk System", "Text": "Thank you. Please wait for the user to agree..."})
-            self.episodeDone = True
-            return
+        if (
+            wizard_message
+            and wizard_message.get("text")
+            and wizard_message.get("text").startswith("<complete>")
+        ):
+            self.wizard_agent.observe(
+                {"text": "", "id": self.wizard_agent.id, "command": "review"}
+            )
+            self.user_agent.observe(
+                {"text": "", "id": self.user_agent.id, "command": "review"}
+            )
 
         if self.kb_agent:
             # Handle communication between the wizard and the knowledge base
@@ -142,11 +149,50 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard_agent.observe(kb_message)
                 wizard_message = self.wizard_agent.act()
 
+        if (
+            wizard_message
+            and wizard_message.get("text")
+            and wizard_message.get("text").startswith("<done>")
+        ):
+            self.wizard_agent.observe(
+                {
+                    "id": "MTurk System",
+                    "Text": "Thank you. Please wait for the user to agree...",
+                }
+            )
+            self.user_agent.observe(
+                {
+                    "id": "MTurk System",
+                    "Text": "The assistant thinks that you are done with your task.",
+                }
+            )
+            self.episodeDone = True
+            return
+
+        if (
+            user_message
+            and user_message.get("text")
+            and user_message.get("text").startswith("<done>")
+        ):
+            self.user_agent.observe(
+                {
+                    "id": "MTurk System",
+                    "Text": "Thank you. Please wait for the assistant to agree...",
+                }
+            )
+            self.wizard_agent.observe(
+                {
+                    "id": "MTurk System",
+                    "Text": "The user thinks that the task is completed.",
+                }
+            )
+            self.episodeDone = True
+            return
+
         self.user_agent.observe(wizard_message)
 
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
-
 
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
