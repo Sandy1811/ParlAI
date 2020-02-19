@@ -48,7 +48,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.observe(
             {
                 "id": 'MTurk System',
-                "text": f"Please wait for the user to join the conversation...",
+                "text": f"Please wait for the user and join the conversation and read his/her instructions...",
             }
         )
         self.episodeDone = True
