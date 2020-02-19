@@ -37,13 +37,20 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.observe(
             {"id": self.mturk_agent.id, "text": "", "command": "setup"}
         )
-        ad = {
-            "id": 'MTurk System',
-            "text": f"Please wait for the user to join the conversation...",
-        }
-        self.mturk_agent.observe(ad)
-        # response = self.mturk_agent.act()
-        # log_write_act(-2, self.mturk_agent.id, response)
+        # self.mturk_agent.observe(
+        #     {
+        #         "id": self.mturk_agent.id,
+        #         "text": "Take your time to read your task description on the left. "
+        #         "Write 'ready' when you are ready and press [Enter].",
+        #     }
+        # )
+        # self.mturk_agent.act()
+        self.mturk_agent.observe(
+            {
+                "id": 'MTurk System',
+                "text": f"Please wait for the user to join the conversation...",
+            }
+        )
         self.episodeDone = True
 
 
@@ -59,13 +66,20 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.observe(
             {"id": self.mturk_agent.id, "text": "", "command": "setup"}
         )
-        ad = {
-            "id": 'MTurk System',
-            "text": "Please wait for the virtual assistant to join the conversation...",
-        }
-        self.mturk_agent.observe(ad)
-        # response = self.mturk_agent.act()
-        # log_write_act(-1, self.mturk_agent.id, response)
+        # self.mturk_agent.observe(
+        #     {
+        #         "id": self.mturk_agent.id,
+        #         "text": "Take your time to read your task description on the left. "
+        #         "Write 'ready' when you are ready and press [Enter].",
+        #     }
+        # )
+        # self.mturk_agent.act()
+        self.mturk_agent.observe(
+            {
+                "id": 'MTurk System',
+                "text": "Please wait for the virtual assistant to join the conversation...",
+            }
+        )
         self.episodeDone = True
 
 
