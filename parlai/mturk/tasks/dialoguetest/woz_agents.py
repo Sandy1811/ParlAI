@@ -66,7 +66,7 @@ class WOZKnowledgeBaseAgent(Agent):
 
     @property
     def worker_id(self):
-        return None
+        return self.id
 
     @property
     def assignment_id(self):

@@ -53,6 +53,12 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         )
         self.episodeDone = True
 
+    def get_model_agent(self):
+        return self.mturk_agent
+
+    def get_task_agent(self):
+        return self.mturk_agent
+
 
 class UserOnboardingWorld(MTurkOnboardWorld):
     """
@@ -81,6 +87,12 @@ class UserOnboardingWorld(MTurkOnboardWorld):
             }
         )
         self.episodeDone = True
+
+    def get_model_agent(self):
+        return self.mturk_agent
+
+    def get_task_agent(self):
+        return self.mturk_agent
 
 
 COMMAND_SETUP = "setup"
@@ -298,7 +310,7 @@ class WOZWorld(MTurkTaskWorld):
 
     def tell_workers_to_start(self):
         send_mturk_message(
-            "The assistant is ready. Go ahead, say hello!", self.user_agent,
+            "The assistant is ready. Once you've read your instructions (left), go ahead, say hello!", self.user_agent,
         )
         send_mturk_message(
             "A user has joined the chat. Please wait for him/her to start the conversation.",
@@ -333,3 +345,9 @@ class WOZWorld(MTurkTaskWorld):
         # creating the dataset. If data requires pickling, put it in a field
         # called 'needs-pickle'.
         return {"events": self.events}
+
+    def get_model_agent(self):
+        return self.wizard_agent  # ToDo: Don't know if this is correct
+
+    def get_task_agent(self):
+        return self.user_agent
