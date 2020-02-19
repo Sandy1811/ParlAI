@@ -120,7 +120,7 @@ function process_parlai_command(command, agent_id) {
       review_form += "If you are unsure, then don't place a check mark.";
 
       div_intro_user.style.display = "block";
-      div_todo_user.innerHTML = review_form;
+      div_intro_user.innerHTML = review_form;
       div_intro_wizard.style.display = "none";
       div_todo_wizard.style.display = "none";
       $("button#done_button").show();

@@ -219,11 +219,20 @@ class WOZWorld(MTurkTaskWorld):
             self.send_command(COMMAND_REVIEW, self.wizard_agent)
             self.send_command(COMMAND_REVIEW, self.user_agent)
             self.evaluating = True
-            send_mturk_message("Thank you for chatting. Now please review your conversation.", self.wizard_agent)
-            send_mturk_message("The assistant thinks that the task is complete. Please review your conversation.", self.user_agent)
+            send_mturk_message(
+                "Thank you for chatting. Now please review your conversation.",
+                self.wizard_agent,
+            )
+            send_mturk_message(
+                "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant.",
+                self.user_agent,
+            )
         elif command == WORKER_COMMAND_DONE:
             log_write("Wizard is DONE")
-            send_mturk_message("Thank you for evaluating! Please wait for the user to agree...", self.wizard_agent)
+            send_mturk_message(
+                "Thank you for evaluating! Please wait for the user to agree...",
+                self.wizard_agent,
+            )
             self.episodeDone = True
         elif command == WORKER_DISCONNECTED:
             log_write("Wizard DISCONNECTED")
@@ -238,12 +247,20 @@ class WOZWorld(MTurkTaskWorld):
         elif command == WORKER_COMMAND_COMPLETE:
             self.send_command(COMMAND_REVIEW, self.wizard_agent)
             self.send_command(COMMAND_REVIEW, self.user_agent)
-            send_mturk_message("Thank you for chatting. Now please review your conversation.", self.user_agent)
-            send_mturk_message("The user thinks that the task is complete. Please review your conversation.",
-                               self.wizard_agent)
+            send_mturk_message(
+                "Thank you for chatting. Now please review your conversation.",
+                self.user_agent,
+            )
+            send_mturk_message(
+                "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user.",
+                self.wizard_agent,
+            )
         elif command == WORKER_COMMAND_DONE:
             log_write("User is DONE")
-            send_mturk_message("Thank you for evaluating! Please wait for the assistant to agree...", self.user_agent)
+            send_mturk_message(
+                "Thank you for evaluating! Please wait for the assistant to agree...",
+                self.user_agent,
+            )
             self.episodeDone = True
         elif command == WORKER_DISCONNECTED:
             log_write("User is DISCONNECTED")
