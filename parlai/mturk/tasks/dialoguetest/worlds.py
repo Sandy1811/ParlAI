@@ -78,6 +78,8 @@ WORKER_COMMAND_COMPLETE = "complete"
 WORKER_COMMAND_DONE = "done"
 WORKER_COMMAND_QUERY = "query"
 
+WORKER_DISCONNECTED = "disconnect"
+
 
 def send_mturk_message(text: Text, recipient: Agent) -> None:
     message = {"id": "MTurk System", "text": text}
@@ -97,20 +99,20 @@ def extract_command_message(
             parameters = None
         elif text.startswith(MESSAGE_DONE_PREFIX):
             command = WORKER_COMMAND_DONE
-            parameters = text[len(WORKER_COMMAND_DONE) :].strip()
+            parameters = text[len(MESSAGE_DONE_PREFIX) :].strip()
         elif text.startswith(MESSAGE_QUERY_PREFIX):
             command = WORKER_COMMAND_QUERY
             parameters = text[len(MESSAGE_QUERY_PREFIX) :].strip()
+        elif text == "[DISCONNECT]":
+            command = WORKER_DISCONNECTED
+            parameters = None
 
     return command, parameters
 
 
 class WOZWorld(MTurkTaskWorld):
     """
-    World to demonstrate workers with assymetric roles.
-
-    This task amounts to three rounds and then an evaluation step. It is purposefully
-    created as a task to demo multiple views and has no other purpose.
+    Wizard-of-Oz world.
     """
 
     collector_agent_id = 'Moderator'
@@ -128,6 +130,7 @@ class WOZWorld(MTurkTaskWorld):
                 self.kb_agent = agent
         self.episodeDone = False
         self.turns = 0
+        self.evaluating = False
         self.events = []
 
         self.num_turns = -1
@@ -138,9 +141,9 @@ class WOZWorld(MTurkTaskWorld):
         """
         Let the user and the wizard have a turn each.
         """
-        log_write_act(0, "None", "world started")
 
         if self.num_turns < 0:
+            log_write_act(0, "None", "world started")
             self.setup_interface()
             self.tell_workers_to_start()
             self.num_turns = 0
@@ -149,14 +152,18 @@ class WOZWorld(MTurkTaskWorld):
         self.num_turns += 1
 
         user_message, command, parameters = self.get_new_user_message()
+        log_write_act(self.num_turns, "User", user_message)
         self.deal_with_user_command(command, parameters)
 
-        self.wizard_agent.observe(user_message)
+        if not self.evaluating:
+            self.wizard_agent.observe(user_message)
 
         wizard_message, command, parameters = self.get_new_wizard_message()
+        log_write_act(self.num_turns, "Wizard", wizard_message)
         self.deal_with_wizard_command(command, parameters)
 
-        self.user_agent.observe(wizard_message)
+        if not self.evaluating:
+            self.user_agent.observe(wizard_message)
 
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
@@ -201,16 +208,24 @@ class WOZWorld(MTurkTaskWorld):
             return
         elif command == WORKER_COMMAND_QUERY and self.kb_agent:
             # Handle communication between the wizard and the knowledge base
-            # while command and command == WORKER_COMMAND_QUERY:
-            #     self.kb_agent.observe({"query": parameters})
-            #     kb_message, _, _ = self.get_new_knowledgebase_message()
-            #     self.wizard_agent.observe(kb_message)
-            #     wizard_message, command, parameters = self.get_new_wizard_message()
-            return
+            while command and command == WORKER_COMMAND_QUERY:
+                self.kb_agent.observe({"query": parameters})
+                kb_message, _, _ = self.get_new_knowledgebase_message()
+                self.wizard_agent.observe(kb_message)
+                wizard_message, command, parameters = self.get_new_wizard_message()
         elif command == WORKER_COMMAND_COMPLETE:
             self.send_command(COMMAND_REVIEW, self.wizard_agent)
             self.send_command(COMMAND_REVIEW, self.user_agent)
+            self.evaluating = True
+            send_mturk_message("Thank you for chatting. Now please review your conversation.", self.wizard_agent)
+            send_mturk_message("The assistant thinks that the task is complete. Please review your conversation.", self.user_agent)
         elif command == WORKER_COMMAND_DONE:
+            log_write("Wizard is DONE")
+            send_mturk_message("Thank you for evaluating! Please wait for the user to agree...", self.wizard_agent)
+            self.episodeDone = True
+        elif command == WORKER_DISCONNECTED:
+            log_write("Wizard DISCONNECTED")
+            send_mturk_message("Sorry, the assistant disconnected...", self.user_agent)
             self.episodeDone = True
 
     def deal_with_user_command(
@@ -221,7 +236,16 @@ class WOZWorld(MTurkTaskWorld):
         elif command == WORKER_COMMAND_COMPLETE:
             self.send_command(COMMAND_REVIEW, self.wizard_agent)
             self.send_command(COMMAND_REVIEW, self.user_agent)
+            send_mturk_message("Thank you for chatting. Now please review your conversation.", self.user_agent)
+            send_mturk_message("The user thinks that the task is complete. Please review your conversation.",
+                               self.wizard_agent)
         elif command == WORKER_COMMAND_DONE:
+            log_write("User is DONE")
+            send_mturk_message("Thank you for evaluating! Please wait for the assistant to agree...", self.user_agent)
+            self.episodeDone = True
+        elif command == WORKER_DISCONNECTED:
+            log_write("User is DISCONNECTED")
+            send_mturk_message("Sorry, the user disconnected...", self.user_agent)
             self.episodeDone = True
 
     def send_command(self, command: Text, recipient: Agent) -> None:

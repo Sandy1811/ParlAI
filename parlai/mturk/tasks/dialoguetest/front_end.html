@@ -44,7 +44,6 @@ If you are ready, please click "Accept HIT" to start this task.<br>
 <div float="right">
   <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="done_button">Confirm</button>
   <button class="btn btn-primary" style="width: 220px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="complete_button">I have completed my task</button>
-  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="kb_button">KB Query</button>
 </div>
 
 <script type="text/javascript">
@@ -52,7 +51,6 @@ If you are ready, please click "Accept HIT" to start this task.<br>
 var num_messages = 0;
 var numberOfItemTypes;
 
-$("button#kb_button").hide();
 $("button#done_button").hide();
 $("button#complete_button").hide();
 
@@ -81,29 +79,28 @@ function process_parlai_command(command, agent_id) {
   if (command == "setup") {
     console.log("JJJ: setup for " + agent_id);
     if (agent_id == "Wizard" || agent_id == "Onboarding Wizard") {
-      <!--    $("button#kb_button").show();-->
-      enable_button($("button#kb_button"), false);
-      div_intro_user.style.display = "none"
-      div_todo_user.style.display = "none"
-      div_intro_wizard.style.display = "block"
-      div_todo_wizard.style.display = "block"
-      $("button#complete_button").show();
-      <!--      document.getElementById("complete_button").disabled = true;-->
-      enable_button($("button#complete_button"), false);
+      div_intro_user.style.display = "none";
+      div_todo_user.style.display = "none";
+      div_intro_wizard.style.display = "block";
+      div_todo_wizard.style.display = "block";
     } else if (agent_id == "User" || agent_id == "Onboarding User") {
-      div_intro_user.style.display = "block"
-      div_todo_user.style.display = "block"
-      div_intro_wizard.style.display = "none"
-      div_todo_wizard.style.display = "none"
+      div_intro_user.style.display = "block";
+      div_todo_user.style.display = "block";
+      div_intro_wizard.style.display = "none";
+      div_todo_wizard.style.display = "none";
     }
+    $("button#complete_button").show();
+    <!--      document.getElementById("complete_button").disabled = true;-->
+    enable_button($("button#complete_button"), false);
   } else if (command == "review") {
     console.log("JJJ: command is review");
     if (agent_id.startsWith("Wizard")) {
       console.log("JJJ: agent is wizard");
       review_form = "Thank you for the conversation. <br>";
-      review_form += "Did the user... <br>";
-      review_form += "<input type=\"checkbox\" id=\"ch_user_found\" name=\"ch_user_found\" value=\"ok_user_found\"><label for=\"ch_user_found\"> find an apartment?</label><br>";
-      review_form += "<input type=\"checkbox\" id=\"ch_user_demands\" name=\"ch_user_demands\" value=\"ok_user_demands\"><label for=\"ch_user_demands\"> require at least 4 specific criteria?</label><br>";
+      review_form += "Did the user...<br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_found\" name=\"ch_user_found\" value=\"ok_user_found\"><label for=\"ch_user_found\"> ... find an apartment?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_demands\" name=\"ch_user_demands\" value=\"ok_user_demands\"><label for=\"ch_user_demands\"> ... require at least 4 specific criteria?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_user_change\" name=\"ch_user_change\" value=\"ok_user_change\"><label for=\"ch_user_change\"> ... change his/her mind about what he/she wants at any point?</label><br>";
       review_form += "If you are unsure, then don't place a check mark.";
 
       div_intro_wizard.style.display = "block";
@@ -115,9 +112,9 @@ function process_parlai_command(command, agent_id) {
       console.log("JJJ: agent is user");
       review_form = "Thank you for the conversation. <br>";
       review_form += "Did the assistant... <br>";
-      review_form += "<input type=\"checkbox\" id=\"ch_user_found\" name=\"ch_user_found\" value=\"ok_user_found\"><label for=\"ch_user_found\"> ...find an apartment for you?</label><br>";
-      review_form += "<input type=\"checkbox\" id=\"ch_user_demands\" name=\"ch_user_demands\" value=\"ok_user_demands\"><label for=\"ch_user_demands\"> ...say goodbye at the end of the dialogue?</label><br>";
-      review_form += "<input type=\"checkbox\" id=\"ch_user_demands\" name=\"ch_user_demands\" value=\"ok_user_demands\"><label for=\"ch_user_demands\"> ...stay polite and patient throughout the dialogue?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_wizard_found\" name=\"ch_wizard_found\" value=\"ok_wizard_found\"><label for=\"ch_wizard_found\"> ... find an apartment for you?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_wizard_bye\" name=\"ch_wizard_bye\" value=\"ok_wizard_bye\"><label for=\"ch_wizard_bye\"> ... say goodbye at the end of the dialogue?</label><br>";
+      review_form += "<input type=\"checkbox\" id=\"ch_wizard_polite\" name=\"ch_wizard_polite\" value=\"ok_wizard_polite\"><label for=\"ch_wizard_polite\"> ... stay polite and patient throughout the conversation?</label><br>";
       review_form += "If you are unsure, then don't place a check mark.";
 
       div_intro_user.style.display = "block";
@@ -168,6 +165,7 @@ function process_parlai_command(command, agent_id) {
 
 
 function send_query(selection) {
+      console.log("JJJ: Sending a query: " + selection);
       new_message_id = uuidv4();
       send_packet(
         TYPE_MESSAGE,
@@ -185,17 +183,52 @@ function send_query(selection) {
 }
 
 
-$("button#kb_button").on('click', function () {
-  send_query('<query> some question');
-});
-
 $("button#done_button").on('click', function () {
+  console.log("JJJ: agent clicked on DONE");
   var result = "{";
-  result += "\"ch_user_demands\": ";
-  if (ch_user_demands.checked == true) {
-    result += "True,";
+
+  if ($('#ch_user_demands').length > 0) {
+    result += "\"ch_user_demands\": ";
+    if (ch_user_demands.checked == true) {
+      result += "True,";
+    } else {
+      result += "False,";
+    }
+    result += "}";
+    result += "\"ch_user_found\": ";
+    if (ch_user_found.checked == true) {
+      result += "True,";
+    } else {
+      result += "False,";
+    }
+    result += "}";
+    result += "\"ch_user_change\": ";
+    if (ch_user_change.checked == true) {
+      result += "True,";
+    } else {
+      result += "False,";
+    }
   } else {
-    result += "False,";
+    result += "\"ch_wizard_found\": ";
+    if (ch_wizard_found.checked == true) {
+      result += "True,";
+    } else {
+      result += "False,";
+    }
+    result += "}";
+    result += "\"ch_wizard_bye\": ";
+    if (ch_wizard_bye.checked == true) {
+      result += "True,";
+    } else {
+      result += "False,";
+    }
+    result += "}";
+    result += "\"ch_wizard_polite\": ";
+    if (ch_wizard_polite.checked == true) {
+      result += "True,";
+    } else {
+      result += "False,";
+    }
   }
   result += "}";
   send_query('<done> ' + result);
