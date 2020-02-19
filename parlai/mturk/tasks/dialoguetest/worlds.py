@@ -12,15 +12,17 @@ import threading
 
 
 def log_write_act(index: int, agent_name: Text, act) -> None:
-    with open("/Users/johannes/TESTLOG.log", "a+") as file:
-        time = str(datetime.now().isoformat())
-        file.write(f"{time}\t{index:2}\t{agent_name}\t{act}\n")
+    # with open("/Users/johannes/TESTLOG.log", "a+") as file:
+    #     time = str(datetime.now().isoformat())
+    #     file.write(f"{time}\t{index:2}\t{agent_name}\t{act}\n")
+    pass
 
 
 def log_write(message: Text) -> None:
-    with open("/Users/johannes/TESTLOG.log", "a+") as file:
-        time = str(datetime.now().isoformat())
-        file.write(f"{time}\t{message}\n")
+    # with open("/Users/johannes/TESTLOG.log", "a+") as file:
+    #     time = str(datetime.now().isoformat())
+    #     file.write(f"{time}\t{message}\n")
+    pass
 
 
 class WizardOnboardingWorld(MTurkOnboardWorld):
