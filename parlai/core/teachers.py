@@ -35,7 +35,7 @@ from parlai.core.agents import Agent, create_agent_from_shared
 from parlai.core.image_featurizers import ImageLoader
 from parlai.core.loader import load_teacher_module
 from parlai.core.message import Message
-from parlai.core.metrics import TeacherMetrics, aggregate_metrics
+from parlai.core.metrics import TeacherMetrics, aggregate_named_reports
 from parlai.core.opt import Opt
 from parlai.utils.misc import AttrDict, no_lock, str_to_msg, warn_once
 
@@ -113,13 +113,11 @@ class Teacher(Agent):
         if not hasattr(self, 'id'):
             self.id = opt.get('task', 'teacher')
         if not hasattr(self, 'metrics'):
-            if shared and shared.get('metrics'):
-                self.metrics = shared['metrics']
-            else:
-                self.metrics = TeacherMetrics(
-                    threadsafe=opt.get('numthreads', 1) > 1,
-                    metrics_list=opt.get('metrics', 'default'),
-                )
+            self.metrics = TeacherMetrics(
+                threadsafe=(opt.get('numthreads', 1) > 1),
+                metrics_list=opt.get('metrics', 'default'),
+                shared=shared['metrics'] if shared is not None else None,
+            )
         self.epochDone = False
 
     # return state/action dict based upon passed state
@@ -179,8 +177,14 @@ class Teacher(Agent):
         In addition to default Agent shared parameters, share metrics.
         """
         shared = super().share()
-        shared['metrics'] = self.metrics
+        shared['metrics'] = self.metrics.share()
         return shared
+
+    def update_counters(self):
+        """
+        Ensure counters are synchronized.
+        """
+        self.metrics.sync()
 
 
 class FixedDialogTeacher(Teacher):
@@ -242,7 +246,7 @@ class FixedDialogTeacher(Teacher):
                 self.datatype.startswith('train') and 'evalmode' not in self.datatype
             )
         if not hasattr(self, 'datafile'):
-            self.datafile = opt.get('datafile', opt.get('pytorch_datafile'))
+            self.datafile = opt.get('datafile')
         # set up support for multithreaded data loading
         self.data_queue = queue.Queue()
         if shared:
@@ -262,8 +266,6 @@ class FixedDialogTeacher(Teacher):
 
         # set up batching
         self.bsz = opt.get('batchsize', 1)
-        self.batchindex = opt.get('batchindex', 0)
-        self.use_batch_act = False  # Batch act disabled by default
 
     def _lock(self):
         if hasattr(self.index, 'get_lock'):
@@ -313,10 +315,6 @@ class FixedDialogTeacher(Teacher):
         Share the data and dataloader.
         """
         shared = super().share()
-
-        if hasattr(self, 'lastYs'):
-            # share lastYs to communicate between batch_act and observe
-            shared['lastYs'] = self.lastYs
 
         if hasattr(self, 'examples'):
             shared['examples'] = self.examples
@@ -442,47 +440,10 @@ class FixedDialogTeacher(Teacher):
         """
         Process observation for metrics.
         """
-        if self.use_batch_act:
-            self.lastY = self.lastYs[self.batchindex]
-            self.lastYs[self.batchindex] = None
-
         if hasattr(self, 'lastY') and self.lastY is not None:
             self.metrics.evaluate_response(observation, self.lastY)
             self.lastY = None
         return observation
-
-    def batch_act(self, observations):
-        """
-        Return an entire batch of examples.
-
-        Note: Currently used by PytorchDataTeacher.
-        """
-        # DEPRECATEDAY: looks like this isn't used anymore
-        # we ignore observations
-        if not hasattr(self, 'epochDone'):
-            # reset if haven't yet
-            self.reset()
-
-        batch = self.next_batch()
-        # pad batch
-        if len(batch) < self.bsz:
-            batch += [{'episode_done': True, 'id': self.getID()}] * (
-                self.bsz - len(batch)
-            )
-
-        # remember correct answer if available (for padding, None)
-        for i, ex in enumerate(batch):
-            if 'labels' in ex:
-                labels = ex['labels']
-                self.lastYs[i] = labels
-                if not self.datatype.startswith('train') or 'evalmode' in self.datatype:
-                    del ex['labels']
-                    if not self.opt.get('hide_labels', False):
-                        ex['eval_labels'] = labels
-            else:
-                self.lastYs[i] = ex.get('eval_labels', None)
-
-        return batch
 
     def act(self):
         """
@@ -546,21 +507,27 @@ class DialogTeacher(FixedDialogTeacher):
         self.training = (
             self.datatype.startswith('train') and 'evalmode' not in self.datatype
         )
-        self.stream = 'stream' in self.datatype.split(':')
+        self.stream = 'stream' in self.datatype
 
-        if not self.use_batch_act:
-            # first initialize any shared objects
-            data_class = StreamDialogData if self.stream else DialogData
-            kwargs = {'cycle': self.training} if self.stream else {}
-            if shared and shared.get('data'):
-                self.data = data_class(opt, shared=shared['data'], **kwargs)
-            else:
-                self.data = data_class(
-                    opt,
-                    data_loader=self.setup_data,
-                    cands=self.label_candidates(),
-                    **kwargs,
-                )
+        # first initialize any shared objects
+        data_class = StreamDialogData if self.stream else DialogData
+        kwargs = (
+            # never cycle if "ordered" is in the datatype. this is used by
+            # build_dict to enumerate through the data exactly once while still
+            # marking examples as training examples.
+            {'cycle': self.training and 'ordered' not in self.datatype}
+            if self.stream
+            else {}
+        )
+        if shared and shared.get('data'):
+            self.data = data_class(opt, shared=shared['data'], **kwargs)
+        else:
+            self.data = data_class(
+                opt,
+                data_loader=self.setup_data,
+                cands=self.label_candidates(),
+                **kwargs,
+            )
 
         self.reset()
 
@@ -893,6 +860,11 @@ class StreamDialogData(DialogData):
         reached without reset being called.
     """
 
+    # represents that we haven't read in any data at all
+    _FIRST_PASS = None
+    # represents that we are out of data.
+    _END_OF_EPOCH = -1
+
     def __init__(self, opt, data_loader=None, cands=None, shared=None, **kwargs):
         # super() call initiates stream in self.data by calling _load()
         super().__init__(opt, data_loader, cands, shared, **kwargs)
@@ -918,7 +890,7 @@ class StreamDialogData(DialogData):
                 )
                 self.lock = Lock()
         self.entry_idx = 0
-        self.next_episode = None
+        self.cur_episode = self._FIRST_PASS
         self.num_eps = None
         self.num_exs = None
 
@@ -951,9 +923,8 @@ class StreamDialogData(DialogData):
         while True:
             for episode in self._read_episode(data_loader(datafile)):
                 yield episode
-            yield -1
             while not self.cycle:
-                yield -1
+                yield self._END_OF_EPOCH
 
     def load_length(self):
         """
@@ -1005,35 +976,24 @@ class StreamDialogData(DialogData):
 
         When episode is done returns first entry of next episode.
         """
-        # first look up data
-        if self.next_episode != -1 or self.entry_idx != 0:
-            with self._lock():
-                if self.next_episode is None:
-                    self.next_episode = next(self.data)
-                if self.entry_idx == 0:
-                    self.cur_episode = self.next_episode
-                    self.next_episode = next(self.data)
-                entry = self.cur_episode[self.entry_idx]
-
-                # now pack it in a action-observation dictionary
-                table = self.build_table(entry)
-
-                episode_done = self.entry_idx == len(self.cur_episode) - 1
-                if episode_done:
-                    self.entry_idx = 0
-                else:
-                    self.entry_idx += 1
-                end_of_data = episode_done and self.next_episode is -1
-                if end_of_data and self.cycle:
-                    self.next_episode = next(self.data)
-
-                # last entry in this episode
-                table['episode_done'] = episode_done
+        if self.cur_episode is self._FIRST_PASS:
+            # first go around, always read off the episode
+            # maybe lock this line
+            self.cur_episode = next(self.data)
+        if self.cur_episode == self._END_OF_EPOCH:
+            # we're done here
+            return {'episode_done': True}, True
+        entry = self.cur_episode[self.entry_idx]
+        table = self.build_table(entry)
+        episode_done = self.entry_idx == len(self.cur_episode) - 1
+        table['episode_done'] = episode_done
+        if episode_done:
+            # maybe lock this line
+            self.cur_episode = next(self.data)
+            self.entry_idx = 0
         else:
-            table = {'episode_done': True}
-            end_of_data = True
-
-        return table, end_of_data
+            self.entry_idx += 1
+        return table, self.cur_episode == self._END_OF_EPOCH
 
     def reset(self):
         """
@@ -1042,13 +1002,12 @@ class StreamDialogData(DialogData):
         if self.reset_data is not None:
             # auxiliary instance, reset main datastream
             self.data = self.reset_data()
-            self.next_episode = None
         elif not self.is_reset:
             # if main instance is not reset, reset datastream
             self._load(self.data_loader, self.datafile)
             self.is_reset = True
-            self.next_episode = None
         self.entry_idx = 0
+        self.cur_episode = self._FIRST_PASS
         return self.data
 
 
@@ -1904,7 +1863,7 @@ class MultiTaskTeacher(Teacher):
         """
         Report aggregated metrics across all subtasks.
         """
-        return aggregate_metrics(self.tasks)
+        return aggregate_named_reports({t.getID(): t.report() for t in self.tasks})
 
     def reset(self):
         """
@@ -1944,6 +1903,10 @@ class MultiTaskTeacher(Teacher):
         for t in self.tasks:
             t.shutdown()
 
+    def update_counters(self):
+        for t in self.tasks:
+            t.update_counters()
+
 
 class ChunkTeacher(FixedDialogTeacher, ABC):
     """
@@ -1959,10 +1922,6 @@ class ChunkTeacher(FixedDialogTeacher, ABC):
 
         if 'stream' not in opt['datatype']:
             raise ValueError('Chunk teacher should be used with streaming. ')
-        if opt.get('pytorch_teacher_task') is not None:
-            raise ValueError(
-                'Chunk teacher is not compatible with pytorch data teacher.'
-            )
         if opt['numthreads'] > 1:
             raise ValueError('Chunk teacher is not compatible with Hogwild.')
 
@@ -2167,7 +2126,24 @@ def _add_task_flags_to_agent_opt(agent, opt: Opt, flags):
     for f in fl:
         if '=' in f:
             one_flag = f.split('=')
-            opt[one_flag[0].replace('-', '_')] = one_flag[1].replace(';', ':')
+            key = one_flag[0].replace('-', '_')
+            raw_value = one_flag[1].replace(';', ':')
+
+            # Convert to bool/int/float if necessary
+            if raw_value.lower() == 'true':
+                value = True
+            elif raw_value.lower() == 'false':
+                value = False
+            else:
+                try:
+                    value = int(raw_value)  # type: ignore
+                except ValueError:
+                    try:
+                        value = float(raw_value)  # type: ignore
+                    except ValueError:
+                        value = raw_value  # type: ignore
+
+            opt[key] = value
         else:
             task.append(f)
     opt['task'] = ':'.join(task)
@@ -2182,16 +2158,10 @@ def create_task_agent_from_taskname(opt: Opt):
     performs ``from parlai.tasks.babi import Task1kTeacher`` with the parameter ``1`` in
     ``opt['task']`` to be used by the class ``Task1kTeacher``.
     """
-    if not (
-        opt.get('task')
-        or opt.get('pytorch_teacher_task')
-        or opt.get('pytorch_teacher_dataset')
-    ):
+    if not opt.get('task'):
         raise RuntimeError(
             'No task specified. Please select a task with ' + '--task {task_name}.'
         )
-    if not opt.get('task'):
-        opt['task'] = 'pytorch_teacher'
     if ',' not in opt['task']:
         # Single task
         teacher_class = load_teacher_module(opt['task'])
