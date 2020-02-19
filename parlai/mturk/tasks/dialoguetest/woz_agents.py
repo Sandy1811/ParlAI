@@ -35,13 +35,13 @@ class WOZKnowledgeBaseAgent(Agent):
         if observation is None:
             return {"text": "Knowledge base invoked without observation."}
 
-        text = observation.get("text", "")
+        text = observation.get("query")
 
         if not text:
-            return {"text": "Knowledge base invoked with empty text."}
+            return {"text": "Knowledge base invoked with empty query."}
 
         try:
-            constraints = eval(text.strip("? "))
+            constraints = eval(text)
             apartment, count = api.call_api("apartment_search", constraints=constraints)
             reply = {"id": "KnowledgeBase", "text": f"Found {count} apartments. Example: {apartment}."}
         except Exception as e:

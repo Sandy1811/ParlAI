@@ -4,8 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from datetime import datetime
-from typing import Text
+from typing import Text, Union, Dict, Any, Optional, Tuple
 
+from parlai.core.agents import Agent
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
@@ -66,6 +67,44 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         self.episodeDone = True
 
 
+COMMAND_SETUP = "setup"
+COMMAND_REVIEW = "review"
+
+MESSAGE_COMPLETE_PREFIX = "<complete>"
+MESSAGE_DONE_PREFIX = "<done>"
+MESSAGE_QUERY_PREFIX = "? "
+
+WORKER_COMMAND_COMPLETE = "complete"
+WORKER_COMMAND_DONE = "done"
+WORKER_COMMAND_QUERY = "query"
+
+
+def send_mturk_message(text: Text, recipient: Agent) -> None:
+    message = {"id": "MTurk System", "text": text}
+    recipient.observe(message)
+
+
+def extract_command_message(
+    message: Optional[Dict[Text, Any]]
+) -> Tuple[Optional[Text], Optional[Text]]:
+    log_write(f"extract_command_message({message})")
+    command = None
+    parameters = None
+    if message and message.get("text"):
+        text = message.get("text", "")
+        if text.startswith(MESSAGE_COMPLETE_PREFIX):
+            command = WORKER_COMMAND_COMPLETE
+            parameters = None
+        elif text.startswith(MESSAGE_DONE_PREFIX):
+            command = WORKER_COMMAND_DONE
+            parameters = text[len(WORKER_COMMAND_DONE) :].strip()
+        elif text.startswith(MESSAGE_QUERY_PREFIX):
+            command = WORKER_COMMAND_QUERY
+            parameters = text[len(MESSAGE_QUERY_PREFIX) :].strip()
+
+    return command, parameters
+
+
 class WOZWorld(MTurkTaskWorld):
     """
     World to demonstrate workers with assymetric roles.
@@ -89,8 +128,7 @@ class WOZWorld(MTurkTaskWorld):
                 self.kb_agent = agent
         self.episodeDone = False
         self.turns = 0
-        self.questions = []
-        self.answers = []
+        self.events = []
 
         self.num_turns = -1
         self.max_turns = 300
@@ -104,100 +142,111 @@ class WOZWorld(MTurkTaskWorld):
 
         if self.num_turns < 0:
             self.setup_interface()
+            self.tell_workers_to_start()
+            self.num_turns = 0
             return
-
-        if self.num_turns == 0:
-            ad = {
-                'id': 'MTurk System',
-                'text': "The assistant is ready. Go ahead, say hello!",
-            }
-            self.user_agent.observe(ad)
-            ad = {
-                'id': 'MTurk System',
-                'text': "A user has joined the chat. "
-                "Please wait for him/her to start the conversation.",
-            }
-            self.wizard_agent.observe(ad)
 
         self.num_turns += 1
 
-        user_message = self.user_agent.act()
+        user_message, command, parameters = self.get_new_user_message()
+        self.deal_with_user_command(command, parameters)
+
         self.wizard_agent.observe(user_message)
-        wizard_message = self.wizard_agent.act()
 
-        if (
-            wizard_message
-            and wizard_message.get("text")
-            and wizard_message.get("text").startswith("<complete>")
-        ):
-            self.wizard_agent.observe(
-                {"text": "", "id": self.wizard_agent.id, "command": "review"}
-            )
-            self.user_agent.observe(
-                {"text": "", "id": self.user_agent.id, "command": "review"}
-            )
-
-        if self.kb_agent:
-            # Handle communication between the wizard and the knowledge base
-            while (
-                wizard_message
-                and wizard_message.get("text")
-                and wizard_message.get("text").startswith("?")
-            ):
-                self.kb_agent.observe(wizard_message)
-                kb_message = self.kb_agent.act()
-                self.wizard_agent.observe(kb_message)
-                wizard_message = self.wizard_agent.act()
-
-        if (
-            wizard_message
-            and wizard_message.get("text")
-            and wizard_message.get("text").startswith("<done>")
-        ):
-            self.wizard_agent.observe(
-                {
-                    "id": "MTurk System",
-                    "Text": "Thank you. Please wait for the user to agree...",
-                }
-            )
-            self.user_agent.observe(
-                {
-                    "id": "MTurk System",
-                    "Text": "The assistant thinks that you are done with your task.",
-                }
-            )
-            self.episodeDone = True
-            return
-
-        if (
-            user_message
-            and user_message.get("text")
-            and user_message.get("text").startswith("<done>")
-        ):
-            self.user_agent.observe(
-                {
-                    "id": "MTurk System",
-                    "Text": "Thank you. Please wait for the assistant to agree...",
-                }
-            )
-            self.wizard_agent.observe(
-                {
-                    "id": "MTurk System",
-                    "Text": "The user thinks that the task is completed.",
-                }
-            )
-            self.episodeDone = True
-            return
+        wizard_message, command, parameters = self.get_new_wizard_message()
+        self.deal_with_wizard_command(command, parameters)
 
         self.user_agent.observe(wizard_message)
 
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
 
+    def get_new_user_message(self):
+        message = self.user_agent.act()
+        command, parameters = extract_command_message(message)
+        self.events.append(
+            {
+                "type": "UserMessage",
+                "message": message,
+                "command": command,
+                "parameters": parameters,
+            }
+        )
+        return message, command, parameters
+
+    def get_new_wizard_message(self):
+        message = self.wizard_agent.act()
+        command, parameters = extract_command_message(message)
+        self.events.append(
+            {
+                "type": "WizardMessage",
+                "message": message,
+                "command": command,
+                "parameters": parameters,
+            }
+        )
+        return message, command, parameters
+
+    def get_new_knowledgebase_message(self):
+        message = self.kb_agent.act()
+        self.events.append(
+            {"type": "KnowledgeBaseMessage", "message": message,}
+        )
+        return message, None, None
+
+    def deal_with_wizard_command(
+        self, command: Optional[Text], parameters: Optional[Text]
+    ) -> None:
+        if command is None:
+            return
+        elif command == WORKER_COMMAND_QUERY and self.kb_agent:
+            # Handle communication between the wizard and the knowledge base
+            # while command and command == WORKER_COMMAND_QUERY:
+            #     self.kb_agent.observe({"query": parameters})
+            #     kb_message, _, _ = self.get_new_knowledgebase_message()
+            #     self.wizard_agent.observe(kb_message)
+            #     wizard_message, command, parameters = self.get_new_wizard_message()
+            return
+        elif command == WORKER_COMMAND_COMPLETE:
+            self.send_command(COMMAND_REVIEW, self.wizard_agent)
+            self.send_command(COMMAND_REVIEW, self.user_agent)
+        elif command == WORKER_COMMAND_DONE:
+            self.episodeDone = True
+
+    def deal_with_user_command(
+        self, command: Optional[Text], parameters: Optional[Text]
+    ) -> None:
+        if command is None:
+            return
+        elif command == WORKER_COMMAND_COMPLETE:
+            self.send_command(COMMAND_REVIEW, self.wizard_agent)
+            self.send_command(COMMAND_REVIEW, self.user_agent)
+        elif command == WORKER_COMMAND_DONE:
+            self.episodeDone = True
+
+    def send_command(self, command: Text, recipient: Agent) -> None:
+        self.events.append(
+            {"type": "WorldCommand", "command": command, "recipient": recipient.id,}
+        )
+        message = {
+            "id": recipient.id,
+            "text": "",
+            "command": command,
+        }
+        recipient.observe(message)
+
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
-            agent.observe({"text": "", "id": agent.id, "command": "setup"})
-        self.num_turns = 0
+            self.send_command(COMMAND_SETUP, agent)
+
+    def tell_workers_to_start(self):
+        send_mturk_message(
+            "The assistant is ready. Go ahead, say hello!", self.user_agent,
+        )
+        send_mturk_message(
+            "A user has joined the chat. Please wait for him/her to start the conversation.",
+            self.wizard_agent,
+        )
 
     def episode_done(self):
         return self.episodeDone
@@ -226,7 +275,4 @@ class WOZWorld(MTurkTaskWorld):
         # brings important data together for the task, to later be used for
         # creating the dataset. If data requires pickling, put it in a field
         # called 'needs-pickle'.
-        return {
-            'questions': self.questions,
-            'answers': self.answers,
-        }
+        return {"events": self.events}
