@@ -1,6 +1,6 @@
 <div id="intro">
   In this task you will take one of two roles:
-  You could be a 'user' who wants to find a new apartment in Berlin or, alternatively, you
+  You could be a 'user' who wants to find a new apartment in Sydney or, alternatively, you
   could take the role of a 'virtual assistant' that helps the user achieve this goal.
 </div>
 <div id="intro_user" style="display: none">
@@ -17,7 +17,7 @@
     <li>You have <b>changed your mind about what you want at least once</b> during the conversation</li>
     <li>You said <b>goodbye</b> (or similar) at the end of your dialogue</li>
   </ul>
-  At the end of this dialogue, you will have to judge if the wizard fulfilled his/her task.
+  At the end of this dialogue, you will have to judge if the wizard fulfilled his/her task.<br>
 </div>
 <div id="intro_wizard" style="display: none">
   You play the role of a <b>virtual assistant</b> that helps people find an apartment in Sydney.
@@ -34,7 +34,7 @@
     <li>The user has found a suitable apartment</li>
     <li>The user has said 'goodbye' (or similar)</li>
   </ul>
-  At the end of this dialogue, you will have to judge if the user fulfilled his/her task.
+  At the end of this dialogue, you will have to judge if the user fulfilled his/her task.<br>
 </div>
 <div id="ask_accept">
 If you are ready, please click "Accept HIT" to start this task.<br>
@@ -42,8 +42,8 @@ If you are ready, please click "Accept HIT" to start this task.<br>
 
 <div id="input"></div>
 <div float="right">
-  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="done_button">Done</button>
-  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="complete_button">Ready!</button>
+  <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="done_button">Confirm</button>
+  <button class="btn btn-primary" style="width: 220px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="complete_button">I have completed my task</button>
   <button class="btn btn-primary" style="width: 120px; font-size: 16px; float: left; margin-left: 10px; padding: 0px;" id="kb_button">KB Query</button>
 </div>
 
@@ -79,7 +79,8 @@ function process_parlai_command(command, agent_id) {
   var div_todo_wizard = document.getElementById("todo_wizard");
 
   if (command == "setup") {
-    if (agent_id.startsWith("Wizard")) {
+    console.log("JJJ: setup for " + agent_id);
+    if (agent_id == "Wizard" || agent_id == "Onboarding Wizard") {
       <!--    $("button#kb_button").show();-->
       enable_button($("button#kb_button"), false);
       div_intro_user.style.display = "none"
@@ -87,7 +88,9 @@ function process_parlai_command(command, agent_id) {
       div_intro_wizard.style.display = "block"
       div_todo_wizard.style.display = "block"
       $("button#complete_button").show();
-    } else {
+      <!--      document.getElementById("complete_button").disabled = true;-->
+      enable_button($("button#complete_button"), false);
+    } else if (agent_id == "User" || agent_id == "Onboarding User") {
       div_intro_user.style.display = "block"
       div_todo_user.style.display = "block"
       div_intro_wizard.style.display = "none"
@@ -105,6 +108,7 @@ function process_parlai_command(command, agent_id) {
 
       div_intro_wizard.style.display = "block";
       div_intro_wizard.innerHTML = review_form;
+      div_intro_user.style.display = "none";
       $("button#done_button").show();
       $("button#complete_button").hide();
     } else {
@@ -118,6 +122,7 @@ function process_parlai_command(command, agent_id) {
 
       div_intro_user.style.display = "block";
       div_todo_user.innerHTML = review_form;
+      div_intro_wizard.style.display = "none";
       $("button#done_button").show();
       $("button#complete_button").hide();
     }
@@ -151,7 +156,7 @@ function process_parlai_command(command, agent_id) {
             add_message_to_conversation(was_this_agent ? "YOU" : agent_id, text, was_this_agent);
         } else {
             num_messages++;
-            if (num_messages >= 2) {
+            if (num_messages >= 8) {
                 enable_button($("button#complete_button"), !was_this_agent);
             }
 

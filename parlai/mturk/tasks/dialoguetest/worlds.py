@@ -31,10 +31,10 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     """
 
     def parley(self):
+        self.mturk_agent.observe({"id": self.mturk_agent.id, "text": "", "command": "setup"})
         ad = {
             "id": 'MTurk System',
             "text": f"Please wait for the user to join the conversation...",
-            "command": "setup",
         }
         self.mturk_agent.observe(ad)
         # response = self.mturk_agent.act()
@@ -51,10 +51,10 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     """
 
     def parley(self):
+        self.mturk_agent.observe({"id": self.mturk_agent.id, "text": "", "command": "setup"})
         ad = {
             "id": 'MTurk System',
             "text": "Please wait for the virtual assistant to join the conversation...",
-            "command": "setup",
         }
         self.mturk_agent.observe(ad)
         # response = self.mturk_agent.act()
@@ -89,7 +89,8 @@ class WOZWorld(MTurkTaskWorld):
         self.answers = []
 
         self.num_turns = -1
-        self.max_turns = 3
+        self.max_turns = 300
+        self.min_turns = 5
 
     def parley(self):
         """
@@ -125,6 +126,7 @@ class WOZWorld(MTurkTaskWorld):
             self.user_agent.observe({"text": "", "id": self.user_agent.id, "command": "review"})
 
         if wizard_message and wizard_message.get("text") and wizard_message.get("text").startswith("<done>"):
+            self.wizard_agent.observe({"id": "MTurk System", "Text": "Thank you. Please wait for the user to agree..."})
             self.episodeDone = True
             return
 
@@ -144,6 +146,7 @@ class WOZWorld(MTurkTaskWorld):
 
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
+
 
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
