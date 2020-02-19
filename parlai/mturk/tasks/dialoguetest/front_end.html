@@ -191,38 +191,38 @@ $("button#done_button").on('click', function () {
   var result = "{";
 
   if ($('#ch_user_demands').length > 0) {
-    result += "\"ch_user_demands\": ";
+    result += "'ch_user_demands': ";
     if (ch_user_demands.checked == true) {
       result += "True,";
     } else {
       result += "False,";
     }
-    result += "\"ch_user_found\": ";
+    result += "'ch_user_found': ";
     if (ch_user_found.checked == true) {
       result += "True,";
     } else {
       result += "False,";
     }
-    result += "\"ch_user_change\": ";
+    result += "'ch_user_change': ";
     if (ch_user_change.checked == true) {
       result += "True,";
     } else {
       result += "False,";
     }
   } else {
-    result += "\"ch_wizard_found\": ";
+    result += "'ch_wizard_found': ";
     if (ch_wizard_found.checked == true) {
       result += "True,";
     } else {
       result += "False,";
     }
-    result += "\"ch_wizard_bye\": ";
+    result += "'ch_wizard_bye': ";
     if (ch_wizard_bye.checked == true) {
       result += "True,";
     } else {
       result += "False,";
     }
-    result += "\"ch_wizard_polite\": ";
+    result += "'ch_wizard_polite': ";
     if (ch_wizard_polite.checked == true) {
       result += "True,";
     } else {
