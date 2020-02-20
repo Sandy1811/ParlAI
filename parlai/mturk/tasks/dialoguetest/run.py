@@ -58,11 +58,10 @@ def main():
     # queue for a task world.
     def run_onboard(worker):
         nonlocal role_index
-        role = mturk_agent_roles[role_index % 2]
+        role = mturk_agent_roles[role_index % len(mturk_agent_roles)]
         role_index += 1
-        worker.update_agent_id(f"Onboarding {role}")
+        worker.update_agent_id("onboarding")  # Necessary because ParlAI messaging seems broken
         worker.demo_role = role
-        log_write(f"Onboarding {role}")
         if role == "Wizard":
             world = WizardOnboardingWorld(opt=opt, mturk_agent=worker)
         elif role == "User":
@@ -71,9 +70,8 @@ def main():
             raise ValueError(f"Unknown role '{role}'")
 
         while not world.episode_done():
-            log_write(f"BEFORE episode_done == {world.episode_done()} for role {role_index}")
             world.parley()
-            log_write(f"AFTER  episode_done == {world.episode_done()} for role {role_index}")
+        print(f"{worker.worker_id} passed onboarding")
 
         world.shutdown()
         return world.prep_save_data([worker])

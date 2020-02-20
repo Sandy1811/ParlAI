@@ -79,12 +79,12 @@ function process_parlai_command(command, agent_id) {
 
   if (command == "setup") {
     console.log("JJJ: setup for " + agent_id);
-    if (agent_id == "Wizard" || agent_id == "Onboarding Wizard") {
+    if (agent_id == "Wizard") {
       div_intro_user.style.display = "none";
       div_todo_user.style.display = "none";
       div_intro_wizard.style.display = "block";
       div_todo_wizard.style.display = "block";
-    } else if (agent_id == "User" || agent_id == "Onboarding User") {
+    } else if (agent_id == "User") {
       div_intro_user.style.display = "block";
       div_todo_user.style.display = "block";
       div_intro_wizard.style.display = "none";

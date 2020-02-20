@@ -7,6 +7,11 @@ from datetime import datetime
 from typing import Text, Union, Dict, Any, Optional, Tuple
 
 from parlai.core.agents import Agent
+from parlai.mturk.core.agents import (
+    MTURK_DISCONNECT_MESSAGE,
+    RETURN_MESSAGE,
+    TIMEOUT_MESSAGE,
+)
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
@@ -25,6 +30,14 @@ def log_write(message: Text) -> None:
     pass
 
 
+def is_disconnected(act):
+    return 'text' in act and act['text'] in [
+        MTURK_DISCONNECT_MESSAGE,
+        RETURN_MESSAGE,
+        TIMEOUT_MESSAGE,
+    ]
+
+
 class WizardOnboardingWorld(MTurkOnboardWorld):
     """
     Example onboarding world.
@@ -33,24 +46,42 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     worker uses the interface
     """
 
+    def block_loop(self):
+        print(f'Worker {self.mturk_agent.worker_id} failed onboarding.')
+        send_mturk_message(
+            "Sorry, you've exceeded the maximum amount of tries to get the "
+            "correct actions given your persona and the setting, and thus we "
+            "don't believe you can complete the task correctly. Please return "
+            "the HIT.",
+            self.mturk_agent,
+        )
+        self.mturk_agent.mturk_manager.soft_block_worker(self.mturk_agent.worker_id)
+        message = self.mturk_agent.act()
+        while not is_disconnected(message):
+            send_mturk_message("Please return the HIT.", self.mturk_agent)
+            message = self.mturk_agent.act()
+        return True
+
     def parley(self):
-        self.mturk_agent.observe(
-            {"id": self.mturk_agent.id, "text": "", "command": "setup"}
+        self.mturk_agent.observe({"id": "Wizard", "text": "", "command": "setup"})
+        send_mturk_message(
+            "Take your time to read your task description on the left. "
+            "Write 'ready' when you are ready and press [Enter].",
+            self.mturk_agent,
         )
-        # self.mturk_agent.observe(
-        #     {
-        #         "id": self.mturk_agent.id,
-        #         "text": "Take your time to read your task description on the left. "
-        #         "Write 'ready' when you are ready and press [Enter].",
-        #     }
-        # )
-        # self.mturk_agent.act()
-        self.mturk_agent.observe(
-            {
-                "id": 'MTurk System',
-                "text": f"Please wait for the user and join the conversation and read his/her instructions...",
-            }
+        message = self.mturk_agent.act(timeout=60)
+        if is_disconnected(message):
+            self.episodeDone = True
+            return
+        # if message.get("text", "") != "ready":
+        #     self.block_loop()
+        #     self.episodeDone = True
+        #     return
+        send_mturk_message(
+            "Please wait for the user and join the conversation...",
+            self.mturk_agent,
         )
+        # self.mturk_agent.onboarding_turns = 1
         self.episodeDone = True
 
     def get_model_agent(self):
@@ -69,22 +100,16 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     """
 
     def parley(self):
-        self.mturk_agent.observe(
-            {"id": self.mturk_agent.id, "text": "", "command": "setup"}
+        self.mturk_agent.observe({"id": "User", "text": "", "command": "setup"})
+        send_mturk_message(
+            "Take your time to read your task description on the left. "
+            "Write 'ready' when you are ready and press [Enter].",
+            self.mturk_agent,
         )
-        # self.mturk_agent.observe(
-        #     {
-        #         "id": self.mturk_agent.id,
-        #         "text": "Take your time to read your task description on the left. "
-        #         "Write 'ready' when you are ready and press [Enter].",
-        #     }
-        # )
-        # self.mturk_agent.act()
-        self.mturk_agent.observe(
-            {
-                "id": 'MTurk System',
-                "text": "Please wait for the virtual assistant to join the conversation...",
-            }
+        self.mturk_agent.act(timeout=60)
+        send_mturk_message(
+            "Please wait for the virtual assistant to join the conversation...",
+            self.mturk_agent,
         )
         self.episodeDone = True
 
@@ -310,7 +335,8 @@ class WOZWorld(MTurkTaskWorld):
 
     def tell_workers_to_start(self):
         send_mturk_message(
-            "The assistant is ready. Once you've read your instructions (left), go ahead, say hello!", self.user_agent,
+            "The assistant is ready. Go ahead, say hello!",
+            self.user_agent,
         )
         send_mturk_message(
             "A user has joined the chat. Please wait for him/her to start the conversation.",
