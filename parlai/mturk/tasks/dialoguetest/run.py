@@ -10,7 +10,7 @@ import os
 
 from parlai.mturk.tasks.dialoguetest.task_config import task_config
 from parlai.mturk.tasks.dialoguetest.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld, log_write
-from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent
+from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent, WOZDummyAgent
 
 
 def main():
@@ -25,6 +25,7 @@ def main():
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
     argparser.add_mturk_args()
+    WOZDummyAgent.add_cmdline_args(argparser)
     WOZKnowledgeBaseAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
 
@@ -35,7 +36,10 @@ def main():
     opt.update(task_config)
 
     # Select an agent_id that worker agents will be assigned in their world
-    mturk_agent_roles = ["Wizard", "User"]
+    if opt["dummy_user"]:
+        mturk_agent_roles = ["Wizard"]
+    else:
+        mturk_agent_roles = ["Wizard", "User"]
 
     # Instantiate an MTurkManager with the given options and a maximum number
     # of agents per world of 1 (based on the length of mturk_agent_ids)
@@ -118,6 +122,10 @@ def main():
 
             kb_agent = WOZKnowledgeBaseAgent(opt=opt)
             workers += [kb_agent]
+
+            if opt["dummy_user"]:
+                dummy_user = WOZDummyAgent(opt, "User")
+                workers += [dummy_user]
 
             # Create the task world
             world = WOZWorld(opt=opt, agents=workers)

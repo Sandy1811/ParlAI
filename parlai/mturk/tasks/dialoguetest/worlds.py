@@ -338,6 +338,10 @@ class WOZWorld(MTurkTaskWorld):
 
     def review_work(self):
         # Can review the work here to accept or reject it
+        # self.mturk_agent.approve_work()
+        # self.mturk_agent.reject_work()
+        # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
+        # self.mturk_agent.block_worker() # Block this worker from future HITs
         pass
 
     def get_custom_task_data(self):
