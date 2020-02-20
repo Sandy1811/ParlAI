@@ -18,6 +18,8 @@ import {
   MenuItem,
   DropdownButton,
   Badge,
+  Checkbox,
+  Radio,
   Popover,
   Overlay,
   Nav,
@@ -25,10 +27,326 @@ import {
   ControlLabel,
   Form,
   Tabs,
-  Tab
+  Tab,
+  HelpBlock
 } from "react-bootstrap";
 
 import $ from "jquery";
+
+// Copied from https://github.com/RasaHQ/data-collection-2020/blob/master/apis/apis/apartment_search.json
+const apartmentJson = {
+  input: [
+    { Name: "Level", Type: "Integer", Min: 0, Max: 15 },
+    {
+      Name: "MaxLevel",
+      Type: "Integer",
+      Min: 0,
+      Max: 15
+    },
+    { Name: "HasBalcony", Type: "Boolean" },
+    {
+      Name: "BalconySide",
+      Type: "Categorical",
+      Categories: ["east", "north", "south", "west"]
+    },
+    {
+      Name: "HasElevator",
+      Type: "Boolean"
+    },
+    { Name: "NumRooms", Type: "Integer", Min: 1, Max: 7 },
+    {
+      Name: "FloorSquareMeters",
+      Type: "Integer",
+      Min: 10,
+      Max: 350
+    },
+    {
+      Name: "NearbyPOIs",
+      Type: "CategoricalMultiple",
+      Categories: ["School", "TrainStation", "Park"]
+    },
+    {
+      Name: "Name",
+      Type: "Categorical",
+      Categories: [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ]
+    }
+  ],
+  output: [
+    { Name: "Level", Type: "Integer", Min: 0, Max: 15 },
+    {
+      Name: "MaxLevel",
+      Type: "Integer",
+      Min: 0,
+      Max: 15
+    },
+    { Name: "HasBalcony", Type: "Boolean" },
+    {
+      Name: "BalconySide",
+      Type: "Categorical",
+      Categories: ["east", "north", "south", "west"]
+    },
+    {
+      Name: "HasElevator",
+      Type: "Boolean"
+    },
+    { Name: "NumRooms", Type: "Integer", Min: 1, Max: 7 },
+    {
+      Name: "FloorSquareMeters",
+      Type: "Integer",
+      Min: 10,
+      Max: 350
+    },
+    {
+      Name: "NearbyPOIs",
+      Type: "CategoricalMultiple",
+      Categories: ["School", "TrainStation", "Park"]
+    },
+    {
+      Name: "Name",
+      Type: "Categorical",
+      Categories: [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ]
+    }
+  ],
+  required: [],
+  db: "apartment",
+  function: "generic_sample",
+  returns_count: true
+};
+
+const hotelSearch = {
+  input: [
+    {
+      Name: "Name",
+      Type: "Categorical",
+      Categories: [
+        "Shadyside Inn",
+        "Hilton Hotel",
+        "Hyatt Hotel",
+        "Old Town Inn"
+      ]
+    },
+    {
+      Name: "Cost",
+      Type: "Categorical",
+      Categories: ["Cheap", "Moderate", "Expensive"]
+    },
+    { Name: "TakesReservations", Type: "Boolean" },
+    { Name: "Service", Type: "Boolean" },
+    { Name: "AverageRating", Type: "Integer", Min: 1, Max: 5 },
+    {
+      Name: "ServiceStartHour",
+      Type: "Integer",
+      Min: 6,
+      Max: 10,
+      Enabled: '!lambda p: p["Service"]'
+    },
+    {
+      Name: "ServiceStopHour",
+      Type: "Integer",
+      Min: 15,
+      Max: 23,
+      Enabled: '!lambda p: p["Service"]'
+    },
+    {
+      Name: "Location",
+      Type: "Categorical",
+      Categories: ["South", "West", "East", "North", "Center"]
+    }
+  ],
+  output: [
+    {
+      Name: "Name",
+      Type: "Categorical",
+      Categories: [
+        "Shadyside Inn",
+        "Hilton Hotel",
+        "Hyatt Hotel",
+        "Old Town Inn"
+      ]
+    },
+    {
+      Name: "Cost",
+      Type: "Categorical",
+      Categories: ["Cheap", "Moderate", "Expensive"]
+    },
+    { Name: "TakesReservations", Type: "Boolean" },
+    { Name: "Service", Type: "Boolean" },
+    { Name: "AverageRating", Type: "Integer", Min: 1, Max: 5 },
+    {
+      Name: "ServiceStartHour",
+      Type: "Integer",
+      Min: 6,
+      Max: 10,
+      Enabled: '!lambda p: p["Service"]'
+    },
+    {
+      Name: "ServiceStopHour",
+      Type: "Integer",
+      Min: 15,
+      Max: 23,
+      Enabled: '!lambda p: p["Service"]'
+    },
+    {
+      Name: "Location",
+      Type: "Categorical",
+      Categories: ["South", "West", "East", "North", "Center"]
+    }
+  ],
+  required: [],
+  db: "hotel",
+  function: "generic_sample",
+  returns_count: true
+};
+
+function FieldGroup({ id, label, help, ...props }) {
+  return (
+    <FormGroup controlId={id}>
+      <ControlLabel>{label}</ControlLabel>
+      <FormControl {...props} />
+      {help && <HelpBlock>{help}</HelpBlock>}
+    </FormGroup>
+  );
+}
+
+function FormKitchenSink() {
+  return (
+    <div>
+      <FieldGroup
+        id="formControlsText"
+        type="text"
+        label="Text"
+        placeholder="Enter text"
+      />
+      <FormGroup>
+        <Checkbox inline>1</Checkbox> <Checkbox inline>2</Checkbox>{" "}
+        <Checkbox inline>3</Checkbox>
+      </FormGroup>
+      <FormGroup>
+        <Radio name="radioGroup" inline>
+          1
+        </Radio>
+        {" "}
+        <Radio name="radioGroup" inline>
+          2
+        </Radio>
+        {" "}
+        <Radio name="radioGroup" inline>
+          3
+        </Radio>
+      </FormGroup>
+
+      <FormGroup controlId="formControlsTextarea">
+        <ControlLabel>Textarea</ControlLabel>
+        <FormControl componentClass="textarea" placeholder="textarea" />
+      </FormGroup>
+    </div>
+  );
+}
+
+function QueryForm(props) {
+  // const convertPascalCaseToSpaceCase = str => {
+  //   return str.replace(
+  //     /(\w)(\w*)/g,
+  //     (g0, g1, g2) => g1.toLowerCase() + " " + g2.toLowerCase()
+  //   );
+  // };
+  function inputToFormElement(input) {
+    switch (input.Type) {
+      case "LongString":
+        return (
+          <FormGroup>
+            <ControlLabel>{input.Name}</ControlLabel>
+            <FormControl componentClass="textarea" placeholder="textarea" />
+          </FormGroup>
+        );
+
+      case "ShortString":
+        return (
+          <FormGroup>
+            <ControlLabel>{input.Name}</ControlLabel>
+            <FormControl componentClass="input" style={{ maxWidth: 400 }} />
+          </FormGroup>
+        );
+      case "Categorical":
+      case "CategoricalMultiple":
+        return (
+          <FormGroup>
+            <ControlLabel>{input.Name}</ControlLabel>
+            <FormControl
+              componentClass="select"
+              placeholder="select"
+              multiple={input.Type == "CategoricalMultiple"}
+            >
+              {input.Categories.map(category =>
+                <option value={category}>{category}</option>
+              )}
+            </FormControl>
+          </FormGroup>
+        );
+      case "Boolean":
+        return (
+          <FormGroup>
+            <Checkbox inline>{input.Name}</Checkbox>
+          </FormGroup>
+        );
+      case "Integer":
+        // handle Min and Max
+        return (
+          <FormGroup controlId="formControlsNumber">
+            <ControlLabel>{input.Name}</ControlLabel>
+            <div>
+              <FormControl
+                componentClass="select"
+                placeholder="is"
+                style={{ maxWidth: 150, display: "inline-block" }}
+              >
+                <option value="select">is</option>
+                <option value="other">is greater than</option>
+                <option value="other">is not</option>
+              </FormControl>
+              <FormControl
+                componentClass="input"
+                type="number"
+                style={{ maxWidth: 250, display: "inline-block" }}
+              />
+            </div>
+          </FormGroup>
+        );
+    }
+  }
+
+  return (
+    <form onSubmit={() => {}}>
+      <FormGroup controlId="formControlsNumber">
+        <ControlLabel>Rooms</ControlLabel>
+        <FormControl
+          componentClass="input"
+          type="number"
+          style={{ maxWidth: 400 }}
+        />
+      </FormGroup>
+      {apartmentJson.input.map(inputToFormElement)}
+
+      <Button
+        className="btn btn-primary"
+        onClick={() => {
+          console.log("sending ? {}");
+          props.onMessageSend("? {}", {}, () => console.log("done"));
+        }}
+      >
+        Find example
+      </Button>
+    </form>
+  );
+}
 
 // Create custom components
 class EvaluatorIdleResponse extends React.Component {
@@ -90,10 +408,10 @@ class NumericResponse extends React.Component {
   }
 
   updateValue(amount) {
-    if ((amount != "" && isNaN(amount)) || amount < 0) {
-      return;
-    }
-    amount = amount == "" ? 0 : amount;
+    // if ((amount != "" && isNaN(amount)) || amount < 0) {
+    //   return;
+    // }
+    // amount = amount == "" ? 0 : amount;
     this.setState({ textval: "" + amount });
   }
 
@@ -310,16 +628,8 @@ class LeftPane extends React.Component {
                 {leftSideCategories.map(tabName => {
                   return (
                     <Tab.Pane eventKey={tabName}>
-                      Content for {tabName}
-                      <h3>User's requirements for apartments:</h3>
-
-                      Rooms:
-
-                      Floors:
-
-                      <Button className="btn btn-primary" onClick={() => {}}>
-                        Find example
-                      </Button>
+                      <h4>User's requirements for {tabName}:</h4>
+                      <QueryForm onMessageSend={this.props.onMessageSend} />
                     </Tab.Pane>
                   );
                 })}
@@ -341,8 +651,7 @@ var IdleResponseHolder = {
 
 var TextResponseHolder = {
   // default: leave blank to use original default when no ids match
-  Wizard: EvaluationResponse,
-  "Onboarding Wizard": EvaluationResponse,
+  // Wizard: EvaluationResponse,
   User: NumericResponse
 };
 
