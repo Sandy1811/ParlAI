@@ -34,5 +34,7 @@ task_config['hit_keywords'] = 'chat,dialog'
 """A detailed task description that will be shown on the HIT task preview page
 and on the left side of the chat page. Supports HTML formatting.
 """
-with open("front_end.html", "r", encoding="utf-8") as file:
-    task_config['task_description'] = file.read()
+# with open("front_end.html", "r", encoding="utf-8") as file:
+#     task_config['task_description'] = file.read()
+
+# task_config['task_description'] = "todo: Some description"
