@@ -571,7 +571,11 @@ class EvaluationResponse extends React.Component {
 class LeftPane extends React.Component {
   constructor(props) {
     super(props);
-    this.state = { current_pane: "instruction", last_update: 0 };
+    this.state = {
+      current_pane: "instruction",
+      last_update: 0,
+      selectedTabKey: 2
+    };
   }
 
   static getDerivedStateFromProps(nextProps, prevState) {
@@ -586,6 +590,12 @@ class LeftPane extends React.Component {
       };
     } else return null;
   }
+
+  handleSelectTab = key => {
+    this.setState({
+      selectedTabKey: key
+    });
+  };
 
   render() {
     let v_id = this.props.v_id;
@@ -615,9 +625,10 @@ class LeftPane extends React.Component {
         <Tab.Container
           id="left-tabs-example"
           defaultActiveKey={leftSideCategories[0]}
+          animation={false}
         >
           <Row className="clearfix">
-            <Col sm={3}>
+            <Col sm={3} style={{ marginTop: 50 }}>
               <Nav bsStyle="pills" stacked>
                 {leftSideCategories.map(tabName =>
                   <NavItem eventKey={tabName}>{tabName}</NavItem>
@@ -629,8 +640,19 @@ class LeftPane extends React.Component {
                 {leftSideCategories.map(tabName => {
                   return (
                     <Tab.Pane eventKey={tabName}>
-                      <h4>User's requirements for {tabName}:</h4>
-                      <QueryForm {...this.props} />
+                      <Tabs
+                        eventKey={this.state.selectedTabKey}
+                        onSelect={this.handleSelectTab}
+                        animation={false}
+                      >
+                        <Tab eventKey={1} title="Your Instruction Schema">
+                          Instruction Schema Image
+                        </Tab>
+                        <Tab eventKey={2} title="Knowledge Base">
+                          <h4>User's requirements for {tabName}:</h4>
+                          <QueryForm {...this.props} />
+                        </Tab>
+                      </Tabs>
                     </Tab.Pane>
                   );
                 })}
