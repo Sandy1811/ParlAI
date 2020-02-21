@@ -60,11 +60,12 @@ def main():
         nonlocal role_index
         role = mturk_agent_roles[role_index % len(mturk_agent_roles)]
         role_index += 1
-        worker.update_agent_id("onboarding")  # Necessary because ParlAI messaging seems broken
         worker.demo_role = role
         if role == "Wizard":
+            worker.update_agent_id("Wizard")
             world = WizardOnboardingWorld(opt=opt, mturk_agent=worker)
         elif role == "User":
+            worker.update_agent_id("User")
             world = UserOnboardingWorld(opt=opt, mturk_agent=worker)
         else:
             raise ValueError(f"Unknown role '{role}'")

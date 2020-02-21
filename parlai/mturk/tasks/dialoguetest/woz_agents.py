@@ -6,6 +6,7 @@ from parlai.core.params import ParlaiParser
 from parlai.mturk.core.shared_utils import AssignState
 import parlai.mturk.tasks.dialoguetest.api as api
 import os
+import json
 
 
 class WOZKnowledgeBaseAgent(Agent):
@@ -44,9 +45,15 @@ class WOZKnowledgeBaseAgent(Agent):
         try:
             constraints = eval(text)
             apartment, count = api.call_api("apartment_search", constraints=constraints)
-            reply = {"id": "KnowledgeBase", "text": f"Found {count} apartments. Example: {apartment}."}
+            reply = {
+                "id": "KnowledgeBase",
+                "text": f"Found {count} apartments. Example: {json.dumps(apartment)}.",
+            }
         except Exception as e:
-            reply = {"id": "KnowledgeBase", "text": f"Could not interpret your query: {e}"}
+            reply = {
+                "id": "KnowledgeBase",
+                "text": f"Could not interpret your query: {e}",
+            }
 
         self._messages.append(reply)
 
