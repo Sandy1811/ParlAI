@@ -7,6 +7,7 @@
  */
 
 import React from "react";
+import ReactDOM from "react-dom";
 import _ from "lodash";
 import {
   Glyphicon,
@@ -34,6 +35,7 @@ import {
 } from "react-bootstrap";
 
 import $ from "jquery";
+import { MessageList } from "./message_list.jsx";
 
 // Copied from https://github.com/RasaHQ/data-collection-2020/blob/master/apis/apis/apartment_search.json
 const apartmentJson = {
@@ -361,48 +363,64 @@ function jsonToForm(json, category, activeFormFields, removeFormField) {
   });
 }
 
-function QueryForm(props) {
-  const { category, addFormField, removeFormField, activeFormFields } = props;
-  const json = apartmentJson;
+class QueryForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.addFormFieldRef = React.createRef();
+  }
 
-  return (
-    <form onSubmit={() => {}}>
-      <FormGroup>
-        <div>
-          <FormControl
-            componentClass="select"
-            style={{ maxWidth: 130, display: "inline-block" }}
-          >
-            {json.input.map(input =>
-              <option value={input.Name}>{input.Name}</option>
-            )}
-          </FormControl>
-          <Button
-            className="btn"
-            onClick={() => {
-              addFormField(category, "NumRooms");
-            }}
-            style={{ marginLeft: 20 }}
-          >
-            Add Field
-          </Button>
-        </div>
-      </FormGroup>
-      <hr />
-      {jsonToForm(json, category, activeFormFields, removeFormField)}
+  render() {
+    const {
+      category,
+      addFormField,
+      removeFormField,
+      activeFormFields
+    } = this.props;
+    const json = apartmentJson;
 
-      <Button
-        className="btn btn-primary"
-        disabled={props.chat_state !== "text_input"}
-        onClick={() => {
-          console.log("sending ? {}");
-          props.onMessageSend("? {}", {}, () => console.log("done"));
-        }}
-      >
-        Find example
-      </Button>
-    </form>
-  );
+    return (
+      <form onSubmit={() => {}}>
+        <FormGroup>
+          <div>
+            <FormControl
+              componentClass="select"
+              style={{ maxWidth: 130, display: "inline-block" }}
+              ref={this.addFormFieldRef}
+            >
+              {json.input.map(input =>
+                <option value={input.Name}>{input.Name}</option>
+              )}
+            </FormControl>
+            <Button
+              className="btn"
+              onClick={() => {
+                const domNode = ReactDOM.findDOMNode(
+                  this.addFormFieldRef.current
+                );
+                addFormField(category, domNode.value);
+              }}
+              style={{ marginLeft: 20 }}
+            >
+              Add Field
+            </Button>
+          </div>
+        </FormGroup>
+        <hr />
+        {jsonToForm(json, category, activeFormFields, removeFormField)}
+
+        <Button
+          className="btn btn-primary"
+          disabled={this.props.chat_state !== "text_input"}
+          onClick={() => {
+            console.log("sending ? {}");
+            this.props.onMessageSend("? {}", {}, () => console.log("done"));
+          }}
+        >
+          Find example
+        </Button>
+      </form>
+    );
+  }
 }
 
 // Create custom components
@@ -701,7 +719,7 @@ class LeftPane extends React.Component {
     let pane_size = this.props.is_cover_page ? "col-xs-12" : "col-xs-4";
     let has_context = this.props.task_data.has_context;
 
-    console.log("this.props", this.props);
+    // console.log("this.props", this.props);
 
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
@@ -778,5 +796,8 @@ export default {
   XIdleResponse: IdleResponseHolder,
   XLeftPane: {
     Wizard: LeftPane
+  },
+  XMessageList: {
+    Wizard: MessageList
   }
 };
