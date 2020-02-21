@@ -7,7 +7,9 @@
  */
 
 import React from "react";
+import _ from "lodash";
 import {
+  Glyphicon,
   Row,
   Col,
   FormControl,
@@ -115,7 +117,7 @@ const apartmentJson = {
       ]
     }
   ],
-  required: [],
+  required: ["NumRooms"],
   db: "apartment",
   function: "generic_sample",
   returns_count: true
@@ -251,36 +253,65 @@ function FormKitchenSink() {
   );
 }
 
-function QueryForm(props) {
-  // const convertPascalCaseToSpaceCase = str => {
-  //   return str.replace(
-  //     /(\w)(\w*)/g,
-  //     (g0, g1, g2) => g1.toLowerCase() + " " + g2.toLowerCase()
-  //   );
-  // };
-  function inputToFormElement(input) {
+function ControlLabelWithRemove(props) {
+  return (
+    <ControlLabel>
+      {props.property}
+      <Button
+        style={{ border: 0, padding: "3px 6px" }}
+        onClick={() => props.onRemove(props.category, props.property)}
+      >
+        <Glyphicon glyph="remove" />
+      </Button>
+
+    </ControlLabel>
+  );
+}
+
+function jsonToForm(json, category, activeFormFields, removeFormField) {
+  const inputByName = _.keyBy(json.input, "Name");
+
+  return activeFormFields.map(formFieldName => {
+    const input = inputByName[formFieldName];
+    const isRequired = json.required.indexOf(input.Name) >= 0;
+    const controlLabelWithRemove = (
+      <ControlLabelWithRemove
+        property={input.Name}
+        category={category}
+        onRemove={removeFormField}
+      />
+    );
     switch (input.Type) {
       case "LongString":
         return (
           <FormGroup>
-            <ControlLabel>{input.Name}</ControlLabel>
-            <FormControl componentClass="textarea" placeholder="textarea" />
+            {controlLabelWithRemove}
+            <FormControl
+              required={isRequired}
+              componentClass="textarea"
+              placeholder="textarea"
+            />
           </FormGroup>
         );
 
       case "ShortString":
         return (
           <FormGroup>
-            <ControlLabel>{input.Name}</ControlLabel>
-            <FormControl componentClass="input" style={{ maxWidth: 400 }} />
+            {controlLabelWithRemove}
+            <FormControl
+              required={isRequired}
+              componentClass="input"
+              style={{ maxWidth: 400 }}
+            />
           </FormGroup>
         );
       case "Categorical":
       case "CategoricalMultiple":
         return (
           <FormGroup>
-            <ControlLabel>{input.Name}</ControlLabel>
+            {controlLabelWithRemove}
             <FormControl
+              required={isRequired}
               componentClass="select"
               placeholder="select"
               multiple={input.Type == "CategoricalMultiple"}
@@ -294,46 +325,71 @@ function QueryForm(props) {
       case "Boolean":
         return (
           <FormGroup>
-            <Checkbox inline>{input.Name}</Checkbox>
+            <Checkbox required={isRequired} inline>{input.Name}</Checkbox>
           </FormGroup>
         );
       case "Integer":
         // handle Min and Max
         return (
           <FormGroup controlId="formControlsNumber">
-            <ControlLabel>{input.Name}</ControlLabel>
+            {controlLabelWithRemove}
             <div>
               <FormControl
+                required={isRequired}
                 componentClass="select"
                 placeholder="is"
-                style={{ maxWidth: 150, display: "inline-block" }}
+                style={{ maxWidth: 130, display: "inline-block" }}
               >
                 <option value="select">is</option>
                 <option value="other">is greater than</option>
                 <option value="other">is not</option>
               </FormControl>
               <FormControl
+                required={isRequired}
                 componentClass="input"
                 type="number"
-                style={{ maxWidth: 250, display: "inline-block" }}
+                style={{
+                  maxWidth: 200,
+                  display: "inline-block",
+                  marginLeft: 20
+                }}
               />
             </div>
           </FormGroup>
         );
     }
-  }
+  });
+}
+
+function QueryForm(props) {
+  const { category, addFormField, removeFormField, activeFormFields } = props;
+  const json = apartmentJson;
 
   return (
     <form onSubmit={() => {}}>
-      <FormGroup controlId="formControlsNumber">
-        <ControlLabel>Rooms</ControlLabel>
-        <FormControl
-          componentClass="input"
-          type="number"
-          style={{ maxWidth: 400 }}
-        />
+      <FormGroup>
+        <div>
+          <FormControl
+            componentClass="select"
+            style={{ maxWidth: 130, display: "inline-block" }}
+          >
+            {json.input.map(input =>
+              <option value={input.Name}>{input.Name}</option>
+            )}
+          </FormControl>
+          <Button
+            className="btn"
+            onClick={() => {
+              addFormField(category, "NumRooms");
+            }}
+            style={{ marginLeft: 20 }}
+          >
+            Add Field
+          </Button>
+        </div>
       </FormGroup>
-      {apartmentJson.input.map(inputToFormElement)}
+      <hr />
+      {jsonToForm(json, category, activeFormFields, removeFormField)}
 
       <Button
         className="btn btn-primary"
@@ -568,15 +624,50 @@ class EvaluationResponse extends React.Component {
   }
 }
 
+const leftSideCategories = [
+  "Apartments",
+  "Hotels",
+  "Flights",
+  "Artifacts",
+  "Trains"
+];
+
 class LeftPane extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
       current_pane: "instruction",
       last_update: 0,
-      selectedTabKey: 2
+      selectedTabKey: 2,
+      addedFormFieldsByCategory: Object.fromEntries(
+        leftSideCategories.map(category => [category, []])
+      )
     };
   }
+
+  addFormField = (category, fieldName) => {
+    this.setState({
+      addedFormFieldsByCategory: {
+        ...this.state.addedFormFieldsByCategory,
+        [category]: [
+          ...this.state.addedFormFieldsByCategory[category],
+          fieldName
+        ]
+      }
+    });
+  };
+
+  removeFormField = (category, fieldName) => {
+    this.setState({
+      addedFormFieldsByCategory: {
+        ...this.state.addedFormFieldsByCategory,
+        [category]: _.without(
+          this.state.addedFormFieldsByCategory[category],
+          fieldName
+        )
+      }
+    });
+  };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (
@@ -610,14 +701,6 @@ class LeftPane extends React.Component {
     let pane_size = this.props.is_cover_page ? "col-xs-12" : "col-xs-4";
     let has_context = this.props.task_data.has_context;
 
-    const leftSideCategories = [
-      "Apartments",
-      "Hotels",
-      "Flights",
-      "Artifacts",
-      "Trains"
-    ];
-
     console.log("this.props", this.props);
 
     return (
@@ -625,7 +708,6 @@ class LeftPane extends React.Component {
         <Tab.Container
           id="left-tabs-example"
           defaultActiveKey={leftSideCategories[0]}
-          animation={false}
         >
           <Row className="clearfix">
             <Col sm={3} style={{ marginTop: 50 }}>
@@ -636,10 +718,14 @@ class LeftPane extends React.Component {
               </Nav>
             </Col>
             <Col sm={9}>
-              <Tab.Content animation>
-                {leftSideCategories.map(tabName => {
+              <Tab.Content animation={false} mountOnEnter={true}>
+                {leftSideCategories.map(categoryName => {
                   return (
-                    <Tab.Pane eventKey={tabName}>
+                    <Tab.Pane
+                      eventKey={categoryName}
+                      animation={false}
+                      mountOnEnter={true}
+                    >
                       <Tabs
                         eventKey={this.state.selectedTabKey}
                         onSelect={this.handleSelectTab}
@@ -649,8 +735,16 @@ class LeftPane extends React.Component {
                           Instruction Schema Image
                         </Tab>
                         <Tab eventKey={2} title="Knowledge Base">
-                          <h4>User's requirements for {tabName}:</h4>
-                          <QueryForm {...this.props} />
+                          <h4>User's requirements for {categoryName}:</h4>
+                          <QueryForm
+                            {...this.props}
+                            category={categoryName}
+                            addFormField={this.addFormField}
+                            removeFormField={this.removeFormField}
+                            activeFormFields={
+                              this.state.addedFormFieldsByCategory[categoryName]
+                            }
+                          />
                         </Tab>
                       </Tabs>
                     </Tab.Pane>
