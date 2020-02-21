@@ -650,6 +650,24 @@ const leftSideCategories = [
   "Trains"
 ];
 
+class TaskDescription extends React.Component {
+  render() {
+    let header_text = CHAT_TITLE;
+    let task_desc = this.props.task_description || "Task Description Loading";
+    return (
+      <div>
+        <h1>{header_text}</h1>
+        <hr style={{ borderTop: "1px solid #555" }} />
+        <span
+          id="task-description"
+          style={{ fontSize: "16px" }}
+          dangerouslySetInnerHTML={{ __html: task_desc }}
+        />
+      </div>
+    );
+  }
+}
+
 class LeftPane extends React.Component {
   constructor(props) {
     super(props);
@@ -718,6 +736,15 @@ class LeftPane extends React.Component {
 
     let pane_size = this.props.is_cover_page ? "col-xs-12" : "col-xs-4";
     let has_context = this.props.task_data.has_context;
+
+    if (this.props.is_cover_page) {
+      return (
+        <div id="left-pane" className={pane_size} style={frame_style}>
+          <TaskDescription {...this.props} />
+          {this.props.children}
+        </div>
+      );
+    }
 
     // console.log("this.props", this.props);
 
@@ -795,9 +822,37 @@ export default {
   XTextResponse: TextResponseHolder,
   XIdleResponse: IdleResponseHolder,
   XLeftPane: {
-    Wizard: LeftPane
+    Wizard: LeftPane,
+    onboarding: LeftPane
   },
   XMessageList: {
     Wizard: MessageList
   }
 };
+
+function workaroundJitterBug() {
+  try {
+    // Parlai constantly refreshes the UI and recalculates the height of
+    // the left pane component. On some devices, this can alternative between
+    // 561px and 560px, resulting in an unpleasant jitter. The following code
+    // adds a CSS rule which enforces 560px at all time.
+
+    const workaroundCss = `div#right-top-pane {
+        height: 560px !important;
+    }`;
+
+    const style = document.createElement("style");
+    // WebKit hack :(
+    style.appendChild(document.createTextNode(""));
+
+    // Add the <style> element to the page
+    document.head.appendChild(style);
+
+    const sheet = style.sheet;
+    sheet.insertRule(workaroundCss, 0);
+  } catch (ex) {}
+}
+
+setTimeout(() => {
+  workaroundJitterBug();
+}, 1000);

@@ -36,5 +36,9 @@ and on the left side of the chat page. Supports HTML formatting.
 """
 # with open("front_end.html", "r", encoding="utf-8") as file:
 #     task_config['task_description'] = file.read()
+task_config['frontend_version'] = 1
 
-# task_config['task_description'] = "todo: Some description"
+intro_test = """In this task you will take one of two roles: You could be a 'user' who wants to find a new apartment in Sydney or, alternatively, you could take the role of a 'virtual assistant' that helps the user achieve this goal."""
+
+task_config['task_description'] = intro_test
+task_config['chat_title'] = "Live Chat"
