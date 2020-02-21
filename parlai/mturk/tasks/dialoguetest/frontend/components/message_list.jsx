@@ -59,13 +59,11 @@ class ChatMessage extends React.Component {
     if (needlePosition >= 0) {
       try {
         const exampleJson = JSON.parse(
-          this.props.message
-            .slice(needlePosition + needle.length, -1)
-            .replace(/'/g, '"')
+          this.props.message.slice(needlePosition + needle.length, -1)
         );
 
         message = [];
-        for (const key of Object.values(exampleJson)) {
+        for (const key of Object.keys(exampleJson)) {
           message.push(`${key}: ${exampleJson[key]}`);
         }
         message = message.join("\n");

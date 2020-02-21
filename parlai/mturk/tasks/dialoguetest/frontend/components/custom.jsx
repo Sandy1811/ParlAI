@@ -652,19 +652,90 @@ const leftSideCategories = [
 
 class TaskDescription extends React.Component {
   render() {
-    let header_text = CHAT_TITLE;
-    let task_desc = this.props.task_description || "Task Description Loading";
-    return (
-      <div>
-        <h1>{header_text}</h1>
-        <hr style={{ borderTop: "1px solid #555" }} />
-        <span
-          id="task-description"
-          style={{ fontSize: "16px" }}
-          dangerouslySetInnerHTML={{ __html: task_desc }}
-        />
-      </div>
-    );
+    // let header_text = CHAT_TITLE;
+    // let task_desc = this.props.task_description || "Task Description Loading";
+    // <span
+    //   id="task-description"
+    //   style={{ fontSize: "16px" }}
+    //   dangerouslySetInnerHTML={{ __html: task_desc }}
+    // />
+    return this.props.agent_id === "User"
+      ? <div id="task-description" style={{ fontSize: "16px" }}>
+          <h1>Live Chat</h1>
+          <hr style={{ borderTop: "1px solid #555" }} />
+          <div>
+            You recently started a <b>new job in Sydney</b> and need to find an
+            apartment to live in.
+            For now, you stay in a hotel, but that is expensive, so you'll
+            {" "}<b>want to find something soon</b>.
+            A friend of yours recommended the virtual assistant that you are
+            about
+            to talk to now.
+            Maybe it can help you find something you like?
+          </div>
+          <br />
+
+          <div>
+            Your task is complete, when
+            <ul>
+              <li>
+                You found an apartment that satisfies at least
+                {" "}<b>4 specific criteria</b> of your choosing (e.g. number of
+                rooms, balcony/elevator availability, etc.) - you might have to
+                make some compromises to find something
+              </li>
+              <li>
+                You have
+                {" "}<b>changed your mind about what you want at least once</b>
+                {" "}during the conversation
+              </li>
+              <li>
+                You said <b>goodbye</b> (or similar) at the end of your dialogue
+              </li>
+            </ul>
+            At the end of this dialogue, you will have to judge if the assistant
+            fulfilled his/her task.<br />
+            <div id="ask_accept">
+              If you are ready, please click "Accept HIT" to start this task.<br />
+            </div>
+          </div>
+        </div>
+      : <div id="task-description" style={{ fontSize: "16px" }}>
+          <h1>Live Chat</h1>
+          <hr style={{ borderTop: "1px solid #555" }} />
+          <div>
+            You play the role of a <b>virtual assistant</b> that helps people
+            find an apartment in Sydney.
+            The user that you talk to may sometimes change his/her mind and may
+            not be sure what he/she wants.
+            Your task is to be as helpful to the user as possible in any case,
+            but
+            {" "}
+            <b>
+              you cannot do anything but searching and discussing apartments
+            </b>.
+            So if the user wants you to make coffee, you should explain that you
+            cannot do this.
+            If you feel like you should provide the user with an example
+            apartment, <b>just make up a description</b>.
+
+            Users may even be rude or uncooperative, but you are beyond this and
+            {" "}<b>always keep a patient, level tone</b>.
+            <br />
+          </div>
+          <div>
+            Your task is complete, when
+            <ul>
+              <li>The user has found a suitable apartment</li>
+              <li>The user has said 'goodbye' (or similar)</li>
+            </ul>
+            At the end of this dialogue, you will have to judge if the user
+            fulfilled his/her task.<br />
+          </div>
+          <div id="ask_accept">
+            If you are ready, please click "Accept HIT" to start this task.<br />
+          </div>
+        </div>;
   }
 }
 
@@ -737,7 +808,10 @@ class LeftPane extends React.Component {
     let pane_size = this.props.is_cover_page ? "col-xs-12" : "col-xs-4";
     let has_context = this.props.task_data.has_context;
 
-    if (this.props.is_cover_page) {
+    if (
+      this.props.world_state === "onboarding" ||
+      this.props.agent_id === "User"
+    ) {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
           <TaskDescription {...this.props} />
@@ -800,6 +874,7 @@ class LeftPane extends React.Component {
           </Row>
         </Tab.Container>
         {this.props.children}
+        {/*JSON.stringify(this.props)*/}
       </div>
     );
   }
@@ -815,19 +890,6 @@ var TextResponseHolder = {
   // default: leave blank to use original default when no ids match
   // Wizard: EvaluationResponse,
   User: NumericResponse
-};
-
-export default {
-  // ComponentName: CustomReplacementComponentMap
-  XTextResponse: TextResponseHolder,
-  XIdleResponse: IdleResponseHolder,
-  XLeftPane: {
-    Wizard: LeftPane,
-    onboarding: LeftPane
-  },
-  XMessageList: {
-    Wizard: MessageList
-  }
 };
 
 function workaroundJitterBug() {
@@ -856,3 +918,19 @@ function workaroundJitterBug() {
 setTimeout(() => {
   workaroundJitterBug();
 }, 1000);
+
+export default {
+  // ComponentName: CustomReplacementComponentMap
+  XTextResponse: TextResponseHolder,
+  XIdleResponse: IdleResponseHolder,
+  XLeftPane: {
+    Wizard: LeftPane,
+    // User: LeftPaneUser,
+    // "Onboarding Wizard": LeftPane,
+    User: LeftPane
+  },
+  XMessageList: {
+    Wizard: MessageList,
+    User: MessageList
+  }
+};
