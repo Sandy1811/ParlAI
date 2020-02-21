@@ -337,6 +337,7 @@ function QueryForm(props) {
 
       <Button
         className="btn btn-primary"
+        disabled={props.chat_state !== "text_input"}
         onClick={() => {
           console.log("sending ? {}");
           props.onMessageSend("? {}", {}, () => console.log("done"));
@@ -599,8 +600,6 @@ class LeftPane extends React.Component {
     let pane_size = this.props.is_cover_page ? "col-xs-12" : "col-xs-4";
     let has_context = this.props.task_data.has_context;
 
-    console.log("Tab", Tab);
-
     const leftSideCategories = [
       "Apartments",
       "Hotels",
@@ -608,6 +607,8 @@ class LeftPane extends React.Component {
       "Artifacts",
       "Trains"
     ];
+
+    console.log("this.props", this.props);
 
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
@@ -629,7 +630,7 @@ class LeftPane extends React.Component {
                   return (
                     <Tab.Pane eventKey={tabName}>
                       <h4>User's requirements for {tabName}:</h4>
-                      <QueryForm onMessageSend={this.props.onMessageSend} />
+                      <QueryForm {...this.props} />
                     </Tab.Pane>
                   );
                 })}
