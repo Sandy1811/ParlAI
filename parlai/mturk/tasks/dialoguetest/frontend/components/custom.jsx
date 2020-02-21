@@ -37,6 +37,8 @@ import {
 import $ from "jquery";
 import { MessageList } from "./message_list.jsx";
 
+const fieldValuePrefix = "fv-";
+
 // Copied from https://github.com/RasaHQ/data-collection-2020/blob/master/apis/apis/apartment_search.json
 const apartmentJson = {
   input: [
@@ -279,6 +281,7 @@ function jsonToForm(json, category, activeFormFields, removeFormField) {
     const controlLabelWithRemove = (
       <ControlLabelWithRemove
         property={input.Name}
+        name={`${fieldValuePrefix}${input.Name}`}
         category={category}
         onRemove={removeFormField}
       />
@@ -290,6 +293,7 @@ function jsonToForm(json, category, activeFormFields, removeFormField) {
             {controlLabelWithRemove}
             <FormControl
               required={isRequired}
+              name={`${fieldValuePrefix}${input.Name}`}
               componentClass="textarea"
               placeholder="textarea"
             />
@@ -301,6 +305,7 @@ function jsonToForm(json, category, activeFormFields, removeFormField) {
           <FormGroup>
             {controlLabelWithRemove}
             <FormControl
+              name={`${fieldValuePrefix}${input.Name}`}
               required={isRequired}
               componentClass="input"
               style={{ maxWidth: 400 }}
@@ -314,6 +319,7 @@ function jsonToForm(json, category, activeFormFields, removeFormField) {
             {controlLabelWithRemove}
             <FormControl
               required={isRequired}
+              name={`${fieldValuePrefix}${input.Name}`}
               componentClass="select"
               placeholder="select"
               multiple={input.Type == "CategoricalMultiple"}
@@ -327,7 +333,19 @@ function jsonToForm(json, category, activeFormFields, removeFormField) {
       case "Boolean":
         return (
           <FormGroup>
-            <Checkbox required={isRequired} inline>{input.Name}</Checkbox>
+            <Checkbox
+              name={`${fieldValuePrefix}${input.Name}`}
+              required={isRequired}
+              inline
+            >
+              {input.Name}
+            </Checkbox>
+            <Button
+              style={{ border: 0, padding: "3px 6px" }}
+              onClick={() => removeFormField(category, input.Name)}
+            >
+              <Glyphicon glyph="remove" />
+            </Button>
           </FormGroup>
         );
       case "Integer":
@@ -338,16 +356,18 @@ function jsonToForm(json, category, activeFormFields, removeFormField) {
             <div>
               <FormControl
                 required={isRequired}
+                name={`${fieldValuePrefix}${input.Name}`}
                 componentClass="select"
                 placeholder="is"
                 style={{ maxWidth: 130, display: "inline-block" }}
               >
-                <option value="select">is</option>
-                <option value="other">is greater than</option>
-                <option value="other">is not</option>
+                <option value="is">is</option>
+                <option value="is_greater_than">is greater than</option>
+                <option value="is_not">is not</option>
               </FormControl>
               <FormControl
                 required={isRequired}
+                name={`${fieldValuePrefix}${input.Name}`}
                 componentClass="input"
                 type="number"
                 style={{
@@ -379,7 +399,46 @@ class QueryForm extends React.Component {
     const json = apartmentJson;
 
     return (
-      <form onSubmit={() => {}}>
+      <form
+        onSubmit={event => {
+          event.preventDefault();
+          let form = event.target;
+
+          console.log("form.elements", form.elements);
+
+          const parameters = {};
+          for (const element of form.elements) {
+            if (element.name.startsWith(fieldValuePrefix)) {
+              const key = element.name.slice(fieldValuePrefix.length);
+
+              if (element.type === "checkbox") {
+                // Todo: Clean this up as soon as back-end handles this properly
+                parameters[key] = element.checked ? "True" : "False";
+              } else if (
+                element.type === "select-one" ||
+                element.type === "number"
+              ) {
+                const { value } = element;
+                const parsedValue = parseFloat(value);
+
+                parameters[key] = isNaN(parsedValue) ? value : parsedValue;
+              } else if (element.type === "select-multiple") {
+                // todo
+                console.warning("not implemented yet");
+              }
+            }
+          }
+          console.log("parameters", parameters);
+          console.log("sending ?", parameters);
+          this.props.onMessageSend(
+            `? ${JSON.stringify(parameters)
+              .replace(/"True"/g, "True")
+              .replace(/"False"/g, "False")}`,
+            {},
+            () => console.log("done")
+          );
+        }}
+      >
         <FormGroup>
           <div>
             <FormControl
@@ -411,10 +470,7 @@ class QueryForm extends React.Component {
         <Button
           className="btn btn-primary"
           disabled={this.props.chat_state !== "text_input"}
-          onClick={() => {
-            console.log("sending ? {}");
-            this.props.onMessageSend("? {}", {}, () => console.log("done"));
-          }}
+          type="submit"
         >
           Find example
         </Button>
