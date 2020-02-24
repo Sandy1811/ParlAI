@@ -59,13 +59,17 @@ def send_setup_command(
     task_description: Text,
     completion_requirements: List[Text],
     form_description: Dict[Text, Any],
+    completion_questions: List[Text],
     recipient: Agent,
 ):
     recipient.observe(
         {
-            "id": SYSTEM_ID,
+            "id": recipient.id,
+            "text": "",
+            "command": COMMAND_SETUP,
             "task_description": task_description,
             "completion_requirements": completion_requirements,
+            "completion_questions": completion_questions,
             "form_description": form_description,
         }
     )

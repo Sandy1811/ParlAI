@@ -16,7 +16,8 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 from parlai.mturk.tasks.dialoguetest.protocol import WORKER_COMMAND_QUERY, WORKER_COMMAND_COMPLETE, COMMAND_REVIEW, \
-    send_mturk_message, WORKER_COMMAND_DONE, WORKER_DISCONNECTED, extract_command_message, COMMAND_SETUP
+    send_mturk_message, WORKER_COMMAND_DONE, WORKER_DISCONNECTED, extract_command_message, COMMAND_SETUP, \
+    send_setup_command
 
 
 def log_write_act(index: int, agent_name: Text, act) -> None:
@@ -39,6 +40,156 @@ def is_disconnected(act):
         RETURN_MESSAGE,
         TIMEOUT_MESSAGE,
     ]
+
+
+DUMMY_FORM_DESCRIPTION = {
+  "input": [
+    {
+      "Name": "Level",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Level"
+    },
+    {
+      "Name": "MaxLevel",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Max Level"
+    },
+    {
+      "Name": "HasBalcony",
+      "Type": "Boolean",
+      "ReadableName": "Has Balcony"
+    },
+    {
+      "Name": "BalconySide",
+      "Type": "Categorical",
+      "Categories": [
+        "east",
+        "north",
+        "south",
+        "west"
+      ],
+      "ReadableName": "Balcony Side"
+    },
+    {
+      "Name": "HasElevator",
+      "Type": "Boolean",
+      "ReadableName": "Has Elevator"
+    },
+    {
+      "Name": "NumRooms",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 7,
+      "ReadableName": "Num Rooms"
+    },
+    {
+      "Name": "FloorSquareMeters",
+      "Type": "Integer",
+      "Min": 10,
+      "Max": 350,
+      "ReadableName": "Floor Square Meters"
+    },
+    {
+      "Name": "NearbyPOIs",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park"
+      ],
+      "ReadableName": "Nearby POIs"
+    },
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Level",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Level"
+    },
+    {
+      "Name": "MaxLevel",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Max Level"
+    },
+    {
+      "Name": "HasBalcony",
+      "Type": "Boolean",
+      "ReadableName": "Has Balcony"
+    },
+    {
+      "Name": "BalconySide",
+      "Type": "Categorical",
+      "Categories": [
+        "east",
+        "north",
+        "south",
+        "west"
+      ],
+      "ReadableName": "Balcony Side"
+    },
+    {
+      "Name": "HasElevator",
+      "Type": "Boolean",
+      "ReadableName": "Has Elevator"
+    },
+    {
+      "Name": "NumRooms",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 7,
+      "ReadableName": "Num Rooms"
+    },
+    {
+      "Name": "FloorSquareMeters",
+      "Type": "Integer",
+      "Min": 10,
+      "Max": 350,
+      "ReadableName": "Floor Square Meters"
+    },
+    {
+      "Name": "NearbyPOIs",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park"
+      ],
+      "ReadableName": "Nearby POIs"
+    },
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    }
+  ],
+  "required": [],
+  "db": "apartment",
+  "function": "generic_sample",
+  "returns_count": True
+}
 
 
 class WizardOnboardingWorld(MTurkOnboardWorld):
@@ -290,7 +441,13 @@ class WOZWorld(MTurkTaskWorld):
 
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
-            self.send_command(COMMAND_SETUP, agent)
+            send_setup_command(
+                task_description=f"Dummy task description for {agent.id}",
+                completion_requirements=[f"Dummy requirement 1 for {agent.id}", f"Dummy requirement 2 for {agent.id}"],
+                completion_questions=[f"Dummy QA 1 for {agent.id}", f"Dummy QA 2 for {agent.id}"],
+                form_description=DUMMY_FORM_DESCRIPTION,
+                recipient=agent
+            )
 
     def tell_workers_to_start(self):
         send_mturk_message(
