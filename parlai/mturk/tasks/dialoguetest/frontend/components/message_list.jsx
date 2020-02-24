@@ -23,7 +23,9 @@ import {
   Form,
   Tabs,
   Tab,
-  HelpBlock
+  HelpBlock,
+  ToggleButtonGroup,
+  ToggleButton
 } from "react-bootstrap";
 
 import $ from "jquery";
@@ -96,6 +98,18 @@ class ChatMessage extends React.Component {
           <div>
             This and {count - 1} matches exist:
             <table style={{ borderStyle: "none" }}>{rows}</table>
+            <br />
+
+            <ToggleButtonGroup
+              type="radio"
+              name="options"
+              defaultValue={"selected"}
+            >
+              <ToggleButton value={"selected"}>selected</ToggleButton>
+              <ToggleButton value={"compare to"}>compare to</ToggleButton>
+              <ToggleButton value={"not selected"}>not selected</ToggleButton>
+            </ToggleButtonGroup>
+
           </div>
         );
       }
