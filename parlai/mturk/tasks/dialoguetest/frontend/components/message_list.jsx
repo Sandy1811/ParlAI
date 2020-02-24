@@ -60,21 +60,44 @@ class ChatMessage extends React.Component {
     const needle = "Example: ";
     const needlePosition = this.props.message.indexOf(needle);
     let message = this.props.message;
+
     if (needlePosition >= 0) {
+      const regex = /Found ([0-9]+)/;
+      let count = null;
+      const m = regex.exec(message);
+      if (m != null) {
+        // The result can be accessed through the `m`-variable.
+        count = m[1];
+        console.log("count", count);
+      }
+      let exampleJson;
       try {
-        const exampleJson = JSON.parse(
+        exampleJson = JSON.parse(
           this.props.message.slice(needlePosition + needle.length, -1)
         );
-
-        message = [];
-        for (const key of Object.keys(exampleJson)) {
-          message.push(`${key}: ${exampleJson[key]}`);
-        }
-        message = message.join("\n");
-
-        console.log("exampleJson", exampleJson);
       } catch (exc) {
         console.log("failed to parse example json");
+      }
+      if (exampleJson != null) {
+        const rows = Object.keys(exampleJson).map((key, idx) => {
+          let value = exampleJson[key];
+          if (typeof value === "boolean") {
+            value = value ? "yes" : "no";
+          }
+
+          return (
+            <tr key={key}>
+              <td>{key}:</td>
+              <td>{value}</td>
+            </tr>
+          );
+        });
+        message = (
+          <div>
+            This and {count - 1} matches exist:
+            <table style={{ borderStyle: "none" }}>{rows}</table>
+          </div>
+        );
       }
     }
 
@@ -90,7 +113,12 @@ class ChatMessage extends React.Component {
         <div
           className={"alert " + alert_class}
           role="alert"
-          style={{ float: float_loc, display: "table" }}
+          style={{
+            float: float_loc,
+            display: "table",
+            backgroundColor: onlyVisibleMsg ? "#FDEFB6" : undefined,
+            color: onlyVisibleMsg ? "rgb(88, 90, 94)" : undefined
+          }}
         >
           <span style={{ fontSize: "16px", whiteSpace: "pre-wrap" }}>
             <b>{this.props.agent_id}{onlyVisibleMsg}</b>: {message}
