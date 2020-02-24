@@ -29,10 +29,7 @@ import {
 } from "react-bootstrap";
 
 import $ from "jquery";
-
-const DEBUG_FLAGS = {
-  RENDER_INVISIBLE_MESSAGES: true
-};
+import * as constants from "./constants";
 
 class ChatMessage extends React.Component {
   render() {
@@ -162,7 +159,7 @@ export class MessageList extends React.Component {
         m.text.startsWith("?") ||
         (m.text.startsWith("<") && m.text.endsWith(">"));
 
-      return dontRender && !DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
+      return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
         ? null
         : <div key={m.message_id} onClick={() => onClickMessage(idx)}>
             <XChatMessage
