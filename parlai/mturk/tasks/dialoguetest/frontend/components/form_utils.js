@@ -1,3 +1,4 @@
+import React from "react";
 import _ from "lodash";
 
 import {
@@ -24,6 +25,7 @@ import {
   Tab,
   HelpBlock
 } from "react-bootstrap";
+import * as constants from "./constants";
 
 function FieldGroup({ id, label, help, ...props }) {
   return (
@@ -59,7 +61,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
     const controlLabelWithRemove = (
       <ControlLabelWithRemove
         property={input.Name}
-        name={`${fieldValuePrefix}${input.Name}`}
+        name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
         category={category}
         onRemove={removeFormField}
       />
@@ -71,7 +73,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
             {controlLabelWithRemove}
             <FormControl
               required={isRequired}
-              name={`${fieldValuePrefix}${input.Name}`}
+              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
               componentClass="textarea"
               placeholder="textarea"
             />
@@ -83,7 +85,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
           <FormGroup>
             {controlLabelWithRemove}
             <FormControl
-              name={`${fieldValuePrefix}${input.Name}`}
+              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
               required={isRequired}
               componentClass="input"
               style={{ maxWidth: 400 }}
@@ -97,13 +99,15 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
             {controlLabelWithRemove}
             <FormControl
               required={isRequired}
-              name={`${fieldValuePrefix}${input.Name}`}
+              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
               componentClass="select"
               placeholder="select"
               multiple={input.Type == "CategoricalMultiple"}
             >
-              {input.Categories.map(category =>
-                <option value={category}>{category}</option>
+              {input.Categories.map((category, idx) =>
+                <option key={`${category}-idx`} value={category}>
+                  {category}
+                </option>
               )}
             </FormControl>
           </FormGroup>
@@ -112,7 +116,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
         return (
           <FormGroup>
             <Checkbox
-              name={`${fieldValuePrefix}${input.Name}`}
+              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
               required={isRequired}
               inline
             >
@@ -134,7 +138,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
             <div>
               <FormControl
                 required={isRequired}
-                name={`${fieldValuePrefix}${input.Name}`}
+                name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
                 componentClass="select"
                 placeholder="is"
                 style={{ maxWidth: 130, display: "inline-block" }}
@@ -145,7 +149,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
               </FormControl>
               <FormControl
                 required={isRequired}
-                name={`${fieldValuePrefix}${input.Name}`}
+                name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
                 componentClass="input"
                 type="number"
                 style={{

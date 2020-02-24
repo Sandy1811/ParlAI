@@ -37,183 +37,9 @@ import {
 import $ from "jquery";
 import { MessageList } from "./message_list.jsx";
 import { jsonToForm } from "./form_utils";
-const fieldValuePrefix = "fv-";
-
-// This includes the initial "ready" message which is required from the turkers
-const FINISHABLE_MESSAGE_COUNT = 3;
-
-// Copied from https://github.com/RasaHQ/data-collection-2020/blob/master/apis/apis/apartment_search.json
-const apartmentJson = {
-  input: [
-    { Name: "Level", Type: "Integer", Min: 0, Max: 15 },
-    {
-      Name: "MaxLevel",
-      Type: "Integer",
-      Min: 0,
-      Max: 15
-    },
-    { Name: "HasBalcony", Type: "Boolean" },
-    {
-      Name: "BalconySide",
-      Type: "Categorical",
-      Categories: ["east", "north", "south", "west"]
-    },
-    {
-      Name: "HasElevator",
-      Type: "Boolean"
-    },
-    { Name: "NumRooms", Type: "Integer", Min: 1, Max: 7 },
-    {
-      Name: "FloorSquareMeters",
-      Type: "Integer",
-      Min: 10,
-      Max: 350
-    },
-    {
-      Name: "NearbyPOIs",
-      Type: "CategoricalMultiple",
-      Categories: ["School", "TrainStation", "Park"]
-    },
-    {
-      Name: "Name",
-      Type: "Categorical",
-      Categories: [
-        "One on Center Apartments",
-        "Shadyside Apartments",
-        "North Hill Apartments"
-      ]
-    }
-  ],
-  output: [
-    { Name: "Level", Type: "Integer", Min: 0, Max: 15 },
-    {
-      Name: "MaxLevel",
-      Type: "Integer",
-      Min: 0,
-      Max: 15
-    },
-    { Name: "HasBalcony", Type: "Boolean" },
-    {
-      Name: "BalconySide",
-      Type: "Categorical",
-      Categories: ["east", "north", "south", "west"]
-    },
-    {
-      Name: "HasElevator",
-      Type: "Boolean"
-    },
-    { Name: "NumRooms", Type: "Integer", Min: 1, Max: 7 },
-    {
-      Name: "FloorSquareMeters",
-      Type: "Integer",
-      Min: 10,
-      Max: 350
-    },
-    {
-      Name: "NearbyPOIs",
-      Type: "CategoricalMultiple",
-      Categories: ["School", "TrainStation", "Park"]
-    },
-    {
-      Name: "Name",
-      Type: "Categorical",
-      Categories: [
-        "One on Center Apartments",
-        "Shadyside Apartments",
-        "North Hill Apartments"
-      ]
-    }
-  ],
-  required: ["NumRooms"],
-  db: "apartment",
-  function: "generic_sample",
-  returns_count: true
-};
-
-const hotelSearch = {
-  input: [
-    {
-      Name: "Name",
-      Type: "Categorical",
-      Categories: [
-        "Shadyside Inn",
-        "Hilton Hotel",
-        "Hyatt Hotel",
-        "Old Town Inn"
-      ]
-    },
-    {
-      Name: "Cost",
-      Type: "Categorical",
-      Categories: ["Cheap", "Moderate", "Expensive"]
-    },
-    { Name: "TakesReservations", Type: "Boolean" },
-    { Name: "Service", Type: "Boolean" },
-    { Name: "AverageRating", Type: "Integer", Min: 1, Max: 5 },
-    {
-      Name: "ServiceStartHour",
-      Type: "Integer",
-      Min: 6,
-      Max: 10,
-      Enabled: '!lambda p: p["Service"]'
-    },
-    {
-      Name: "ServiceStopHour",
-      Type: "Integer",
-      Min: 15,
-      Max: 23,
-      Enabled: '!lambda p: p["Service"]'
-    },
-    {
-      Name: "Location",
-      Type: "Categorical",
-      Categories: ["South", "West", "East", "North", "Center"]
-    }
-  ],
-  output: [
-    {
-      Name: "Name",
-      Type: "Categorical",
-      Categories: [
-        "Shadyside Inn",
-        "Hilton Hotel",
-        "Hyatt Hotel",
-        "Old Town Inn"
-      ]
-    },
-    {
-      Name: "Cost",
-      Type: "Categorical",
-      Categories: ["Cheap", "Moderate", "Expensive"]
-    },
-    { Name: "TakesReservations", Type: "Boolean" },
-    { Name: "Service", Type: "Boolean" },
-    { Name: "AverageRating", Type: "Integer", Min: 1, Max: 5 },
-    {
-      Name: "ServiceStartHour",
-      Type: "Integer",
-      Min: 6,
-      Max: 10,
-      Enabled: '!lambda p: p["Service"]'
-    },
-    {
-      Name: "ServiceStopHour",
-      Type: "Integer",
-      Min: 15,
-      Max: 23,
-      Enabled: '!lambda p: p["Service"]'
-    },
-    {
-      Name: "Location",
-      Type: "Categorical",
-      Categories: ["South", "West", "East", "North", "Center"]
-    }
-  ],
-  required: [],
-  db: "hotel",
-  function: "generic_sample",
-  returns_count: true
-};
+import { apartmentJson } from "./mocks.js";
+import * as constants from "./constants";
+import "./jitter_workaround";
 
 class QueryForm extends React.Component {
   constructor(props) {
@@ -240,8 +66,10 @@ class QueryForm extends React.Component {
 
           const parameters = {};
           for (const element of form.elements) {
-            if (element.name.startsWith(fieldValuePrefix)) {
-              const key = element.name.slice(fieldValuePrefix.length);
+            if (element.name.startsWith(constants.FIELD_VALUE_PREFIX)) {
+              const key = element.name.slice(
+                constants.FIELD_VALUE_PREFIX.length
+              );
 
               if (element.type === "checkbox") {
                 // Todo: Clean this up as soon as back-end handles this properly
@@ -627,11 +455,10 @@ function CompleteButton(props) {
       msg.id !== "MTurk System"
   ).length;
 
-  // Render "Complete" button
   return (
     <Button
       className="btn btn-primary"
-      disabled={realMessageCount < FINISHABLE_MESSAGE_COUNT}
+      disabled={realMessageCount < constants.FINISHABLE_MESSAGE_COUNT}
       onClick={() => {
         props.onMessageSend("<complete>", {}, () =>
           console.log("sent complete")
@@ -817,8 +644,6 @@ class LeftPane extends React.Component {
       );
     }
 
-    // console.log("this.props", this.props);
-
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
         <Tab.Container
@@ -881,52 +706,20 @@ class LeftPane extends React.Component {
 }
 
 // Package components
-var IdleResponseHolder = {
-  // default: leave blank to use original default when no ids match
-  Wizard: EvaluatorIdleResponse
-};
-
-var TextResponseHolder = {
-  // default: leave blank to use original default when no ids match
-  // Wizard: EvaluationResponse,
-  User: NumericResponse
-};
-
-function workaroundJitterBug() {
-  try {
-    // Parlai constantly refreshes the UI and recalculates the height of
-    // the left pane component. On some devices, this can alternative between
-    // 561px and 560px, resulting in an unpleasant jitter. The following code
-    // adds a CSS rule which enforces 560px at all time.
-
-    const workaroundCss = `div#right-top-pane {
-        height: 560px !important;
-    }`;
-
-    const style = document.createElement("style");
-    // WebKit hack :(
-    style.appendChild(document.createTextNode(""));
-
-    // Add the <style> element to the page
-    document.head.appendChild(style);
-
-    const sheet = style.sheet;
-    sheet.insertRule(workaroundCss, 0);
-  } catch (ex) {}
-}
-
-setTimeout(() => {
-  workaroundJitterBug();
-}, 1000);
 
 export default {
   // ComponentName: CustomReplacementComponentMap
-  XTextResponse: TextResponseHolder,
-  XIdleResponse: IdleResponseHolder,
+  XTextResponse: {
+    // default: leave blank to use original default when no ids match
+    // Wizard: EvaluationResponse,
+    User: NumericResponse
+  },
+  XIdleResponse: {
+    // default: leave blank to use original default when no ids match
+    Wizard: EvaluatorIdleResponse
+  },
   XLeftPane: {
     Wizard: LeftPane,
-    // User: LeftPaneUser,
-    // "Onboarding Wizard": LeftPane,
     User: LeftPane
   },
   XMessageList: {
