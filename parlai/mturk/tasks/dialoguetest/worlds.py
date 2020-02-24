@@ -15,6 +15,9 @@ from parlai.mturk.core.agents import (
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
+from parlai.mturk.tasks.dialoguetest.protocol import WORKER_COMMAND_QUERY, WORKER_COMMAND_COMPLETE, COMMAND_REVIEW, \
+    send_mturk_message, WORKER_COMMAND_DONE, WORKER_DISCONNECTED, extract_command_message, COMMAND_SETUP
+
 
 def log_write_act(index: int, agent_name: Text, act) -> None:
     # with open("/Users/johannes/TESTLOG.log", "a+") as file:
@@ -119,49 +122,6 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         return self.mturk_agent
 
 
-COMMAND_SETUP = "setup"
-COMMAND_REVIEW = "review"
-
-MESSAGE_COMPLETE_PREFIX = "<complete>"
-MESSAGE_DONE_PREFIX = "<done>"
-MESSAGE_QUERY_PREFIX = "? "
-
-WORKER_COMMAND_COMPLETE = "complete"
-WORKER_COMMAND_DONE = "done"
-WORKER_COMMAND_QUERY = "query"
-
-WORKER_DISCONNECTED = "disconnect"
-
-
-def send_mturk_message(text: Text, recipient: Agent) -> None:
-    message = {"id": "MTurk System", "text": text}
-    recipient.observe(message)
-
-
-def extract_command_message(
-    message: Optional[Dict[Text, Any]]
-) -> Tuple[Optional[Text], Optional[Text]]:
-    log_write(f"extract_command_message({message})")
-    command = None
-    parameters = None
-    if message and message.get("text"):
-        text = message.get("text", "")
-        if text.startswith(MESSAGE_COMPLETE_PREFIX):
-            command = WORKER_COMMAND_COMPLETE
-            parameters = None
-        elif text.startswith(MESSAGE_DONE_PREFIX):
-            command = WORKER_COMMAND_DONE
-            parameters = text[len(MESSAGE_DONE_PREFIX) :].strip()
-        elif text.startswith(MESSAGE_QUERY_PREFIX):
-            command = WORKER_COMMAND_QUERY
-            parameters = text[len(MESSAGE_QUERY_PREFIX) :].strip()
-        elif text == "[DISCONNECT]":
-            command = WORKER_DISCONNECTED
-            parameters = None
-
-    return command, parameters
-
-
 class WOZWorld(MTurkTaskWorld):
     """
     Wizard-of-Oz world.
@@ -212,6 +172,13 @@ class WOZWorld(MTurkTaskWorld):
 
         wizard_message, command, parameters = self.get_new_wizard_message()
         log_write_act(self.num_turns, "Wizard", wizard_message)
+        # Handle communication between the wizard and the knowledge base
+        while command and command == WORKER_COMMAND_QUERY:
+            self.kb_agent.observe({"query": parameters})
+            kb_message, _, _ = self.get_new_knowledgebase_message()
+            self.wizard_agent.observe(kb_message)
+            wizard_message, command, parameters = self.get_new_wizard_message()
+
         self.deal_with_wizard_command(command, parameters)
 
         if not self.evaluating:
@@ -258,13 +225,6 @@ class WOZWorld(MTurkTaskWorld):
     ) -> None:
         if command is None:
             return
-        elif command == WORKER_COMMAND_QUERY and self.kb_agent:
-            # Handle communication between the wizard and the knowledge base
-            while command and command == WORKER_COMMAND_QUERY:
-                self.kb_agent.observe({"query": parameters})
-                kb_message, _, _ = self.get_new_knowledgebase_message()
-                self.wizard_agent.observe(kb_message)
-                wizard_message, command, parameters = self.get_new_wizard_message()
         elif command == WORKER_COMMAND_COMPLETE:
             self.send_command(COMMAND_REVIEW, self.wizard_agent)
             self.send_command(COMMAND_REVIEW, self.user_agent)

@@ -155,7 +155,7 @@ function process_parlai_command(command, agent_id) {
 
         if (message.command) {
             process_parlai_command(message.command, agent_id);
-        } else if (text.startsWith('<query>')) {
+        } else if (text.startsWith('?')) {
             message.id = (was_this_agent ? "YOU" : agent_id);
             // add_message_to_conversation(was_this_agent ? "YOU" : "THEM", text, was_this_agent);
             add_message_to_conversation(was_this_agent ? "YOU" : agent_id, text, was_this_agent);
