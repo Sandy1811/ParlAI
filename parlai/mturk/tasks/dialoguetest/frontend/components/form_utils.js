@@ -42,7 +42,7 @@ function ControlLabelWithRemove(props) {
     <ControlLabel>
       {props.property}
       <Button
-        style={{ border: 0, padding: "3px 6px" }}
+        style={{ border: 0, padding: "3px 6px", background: "transparent" }}
         onClick={() => props.onRemove(props.category, props.property)}
       >
         <Glyphicon glyph="remove" />
@@ -123,7 +123,11 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
               {input.Name}
             </Checkbox>
             <Button
-              style={{ border: 0, padding: "3px 6px" }}
+              style={{
+                border: 0,
+                padding: "3px 6px",
+                background: "transparent"
+              }}
               onClick={() => removeFormField(category, input.Name)}
             >
               <Glyphicon glyph="remove" />
