@@ -78,8 +78,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         #     self.episodeDone = True
         #     return
         send_mturk_message(
-            "Please wait for the user and join the conversation...",
-            self.mturk_agent,
+            "Please wait for the user and join the conversation...", self.mturk_agent,
         )
         # self.mturk_agent.onboarding_turns = 1
         self.episodeDone = True
@@ -335,8 +334,7 @@ class WOZWorld(MTurkTaskWorld):
 
     def tell_workers_to_start(self):
         send_mturk_message(
-            "The assistant is ready. Go ahead, say hello!",
-            self.user_agent,
+            "The assistant is ready. Go ahead, say hello!", self.user_agent,
         )
         send_mturk_message(
             "A user has joined the chat. Please wait for him/her to start the conversation.",
