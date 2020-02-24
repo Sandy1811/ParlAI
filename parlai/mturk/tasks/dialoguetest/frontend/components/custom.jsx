@@ -546,57 +546,63 @@ function ReviewForm(props) {
     ) != null;
 
   return (
-    <div>
+    <form
+      onSubmit={event => {
+        event.preventDefault();
+        let form = event.target;
+        const parameters = {};
+        for (const element of form.elements) {
+          const key = element.name;
+          if (element.type === "checkbox") {
+            parameters[key] = element.checked;
+          }
+        }
+
+        props.onMessageSend(`<done> ${parameters}`, {}, () =>
+          console.log("sent done with", parameters)
+        );
+      }}
+    >
       <div>Thank you for the conversation.</div>
       <br />
       {props.agent_id === "Wizard"
         ? <div>
             Did the user...<br />
 
-            <Checkbox name="ok_user_found">... find an apartment?</Checkbox>
-            <Checkbox name="ok_user_demands">
-              ... require at least 4 specific criteria?
-            </Checkbox>
-            <Checkbox name="ok_user_change">
-              ... change his/her mind about what he/she wants at any point?
-            </Checkbox>
+            <div style={{ marginLeft: 20 }}>
+              <Checkbox name="ok_user_found">... find an apartment?</Checkbox>
+              <Checkbox name="ok_user_demands">
+                ... require at least 4 specific criteria?
+              </Checkbox>
+              <Checkbox name="ok_user_change">
+                ... change his/her mind about what he/she wants at any point?
+              </Checkbox>
+            </div>
 
             {unsure_hint}
           </div>
         : <div>
             Did the assistant... <br />
 
-            <Checkbox name="ok_wizard_found">
-              ... find an apartment for you?
-            </Checkbox>
-            <Checkbox name="ok_wizard_bye">
-              ... say goodbye at the end of the dialogue?
-              {" "}
-            </Checkbox>
-            <Checkbox name="ok_wizard_polite">
-              ... stay polite and patient throughout the conversation?
-            </Checkbox>
+            <div style={{ marginLeft: 20 }}>
+              <Checkbox name="ok_wizard_found">
+                ... find an apartment for you?
+              </Checkbox>
+              <Checkbox name="ok_wizard_bye">
+                ... say goodbye at the end of the dialogue?
+                {" "}
+              </Checkbox>
+              <Checkbox name="ok_wizard_polite">
+                ... stay polite and patient throughout the conversation?
+              </Checkbox>
+            </div>
             {unsure_hint}
           </div>}
 
-      <Button
-        className="btn btn-primary"
-        disabled={hasReviewed}
-        onClick={() => {
-          console.log("Todo: read proper field values");
-          // ch_user_demands;
-          // ch_user_found;
-          // ch_user_change;
-          // ch_wizard_found;
-          // ch_wizard_bye;
-          // ch_wizard_polite;
-
-          props.onMessageSend("<done>", {}, () => console.log("sent done"));
-        }}
-      >
+      <Button className="btn btn-primary" disabled={hasReviewed} type="submit">
         Confirm
       </Button>
-    </div>
+    </form>
   );
 }
 
