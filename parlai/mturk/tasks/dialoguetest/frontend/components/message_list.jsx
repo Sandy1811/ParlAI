@@ -28,6 +28,10 @@ import {
 
 import $ from "jquery";
 
+const DEBUG_FLAGS = {
+  RENDER_INVISIBLE_MESSAGES: true
+};
+
 class ChatMessage extends React.Component {
   render() {
     let float_loc = "left";
@@ -75,7 +79,14 @@ class ChatMessage extends React.Component {
     }
 
     return (
-      <div className={"row"} style={{ marginLeft: "0", marginRight: "0" }}>
+      <div
+        className={"row"}
+        style={{
+          marginLeft: "0",
+          marginRight: "0",
+          backgroundColor: this.props.invisible ? "#ff2300cf" : "default"
+        }}
+      >
         <div
           className={"alert " + alert_class}
           role="alert"
@@ -104,13 +115,17 @@ export class MessageList extends React.Component {
       onClickMessage = idx => {};
     }
     return messages.map((m, idx) => {
-      const dontRender = m.command != null || m.text.startsWith("?");
+      const dontRender =
+        m.command != null ||
+        m.text.startsWith("?") ||
+        (m.text.startsWith("<") && m.text.endsWith(">"));
 
-      return dontRender
+      return dontRender && !DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
         ? null
         : <div key={m.message_id} onClick={() => onClickMessage(idx)}>
             <XChatMessage
               is_self={m.id == agent_id}
+              invisible={dontRender}
               agent_id={m.id}
               message={m.text}
               task_data={m.task_data}

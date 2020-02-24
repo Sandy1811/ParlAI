@@ -36,7 +36,7 @@ import {
 
 import $ from "jquery";
 import { MessageList } from "./message_list.jsx";
-
+import { jsonToForm } from "./form_utils";
 const fieldValuePrefix = "fv-";
 
 // Copied from https://github.com/RasaHQ/data-collection-2020/blob/master/apis/apis/apartment_search.json
@@ -212,177 +212,6 @@ const hotelSearch = {
   returns_count: true
 };
 
-function FieldGroup({ id, label, help, ...props }) {
-  return (
-    <FormGroup controlId={id}>
-      <ControlLabel>{label}</ControlLabel>
-      <FormControl {...props} />
-      {help && <HelpBlock>{help}</HelpBlock>}
-    </FormGroup>
-  );
-}
-
-function FormKitchenSink() {
-  return (
-    <div>
-      <FieldGroup
-        id="formControlsText"
-        type="text"
-        label="Text"
-        placeholder="Enter text"
-      />
-      <FormGroup>
-        <Checkbox inline>1</Checkbox> <Checkbox inline>2</Checkbox>{" "}
-        <Checkbox inline>3</Checkbox>
-      </FormGroup>
-      <FormGroup>
-        <Radio name="radioGroup" inline>
-          1
-        </Radio>
-        {" "}
-        <Radio name="radioGroup" inline>
-          2
-        </Radio>
-        {" "}
-        <Radio name="radioGroup" inline>
-          3
-        </Radio>
-      </FormGroup>
-
-      <FormGroup controlId="formControlsTextarea">
-        <ControlLabel>Textarea</ControlLabel>
-        <FormControl componentClass="textarea" placeholder="textarea" />
-      </FormGroup>
-    </div>
-  );
-}
-
-function ControlLabelWithRemove(props) {
-  return (
-    <ControlLabel>
-      {props.property}
-      <Button
-        style={{ border: 0, padding: "3px 6px" }}
-        onClick={() => props.onRemove(props.category, props.property)}
-      >
-        <Glyphicon glyph="remove" />
-      </Button>
-
-    </ControlLabel>
-  );
-}
-
-function jsonToForm(json, category, activeFormFields, removeFormField) {
-  const inputByName = _.keyBy(json.input, "Name");
-
-  return activeFormFields.map(formFieldName => {
-    const input = inputByName[formFieldName];
-    const isRequired = json.required.indexOf(input.Name) >= 0;
-    const controlLabelWithRemove = (
-      <ControlLabelWithRemove
-        property={input.Name}
-        name={`${fieldValuePrefix}${input.Name}`}
-        category={category}
-        onRemove={removeFormField}
-      />
-    );
-    switch (input.Type) {
-      case "LongString":
-        return (
-          <FormGroup>
-            {controlLabelWithRemove}
-            <FormControl
-              required={isRequired}
-              name={`${fieldValuePrefix}${input.Name}`}
-              componentClass="textarea"
-              placeholder="textarea"
-            />
-          </FormGroup>
-        );
-
-      case "ShortString":
-        return (
-          <FormGroup>
-            {controlLabelWithRemove}
-            <FormControl
-              name={`${fieldValuePrefix}${input.Name}`}
-              required={isRequired}
-              componentClass="input"
-              style={{ maxWidth: 400 }}
-            />
-          </FormGroup>
-        );
-      case "Categorical":
-      case "CategoricalMultiple":
-        return (
-          <FormGroup>
-            {controlLabelWithRemove}
-            <FormControl
-              required={isRequired}
-              name={`${fieldValuePrefix}${input.Name}`}
-              componentClass="select"
-              placeholder="select"
-              multiple={input.Type == "CategoricalMultiple"}
-            >
-              {input.Categories.map(category =>
-                <option value={category}>{category}</option>
-              )}
-            </FormControl>
-          </FormGroup>
-        );
-      case "Boolean":
-        return (
-          <FormGroup>
-            <Checkbox
-              name={`${fieldValuePrefix}${input.Name}`}
-              required={isRequired}
-              inline
-            >
-              {input.Name}
-            </Checkbox>
-            <Button
-              style={{ border: 0, padding: "3px 6px" }}
-              onClick={() => removeFormField(category, input.Name)}
-            >
-              <Glyphicon glyph="remove" />
-            </Button>
-          </FormGroup>
-        );
-      case "Integer":
-        // handle Min and Max
-        return (
-          <FormGroup controlId="formControlsNumber">
-            {controlLabelWithRemove}
-            <div>
-              <FormControl
-                required={isRequired}
-                name={`${fieldValuePrefix}${input.Name}`}
-                componentClass="select"
-                placeholder="is"
-                style={{ maxWidth: 130, display: "inline-block" }}
-              >
-                <option value="is">is</option>
-                <option value="is_greater_than">is greater than</option>
-                <option value="is_not">is not</option>
-              </FormControl>
-              <FormControl
-                required={isRequired}
-                name={`${fieldValuePrefix}${input.Name}`}
-                componentClass="input"
-                type="number"
-                style={{
-                  maxWidth: 200,
-                  display: "inline-block",
-                  marginLeft: 20
-                }}
-              />
-            </div>
-          </FormGroup>
-        );
-    }
-  });
-}
-
 class QueryForm extends React.Component {
   constructor(props) {
     super(props);
@@ -423,7 +252,7 @@ class QueryForm extends React.Component {
 
                 parameters[key] = isNaN(parsedValue) ? value : parsedValue;
               } else if (element.type === "select-multiple") {
-                // todo
+                // Todo
                 console.warning("not implemented yet");
               }
             }
@@ -482,7 +311,6 @@ class QueryForm extends React.Component {
 // Create custom components
 class EvaluatorIdleResponse extends React.Component {
   render() {
-    // TODO maybe move to CSS?
     let pane_style = {
       paddingLeft: "25px",
       paddingTop: "20px",
@@ -547,7 +375,6 @@ class NumericResponse extends React.Component {
   }
 
   render() {
-    // TODO maybe move to CSS?
     let pane_style = {
       paddingLeft: "25px",
       paddingTop: "20px",
@@ -589,7 +416,6 @@ class NumericResponse extends React.Component {
       />
     );
 
-    // TODO attach send message callback
     let submit_button = (
       <Button
         className="btn btn-primary"
@@ -635,7 +461,6 @@ class EvaluationResponse extends React.Component {
   }
 
   render() {
-    // TODO maybe move to CSS?
     let pane_style = {
       paddingLeft: "25px",
       paddingTop: "20px",
@@ -706,92 +531,187 @@ const leftSideCategories = [
   "Trains"
 ];
 
+function ReviewForm(props) {
+  const unsure_hint = (
+    <React.Fragment>
+      <br />
+      If you are unsure, then don't place a check mark.
+      <br />
+    </React.Fragment>
+  );
+
+  const hasReviewed =
+    props.messages.find(
+      msg => msg.id === props.agent_id && msg.text.startsWith("<done>")
+    ) != null;
+
+  return (
+    <div>
+      <div>Thank you for the conversation.</div>
+      <br />
+      {props.agent_id === "Wizard"
+        ? <div>
+            Did the user...<br />
+
+            <Checkbox name="ok_user_found">... find an apartment?</Checkbox>
+            <Checkbox name="ok_user_demands">
+              ... require at least 4 specific criteria?
+            </Checkbox>
+            <Checkbox name="ok_user_change">
+              ... change his/her mind about what he/she wants at any point?
+            </Checkbox>
+
+            {unsure_hint}
+          </div>
+        : <div>
+            Did the assistant... <br />
+
+            <Checkbox name="ok_wizard_found">
+              ... find an apartment for you?
+            </Checkbox>
+            <Checkbox name="ok_wizard_bye">
+              ... say goodbye at the end of the dialogue?
+              {" "}
+            </Checkbox>
+            <Checkbox name="ok_wizard_polite">
+              ... stay polite and patient throughout the conversation?
+            </Checkbox>
+            {unsure_hint}
+          </div>}
+
+      <Button
+        className="btn btn-primary"
+        disabled={hasReviewed}
+        onClick={() => {
+          console.log("Todo: read proper field values");
+          // ch_user_demands;
+          // ch_user_found;
+          // ch_user_change;
+          // ch_wizard_found;
+          // ch_wizard_bye;
+          // ch_wizard_polite;
+
+          props.onMessageSend("<done>", {}, () => console.log("sent done"));
+        }}
+      >
+        Confirm
+      </Button>
+    </div>
+  );
+}
+
+function CompleteButton(props) {
+  if (props.world_state === "onboarding") {
+    return (
+      <div id="ask_accept">
+        If you are ready, please click "Accept HIT" to start this
+        task.<br />
+      </div>
+    );
+  }
+
+  // Render "Complete" button
+  return (
+    <Button
+      className="btn btn-primary"
+      onClick={() => {
+        props.onMessageSend("<complete>", {}, () =>
+          console.log("sent complete")
+        );
+      }}
+    >
+      I have completed my task
+    </Button>
+  );
+}
+
+function OnboardingView(props) {
+  return props.agent_id === "User"
+    ? <div id="task-description" style={{ fontSize: "16px" }}>
+        <h1>Live Chat</h1>
+        <hr style={{ borderTop: "1px solid #555" }} />
+        <div>
+          You recently started a <b>new job in Sydney</b> and need to find an
+          apartment to live in.
+          For now, you stay in a hotel, but that is expensive, so you'll
+          {" "}<b>want to find something soon</b>.
+          A friend of yours recommended the virtual assistant that you are
+          about
+          to talk to now.
+          Maybe it can help you find something you like?
+        </div>
+        <br />
+
+        <div>
+          Your task is complete, when
+          <ul>
+            <li>
+              You found an apartment that satisfies at least
+              {" "}<b>4 specific criteria</b> of your choosing (e.g. number of
+              rooms, balcony/elevator availability, etc.) - you might have to
+              make some compromises to find something
+            </li>
+            <li>
+              You have
+              {" "}<b>changed your mind about what you want at least once</b>
+              {" "}during the conversation
+            </li>
+            <li>
+              You said <b>goodbye</b> (or similar) at the end of your dialogue
+            </li>
+          </ul>
+          At the end of this dialogue, you will have to judge if the assistant
+          fulfilled his/her task.<br />
+
+          <CompleteButton {...props} />
+        </div>
+      </div>
+    : <div id="task-description" style={{ fontSize: "16px" }}>
+        <h1>Live Chat</h1>
+        <hr style={{ borderTop: "1px solid #555" }} />
+        <div>
+          You play the role of a <b>virtual assistant</b> that helps people
+          find an apartment in Sydney.
+          The user that you talk to may sometimes change his/her mind and may
+          not be sure what he/she wants.
+          Your task is to be as helpful to the user as possible in any case,
+          but
+          {" "}
+          <b>
+            you cannot do anything but searching and discussing apartments
+          </b>.
+          So if the user wants you to make coffee, you should explain that you
+          cannot do this.
+          If you feel like you should provide the user with an example
+          apartment, <b>just make up a description</b>.
+
+          Users may even be rude or uncooperative, but you are beyond this and
+          {" "}<b>always keep a patient, level tone</b>.
+          <br />
+        </div>
+        <div>
+          Your task is complete, when
+          <ul>
+            <li>The user has found a suitable apartment</li>
+            <li>The user has said 'goodbye' (or similar)</li>
+          </ul>
+
+          At the end of this dialogue, you will have to judge if the user
+          fulfilled his/her task.<br />
+        </div>
+        <div id="ask_accept">
+          If you are ready, please click "Accept HIT" to start this task.<br />
+        </div>
+      </div>;
+}
+
 class TaskDescription extends React.Component {
   render() {
-    // let header_text = CHAT_TITLE;
-    // let task_desc = this.props.task_description || "Task Description Loading";
-    // <span
-    //   id="task-description"
-    //   style={{ fontSize: "16px" }}
-    //   dangerouslySetInnerHTML={{ __html: task_desc }}
-    // />
-    return this.props.agent_id === "User"
-      ? <div id="task-description" style={{ fontSize: "16px" }}>
-          <h1>Live Chat</h1>
-          <hr style={{ borderTop: "1px solid #555" }} />
-          <div>
-            You recently started a <b>new job in Sydney</b> and need to find an
-            apartment to live in.
-            For now, you stay in a hotel, but that is expensive, so you'll
-            {" "}<b>want to find something soon</b>.
-            A friend of yours recommended the virtual assistant that you are
-            about
-            to talk to now.
-            Maybe it can help you find something you like?
-          </div>
-          <br />
+    if (this.props.isInReview) {
+      return <ReviewForm {...this.props} />;
+    }
 
-          <div>
-            Your task is complete, when
-            <ul>
-              <li>
-                You found an apartment that satisfies at least
-                {" "}<b>4 specific criteria</b> of your choosing (e.g. number of
-                rooms, balcony/elevator availability, etc.) - you might have to
-                make some compromises to find something
-              </li>
-              <li>
-                You have
-                {" "}<b>changed your mind about what you want at least once</b>
-                {" "}during the conversation
-              </li>
-              <li>
-                You said <b>goodbye</b> (or similar) at the end of your dialogue
-              </li>
-            </ul>
-            At the end of this dialogue, you will have to judge if the assistant
-            fulfilled his/her task.<br />
-            <div id="ask_accept">
-              If you are ready, please click "Accept HIT" to start this task.<br />
-            </div>
-          </div>
-        </div>
-      : <div id="task-description" style={{ fontSize: "16px" }}>
-          <h1>Live Chat</h1>
-          <hr style={{ borderTop: "1px solid #555" }} />
-          <div>
-            You play the role of a <b>virtual assistant</b> that helps people
-            find an apartment in Sydney.
-            The user that you talk to may sometimes change his/her mind and may
-            not be sure what he/she wants.
-            Your task is to be as helpful to the user as possible in any case,
-            but
-            {" "}
-            <b>
-              you cannot do anything but searching and discussing apartments
-            </b>.
-            So if the user wants you to make coffee, you should explain that you
-            cannot do this.
-            If you feel like you should provide the user with an example
-            apartment, <b>just make up a description</b>.
-
-            Users may even be rude or uncooperative, but you are beyond this and
-            {" "}<b>always keep a patient, level tone</b>.
-            <br />
-          </div>
-          <div>
-            Your task is complete, when
-            <ul>
-              <li>The user has found a suitable apartment</li>
-              <li>The user has said 'goodbye' (or similar)</li>
-            </ul>
-            At the end of this dialogue, you will have to judge if the user
-            fulfilled his/her task.<br />
-          </div>
-          <div id="ask_accept">
-            If you are ready, please click "Accept HIT" to start this task.<br />
-          </div>
-        </div>;
+    return <OnboardingView {...this.props} />;
   }
 }
 
@@ -863,14 +783,17 @@ class LeftPane extends React.Component {
 
     let pane_size = this.props.is_cover_page ? "col-xs-12" : "col-xs-4";
     let has_context = this.props.task_data.has_context;
+    const isInReview =
+      this.props.messages.find(msg => msg.command === "review") != null;
 
     if (
       this.props.world_state === "onboarding" ||
-      this.props.agent_id === "User"
+      this.props.agent_id === "User" ||
+      isInReview
     ) {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
-          <TaskDescription {...this.props} />
+          <TaskDescription {...this.props} isInReview={isInReview} />
           {this.props.children}
         </div>
       );
@@ -922,6 +845,9 @@ class LeftPane extends React.Component {
                           />
                         </Tab>
                       </Tabs>
+
+                      <hr />
+                      <CompleteButton {...this.props} />
                     </Tab.Pane>
                   );
                 })}
