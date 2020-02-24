@@ -39,6 +39,9 @@ import { MessageList } from "./message_list.jsx";
 import { jsonToForm } from "./form_utils";
 const fieldValuePrefix = "fv-";
 
+// This includes the initial "ready" message which is required from the turkers
+const FINISHABLE_MESSAGE_COUNT = 3;
+
 // Copied from https://github.com/RasaHQ/data-collection-2020/blob/master/apis/apis/apartment_search.json
 const apartmentJson = {
   input: [
@@ -616,10 +619,19 @@ function CompleteButton(props) {
     );
   }
 
+  const realMessageCount = props.messages.filter(
+    msg =>
+      msg.text !== "" &&
+      msg.command == null &&
+      !msg.text.startsWith("<") &&
+      msg.id !== "MTurk System"
+  ).length;
+
   // Render "Complete" button
   return (
     <Button
       className="btn btn-primary"
+      disabled={realMessageCount < FINISHABLE_MESSAGE_COUNT}
       onClick={() => {
         props.onMessageSend("<complete>", {}, () =>
           console.log("sent complete")
