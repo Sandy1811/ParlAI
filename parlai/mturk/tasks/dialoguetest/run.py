@@ -8,8 +8,9 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 
 import os
 
+import parlai.mturk.tasks.dialoguetest.echo as echo
 from parlai.mturk.tasks.dialoguetest.task_config import task_config
-from parlai.mturk.tasks.dialoguetest.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld, log_write
+from parlai.mturk.tasks.dialoguetest.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld
 from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent, WOZDummyAgent
 
 
@@ -18,8 +19,6 @@ def main():
     Handles setting up and running a ParlAI-MTurk task by instantiating an MTurk manager
     and configuring it for the qa_data_collection task.
     """
-
-    log_write("NEW RUN")
 
     # Get relevant arguments
     argparser = ParlaiParser(False, False)
@@ -110,7 +109,6 @@ def main():
         # counts.
         def assign_worker_roles(workers):
             for worker in workers:
-                log_write(f"Assigning {worker.demo_role}")
                 worker.id = worker.demo_role
 
         # Define the task function, which will be run with workers that are
