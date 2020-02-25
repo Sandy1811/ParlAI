@@ -109,7 +109,6 @@ function KnowledgeBaseMessage(props) {
   if (m != null) {
     // The result can be accessed through the `m`-variable.
     count = m[1];
-    console.log("count", count);
   }
   let exampleJson;
   try {
@@ -301,7 +300,8 @@ export class MessageList extends React.Component {
       .concat(showDummyMessage ? [dummySuggestionMessage] : [])
       .map((m, idx) => {
         const dontRender =
-          (m.command != null && m.command !== "suggestion") ||
+          (m.command != null &&
+            (m.command !== "suggestion" || agent_id === "User")) ||
           m.text.startsWith("?") ||
           (m.text.startsWith("<") && m.text.indexOf(">") > -1);
 
