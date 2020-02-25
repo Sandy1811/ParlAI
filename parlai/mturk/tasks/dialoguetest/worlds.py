@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from datetime import datetime
-from typing import Text, Union, Dict, Any, Optional, Tuple
+from typing import Text, Optional
 
 from parlai.core.agents import Agent
 from parlai.mturk.core.agents import (
@@ -15,23 +15,10 @@ from parlai.mturk.core.agents import (
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
+import parlai.mturk.tasks.dialoguetest.echo as echo
 from parlai.mturk.tasks.dialoguetest.protocol import WORKER_COMMAND_QUERY, WORKER_COMMAND_COMPLETE, COMMAND_REVIEW, \
     send_mturk_message, WORKER_COMMAND_DONE, WORKER_DISCONNECTED, extract_command_message, COMMAND_SETUP, \
     send_setup_command
-
-
-def log_write_act(index: int, agent_name: Text, act) -> None:
-    # with open("/Users/johannes/TESTLOG.log", "a+") as file:
-    #     time = str(datetime.now().isoformat())
-    #     file.write(f"{time}\t{index:2}\t{agent_name}\t{act}\n")
-    pass
-
-
-def log_write(message: Text) -> None:
-    # with open("/Users/johannes/TESTLOG.log", "a+") as file:
-    #     time = str(datetime.now().isoformat())
-    #     file.write(f"{time}\t{message}\n")
-    pass
 
 
 def is_disconnected(act):
@@ -223,7 +210,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
             "Write 'ready' when you are ready and press [Enter].",
             self.mturk_agent,
         )
-        message = self.mturk_agent.act(timeout=60)
+        message = self.mturk_agent.act()
         if is_disconnected(message):
             self.episodeDone = True
             return
@@ -283,7 +270,6 @@ class WOZWorld(MTurkTaskWorld):
     def __init__(self, opt, agents):
         self.mturk_agents = agents
         self.kb_agent = None
-        log_write(f"Initializing world with agents: {agents}")
         for agent in agents:
             if agent.demo_role == 'User':
                 self.user_agent = agent
@@ -306,7 +292,6 @@ class WOZWorld(MTurkTaskWorld):
         """
 
         if self.num_turns < 0:
-            log_write_act(0, "None", "world started")
             self.setup_interface()
             self.tell_workers_to_start()
             self.num_turns = 0
@@ -315,14 +300,12 @@ class WOZWorld(MTurkTaskWorld):
         self.num_turns += 1
 
         user_message, command, parameters = self.get_new_user_message()
-        log_write_act(self.num_turns, "User", user_message)
         self.deal_with_user_command(command, parameters)
 
         if not self.evaluating:
             self.wizard_agent.observe(user_message)
 
         wizard_message, command, parameters = self.get_new_wizard_message()
-        log_write_act(self.num_turns, "Wizard", wizard_message)
         # Handle communication between the wizard and the knowledge base
         while command and command == WORKER_COMMAND_QUERY:
             self.kb_agent.observe({"query": parameters})
@@ -338,6 +321,7 @@ class WOZWorld(MTurkTaskWorld):
         if self.num_turns >= self.max_turns:
             self.episodeDone = True
 
+    @echo.echo_out(output=echo.log_write, prefix="get_new_user_message() = ")
     def get_new_user_message(self):
         message = self.user_agent.act()
         command, parameters = extract_command_message(message)
@@ -351,6 +335,7 @@ class WOZWorld(MTurkTaskWorld):
         )
         return message, command, parameters
 
+    @echo.echo_out(output=echo.log_write, prefix="get_new_wizard_message() = ")
     def get_new_wizard_message(self):
         message = self.wizard_agent.act()
         command, parameters = extract_command_message(message)
@@ -364,6 +349,7 @@ class WOZWorld(MTurkTaskWorld):
         )
         return message, command, parameters
 
+    @echo.echo_out(output=echo.log_write, prefix="get_new_knowledgebase_message() = ")
     def get_new_knowledgebase_message(self):
         message = self.kb_agent.act()
         self.events.append(
@@ -389,14 +375,12 @@ class WOZWorld(MTurkTaskWorld):
                 self.user_agent,
             )
         elif command == WORKER_COMMAND_DONE:
-            log_write("Wizard is DONE")
             send_mturk_message(
                 "Thank you for evaluating! Please wait for the user to agree...",
                 self.wizard_agent,
             )
             self.episodeDone = True
         elif command == WORKER_DISCONNECTED:
-            log_write("Wizard DISCONNECTED")
             send_mturk_message("Sorry, the assistant disconnected...", self.user_agent)
             self.episodeDone = True
 
@@ -417,17 +401,18 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard_agent,
             )
         elif command == WORKER_COMMAND_DONE:
-            log_write("User is DONE")
             send_mturk_message(
                 "Thank you for evaluating! Please wait for the assistant to agree...",
                 self.user_agent,
             )
             self.episodeDone = True
         elif command == WORKER_DISCONNECTED:
-            log_write("User is DISCONNECTED")
             send_mturk_message("Sorry, the user disconnected...", self.user_agent)
             self.episodeDone = True
 
+    @echo.echo_in(
+        output=echo.log_write, prolog={"command": None, "recipient": (lambda a: a.id)}
+    )
     def send_command(self, command: Text, recipient: Agent) -> None:
         self.events.append(
             {"type": "WorldCommand", "command": command, "recipient": recipient.id,}
