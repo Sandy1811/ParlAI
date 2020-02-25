@@ -50,28 +50,29 @@ function getSelectionInfo(originalMessages) {
     return message.slice(prefix.length).trim();
   };
 
-  // Iterate through all messages in reverse order to find
+  // Iterate through all messages to find
   // the most recent, selected KB messages.
-  for (const msg of originalMessages.slice().reverse()) {
-    if (
-      msg.text.startsWith(selectionConstants.select_kb_entry_prefix) &&
-      selectedMessage == null
-    ) {
+  for (const msg of originalMessages) {
+    if (msg.text.startsWith(selectionConstants.select_kb_entry_prefix)) {
       selectedMessage = extractIdFromCommandMsg(msg.text);
+      if (selectedMessage === compareToMessage) {
+        // If a message was selected which was previously "compared to",
+        // compareToMessage needs to be cleared. Otherwise, the compared-to
+        // state will be restored when a new message will be selected
+        compareToMessage = null;
+      }
     } else if (
-      msg.text.startsWith(
-        selectionConstants.select_reference_kb_entry_prefix
-      ) &&
-      compareToMessage == null
+      msg.text.startsWith(selectionConstants.select_reference_kb_entry_prefix)
     ) {
-      const selected_msg_id = extractIdFromCommandMsg(msg.text);
-      compareToMessage = selected_msg_id;
-    } else if (msg.id === "KnowledgeBase" && selectedMessage == null) {
+      compareToMessage = extractIdFromCommandMsg(msg.text);
+      if (compareToMessage === selectedMessage) {
+        // If a message was selected to be "compared to" and that message was previously selected,
+        // selectedMessage needs to be cleared. Otherwise, the selected state will be restored when
+        // a new message will be compared-to
+        selectedMessage = null;
+      }
+    } else if (msg.id === "KnowledgeBase") {
       selectedMessage = msg.message_id;
-    }
-
-    if (selectedMessage != null && compareToMessage != null) {
-      break;
     }
   }
 
