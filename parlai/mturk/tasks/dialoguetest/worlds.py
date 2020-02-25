@@ -16,9 +16,17 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.dialoguetest.echo as echo
-from parlai.mturk.tasks.dialoguetest.protocol import WORKER_COMMAND_QUERY, WORKER_COMMAND_COMPLETE, COMMAND_REVIEW, \
-    send_mturk_message, WORKER_COMMAND_DONE, WORKER_DISCONNECTED, extract_command_message, COMMAND_SETUP, \
-    send_setup_command
+from parlai.mturk.tasks.dialoguetest.protocol import (
+    WORKER_COMMAND_QUERY,
+    WORKER_COMMAND_COMPLETE,
+    COMMAND_REVIEW,
+    send_mturk_message,
+    WORKER_COMMAND_DONE,
+    WORKER_DISCONNECTED,
+    extract_command_message,
+    COMMAND_SETUP,
+    send_setup_command,
+)
 
 
 def is_disconnected(act):
@@ -29,154 +37,195 @@ def is_disconnected(act):
     ]
 
 
-DUMMY_FORM_DESCRIPTION = {
-  "input": [
+DUMMY_FORM_DESCRIPTION = [
     {
-      "Name": "Level",
-      "Type": "Integer",
-      "Min": 0,
-      "Max": 15,
-      "ReadableName": "Level"
+        "input": [
+            {
+                "Name": "Level",
+                "Type": "Integer",
+                "Min": 0,
+                "Max": 15,
+                "ReadableName": "Level",
+            },
+            {
+                "Name": "MaxLevel",
+                "Type": "Integer",
+                "Min": 0,
+                "Max": 15,
+                "ReadableName": "Max Level",
+            },
+            {"Name": "HasBalcony", "Type": "Boolean", "ReadableName": "Has Balcony"},
+            {
+                "Name": "BalconySide",
+                "Type": "Categorical",
+                "Categories": ["east", "north", "south", "west"],
+                "ReadableName": "Balcony Side",
+            },
+            {"Name": "HasElevator", "Type": "Boolean", "ReadableName": "Has Elevator"},
+            {
+                "Name": "NumRooms",
+                "Type": "Integer",
+                "Min": 1,
+                "Max": 7,
+                "ReadableName": "Num Rooms",
+            },
+            {
+                "Name": "FloorSquareMeters",
+                "Type": "Integer",
+                "Min": 10,
+                "Max": 350,
+                "ReadableName": "Floor Square Meters",
+            },
+            {
+                "Name": "NearbyPOIs",
+                "Type": "CategoricalMultiple",
+                "Categories": ["School", "TrainStation", "Park"],
+                "ReadableName": "Nearby POIs",
+            },
+            {
+                "Name": "Name",
+                "Type": "Categorical",
+                "Categories": [
+                    "One on Center Apartments",
+                    "Shadyside Apartments",
+                    "North Hill Apartments",
+                ],
+                "ReadableName": "Name",
+            },
+        ],
+        "output": [
+            {
+                "Name": "Level",
+                "Type": "Integer",
+                "Min": 0,
+                "Max": 15,
+                "ReadableName": "Level",
+            },
+            {
+                "Name": "MaxLevel",
+                "Type": "Integer",
+                "Min": 0,
+                "Max": 15,
+                "ReadableName": "Max Level",
+            },
+            {"Name": "HasBalcony", "Type": "Boolean", "ReadableName": "Has Balcony"},
+            {
+                "Name": "BalconySide",
+                "Type": "Categorical",
+                "Categories": ["east", "north", "south", "west"],
+                "ReadableName": "Balcony Side",
+            },
+            {"Name": "HasElevator", "Type": "Boolean", "ReadableName": "Has Elevator"},
+            {
+                "Name": "NumRooms",
+                "Type": "Integer",
+                "Min": 1,
+                "Max": 7,
+                "ReadableName": "Num Rooms",
+            },
+            {
+                "Name": "FloorSquareMeters",
+                "Type": "Integer",
+                "Min": 10,
+                "Max": 350,
+                "ReadableName": "Floor Square Meters",
+            },
+            {
+                "Name": "NearbyPOIs",
+                "Type": "CategoricalMultiple",
+                "Categories": ["School", "TrainStation", "Park"],
+                "ReadableName": "Nearby POIs",
+            },
+            {
+                "Name": "Name",
+                "Type": "Categorical",
+                "Categories": [
+                    "One on Center Apartments",
+                    "Shadyside Apartments",
+                    "North Hill Apartments",
+                ],
+                "ReadableName": "Name",
+            },
+        ],
+        "required": [],
+        "db": "apartment",
+        "function": "generic_sample",
+        "returns_count": True,
     },
     {
-      "Name": "MaxLevel",
-      "Type": "Integer",
-      "Min": 0,
-      "Max": 15,
-      "ReadableName": "Max Level"
+        "input": [
+            {
+                "Name": "id",
+                "Type": "Integer",
+                "Min": 1,
+                "Max": 1000,
+                "ReadableName": "id",
+            }
+        ],
+        "output": [
+            {
+                "Name": "Price",
+                "Type": "Integer",
+                "Min": 5,
+                "Max": 50,
+                "ReadableName": "Price",
+            },
+            {
+                "Name": "AllowsChanges",
+                "Type": "Boolean",
+                "ReadableName": "Allows Changes",
+            },
+            {
+                "Name": "DurationMinutes",
+                "Type": "Integer",
+                "Min": 5,
+                "Max": 30,
+                "ReadableName": "Duration Minutes",
+            },
+            {
+                "Name": "ServiceProvider",
+                "Type": "Categorical",
+                "Categories": ["Uber", "Lyft", "Taxi"],
+                "ReadableName": "Service Provider",
+            },
+            {
+                "Name": "DriverName",
+                "Type": "Categorical",
+                "Categories": ["Mark", "John", "Dave", "Connor", "Alex"],
+                "ReadableName": "Driver Name",
+            },
+            {
+                "Name": "CarModel",
+                "Type": "Categorical",
+                "Categories": ["Honda", "Toyota", "Corolla", "Tesla", "BMW", "Ford"],
+                "ReadableName": "Car Model",
+            },
+            {
+                "Name": "LicensePlate",
+                "Type": "Categorical",
+                "Categories": ["432 LSA", "313 EA9", "901 FSA", "019 EAS", "031 NGA"],
+                "ReadableName": "License Plate",
+            },
+            {
+                "Name": "id",
+                "Type": "Integer",
+                "Min": 1,
+                "Max": 1000,
+                "ReadableName": "id",
+            },
+            {
+                "Name": "RideStatus",
+                "Type": "ShortString",
+                "ReadableName": "Ride Status",
+            },
+            {"Name": "RideWait", "Type": "ShortString", "ReadableName": "Ride Wait"},
+        ],
+        "required": ["id"],
+        "db": "ride",
+        "function": "ride_status",
+        "returns_count": False,
     },
-    {
-      "Name": "HasBalcony",
-      "Type": "Boolean",
-      "ReadableName": "Has Balcony"
-    },
-    {
-      "Name": "BalconySide",
-      "Type": "Categorical",
-      "Categories": [
-        "east",
-        "north",
-        "south",
-        "west"
-      ],
-      "ReadableName": "Balcony Side"
-    },
-    {
-      "Name": "HasElevator",
-      "Type": "Boolean",
-      "ReadableName": "Has Elevator"
-    },
-    {
-      "Name": "NumRooms",
-      "Type": "Integer",
-      "Min": 1,
-      "Max": 7,
-      "ReadableName": "Num Rooms"
-    },
-    {
-      "Name": "FloorSquareMeters",
-      "Type": "Integer",
-      "Min": 10,
-      "Max": 350,
-      "ReadableName": "Floor Square Meters"
-    },
-    {
-      "Name": "NearbyPOIs",
-      "Type": "CategoricalMultiple",
-      "Categories": [
-        "School",
-        "TrainStation",
-        "Park"
-      ],
-      "ReadableName": "Nearby POIs"
-    },
-    {
-      "Name": "Name",
-      "Type": "Categorical",
-      "Categories": [
-        "One on Center Apartments",
-        "Shadyside Apartments",
-        "North Hill Apartments"
-      ],
-      "ReadableName": "Name"
-    }
-  ],
-  "output": [
-    {
-      "Name": "Level",
-      "Type": "Integer",
-      "Min": 0,
-      "Max": 15,
-      "ReadableName": "Level"
-    },
-    {
-      "Name": "MaxLevel",
-      "Type": "Integer",
-      "Min": 0,
-      "Max": 15,
-      "ReadableName": "Max Level"
-    },
-    {
-      "Name": "HasBalcony",
-      "Type": "Boolean",
-      "ReadableName": "Has Balcony"
-    },
-    {
-      "Name": "BalconySide",
-      "Type": "Categorical",
-      "Categories": [
-        "east",
-        "north",
-        "south",
-        "west"
-      ],
-      "ReadableName": "Balcony Side"
-    },
-    {
-      "Name": "HasElevator",
-      "Type": "Boolean",
-      "ReadableName": "Has Elevator"
-    },
-    {
-      "Name": "NumRooms",
-      "Type": "Integer",
-      "Min": 1,
-      "Max": 7,
-      "ReadableName": "Num Rooms"
-    },
-    {
-      "Name": "FloorSquareMeters",
-      "Type": "Integer",
-      "Min": 10,
-      "Max": 350,
-      "ReadableName": "Floor Square Meters"
-    },
-    {
-      "Name": "NearbyPOIs",
-      "Type": "CategoricalMultiple",
-      "Categories": [
-        "School",
-        "TrainStation",
-        "Park"
-      ],
-      "ReadableName": "Nearby POIs"
-    },
-    {
-      "Name": "Name",
-      "Type": "Categorical",
-      "Categories": [
-        "One on Center Apartments",
-        "Shadyside Apartments",
-        "North Hill Apartments"
-      ],
-      "ReadableName": "Name"
-    }
-  ],
-  "required": [],
-  "db": "apartment",
-  "function": "generic_sample",
-  "returns_count": True
-}
+]
 
 
 class WizardOnboardingWorld(MTurkOnboardWorld):
@@ -428,10 +477,16 @@ class WOZWorld(MTurkTaskWorld):
         for agent in [self.user_agent, self.wizard_agent]:
             send_setup_command(
                 task_description=f"Dummy task description for {agent.id}",
-                completion_requirements=[f"Dummy requirement 1 for {agent.id}", f"Dummy requirement 2 for {agent.id}"],
-                completion_questions=[f"Dummy QA 1 for {agent.id}", f"Dummy QA 2 for {agent.id}"],
+                completion_requirements=[
+                    f"Dummy requirement 1 for {agent.id}",
+                    f"Dummy requirement 2 for {agent.id}",
+                ],
+                completion_questions=[
+                    f"Dummy QA 1 for {agent.id}",
+                    f"Dummy QA 2 for {agent.id}",
+                ],
                 form_description=DUMMY_FORM_DESCRIPTION,
-                recipient=agent
+                recipient=agent,
             )
 
     def tell_workers_to_start(self):

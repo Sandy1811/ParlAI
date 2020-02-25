@@ -10,6 +10,7 @@ import os
 
 import parlai.mturk.tasks.dialoguetest.echo as echo
 from parlai.mturk.tasks.dialoguetest.task_config import task_config
+from parlai.mturk.tasks.dialoguetest.utils import MTurkQualificationManager
 from parlai.mturk.tasks.dialoguetest.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld
 from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent, WOZDummyAgent
 
@@ -27,6 +28,10 @@ def main():
     WOZDummyAgent.add_cmdline_args(argparser)
     WOZKnowledgeBaseAgent.add_cmdline_args(argparser)
     opt = argparser.parse_args()
+
+    qualification_manager = MTurkQualificationManager()
+    qualification_manager.require_min_approved_hits(10)
+    qualification_manager.require_locales(["DE", "US", "CA", "GB", "AU", "NZ"])
 
     # Set the task name to be the folder name
     opt["task"] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
@@ -85,7 +90,7 @@ def main():
         mturk_manager.ready_to_accept_workers()
 
         # Create the hits as specified by command line arguments
-        mturk_manager.create_hits()
+        mturk_manager.create_hits(qualifications=qualification_manager.qualifications)
 
         # Check workers eligiblity acts as a filter, and should return
         # the list of all workers currently eligible to work on the task
