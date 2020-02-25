@@ -109,19 +109,14 @@ class QueryForm extends React.Component {
       category,
       addFormField,
       removeFormField,
-      activeFormFields
+      activeFormFields,
+      formDescriptionIndex,
+      formDescription
     } = this.props;
-
-    const setupMessage = this.props.messages.find(
-      msg => msg.command === "setup" && msg.form_description != null
-    );
-    if (setupMessage == null) {
-      return "Waiting for initialization...";
-    }
 
     // TODO: remove this flag
     const use_mock = false;
-    const json = use_mock ? apartmentJson : setupMessage.form_description;
+    const json = use_mock ? apartmentJson : formDescription;
 
     const activeAndRequiredFormFields = _.uniq(
       activeFormFields.concat(json.required)
@@ -310,14 +305,6 @@ class NumericResponse extends React.Component {
     );
   }
 }
-
-const leftSideCategories = [
-  "Apartments",
-  "Hotels",
-  "Flights",
-  "Artifacts",
-  "Trains"
-];
 
 function ReviewForm(props) {
   const unsure_hint = (
@@ -524,9 +511,7 @@ class LeftPane extends React.Component {
       current_pane: "instruction",
       last_update: 0,
       selectedTabKey: 2,
-      addedFormFieldsByCategory: Object.fromEntries(
-        leftSideCategories.map(category => [category, []])
-      )
+      addedFormFieldsByCategory: {}
     };
   }
 
@@ -535,7 +520,7 @@ class LeftPane extends React.Component {
       addedFormFieldsByCategory: {
         ...this.state.addedFormFieldsByCategory,
         [category]: [
-          ...this.state.addedFormFieldsByCategory[category],
+          ...(this.state.addedFormFieldsByCategory[category] || []),
           fieldName
         ]
       }
@@ -547,7 +532,7 @@ class LeftPane extends React.Component {
       addedFormFieldsByCategory: {
         ...this.state.addedFormFieldsByCategory,
         [category]: _.without(
-          this.state.addedFormFieldsByCategory[category],
+          this.state.addedFormFieldsByCategory[category] || [],
           fieldName
         )
       }
@@ -601,26 +586,38 @@ class LeftPane extends React.Component {
       );
     }
 
+    const setupMessage = this.props.messages.find(
+      msg => msg.command === "setup" && msg.form_description != null
+    );
+    if (setupMessage == null) {
+      return "Waiting for initialization...";
+    }
+
+    const dbNames = setupMessage.form_description.map(desc => desc.db);
+
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
-        <Tab.Container
-          id="left-tabs-example"
-          defaultActiveKey={leftSideCategories[0]}
-        >
+        <Tab.Container id="left-tabs-example" defaultActiveKey={0}>
           <Row className="clearfix">
-            <Col sm={3} style={{ marginTop: 50 }}>
+            <Col
+              sm={3}
+              style={{
+                marginTop: 50,
+                display: dbNames.length <= 1 ? "none" : undefined
+              }}
+            >
               <Nav bsStyle="pills" stacked>
-                {leftSideCategories.map(tabName =>
-                  <NavItem eventKey={tabName}>{tabName}</NavItem>
+                {dbNames.map((tabName, idx) =>
+                  <NavItem eventKey={idx}>{_.capitalize(tabName)}</NavItem>
                 )}
               </Nav>
             </Col>
             <Col sm={9}>
               <Tab.Content animation={false} mountOnEnter={true}>
-                {leftSideCategories.map(categoryName => {
+                {dbNames.map((dbName, dbIndex) => {
                   return (
                     <Tab.Pane
-                      eventKey={categoryName}
+                      eventKey={dbIndex}
                       animation={false}
                       mountOnEnter={true}
                     >
@@ -633,14 +630,17 @@ class LeftPane extends React.Component {
                           Instruction Schema Image
                         </Tab>
                         <Tab eventKey={2} title="Knowledge Base">
-                          <h4>User's requirements for {categoryName}:</h4>
+                          <h4>User's requirements for {dbName}:</h4>
                           <QueryForm
                             {...this.props}
-                            category={categoryName}
+                            category={dbName}
                             addFormField={this.addFormField}
                             removeFormField={this.removeFormField}
                             activeFormFields={
-                              this.state.addedFormFieldsByCategory[categoryName]
+                              this.state.addedFormFieldsByCategory[dbName] || []
+                            }
+                            formDescription={
+                              setupMessage.form_description[dbIndex]
                             }
                           />
                         </Tab>

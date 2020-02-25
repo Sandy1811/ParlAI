@@ -89,7 +89,7 @@ function renderKnowledgeBaseMessage(message, selectionInfo) {
   try {
     exampleJson = JSON.parse(message.slice(needlePosition + needle.length, -1));
   } catch (exc) {
-    console.log("failed to parse example json");
+    console.log("Failed to parse example JSON.");
   }
   if (exampleJson != null) {
     const rows = Object.keys(exampleJson).map((key, idx) => {
@@ -107,7 +107,7 @@ function renderKnowledgeBaseMessage(message, selectionInfo) {
     });
     message = (
       <div>
-        This and {count - 1} matches exist:
+        {count > 1 ? <span>This and {count - 1} matches exist:</span> : null}
         <table style={{ borderStyle: "none" }}>{rows}</table>
         <br />
 
