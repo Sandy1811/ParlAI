@@ -31,20 +31,43 @@ import {
 import $ from "jquery";
 import * as constants from "./constants";
 
+const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
+
 function getSelectionInfo(originalMessages) {
   let selectedMessage = null;
   let compareToMessage = null;
 
+  const extractIdFromCommandMsg = message => {
+    const {
+      select_kb_entry_prefix,
+      select_reference_kb_entry_prefix
+    } = selectionConstants;
+
+    const prefix = message.indexOf(select_kb_entry_prefix) > -1
+      ? select_kb_entry_prefix
+      : select_reference_kb_entry_prefix;
+
+    return message.slice(prefix.length).trim();
+  };
+
+  // Iterate through all messages in reverse order to find
+  // the most recent, selected KB messages.
   for (const msg of originalMessages.slice().reverse()) {
-    if (msg.command === "<select_message>" && selectedMessage == null) {
-      selectedMessage = "todo";
-    } else if (msg.id === "KnowledgeBase" && selectedMessage == null) {
-      selectedMessage = "todo";
+    if (
+      msg.text.startsWith(selectionConstants.select_kb_entry_prefix) &&
+      selectedMessage == null
+    ) {
+      selectedMessage = extractIdFromCommandMsg(msg.text);
     } else if (
-      msg.command === "<compare_to_message>" &&
+      msg.text.startsWith(
+        selectionConstants.select_reference_kb_entry_prefix
+      ) &&
       compareToMessage == null
     ) {
-      compareToMessage = "todo";
+      const selected_msg_id = extractIdFromCommandMsg(msg.text);
+      compareToMessage = selected_msg_id;
+    } else if (msg.id === "KnowledgeBase" && selectedMessage == null) {
+      selectedMessage = msg.message_id;
     }
 
     if (selectedMessage != null && compareToMessage != null) {
@@ -58,16 +81,18 @@ function getSelectionInfo(originalMessages) {
   };
 }
 
-function renderKnowledgeBaseMessage(message, selectionInfo) {
+function KnowledgeBaseMessage(props) {
+  const { message, selectionInfo } = props;
+
   const needle = "Example: ";
   const needlePosition = message.indexOf(needle);
 
   const { selectedMessage, compareToMessage } = selectionInfo;
 
   let toggleValue;
-  if (message === selectedMessage) {
+  if (props.message_id === selectedMessage) {
     toggleValue = "selected";
-  } else if (message === compareToMessage) {
+  } else if (props.message_id === compareToMessage) {
     toggleValue = "compare_to";
   } else {
     toggleValue = "not_selected";
@@ -105,16 +130,51 @@ function renderKnowledgeBaseMessage(message, selectionInfo) {
         </tr>
       );
     });
-    message = (
+
+    const handleSelection = value => {
+      if (value === "not_selected") {
+        return;
+      }
+
+      const prefix = value === "selected"
+        ? selectionConstants.select_kb_entry_prefix
+        : selectionConstants.select_reference_kb_entry_prefix;
+
+      props.onMessageSend(`${prefix} ${props.message_id}`, {}, () =>
+        console.log("sent selection")
+      );
+
+      // select_kb_entry_prefix
+      // select_reference_kb_entry_prefix
+    };
+
+    return (
       <div>
         {count > 1 ? <span>This and {count - 1} matches exist:</span> : null}
-        <table style={{ borderStyle: "none" }}>{rows}</table>
+        <table style={{ borderStyle: "none" }}><tbody>{rows}</tbody></table>
         <br />
 
-        <ToggleButtonGroup type="radio" name="options" value={toggleValue}>
+        <ToggleButtonGroup
+          type="radio"
+          name="options"
+          value={toggleValue}
+          onChange={handleSelection}
+        >
           <ToggleButton value={"selected"}>selected</ToggleButton>
-          <ToggleButton value={"compare_to"}>compare to</ToggleButton>
-          <ToggleButton value={"not_selected"}>not selected</ToggleButton>
+          <ToggleButton
+            value={"compare_to"}
+            disabled={toggleValue === "selected"}
+            title={
+              toggleValue === "selected"
+                ? "Cannot compare to this message because it's already selected."
+                : null
+            }
+          >
+            compare to
+          </ToggleButton>
+          <ToggleButton value={"not_selected"} disabled>
+            not selected
+          </ToggleButton>
         </ToggleButtonGroup>
       </div>
     );
@@ -149,7 +209,7 @@ class ChatMessage extends React.Component {
     const isKB = this.props.agent_id === "KnowledgeBase";
     const onlyVisibleMsg = isKB ? " (Only visible to you)" : null;
     let message = isKB
-      ? renderKnowledgeBaseMessage(this.props.message, this.props.selectionInfo)
+      ? <KnowledgeBaseMessage {...this.props} />
       : this.props.message;
 
     return (
@@ -205,6 +265,7 @@ export class MessageList extends React.Component {
         ? null
         : <div key={m.message_id} onClick={() => onClickMessage(idx)}>
             <ChatMessage
+              {...this.props}
               is_self={m.id == agent_id}
               invisible={dontRender}
               agent_id={m.id}
