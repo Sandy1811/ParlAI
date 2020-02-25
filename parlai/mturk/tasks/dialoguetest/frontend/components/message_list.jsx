@@ -31,6 +31,98 @@ import {
 import $ from "jquery";
 import * as constants from "./constants";
 
+function getSelectionInfo(originalMessages) {
+  let selectedMessage = null;
+  let compareToMessage = null;
+
+  for (const msg of originalMessages.slice().reverse()) {
+    if (msg.command === "<select_message>" && selectedMessage == null) {
+      selectedMessage = "todo";
+    } else if (msg.id === "KnowledgeBase" && selectedMessage == null) {
+      selectedMessage = "todo";
+    } else if (
+      msg.command === "<compare_to_message>" &&
+      compareToMessage == null
+    ) {
+      compareToMessage = "todo";
+    }
+
+    if (selectedMessage != null && compareToMessage != null) {
+      break;
+    }
+  }
+
+  return {
+    selectedMessage,
+    compareToMessage
+  };
+}
+
+function renderKnowledgeBaseMessage(message, selectionInfo) {
+  const needle = "Example: ";
+  const needlePosition = message.indexOf(needle);
+
+  const { selectedMessage, compareToMessage } = selectionInfo;
+
+  let toggleValue;
+  if (message === selectedMessage) {
+    toggleValue = "selected";
+  } else if (message === compareToMessage) {
+    toggleValue = "compare_to";
+  } else {
+    toggleValue = "not_selected";
+  }
+
+  if (needlePosition === -1) {
+    return message;
+  }
+
+  const regex = /Found ([0-9]+)/;
+  let count = null;
+  const m = regex.exec(message);
+  if (m != null) {
+    // The result can be accessed through the `m`-variable.
+    count = m[1];
+    console.log("count", count);
+  }
+  let exampleJson;
+  try {
+    exampleJson = JSON.parse(message.slice(needlePosition + needle.length, -1));
+  } catch (exc) {
+    console.log("failed to parse example json");
+  }
+  if (exampleJson != null) {
+    const rows = Object.keys(exampleJson).map((key, idx) => {
+      let value = exampleJson[key];
+      if (typeof value === "boolean") {
+        value = value ? "yes" : "no";
+      }
+
+      return (
+        <tr key={key}>
+          <td>{key}:</td>
+          <td>{value}</td>
+        </tr>
+      );
+    });
+    message = (
+      <div>
+        This and {count - 1} matches exist:
+        <table style={{ borderStyle: "none" }}>{rows}</table>
+        <br />
+
+        <ToggleButtonGroup type="radio" name="options" value={toggleValue}>
+          <ToggleButton value={"selected"}>selected</ToggleButton>
+          <ToggleButton value={"compare_to"}>compare to</ToggleButton>
+          <ToggleButton value={"not_selected"}>not selected</ToggleButton>
+        </ToggleButtonGroup>
+      </div>
+    );
+  }
+
+  return message;
+}
+
 class ChatMessage extends React.Component {
   render() {
     let float_loc = "left";
@@ -56,61 +148,9 @@ class ChatMessage extends React.Component {
 
     const isKB = this.props.agent_id === "KnowledgeBase";
     const onlyVisibleMsg = isKB ? " (Only visible to you)" : null;
-    const needle = "Example: ";
-    const needlePosition = this.props.message.indexOf(needle);
-    let message = this.props.message;
-
-    if (needlePosition >= 0) {
-      const regex = /Found ([0-9]+)/;
-      let count = null;
-      const m = regex.exec(message);
-      if (m != null) {
-        // The result can be accessed through the `m`-variable.
-        count = m[1];
-        console.log("count", count);
-      }
-      let exampleJson;
-      try {
-        exampleJson = JSON.parse(
-          this.props.message.slice(needlePosition + needle.length, -1)
-        );
-      } catch (exc) {
-        console.log("failed to parse example json");
-      }
-      if (exampleJson != null) {
-        const rows = Object.keys(exampleJson).map((key, idx) => {
-          let value = exampleJson[key];
-          if (typeof value === "boolean") {
-            value = value ? "yes" : "no";
-          }
-
-          return (
-            <tr key={key}>
-              <td>{key}:</td>
-              <td>{value}</td>
-            </tr>
-          );
-        });
-        message = (
-          <div>
-            This and {count - 1} matches exist:
-            <table style={{ borderStyle: "none" }}>{rows}</table>
-            <br />
-
-            <ToggleButtonGroup
-              type="radio"
-              name="options"
-              defaultValue={"selected"}
-            >
-              <ToggleButton value={"selected"}>selected</ToggleButton>
-              <ToggleButton value={"compare to"}>compare to</ToggleButton>
-              <ToggleButton value={"not selected"}>not selected</ToggleButton>
-            </ToggleButtonGroup>
-
-          </div>
-        );
-      }
-    }
+    let message = isKB
+      ? renderKnowledgeBaseMessage(this.props.message, this.props.selectionInfo)
+      : this.props.message;
 
     return (
       <div
@@ -148,11 +188,13 @@ export class MessageList extends React.Component {
     // Handles rendering messages from both the user and anyone else
     // on the thread - agent_ids for the sender of a message exist in
     // the m.id field.
-    let XChatMessage = ChatMessage;
     let onClickMessage = this.props.onClickMessage;
     if (typeof onClickMessage !== "function") {
       onClickMessage = idx => {};
     }
+
+    const selectionInfo = getSelectionInfo(this.props.messages);
+
     return messages.map((m, idx) => {
       const dontRender =
         m.command != null ||
@@ -162,7 +204,7 @@ export class MessageList extends React.Component {
       return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
         ? null
         : <div key={m.message_id} onClick={() => onClickMessage(idx)}>
-            <XChatMessage
+            <ChatMessage
               is_self={m.id == agent_id}
               invisible={dontRender}
               agent_id={m.id}
@@ -170,6 +212,7 @@ export class MessageList extends React.Component {
               task_data={m.task_data}
               message_id={m.message_id}
               duration={this.props.is_review ? m.duration : undefined}
+              selectionInfo={selectionInfo}
             />
           </div>;
     });
