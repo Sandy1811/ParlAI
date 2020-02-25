@@ -54,7 +54,16 @@ class QueryForm extends React.Component {
       removeFormField,
       activeFormFields
     } = this.props;
-    const json = apartmentJson;
+
+    const setupMessage = this.props.messages.find(
+      msg => msg.command === "setup" && msg.form_description != null
+    );
+    if (setupMessage == null) {
+      return "Waiting for initialization...";
+    }
+
+    const use_mock = false;
+    const json = use_mock ? apartmentJson : setupMessage.form_description;
 
     return (
       <form
@@ -293,84 +302,6 @@ class NumericResponse extends React.Component {
         <div style={input_style}>
           {text_input}
           {submit_button}
-        </div>
-      </div>
-    );
-  }
-}
-
-class EvaluationResponse extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { textval: "", sending: false };
-  }
-
-  tryMessageSend(value) {
-    if (this.props.active && !this.state.sending) {
-      this.setState({ sending: true });
-      this.props.onMessageSend(value, {}, () =>
-        this.setState({ textval: "", sending: false })
-      );
-    }
-  }
-
-  render() {
-    let pane_style = {
-      paddingLeft: "25px",
-      paddingTop: "20px",
-      paddingBottom: "20px",
-      paddingRight: "25px",
-      float: "left",
-      width: "100%"
-    };
-    let input_style = {
-      height: "50px",
-      width: "100%",
-      display: "block",
-      float: "left"
-    };
-    let submit_style = {
-      width: "100px",
-      height: "100%",
-      fontSize: "16px",
-      float: "left",
-      marginLeft: "10px",
-      padding: "0px"
-    };
-
-    let reject_button = (
-      <Button
-        className="btn btn-danger"
-        style={submit_style}
-        id="id_reject_chat_button"
-        disabled={!this.props.active || this.state.sending}
-        onClick={() => this.tryMessageSend("reject")}
-      >
-        Reject!
-      </Button>
-    );
-
-    let approve_button = (
-      <Button
-        className="btn btn-success"
-        style={submit_style}
-        id="id_approve_chat_button"
-        disabled={!this.props.active || this.state.sending}
-        onClick={() => this.tryMessageSend("approve")}
-      >
-        Approve!
-      </Button>
-    );
-
-    return (
-      <div
-        id="response-type-text-input"
-        className="response-type-module"
-        style={pane_style}
-      >
-        <div style={input_style}>
-          {reject_button}
-          {approve_button}
         </div>
       </div>
     );
@@ -722,7 +653,6 @@ class LeftPane extends React.Component {
           </Row>
         </Tab.Container>
         {this.props.children}
-        {/*JSON.stringify(this.props)*/}
       </div>
     );
   }
@@ -736,10 +666,6 @@ export default {
     // default: leave blank to use original default when no ids match
     // Wizard: EvaluationResponse,
     User: NumericResponse
-  },
-  XIdleResponse: {
-    // default: leave blank to use original default when no ids match
-    Wizard: EvaluatorIdleResponse
   },
   XLeftPane: {
     Wizard: LeftPane,
