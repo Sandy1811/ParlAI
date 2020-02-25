@@ -135,20 +135,28 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
           </FormGroup>
         );
       case "Integer":
-        // handle Min and Max
+        // TODO: handle Min and Max
+        // TODO: more operators for all data types
+
+        // contains
+        // is_one_of
+        // contain_all_of
+        // contain_at_least_one_of
+        // contains_substring
         return (
           <FormGroup controlId="formControlsNumber">
             {controlLabelWithRemove}
             <div>
               <FormControl
                 required={isRequired}
-                name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
+                name={`${constants.FIELD_OPERATOR_PREFIX}${input.Name}`}
                 componentClass="select"
                 placeholder="is"
                 style={{ maxWidth: 130, display: "inline-block" }}
               >
-                <option value="is">is</option>
+                <option value="is_equal_to">is equal to</option>
                 <option value="is_greater_than">is greater than</option>
+                <option value="is_less_than">is less than</option>
                 <option value="is_not">is not</option>
               </FormControl>
               <FormControl
