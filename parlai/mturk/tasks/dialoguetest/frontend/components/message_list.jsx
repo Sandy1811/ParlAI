@@ -172,7 +172,13 @@ function KnowledgeBaseMessage(props) {
           >
             compare to
           </ToggleButton>
-          <ToggleButton value={"not_selected"} disabled>
+          <ToggleButton
+            value={"not_selected"}
+            disabled
+            title={
+              "Deselect this entry by selecting another knowledge base item."
+            }
+          >
             not selected
           </ToggleButton>
         </ToggleButtonGroup>
@@ -259,7 +265,7 @@ export class MessageList extends React.Component {
       const dontRender =
         m.command != null ||
         m.text.startsWith("?") ||
-        (m.text.startsWith("<") && m.text.endsWith(">"));
+        (m.text.startsWith("<") && m.text.indexOf(">") > -1);
 
       return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
         ? null
