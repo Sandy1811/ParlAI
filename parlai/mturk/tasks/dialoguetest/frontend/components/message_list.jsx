@@ -126,7 +126,7 @@ function KnowledgeBaseMessage(props) {
 
       return (
         <tr key={key}>
-          <td>{key}:</td>
+          <td style={{ paddingRight: 10 }}>{key}:</td>
           <td>{value}</td>
         </tr>
       );
@@ -213,11 +213,38 @@ class ChatMessage extends React.Component {
       );
     }
 
+    const isDummyMessage = this.props.command === "suggestion";
     const isKB = this.props.agent_id === "KnowledgeBase";
+    let message = null;
+
+    if (isDummyMessage) {
+      const suggestions = JSON.parse(this.props.message);
+
+      message = (
+        <div>
+          Please pick one of the following replies:
+          {suggestions.map(suggestion =>
+            <div style={{ margin: "6px 0" }}>
+              <Button
+                className="btn"
+                onClick={() => {
+                  this.props.onMessageSend(suggestion, {}, () =>
+                    console.log("sent suggestion")
+                  );
+                }}
+              >
+                {suggestion}
+              </Button>
+            </div>
+          )}
+        </div>
+      );
+    } else if (isKB) {
+      message = <KnowledgeBaseMessage {...this.props} />;
+    } else {
+      message = this.props.message;
+    }
     const onlyVisibleMsg = isKB ? " (Only visible to you)" : null;
-    let message = isKB
-      ? <KnowledgeBaseMessage {...this.props} />
-      : this.props.message;
 
     return (
       <div
@@ -255,35 +282,46 @@ export class MessageList extends React.Component {
     // Handles rendering messages from both the user and anyone else
     // on the thread - agent_ids for the sender of a message exist in
     // the m.id field.
-    let onClickMessage = this.props.onClickMessage;
-    if (typeof onClickMessage !== "function") {
-      onClickMessage = idx => {};
-    }
 
     const selectionInfo = getSelectionInfo(this.props.messages);
+    const dummySuggestionMessage = {
+      id: "MTurk System",
+      message_id: "message_id",
+      text: JSON.stringify(["Suggestion 1", "Suggestion 2", "Suggestion 3"]),
+      type: "MESSAGE",
+      command: "suggestion"
+    };
+    const showDummyMessage =
+      messages.length > 0 &&
+      messages[messages.length - 1].text.startsWith(
+        selectionConstants.request_suggestions_prefix
+      );
 
-    return messages.map((m, idx) => {
-      const dontRender =
-        m.command != null ||
-        m.text.startsWith("?") ||
-        (m.text.startsWith("<") && m.text.indexOf(">") > -1);
+    return messages
+      .concat(showDummyMessage ? [dummySuggestionMessage] : [])
+      .map((m, idx) => {
+        const dontRender =
+          (m.command != null && m.command !== "suggestion") ||
+          m.text.startsWith("?") ||
+          (m.text.startsWith("<") && m.text.indexOf(">") > -1);
 
-      return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
-        ? null
-        : <div key={m.message_id} onClick={() => onClickMessage(idx)}>
-            <ChatMessage
-              {...this.props}
-              is_self={m.id == agent_id}
-              invisible={dontRender}
-              agent_id={m.id}
-              message={m.text}
-              task_data={m.task_data}
-              message_id={m.message_id}
-              duration={this.props.is_review ? m.duration : undefined}
-              selectionInfo={selectionInfo}
-            />
-          </div>;
-    });
+        return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
+          ? null
+          : <div key={m.message_id}>
+              <ChatMessage
+                {...this.props}
+                is_self={m.id == agent_id}
+                invisible={dontRender}
+                agent_id={m.id}
+                message={m.text}
+                command={m.command}
+                task_data={m.task_data}
+                message_id={m.message_id}
+                duration={this.props.is_review ? m.duration : undefined}
+                selectionInfo={selectionInfo}
+              />
+            </div>;
+      });
   }
 
   render() {

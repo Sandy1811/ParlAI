@@ -210,18 +210,29 @@ class NumericResponse extends React.Component {
     this.props.onInputResize();
   }
 
-  tryMessageSend() {
+  tryMessageSend(shouldSuggest) {
     if (this.state.textval != "" && this.props.active && !this.state.sending) {
       this.setState({ sending: true });
-      this.props.onMessageSend(this.state.textval, {}, () =>
-        this.setState({ textval: "", sending: false })
-      );
+
+      if (shouldSuggest) {
+        const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
+        this.props.onMessageSend(
+          `${selectionConstants.request_suggestions_prefix}${this.state
+            .textval}`,
+          {},
+          () => this.setState({ textval: "", sending: false })
+        );
+      } else {
+        this.props.onMessageSend(this.state.textval, {}, () =>
+          this.setState({ textval: "", sending: false })
+        );
+      }
     }
   }
 
-  handleKeyPress(e) {
+  handleKeyPress(e, shouldSuggest) {
     if (e.key === "Enter") {
-      this.tryMessageSend();
+      this.tryMessageSend(shouldSuggest);
       e.stopPropagation();
       e.nativeEvent.stopImmediatePropagation();
     }
@@ -251,13 +262,13 @@ class NumericResponse extends React.Component {
       float: "left"
     };
     let submit_style = {
-      width: "100px",
       height: "100%",
       fontSize: "16px",
       float: "left",
-      marginLeft: "10px",
-      padding: "0px"
+      marginLeft: "10px"
     };
+    const shouldSuggest =
+      this.props.messages.find(msg => msg.id === "KnowledgeBase") != null;
 
     let text_input = (
       <FormControl
@@ -271,7 +282,7 @@ class NumericResponse extends React.Component {
         }}
         value={this.state.textval}
         placeholder="Please enter here..."
-        onKeyPress={e => this.handleKeyPress(e)}
+        onKeyPress={e => this.handleKeyPress(e, shouldSuggest)}
         onChange={e => this.updateValue(e.target.value)}
         disabled={!this.props.active || this.state.sending}
       />
@@ -285,9 +296,9 @@ class NumericResponse extends React.Component {
         disabled={
           this.state.textval == "" || !this.props.active || this.state.sending
         }
-        onClick={() => this.tryMessageSend()}
+        onClick={() => this.tryMessageSend(shouldSuggest)}
       >
-        Send
+        {shouldSuggest ? "Get Suggestions" : "Send"}
       </Button>
     );
 
@@ -661,14 +672,10 @@ class LeftPane extends React.Component {
   }
 }
 
-// Package components
-
 export default {
-  // ComponentName: CustomReplacementComponentMap
   XTextResponse: {
     // default: leave blank to use original default when no ids match
-    // Wizard: EvaluationResponse,
-    User: NumericResponse
+    Wizard: NumericResponse
   },
   XLeftPane: {
     Wizard: LeftPane,
