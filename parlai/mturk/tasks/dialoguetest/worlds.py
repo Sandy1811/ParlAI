@@ -15,6 +15,10 @@ from parlai.mturk.core.agents import (
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
+from parlai.mturk.tasks.dialoguetest.protocol import WORKER_COMMAND_QUERY, WORKER_COMMAND_COMPLETE, COMMAND_REVIEW, \
+    send_mturk_message, WORKER_COMMAND_DONE, WORKER_DISCONNECTED, extract_command_message, COMMAND_SETUP, \
+    send_setup_command
+
 
 def log_write_act(index: int, agent_name: Text, act) -> None:
     # with open("/Users/johannes/TESTLOG.log", "a+") as file:
@@ -36,6 +40,156 @@ def is_disconnected(act):
         RETURN_MESSAGE,
         TIMEOUT_MESSAGE,
     ]
+
+
+DUMMY_FORM_DESCRIPTION = {
+  "input": [
+    {
+      "Name": "Level",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Level"
+    },
+    {
+      "Name": "MaxLevel",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Max Level"
+    },
+    {
+      "Name": "HasBalcony",
+      "Type": "Boolean",
+      "ReadableName": "Has Balcony"
+    },
+    {
+      "Name": "BalconySide",
+      "Type": "Categorical",
+      "Categories": [
+        "east",
+        "north",
+        "south",
+        "west"
+      ],
+      "ReadableName": "Balcony Side"
+    },
+    {
+      "Name": "HasElevator",
+      "Type": "Boolean",
+      "ReadableName": "Has Elevator"
+    },
+    {
+      "Name": "NumRooms",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 7,
+      "ReadableName": "Num Rooms"
+    },
+    {
+      "Name": "FloorSquareMeters",
+      "Type": "Integer",
+      "Min": 10,
+      "Max": 350,
+      "ReadableName": "Floor Square Meters"
+    },
+    {
+      "Name": "NearbyPOIs",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park"
+      ],
+      "ReadableName": "Nearby POIs"
+    },
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Level",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Level"
+    },
+    {
+      "Name": "MaxLevel",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Max Level"
+    },
+    {
+      "Name": "HasBalcony",
+      "Type": "Boolean",
+      "ReadableName": "Has Balcony"
+    },
+    {
+      "Name": "BalconySide",
+      "Type": "Categorical",
+      "Categories": [
+        "east",
+        "north",
+        "south",
+        "west"
+      ],
+      "ReadableName": "Balcony Side"
+    },
+    {
+      "Name": "HasElevator",
+      "Type": "Boolean",
+      "ReadableName": "Has Elevator"
+    },
+    {
+      "Name": "NumRooms",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 7,
+      "ReadableName": "Num Rooms"
+    },
+    {
+      "Name": "FloorSquareMeters",
+      "Type": "Integer",
+      "Min": 10,
+      "Max": 350,
+      "ReadableName": "Floor Square Meters"
+    },
+    {
+      "Name": "NearbyPOIs",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park"
+      ],
+      "ReadableName": "Nearby POIs"
+    },
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    }
+  ],
+  "required": [],
+  "db": "apartment",
+  "function": "generic_sample",
+  "returns_count": True
+}
 
 
 class WizardOnboardingWorld(MTurkOnboardWorld):
@@ -78,8 +232,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         #     self.episodeDone = True
         #     return
         send_mturk_message(
-            "Please wait for the user and join the conversation...",
-            self.mturk_agent,
+            "Please wait for the user and join the conversation...", self.mturk_agent,
         )
         # self.mturk_agent.onboarding_turns = 1
         self.episodeDone = True
@@ -118,49 +271,6 @@ class UserOnboardingWorld(MTurkOnboardWorld):
 
     def get_task_agent(self):
         return self.mturk_agent
-
-
-COMMAND_SETUP = "setup"
-COMMAND_REVIEW = "review"
-
-MESSAGE_COMPLETE_PREFIX = "<complete>"
-MESSAGE_DONE_PREFIX = "<done>"
-MESSAGE_QUERY_PREFIX = "? "
-
-WORKER_COMMAND_COMPLETE = "complete"
-WORKER_COMMAND_DONE = "done"
-WORKER_COMMAND_QUERY = "query"
-
-WORKER_DISCONNECTED = "disconnect"
-
-
-def send_mturk_message(text: Text, recipient: Agent) -> None:
-    message = {"id": "MTurk System", "text": text}
-    recipient.observe(message)
-
-
-def extract_command_message(
-    message: Optional[Dict[Text, Any]]
-) -> Tuple[Optional[Text], Optional[Text]]:
-    log_write(f"extract_command_message({message})")
-    command = None
-    parameters = None
-    if message and message.get("text"):
-        text = message.get("text", "")
-        if text.startswith(MESSAGE_COMPLETE_PREFIX):
-            command = WORKER_COMMAND_COMPLETE
-            parameters = None
-        elif text.startswith(MESSAGE_DONE_PREFIX):
-            command = WORKER_COMMAND_DONE
-            parameters = text[len(MESSAGE_DONE_PREFIX) :].strip()
-        elif text.startswith(MESSAGE_QUERY_PREFIX):
-            command = WORKER_COMMAND_QUERY
-            parameters = text[len(MESSAGE_QUERY_PREFIX) :].strip()
-        elif text == "[DISCONNECT]":
-            command = WORKER_DISCONNECTED
-            parameters = None
-
-    return command, parameters
 
 
 class WOZWorld(MTurkTaskWorld):
@@ -213,6 +323,13 @@ class WOZWorld(MTurkTaskWorld):
 
         wizard_message, command, parameters = self.get_new_wizard_message()
         log_write_act(self.num_turns, "Wizard", wizard_message)
+        # Handle communication between the wizard and the knowledge base
+        while command and command == WORKER_COMMAND_QUERY:
+            self.kb_agent.observe({"query": parameters})
+            kb_message, _, _ = self.get_new_knowledgebase_message()
+            self.wizard_agent.observe(kb_message)
+            wizard_message, command, parameters = self.get_new_wizard_message()
+
         self.deal_with_wizard_command(command, parameters)
 
         if not self.evaluating:
@@ -259,13 +376,6 @@ class WOZWorld(MTurkTaskWorld):
     ) -> None:
         if command is None:
             return
-        elif command == WORKER_COMMAND_QUERY and self.kb_agent:
-            # Handle communication between the wizard and the knowledge base
-            while command and command == WORKER_COMMAND_QUERY:
-                self.kb_agent.observe({"query": parameters})
-                kb_message, _, _ = self.get_new_knowledgebase_message()
-                self.wizard_agent.observe(kb_message)
-                wizard_message, command, parameters = self.get_new_wizard_message()
         elif command == WORKER_COMMAND_COMPLETE:
             self.send_command(COMMAND_REVIEW, self.wizard_agent)
             self.send_command(COMMAND_REVIEW, self.user_agent)
@@ -331,12 +441,17 @@ class WOZWorld(MTurkTaskWorld):
 
     def setup_interface(self):
         for agent in [self.user_agent, self.wizard_agent]:
-            self.send_command(COMMAND_SETUP, agent)
+            send_setup_command(
+                task_description=f"Dummy task description for {agent.id}",
+                completion_requirements=[f"Dummy requirement 1 for {agent.id}", f"Dummy requirement 2 for {agent.id}"],
+                completion_questions=[f"Dummy QA 1 for {agent.id}", f"Dummy QA 2 for {agent.id}"],
+                form_description=DUMMY_FORM_DESCRIPTION,
+                recipient=agent
+            )
 
     def tell_workers_to_start(self):
         send_mturk_message(
-            "The assistant is ready. Go ahead, say hello!",
-            self.user_agent,
+            "The assistant is ready. Go ahead, say hello!", self.user_agent,
         )
         send_mturk_message(
             "A user has joined the chat. Please wait for him/her to start the conversation.",
