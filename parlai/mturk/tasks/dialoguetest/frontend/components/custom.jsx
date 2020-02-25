@@ -47,6 +47,63 @@ class QueryForm extends React.Component {
     this.addFormFieldRef = React.createRef();
   }
 
+  onSubmit = event => {
+    event.preventDefault();
+    let form = event.target;
+
+    console.log("form.elements", form.elements);
+
+    const parameters = {};
+    const operators = {};
+
+    // Gather operators
+    for (const element of form.elements) {
+      if (!element.name.startsWith(constants.FIELD_OPERATOR_PREFIX)) {
+        continue;
+      }
+      const key = element.name.slice(constants.FIELD_VALUE_PREFIX.length);
+
+      operators[key] = element.value;
+    }
+
+    for (const element of form.elements) {
+      if (element.name.startsWith(constants.FIELD_VALUE_PREFIX)) {
+        const key = element.name.slice(constants.FIELD_VALUE_PREFIX.length);
+
+        // ? { "Level": api.is_greater_than(10) }
+
+        if (element.type === "checkbox") {
+          // Todo: Clean this up as soon as back-end handles this properly
+          parameters[key] = element.checked ? "##True##" : "##False##";
+        } else if (element.type === "select-one" || element.type === "number") {
+          const { value } = element;
+          const parsedValue = parseFloat(value);
+          const operator = operators[key];
+
+          const operatorEndings = ["", ""];
+          if (operator != null) {
+            operatorEndings[0] = `api.${operator}(`;
+            operatorEndings[1] = `)`;
+          }
+
+          parameters[key] = isNaN(parsedValue)
+            ? value
+            : `##${operatorEndings[0]}${parsedValue}${operatorEndings[1]}##`;
+        } else if (element.type === "select-multiple") {
+          // Todo
+          console.warning("not implemented yet");
+        }
+      }
+    }
+    console.log("parameters", parameters);
+    console.log("sending ?", parameters);
+    this.props.onMessageSend(
+      `? ${JSON.stringify(parameters).replace(/"##/g, "").replace(/##"/g, "")}`,
+      {},
+      () => console.log("done")
+    );
+  };
+
   render() {
     const {
       category,
@@ -62,75 +119,16 @@ class QueryForm extends React.Component {
       return "Waiting for initialization...";
     }
 
+    // TODO: remove this flag
     const use_mock = false;
     const json = use_mock ? apartmentJson : setupMessage.form_description;
 
+    const activeAndRequiredFormFields = _.uniq(
+      activeFormFields.concat(json.required)
+    );
+
     return (
-      <form
-        onSubmit={event => {
-          event.preventDefault();
-          let form = event.target;
-
-          console.log("form.elements", form.elements);
-
-          const parameters = {};
-          const operators = {};
-
-          // Gather operators
-          for (const element of form.elements) {
-            if (!element.name.startsWith(constants.FIELD_OPERATOR_PREFIX)) {
-              continue;
-            }
-            const key = element.name.slice(constants.FIELD_VALUE_PREFIX.length);
-
-            operators[key] = element.value;
-          }
-
-          for (const element of form.elements) {
-            if (element.name.startsWith(constants.FIELD_VALUE_PREFIX)) {
-              const key = element.name.slice(
-                constants.FIELD_VALUE_PREFIX.length
-              );
-
-              // ? { "Level": api.is_greater_than(10) }
-
-              if (element.type === "checkbox") {
-                // Todo: Clean this up as soon as back-end handles this properly
-                parameters[key] = element.checked ? "##True##" : "##False##";
-              } else if (
-                element.type === "select-one" ||
-                element.type === "number"
-              ) {
-                const { value } = element;
-                const parsedValue = parseFloat(value);
-                const operator = operators[key];
-
-                const operatorEndings = ["", ""];
-                if (operator != null) {
-                  operatorEndings[0] = `api.${operator}(`;
-                  operatorEndings[1] = `)`;
-                }
-
-                parameters[key] = isNaN(parsedValue)
-                  ? value
-                  : `##${operatorEndings[0]}${parsedValue}${operatorEndings[1]}##`;
-              } else if (element.type === "select-multiple") {
-                // Todo
-                console.warning("not implemented yet");
-              }
-            }
-          }
-          console.log("parameters", parameters);
-          console.log("sending ?", parameters);
-          this.props.onMessageSend(
-            `? ${JSON.stringify(parameters)
-              .replace(/"##/g, "")
-              .replace(/##"/g, "")}`,
-            {},
-            () => console.log("done")
-          );
-        }}
-      >
+      <form onSubmit={this.onSubmit}>
         <FormGroup>
           <div>
             <FormControl
@@ -157,7 +155,12 @@ class QueryForm extends React.Component {
           </div>
         </FormGroup>
         <hr />
-        {jsonToForm(json, category, activeFormFields, removeFormField)}
+        {jsonToForm(
+          json,
+          category,
+          activeAndRequiredFormFields,
+          removeFormField
+        )}
 
         <Button
           className="btn btn-primary"
