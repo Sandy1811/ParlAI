@@ -135,14 +135,21 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
           </FormGroup>
         );
       case "Integer":
-        // TODO: handle Min and Max
         // TODO: more operators for all data types
 
-        // contains
+        // right side - multiple
         // is_one_of
         // contain_all_of
         // contain_at_least_one_of
+
+        // right side - single
+        // is_equal_to
         // contains_substring
+        // contains
+        // is_not
+
+        const { Min, Max } = input;
+
         return (
           <FormGroup controlId="formControlsNumber">
             {controlLabelWithRemove}
@@ -164,6 +171,8 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
                 name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
                 componentClass="input"
                 type="number"
+                min={Min}
+                max={Max}
                 style={{
                   maxWidth: 200,
                   display: "inline-block",
