@@ -5,7 +5,9 @@ from parlai.core.agents import Agent
 import parlai.mturk.tasks.dialoguetest.echo as echo
 import os, json
 
-with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "constants.json"), "r") as file:
+with open(
+    os.path.join(os.path.dirname(os.path.abspath(__file__)), "constants.json"), "r"
+) as file:
     ALL_CONSTANTS = json.load(file)
 
 COMMAND_SETUP = ALL_CONSTANTS["back_to_front"]["command_setup"]
@@ -27,7 +29,7 @@ USER_ID = ALL_CONSTANTS["agent_ids"]["user_id"]
 KNOWLEDGE_BASE_ID = ALL_CONSTANTS["agent_ids"]["knowledgebase_id"]
 
 
-@echo.echo_out(prefix="extract_command_message(...) = ")
+@echo.echo_out(output=echo.log_write, prefix="extract_command_message(...) = ")
 def extract_command_message(
     message: Optional[Dict[Text, Any]]
 ) -> Tuple[Optional[Text], Optional[Text]]:
@@ -66,9 +68,7 @@ def send_kb_message(text: Text, recipient: Agent) -> None:
     recipient.observe({"id": KNOWLEDGE_BASE_ID, "kb_item": text})
 
 
-@echo.echo_in(
-    output=echo.log_write, prolog={"recipient": (lambda a: a.id)}
-)
+@echo.echo_in(output=echo.log_write, prolog={"recipient": (lambda a: a.id)})
 def send_setup_command(
     task_description: Text,
     completion_requirements: List[Text],
