@@ -3,13 +3,17 @@ from typing import Text, Optional, Dict, Any, Tuple, List
 
 from parlai.core.agents import Agent
 import parlai.mturk.tasks.dialoguetest.echo as echo
+import os, json
 
-COMMAND_SETUP = "setup"
-COMMAND_REVIEW = "review"
+with open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "constants.json"), "r") as file:
+    ALL_CONSTANTS = json.load(file)
 
-MESSAGE_COMPLETE_PREFIX = "<complete>"
-MESSAGE_DONE_PREFIX = "<done>"
-MESSAGE_QUERY_PREFIX = "? "
+COMMAND_SETUP = ALL_CONSTANTS["back_to_front"]["command_setup"]
+COMMAND_REVIEW = ALL_CONSTANTS["back_to_front"]["command_review"]
+
+MESSAGE_COMPLETE_PREFIX = ALL_CONSTANTS["front_to_back"]["complete_prefix"]
+MESSAGE_DONE_PREFIX = ALL_CONSTANTS["front_to_back"]["done_prefix"]
+MESSAGE_QUERY_PREFIX = ALL_CONSTANTS["front_to_back"]["query_prefix"]
 
 WORKER_COMMAND_COMPLETE = "complete"
 WORKER_COMMAND_DONE = "done"
@@ -17,10 +21,10 @@ WORKER_COMMAND_QUERY = "query"
 
 WORKER_DISCONNECTED = "disconnect"
 
-SYSTEM_ID = "MTurk System"
-WIZARD_ID = "Assistant"
-USER_ID = "User"
-KNOWLEDGE_BASE_ID = "KB"
+SYSTEM_ID = ALL_CONSTANTS["agent_ids"]["system_id"]
+WIZARD_ID = ALL_CONSTANTS["agent_ids"]["wizard_id"]
+USER_ID = ALL_CONSTANTS["agent_ids"]["user_id"]
+KNOWLEDGE_BASE_ID = ALL_CONSTANTS["agent_ids"]["knowledgebase_id"]
 
 
 @echo.echo_out(prefix="extract_command_message(...) = ")
