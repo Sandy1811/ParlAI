@@ -1,4 +1,5 @@
 import React from "react";
+import ReactDOM from "react-dom";
 import _ from "lodash";
 
 import {
@@ -26,6 +27,192 @@ import {
   HelpBlock
 } from "react-bootstrap";
 import * as constants from "./constants";
+
+export class QueryForm extends React.Component {
+  constructor(props) {
+    super(props);
+    this.addFormFieldRef = React.createRef();
+    this.formFieldIdCounter = 0;
+
+    // A formField is
+    // {
+    //    fieldName: string,
+    //    id: number
+    //    operatorValue: string,
+    //    value: string
+    // }
+
+    this.state = {
+      addedFormFields: [],
+      formFieldData: {}
+    };
+  }
+
+  addFormField = fieldName => {
+    const id = this.formFieldIdCounter++;
+    this.setState({
+      addedFormFields: [...this.state.addedFormFields, { fieldName, id }]
+    });
+  };
+
+  removeFormField = fieldId => {
+    this.setState({
+      addedFormFields: this.state.addedFormFields.filter(fieldNameWithId => {
+        return fieldNameWithId.id !== fieldId;
+      })
+    });
+  };
+
+  onChangeValue = newFormField => {
+    this.setState({
+      formFieldData: {
+        ...this.state.formFieldData,
+        [newFormField.id]: newFormField
+      }
+    });
+  };
+
+  deriveFormDatumFromDOM(form, formFieldId) {
+    const formDatum = {
+      id: formFieldId,
+      fieldName: null,
+      value: null,
+      operatorValue: null
+    };
+
+    for (const element of form.elements) {
+      if (element.getAttribute("data-form-field-id") !== `${formFieldId}`) {
+        continue;
+      }
+      if (element.getAttribute("data-is-operator") === "true") {
+        formDatum.operatorValue = element.value;
+      } else {
+        formDatum.fieldName = element.getAttribute("data-field-name");
+
+        if (element.type === "checkbox") {
+          formDatum.value = element.checked;
+        } else if (element.type === "select-one") {
+          formDatum.value = element.value;
+        } else if (element.type === "number") {
+          formDatum.value = element.value;
+        } else if (element.type === "select-multiple") {
+          const selectedOptions = Array.from(
+            element.querySelectorAll("option:checked"),
+            e => e.value
+          );
+          formDatum.value = selectedOptions;
+        }
+      }
+    }
+
+    return formDatum;
+  }
+
+  onSubmit = (event, relevantFormFields) => {
+    console.log(this.state.formFieldData);
+    event.preventDefault();
+    const form = event.target;
+
+    const constraints = [];
+
+    for (const formFieldWithId of Object.values(relevantFormFields)) {
+      let formField = this.state.formFieldData[formFieldWithId.id];
+      if (!formField) {
+        formField = this.deriveFormDatumFromDOM(form, formFieldWithId.id);
+      }
+
+      const operator = formField.operatorValue;
+      const operatorWrapper = operator == null
+        ? val => val
+        : val => `api.${operator}(${val})`;
+
+      let value = formField.value;
+      if (typeof value === "boolean") {
+        value = value ? "True" : "False";
+      } else if (isNaN(value)) {
+        value = JSON.stringify(value);
+      } else {
+        value = value;
+      }
+
+      constraints.push({
+        [formField.fieldName]: `${operatorWrapper(value)}`
+      });
+    }
+
+    console.log("constraints", constraints);
+    const queryString = `? ${JSON.stringify(constraints)}`;
+    console.log("sending", queryString);
+    this.props.onMessageSend(queryString, {}, () => console.log("done"));
+  };
+
+  render() {
+    const { category, formDescriptionIndex, formDescription } = this.props;
+
+    const { addFormField, removeFormField } = this;
+
+    // TODO (low-pri): remove this flag
+    const use_mock = false;
+    const json = use_mock ? apartmentJson : formDescription;
+
+    const activeAndRequiredFormFields = json.required
+      .map(fieldName => ({
+        fieldName,
+        id: fieldName,
+        operatorValue: null,
+        value: null
+      }))
+      .concat(this.state.addedFormFields);
+
+    return (
+      <form
+        onSubmit={event => this.onSubmit(event, activeAndRequiredFormFields)}
+      >
+        <FormGroup>
+          <div>
+            <FormControl
+              componentClass="select"
+              style={{ maxWidth: 130, display: "inline-block" }}
+              ref={this.addFormFieldRef}
+            >
+              {json.input.map(input =>
+                <option value={input.Name}>{input.Name}</option>
+              )}
+            </FormControl>
+            <Button
+              className="btn"
+              onClick={() => {
+                const domNode = ReactDOM.findDOMNode(
+                  this.addFormFieldRef.current
+                );
+                addFormField(domNode.value);
+              }}
+              style={{ marginLeft: 20 }}
+            >
+              Add Field
+            </Button>
+          </div>
+        </FormGroup>
+        <hr />
+        {jsonToForm(
+          json,
+          activeAndRequiredFormFields,
+          removeFormField,
+          this.state.formFieldData,
+          this.onChangeValue
+        )}
+
+        <Button
+          className="btn btn-primary"
+          disabled={this.props.chat_state !== "text_input"}
+          type="submit"
+        >
+          Find example
+        </Button>
+      </form>
+    );
+  }
+}
 
 function FieldGroup({ id, label, help, ...props }) {
   return (

@@ -32,6 +32,7 @@ import $ from "jquery";
 import * as constants from "./constants";
 
 const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
+const supply_suggestions_prefix = "supply_suggestions";
 
 function getSelectionInfo(originalMessages) {
   let selectedMessage = null;
@@ -121,6 +122,8 @@ function KnowledgeBaseMessage(props) {
       let value = exampleJson[key];
       if (typeof value === "boolean") {
         value = value ? "yes" : "no";
+      } else if (Array.isArray(value)) {
+        value = value.join(", ");
       }
 
       return (
@@ -209,12 +212,18 @@ class ChatMessage extends React.Component {
       );
     }
 
-    const isDummyMessage = this.props.command === "suggestion";
+    const isDummyMessage =
+      this.props.command != null &&
+      this.props.command.startsWith(supply_suggestions_prefix);
+
     const isKB = this.props.agent_id === "KnowledgeBase";
     let message = null;
 
     if (isDummyMessage) {
-      const suggestions = JSON.parse(this.props.message);
+      // TODO (low-pri): if the backend provides JSON instead, we can use JSON.parse()
+      const suggestions = eval(
+        this.props.command.slice(supply_suggestions_prefix.length)
+      );
 
       message = (
         <div>
@@ -224,8 +233,10 @@ class ChatMessage extends React.Component {
               <Button
                 className="btn"
                 onClick={() => {
-                  this.props.onMessageSend(suggestion, {}, () =>
-                    console.log("sent suggestion")
+                  this.props.onMessageSend(
+                    `${selectionConstants.pick_suggestion_prefix}${suggestion}`,
+                    {},
+                    () => console.log("Sent suggestion")
                   );
                 }}
               >
@@ -280,45 +291,46 @@ export class MessageList extends React.Component {
     // the m.id field.
 
     const selectionInfo = getSelectionInfo(this.props.messages);
-    const dummySuggestionMessage = {
-      id: "MTurk System",
-      message_id: "message_id",
-      text: JSON.stringify(["Suggestion 1", "Suggestion 2", "Suggestion 3"]),
-      type: "MESSAGE",
-      command: "suggestion"
-    };
-    const showDummyMessage =
-      messages.length > 0 &&
-      messages[messages.length - 1].text.startsWith(
-        selectionConstants.request_suggestions_prefix
-      );
 
-    return messages
-      .concat(showDummyMessage ? [dummySuggestionMessage] : [])
-      .map((m, idx) => {
-        const dontRender =
-          (m.command != null &&
-            (m.command !== "suggestion" || agent_id === "User")) ||
-          m.text.startsWith("?") ||
-          (m.text.startsWith("<") && m.text.indexOf(">") > -1);
+    function shouldNotRender(m) {
+      if (
+        m.command != null &&
+        !m.command.startsWith(supply_suggestions_prefix)
+      ) {
+        return true;
+      }
 
-        return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
-          ? null
-          : <div key={m.message_id}>
-              <ChatMessage
-                {...this.props}
-                is_self={m.id == agent_id}
-                invisible={dontRender}
-                agent_id={m.id}
-                message={m.text}
-                command={m.command}
-                task_data={m.task_data}
-                message_id={m.message_id}
-                duration={this.props.is_review ? m.duration : undefined}
-                selectionInfo={selectionInfo}
-              />
-            </div>;
-      });
+      if (m.text.startsWith("?")) {
+        return true;
+      }
+
+      if (m.text.startsWith("<") && m.text.indexOf(">") > -1) {
+        return true;
+      }
+
+      return false;
+    }
+
+    return messages.map((m, idx) => {
+      const dontRender = shouldNotRender(m);
+
+      return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
+        ? null
+        : <div key={m.message_id}>
+            <ChatMessage
+              {...this.props}
+              is_self={m.id == agent_id}
+              invisible={dontRender}
+              agent_id={m.id}
+              message={m.text}
+              command={m.command}
+              task_data={m.task_data}
+              message_id={m.message_id}
+              duration={this.props.is_review ? m.duration : undefined}
+              selectionInfo={selectionInfo}
+            />
+          </div>;
+    });
   }
 
   render() {
