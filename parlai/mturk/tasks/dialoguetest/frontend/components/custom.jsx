@@ -458,6 +458,8 @@ class LeftPane extends React.Component {
             <Col sm={9}>
               <Tab.Content animation={false} mountOnEnter={true}>
                 {dbNames.map((dbName, dbIndex) => {
+                  const imgUrl =
+                    setupMessage.form_description[dbIndex].schema_url;
                   return (
                     <Tab.Pane
                       eventKey={dbIndex}
@@ -471,12 +473,10 @@ class LeftPane extends React.Component {
                       >
                         <Tab eventKey={1} title="Your Instruction Schema">
 
-                          <img
-                            style={{ width: "100%" }}
-                            src={
-                              setupMessage.form_description[dbIndex].schema_url
-                            }
-                          />
+                          <a href={imgUrl} target="_blank">
+
+                            <img style={{ width: "100%" }} src={imgUrl} />
+                          </a>
                         </Tab>
                         <Tab eventKey={2} title="Knowledge Base">
                           <h4>User's requirements for {dbName}:</h4>
