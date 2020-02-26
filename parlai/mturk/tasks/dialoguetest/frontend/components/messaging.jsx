@@ -193,6 +193,26 @@ function KnowledgeBaseMessage(props) {
 }
 
 class ChatMessage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { textval: "", sending: false };
+  }
+
+  handleKeyPress(e) {
+    if (e.key === "Enter") {
+      this.props.onMessageSend(this.state.textval, {}, () =>
+        this.setState({ textval: "", sending: false })
+      );
+
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+    }
+  }
+
+  updateValue(value) {
+    this.setState({ textval: "" + value });
+  }
+
   render() {
     let float_loc = "left";
     let alert_class = "alert-warning";
@@ -241,8 +261,32 @@ class ChatMessage extends React.Component {
               >
                 {suggestion}
               </Button>
+
             </div>
           )}
+          <FormControl
+            type="text"
+            id="id_text_input"
+            style={{
+              width: "80%",
+              height: "100%",
+              float: "left",
+              fontSize: "16px"
+            }}
+            value={this.state.textval}
+            placeholder="Please enter here..."
+            onKeyPress={e => this.handleKeyPress(e)}
+            onChange={e => this.updateValue(e.target.value)}
+          />
+
+          <Button
+            className="btn btn-primary"
+            id="id_send_msg_button"
+            disabled={this.state.textval == ""}
+            onClick={() => this.tryMessageSend()}
+          >
+            Send
+          </Button>
         </div>
       );
     } else if (isKB) {
