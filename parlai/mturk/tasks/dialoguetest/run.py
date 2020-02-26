@@ -67,12 +67,13 @@ def main():
         echo.log_write(f"run_onboard for {worker.worker_id}")
         role = mturk_agent_roles[role_index % len(mturk_agent_roles)]
         role_index += 1
-        worker.update_agent_id("onboarding")  # Necessary because ParlAI messaging seems broken
         worker.demo_role = role
         worker.passed_onboarding = False
         if role == "Wizard":
+            worker.update_agent_id("Wizard")
             world = WizardOnboardingWorld(opt=opt, mturk_agent=worker)
         elif role == "User":
+            worker.update_agent_id("User")
             world = UserOnboardingWorld(opt=opt, mturk_agent=worker)
         else:
             raise ValueError(f"Unknown role '{role}'")
