@@ -122,6 +122,8 @@ function KnowledgeBaseMessage(props) {
       let value = exampleJson[key];
       if (typeof value === "boolean") {
         value = value ? "yes" : "no";
+      } else if (Array.isArray(value)) {
+        value = value.join(", ");
       }
 
       return (
