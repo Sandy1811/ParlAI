@@ -135,7 +135,12 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
                 componentClass="select"
                 placeholder="select"
                 multiple={isMultiple}
-                style={{ maxWidth: 200 }}
+                style={{
+                  maxWidth: 200,
+                  display: "inline-block",
+                  verticalAlign: "top",
+                  marginLeft: 10
+                }}
               >
                 {input.Categories.map((category, idx) =>
                   <option key={`${category}-idx`} value={category}>

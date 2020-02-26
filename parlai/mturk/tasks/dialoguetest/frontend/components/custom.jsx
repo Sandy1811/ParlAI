@@ -76,33 +76,33 @@ class QueryForm extends React.Component {
 
         if (element.type === "checkbox") {
           // Todo (low-pri): Clean this up as soon as back-end handles this properly
-          parameters[key] = element.checked ? "##True##" : "##False##";
+          parameters[key] = element.checked ? "True" : "False";
         } else if (element.type === "select-one" || element.type === "number") {
           let { value } = element;
           const parsedValue = parseFloat(value);
           value = isNaN(parsedValue) ? value : parsedValue;
 
-          parameters[key] = `##${operatorWrapper(parsedValue)}##`;
+          parameters[key] = `${operatorWrapper(parsedValue)}`;
         } else if (element.type === "select-multiple") {
           // Todo (high-pri)
           const selectedOptions = Array.from(
             element.querySelectorAll("option:checked"),
             e => e.value
           );
-          const selectedOptionsJSON = JSON.stringify(selectedOptions).replace(
-            /"/g,
-            "'"
-          );
+          const selectedOptionsJSON = JSON.stringify(selectedOptions);
 
-          parameters[key] = `##${operatorWrapper(selectedOptionsJSON)}##`;
+          parameters[key] = operatorWrapper(selectedOptionsJSON);
         }
       }
     }
 
-    console.log("parameters", parameters);
-    const queryString = `? ${JSON.stringify(parameters)
-      .replace(/"##/g, "")
-      .replace(/##"/g, "")}`;
+    const constraints = [];
+    for (const key of Object.keys(parameters)) {
+      constraints.push({ [key]: parameters[key] });
+    }
+
+    console.log("constraints", constraints);
+    const queryString = `? ${JSON.stringify(constraints)}`;
     console.log("sending ?", queryString);
     this.props.onMessageSend(queryString, {}, () => console.log("done"));
   };
@@ -678,7 +678,8 @@ export default {
   },
   XLeftPane: {
     Wizard: LeftPane,
-    User: LeftPane
+    User: LeftPane,
+    Onboarding: LeftPane
   },
   XMessageList: {
     Wizard: MessageList,
