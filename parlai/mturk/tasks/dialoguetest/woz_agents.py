@@ -8,6 +8,8 @@ import parlai.mturk.tasks.dialoguetest.api as api
 import os
 import json
 
+from parlai.mturk.tasks.dialoguetest import echo
+
 
 class WOZKnowledgeBaseAgent(Agent):
     """
@@ -37,13 +39,14 @@ class WOZKnowledgeBaseAgent(Agent):
         if observation is None:
             return {"text": "Knowledge base invoked without observation."}
 
-        text = observation.get("query")
+        query = observation.get("query")
+        echo.log_write(f"KBQuery: {query}")
 
-        if not text:
+        if not query:
             return {"text": "Knowledge base invoked with empty query."}
 
         try:
-            constraints = eval(text)
+            constraints = self._parse(query)
             apartment, count = api.call_api("apartment_search", constraints=constraints)
             reply = {
                 "id": "KnowledgeBase",
@@ -58,6 +61,24 @@ class WOZKnowledgeBaseAgent(Agent):
         self._messages.append(reply)
 
         return reply
+
+    def _parse_old(self, text: Text) -> Dict[Text, Any]:
+        return eval(text)
+
+    def _parse_new(self, text: Text) -> Dict[Text, Any]:
+        constraints = eval(text)
+        result = [
+            {name: eval(expr)}
+            for constraint in constraints
+            for name, expr in constraint.items()
+        ]
+        return result[0]
+
+    def _parse(self, text: Text) -> Dict[Text, Any]:
+        if text.startswith("["):
+            return self._parse_new(text)
+        else:
+            return self._parse_old(text)
 
     def get_messages(self) -> List[Dict[Text, Any]]:
         # Note: Messages must contain a 'text' field
@@ -87,7 +108,6 @@ class WOZKnowledgeBaseAgent(Agent):
     def feedback(self):
         return None  # ToDo: Implement
 
-    @property
     def submitted_hit(self) -> bool:
         return True
 
