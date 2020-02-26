@@ -326,6 +326,8 @@ def create_hit_type(
             }
         )
 
+    locale_requirements = []  # ToDo: JOHANNES DEBUG
+
     # Create the HIT type
     response = client.create_hit_type(
         AutoApprovalDelayInSeconds=auto_approve_delay,

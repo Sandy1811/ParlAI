@@ -101,6 +101,7 @@ class LightChatOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.update_agent_id('Bandit')
         self.mturk_agent.observe(self.instruction_act)
         act = self.mturk_agent.act()  # first attempt, turns = 0
+        print(act)
         data = act.get('task_data', {'action': None})
         while data['action'] != 'steal coin purse from orc' or len(act['text']) < 4:
             if self.turns >= 2:  # if 3rd attempt wasn't correct, block worker
@@ -117,10 +118,12 @@ class LightChatOnboardingWorld(MTurkOnboardWorld):
                 self.mturk_agent.observe(self.too_short_act)
             self.turns += 1
             act = self.mturk_agent.act()
+            print(act)
             data = act.get('task_data', {'action': None})
 
         self.mturk_agent.observe(self.complete_act)
         self.mturk_agent.onboarding_turns = self.turns
+        print(f"done onboarding with {self.mturk_agent.worker_id}")
         self.episodeDone = True
         time.sleep(3)
 
@@ -219,6 +222,8 @@ class LightChatTaskWorld(MTurkTaskWorld):
                 else:
                     a = cur_agent.act(timeout=5 * 60)
 
+                print(a)
+
                 self.acts.append(a)
                 if is_disconnected(a):
                     self.episodeDone = True
@@ -265,6 +270,7 @@ class LightChatTaskWorld(MTurkTaskWorld):
                 'id': 'System',
                 'text': "Thank you for the talk, the chat is complete.",
             }
+            print("Done with this world")
             for agent in self.mturk_agents:
                 agent.observe(ad)
             self.episodeDone = True

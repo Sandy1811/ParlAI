@@ -3,6 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from collections import defaultdict
+
 from parlai.core.params import ParlaiParser
 from parlai.mturk.tasks.light.light_chats.worlds import (
     LightChatOnboardingWorld,
@@ -347,13 +349,14 @@ def main():
         if worker.worker_id in completed_agents:
             return
         else:
-            world = LightChatOnboardingWorld(opt=opt, mturk_agent=worker)
-            while not world.episode_done():
-                world.parley()
-            world.shutdown()
+            # world = LightChatOnboardingWorld(opt=opt, mturk_agent=worker)
+            # while not world.episode_done():
+            #     world.parley()
+            # world.shutdown()
             completed_agents.append(worker.worker_id)
-            print(worker.worker_id, 'took', world.turns, 'turns for onboarding')
-            return world.prep_save_data([worker])
+            # print(worker.worker_id, 'took', world.turns, 'turns for onboarding')
+            # return world.prep_save_data([worker])
+            return defaultdict(dict)
 
     # If we want to use the above onboard function, we can replace the below
     # with set_onboard_function(onboard_function=run_onboard)
@@ -380,7 +383,7 @@ def main():
         ]
 
         # Create the hits as specified by command line arguments
-        mturk_manager.create_hits(qualifications=agent_qualifications)
+        mturk_manager.create_hits(qualifications=None)
 
         # Check workers eligiblity acts as a filter, and should return
         # the list of all workers currently eligible to work on the task
