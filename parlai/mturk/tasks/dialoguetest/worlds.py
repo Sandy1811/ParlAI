@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from datetime import datetime
-from typing import Text, Optional
+from typing import Text, Optional, List
 
 from parlai.core.agents import Agent
 from parlai.mturk.core.agents import (
@@ -24,10 +24,10 @@ from parlai.mturk.tasks.dialoguetest.protocol import (
     WORKER_COMMAND_DONE,
     WORKER_DISCONNECTED,
     extract_command_message,
-    MESSAGE_SELECT_1_PREFIX,
-    MESSAGE_SELECT_2_PREFIX,
+    WORKER_SELECT_1,
+    WORKER_SELECT_2,
     send_setup_command,
-)
+    WORKER_REQUEST_SUGGESTIONS, COMMAND_SUPPLY_SUGGESTIONS, WORKER_PICK_SUGGESTION)
 
 
 def is_disconnected(act):
@@ -361,12 +361,26 @@ class WOZWorld(MTurkTaskWorld):
 
         wizard_message, command, parameters = self.get_new_wizard_message()
         # Handle communication between the wizard and the knowledge base
-        while command in [WORKER_COMMAND_QUERY, MESSAGE_SELECT_1_PREFIX, MESSAGE_SELECT_2_PREFIX]:
+        while command in [
+            WORKER_COMMAND_QUERY,
+            WORKER_SELECT_1,
+            WORKER_SELECT_2,
+            WORKER_REQUEST_SUGGESTIONS,
+        ]:
             if command == WORKER_COMMAND_QUERY:
                 self.kb_agent.observe({"query": parameters})
                 kb_message, _, _ = self.get_new_knowledgebase_message()
                 self.wizard_agent.observe(kb_message)
+            elif command == WORKER_REQUEST_SUGGESTIONS:
+                self.send_suggestions(["1", "2", "3"], self.wizard_agent)
             wizard_message, command, parameters = self.get_new_wizard_message()
+
+        if command and command == WORKER_PICK_SUGGESTION:
+            message = {
+                "id": self.wizard_agent.id,
+                "text": parameters,
+            }
+            self.wizard_agent.observe(message)
 
         self.deal_with_wizard_command(command, parameters)
 
@@ -542,3 +556,6 @@ class WOZWorld(MTurkTaskWorld):
 
     def get_task_agent(self):
         return self.user_agent
+
+    def send_suggestions(self, suggestions: List[Text], wizard_agent):
+        self.send_command(COMMAND_SUPPLY_SUGGESTIONS + str(suggestions), wizard_agent)

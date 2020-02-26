@@ -12,16 +12,23 @@ with open(
 
 COMMAND_SETUP = ALL_CONSTANTS["back_to_front"]["command_setup"]
 COMMAND_REVIEW = ALL_CONSTANTS["back_to_front"]["command_review"]
+COMMAND_SUPPLY_SUGGESTIONS = ALL_CONSTANTS["back_to_front"]["command_supply_suggestions"]
 
 MESSAGE_COMPLETE_PREFIX = ALL_CONSTANTS["front_to_back"]["complete_prefix"]
 MESSAGE_DONE_PREFIX = ALL_CONSTANTS["front_to_back"]["done_prefix"]
 MESSAGE_QUERY_PREFIX = ALL_CONSTANTS["front_to_back"]["query_prefix"]
 MESSAGE_SELECT_1_PREFIX = ALL_CONSTANTS["front_to_back"]["select_kb_entry_prefix"]
 MESSAGE_SELECT_2_PREFIX = ALL_CONSTANTS["front_to_back"]["select_reference_kb_entry_prefix"]
+MESSAGE_REQUEST_SUGGESTIONS_PREFIX = ALL_CONSTANTS["front_to_back"]["request_suggestions_prefix"]
+MESSAGE_PICK_SUGGESTION_PREFIX = ALL_CONSTANTS["front_to_back"]["pick_suggestion_prefix"]
 
 WORKER_COMMAND_COMPLETE = "complete"
 WORKER_COMMAND_DONE = "done"
 WORKER_COMMAND_QUERY = "query"
+WORKER_SELECT_1 = "select-1"
+WORKER_SELECT_2 = "select-2"
+WORKER_REQUEST_SUGGESTIONS = "requrest"
+WORKER_PICK_SUGGESTION = "pick"
 
 WORKER_DISCONNECTED = "disconnect"
 
@@ -51,6 +58,18 @@ def extract_command_message(
         elif text == "[DISCONNECT]":
             command = WORKER_DISCONNECTED
             parameters = None
+        elif text.startswith(MESSAGE_SELECT_1_PREFIX):
+            command = WORKER_SELECT_1
+            parameters = text[len(MESSAGE_SELECT_1_PREFIX):].strip()
+        elif text.startswith(MESSAGE_SELECT_2_PREFIX):
+            command = WORKER_SELECT_2
+            parameters = text[len(MESSAGE_SELECT_2_PREFIX):].strip()
+        elif text.startswith(MESSAGE_REQUEST_SUGGESTIONS_PREFIX):
+            command = WORKER_REQUEST_SUGGESTIONS
+            parameters = None
+        elif text.startswith(MESSAGE_PICK_SUGGESTION_PREFIX):
+            command = WORKER_PICK_SUGGESTION
+            parameters = text[len(WORKER_PICK_SUGGESTION):].strip()
 
     return command, parameters
 
