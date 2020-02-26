@@ -45,6 +45,7 @@ class QueryForm extends React.Component {
   constructor(props) {
     super(props);
     this.addFormFieldRef = React.createRef();
+    this.formFieldIdCounter = 0;
 
     // A formField is
     // {
@@ -55,9 +56,25 @@ class QueryForm extends React.Component {
     // }
 
     this.state = {
+      addedFormFields: [],
       formFieldData: {}
     };
   }
+
+  addFormField = fieldName => {
+    const id = this.formFieldIdCounter++;
+    this.setState({
+      addedFormFields: [...this.state.addedFormFields, { fieldName, id }]
+    });
+  };
+
+  removeFormField = fieldId => {
+    this.setState({
+      addedFormFields: this.state.addedFormFields.filter(fieldNameWithId => {
+        return fieldNameWithId.id !== fieldId;
+      })
+    });
+  };
 
   onChangeValue = newFormField => {
     this.setState({
@@ -68,14 +85,55 @@ class QueryForm extends React.Component {
     });
   };
 
+  deriveFormDatumFromDOM(form, formFieldId) {
+    const formDatum = {
+      id: formFieldId,
+      fieldName: null,
+      value: null,
+      operatorValue: null
+    };
+
+    for (const element of form.elements) {
+      if (element.getAttribute("data-form-field-id") !== `${formFieldId}`) {
+        continue;
+      }
+      if (element.getAttribute("data-is-operator") === "true") {
+        formDatum.operatorValue = element.value;
+      } else {
+        formDatum.fieldName = element.getAttribute("data-field-name");
+
+        if (element.type === "checkbox") {
+          formDatum.value = element.checked;
+        } else if (element.type === "select-one") {
+          formDatum.value = element.value;
+        } else if (element.type === "number") {
+          formDatum.value = element.value;
+        } else if (element.type === "select-multiple") {
+          const selectedOptions = Array.from(
+            element.querySelectorAll("option:checked"),
+            e => e.value
+          );
+          formDatum.value = selectedOptions;
+        }
+      }
+    }
+
+    return formDatum;
+  }
+
   onSubmit = (event, relevantFormFields) => {
     console.log(this.state.formFieldData);
     event.preventDefault();
+    const form = event.target;
 
     const constraints = [];
 
     for (const formFieldWithId of Object.values(relevantFormFields)) {
-      const formField = this.state.formFieldData[formFieldWithId.id];
+      let formField = this.state.formFieldData[formFieldWithId.id];
+      if (!formField) {
+        formField = this.deriveFormDatumFromDOM(form, formFieldWithId.id);
+      }
+
       const operator = formField.operatorValue;
       const operatorWrapper = operator == null
         ? val => val
@@ -102,16 +160,11 @@ class QueryForm extends React.Component {
   };
 
   render() {
-    const {
-      category,
-      addFormField,
-      removeFormField,
-      activeFormFields,
-      formDescriptionIndex,
-      formDescription
-    } = this.props;
+    const { category, formDescriptionIndex, formDescription } = this.props;
 
-    // TODO: remove this flag
+    const { addFormField, removeFormField } = this;
+
+    // TODO (low-pri): remove this flag
     const use_mock = false;
     const json = use_mock ? apartmentJson : formDescription;
 
@@ -122,7 +175,7 @@ class QueryForm extends React.Component {
         operatorValue: null,
         value: null
       }))
-      .concat(activeFormFields);
+      .concat(this.state.addedFormFields);
 
     return (
       <form
@@ -145,7 +198,7 @@ class QueryForm extends React.Component {
                 const domNode = ReactDOM.findDOMNode(
                   this.addFormFieldRef.current
                 );
-                addFormField(category, domNode.value);
+                addFormField(domNode.value);
               }}
               style={{ marginLeft: 20 }}
             >
@@ -156,7 +209,6 @@ class QueryForm extends React.Component {
         <hr />
         {jsonToForm(
           json,
-          category,
           activeAndRequiredFormFields,
           removeFormField,
           this.state.formFieldData,
@@ -498,36 +550,9 @@ class LeftPane extends React.Component {
     this.state = {
       current_pane: "instruction",
       last_update: 0,
-      selectedTabKey: 2,
-      addedFormFieldsByCategory: {}
+      selectedTabKey: 2
     };
-    this.formFieldIdCounter = 0;
   }
-
-  addFormField = (category, fieldName) => {
-    const id = this.formFieldIdCounter++;
-    this.setState({
-      addedFormFieldsByCategory: {
-        ...this.state.addedFormFieldsByCategory,
-        [category]: [
-          ...(this.state.addedFormFieldsByCategory[category] || []),
-          { fieldName, id }
-        ]
-      }
-    });
-  };
-
-  removeFormField = (category, fieldId) => {
-    this.setState({
-      addedFormFieldsByCategory: {
-        ...this.state.addedFormFieldsByCategory,
-        [category]: (this.state.addedFormFieldsByCategory[category] || [])
-          .filter(fieldNameWithId => {
-            return fieldNameWithId.id !== fieldId;
-          })
-      }
-    });
-  };
 
   static getDerivedStateFromProps(nextProps, prevState) {
     if (
@@ -624,11 +649,6 @@ class LeftPane extends React.Component {
                           <QueryForm
                             {...this.props}
                             category={dbName}
-                            addFormField={this.addFormField}
-                            removeFormField={this.removeFormField}
-                            activeFormFields={
-                              this.state.addedFormFieldsByCategory[dbName] || []
-                            }
                             formDescription={
                               setupMessage.form_description[dbIndex]
                             }

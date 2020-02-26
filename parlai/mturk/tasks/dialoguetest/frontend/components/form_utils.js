@@ -43,7 +43,7 @@ function ControlLabelWithRemove(props) {
       {props.formFieldName}
       <Button
         style={{ border: 0, padding: "3px 6px", background: "transparent" }}
-        onClick={() => props.onRemove(props.category, props.formFieldId)}
+        onClick={() => props.onRemove(props.formFieldId)}
       >
         <Glyphicon glyph="remove" />
       </Button>
@@ -54,7 +54,6 @@ function ControlLabelWithRemove(props) {
 
 export function jsonToForm(
   json,
-  category,
   activeFormFields,
   removeFormField,
   formFieldData,
@@ -71,7 +70,6 @@ export function jsonToForm(
       <ControlLabelWithRemove
         formFieldName={formFieldName}
         formFieldId={formFieldId}
-        category={category}
         onRemove={removeFormField}
       />
     );
@@ -91,6 +89,9 @@ export function jsonToForm(
             <FormControl
               required={isRequired}
               name={formFieldId}
+              data-form-field-id={formFieldDatum.id}
+              data-is-operator={false}
+              data-field-name={formFieldDatum.fieldName}
               componentClass="textarea"
               placeholder="textarea"
               value={formFieldDatum.value}
@@ -104,13 +105,15 @@ export function jsonToForm(
         );
       }
       case "ShortString": {
-        // const formFieldId = `${constants.FIELD_VALUE_PREFIX}${formFieldId}`;
         return (
           <FormGroup>
             {controlLabelWithRemove}
             <FormControl
               name={formFieldId}
               required={isRequired}
+              data-form-field-id={formFieldDatum.id}
+              data-is-operator={false}
+              data-field-name={formFieldDatum.fieldName}
               componentClass="input"
               style={{ maxWidth: 400 }}
               value={formFieldDatum.value}
@@ -140,15 +143,14 @@ export function jsonToForm(
           }
         }[input.Type];
 
-        const operatorformFieldId = `${constants.FIELD_OPERATOR_PREFIX}${formFieldId}`;
-        // const formFieldId = `${constants.FIELD_VALUE_PREFIX}${formFieldId}`;
-
         const operatorUi = (
           <FormControl
-            name={operatorformFieldId}
             componentClass="select"
             placeholder={Object.keys(uiLogicInfo)[0]}
             style={{ maxWidth: 130, display: "inline-block" }}
+            data-form-field-id={formFieldDatum.id}
+            data-is-operator={true}
+            data-field-name={formFieldDatum.fieldName}
             value={formFieldDatum.operatorValue}
             onChange={event =>
               onChangeValue({
@@ -175,6 +177,9 @@ export function jsonToForm(
                 name={formFieldId}
                 componentClass="select"
                 placeholder="select"
+                data-form-field-id={formFieldDatum.id}
+                data-is-operator={false}
+                data-field-name={formFieldDatum.fieldName}
                 multiple={isMultiple}
                 value={formFieldDatum.value}
                 onChange={event => {
@@ -212,13 +217,15 @@ export function jsonToForm(
         );
       }
       case "Boolean": {
-        // const formFieldId = `${constants.FIELD_VALUE_PREFIX}${formFieldId}`;
         return (
           <FormGroup>
             <Checkbox
               name={formFieldId}
               required={isRequired}
               value={formFieldDatum.value}
+              data-form-field-id={formFieldDatum.id}
+              data-is-operator={false}
+              data-field-name={formFieldDatum.fieldName}
               onChange={event =>
                 onChangeValue({
                   ...formFieldDatum,
@@ -234,7 +241,7 @@ export function jsonToForm(
                 padding: "3px 6px",
                 background: "transparent"
               }}
-              onClick={() => removeFormField(category, formFieldId)}
+              onClick={() => removeFormField(formFieldId)}
             >
               <Glyphicon glyph="remove" />
             </Button>
@@ -246,17 +253,16 @@ export function jsonToForm(
 
         const { Min, Max } = input;
 
-        const operatorformFieldId = `${constants.FIELD_OPERATOR_PREFIX}${formFieldId}`;
-
         return (
           <FormGroup controlId="formControlsNumber">
             {controlLabelWithRemove}
             <div>
               <FormControl
                 required={isRequired}
-                name={operatorformFieldId}
                 componentClass="select"
-                placeholder="is"
+                data-form-field-id={formFieldDatum.id}
+                data-is-operator={true}
+                data-field-name={formFieldDatum.fieldName}
                 style={{ maxWidth: 180, display: "inline-block" }}
                 value={formFieldDatum.operatorValue}
                 onChange={event =>
@@ -273,6 +279,9 @@ export function jsonToForm(
               <FormControl
                 required={isRequired}
                 name={formFieldId}
+                data-form-field-id={formFieldDatum.id}
+                data-is-operator={false}
+                data-field-name={formFieldDatum.fieldName}
                 componentClass="input"
                 type="number"
                 min={Min}
