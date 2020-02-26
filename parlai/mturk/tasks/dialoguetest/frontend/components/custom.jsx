@@ -45,69 +45,54 @@ class QueryForm extends React.Component {
   constructor(props) {
     super(props);
     this.addFormFieldRef = React.createRef();
+
+    // A formField is
+    // {
+    //    fieldName: string,
+    //    id: number
+    //    operatorValue: string,
+    //    value: string
+    // }
+
     this.state = {
-      values: {}
+      formFieldData: {}
     };
   }
 
-  onChangeValue = (key, value) => {
+  onChangeValue = newFormField => {
     this.setState({
-      values: { ...this.state.values, [key]: value }
+      formFieldData: {
+        ...this.state.formFieldData,
+        [newFormField.id]: newFormField
+      }
     });
   };
 
-  onSubmit = event => {
+  onSubmit = (event, relevantFormFields) => {
+    console.log(this.state.formFieldData);
     event.preventDefault();
-    let form = event.target;
-
-    console.log("form.elements", form.elements);
-
-    const parameters = {};
-    const operators = {};
-
-    // Gather operators
-    for (const element of form.elements) {
-      if (!element.name.startsWith(constants.FIELD_OPERATOR_PREFIX)) {
-        continue;
-      }
-      const key = element.name.slice(constants.FIELD_VALUE_PREFIX.length);
-
-      operators[key] = element.value;
-    }
-
-    for (const element of form.elements) {
-      if (element.name.startsWith(constants.FIELD_VALUE_PREFIX)) {
-        const key = element.name.slice(constants.FIELD_VALUE_PREFIX.length);
-        const operator = operators[key];
-        const operatorWrapper = operator == null
-          ? val => val
-          : val => `api.${operator}(${val})`;
-
-        if (element.type === "checkbox") {
-          // Todo (low-pri): Clean this up as soon as back-end handles this properly
-          parameters[key] = element.checked ? "True" : "False";
-        } else if (element.type === "select-one") {
-          let { value } = element;
-          parameters[key] = `${operatorWrapper(JSON.stringify(value))}`;
-        } else if (element.type === "number") {
-          let { value } = element;
-          parameters[key] = `${operatorWrapper(value)}`;
-        } else if (element.type === "select-multiple") {
-          // Todo (high-pri)
-          const selectedOptions = Array.from(
-            element.querySelectorAll("option:checked"),
-            e => e.value
-          );
-          const selectedOptionsJSON = JSON.stringify(selectedOptions);
-
-          parameters[key] = operatorWrapper(selectedOptionsJSON);
-        }
-      }
-    }
 
     const constraints = [];
-    for (const key of Object.keys(parameters)) {
-      constraints.push({ [key]: parameters[key] });
+
+    for (const formFieldWithId of Object.values(relevantFormFields)) {
+      const formField = this.state.formFieldData[formFieldWithId.id];
+      const operator = formField.operatorValue;
+      const operatorWrapper = operator == null
+        ? val => val
+        : val => `api.${operator}(${val})`;
+
+      let value = formField.value;
+      if (typeof value === "boolean") {
+        value = value ? "True" : "False";
+      } else if (isNaN(value)) {
+        value = JSON.stringify(value);
+      } else {
+        value = value;
+      }
+
+      constraints.push({
+        [formField.fieldName]: `${operatorWrapper(value)}`
+      });
     }
 
     console.log("constraints", constraints);
@@ -130,12 +115,19 @@ class QueryForm extends React.Component {
     const use_mock = false;
     const json = use_mock ? apartmentJson : formDescription;
 
-    const activeAndRequiredFormFields = _.uniq(
-      activeFormFields.concat(json.required)
-    );
+    const activeAndRequiredFormFields = json.required
+      .map(fieldName => ({
+        fieldName,
+        id: fieldName,
+        operatorValue: null,
+        value: null
+      }))
+      .concat(activeFormFields);
 
     return (
-      <form onSubmit={this.onSubmit}>
+      <form
+        onSubmit={event => this.onSubmit(event, activeAndRequiredFormFields)}
+      >
         <FormGroup>
           <div>
             <FormControl
@@ -167,7 +159,7 @@ class QueryForm extends React.Component {
           category,
           activeAndRequiredFormFields,
           removeFormField,
-          this.state.values,
+          this.state.formFieldData,
           this.onChangeValue
         )}
 
@@ -183,32 +175,7 @@ class QueryForm extends React.Component {
   }
 }
 
-// Create custom components
-class EvaluatorIdleResponse extends React.Component {
-  render() {
-    let pane_style = {
-      paddingLeft: "25px",
-      paddingTop: "20px",
-      paddingBottom: "20px",
-      paddingRight: "25px",
-      float: "left"
-    };
-
-    return (
-      <div
-        id="response-type-idle"
-        className="response-type-module"
-        style={pane_style}
-      >
-        <span>
-          Pay attention to the conversation above, as you'll need to evaluate.
-        </span>
-      </div>
-    );
-  }
-}
-
-class NumericResponse extends React.Component {
+class WizardResponse extends React.Component {
   constructor(props) {
     super(props);
     this.state = { textval: "", sending: false };
@@ -534,28 +501,30 @@ class LeftPane extends React.Component {
       selectedTabKey: 2,
       addedFormFieldsByCategory: {}
     };
+    this.formFieldIdCounter = 0;
   }
 
   addFormField = (category, fieldName) => {
+    const id = this.formFieldIdCounter++;
     this.setState({
       addedFormFieldsByCategory: {
         ...this.state.addedFormFieldsByCategory,
         [category]: [
           ...(this.state.addedFormFieldsByCategory[category] || []),
-          fieldName
+          { fieldName, id }
         ]
       }
     });
   };
 
-  removeFormField = (category, fieldName) => {
+  removeFormField = (category, fieldId) => {
     this.setState({
       addedFormFieldsByCategory: {
         ...this.state.addedFormFieldsByCategory,
-        [category]: _.without(
-          this.state.addedFormFieldsByCategory[category] || [],
-          fieldName
-        )
+        [category]: (this.state.addedFormFieldsByCategory[category] || [])
+          .filter(fieldNameWithId => {
+            return fieldNameWithId.id !== fieldId;
+          })
       }
     });
   };
@@ -685,7 +654,7 @@ class LeftPane extends React.Component {
 export default {
   XTextResponse: {
     // default: leave blank to use original default when no ids match
-    Wizard: NumericResponse
+    Wizard: WizardResponse
   },
   XLeftPane: {
     Wizard: LeftPane,
