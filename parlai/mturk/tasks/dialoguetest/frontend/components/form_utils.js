@@ -94,22 +94,61 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
         );
       case "Categorical":
       case "CategoricalMultiple":
+        const uiLogicInfo = {
+          Categorical: {
+            is_equal_to: "SingleSelect",
+            is_one_of: "MultiSelect"
+            // Todo: Probably easier if the back-end provides "is_not_equal" ?
+            // is_not: "SingleSelect"
+          },
+          CategoricalMultiple: {
+            is_equal_to: "MultiSelect",
+            contains: "SingleSelect",
+            contain_all_of: "MultiSelect",
+            contain_at_least_one_of: "MultiSelect"
+          }
+        }[input.Type];
+
+        const operatorUi = (
+          <FormControl
+            name={`${constants.FIELD_OPERATOR_PREFIX}${input.Name}`}
+            componentClass="select"
+            placeholder={Object.keys(uiLogicInfo)[0]}
+            style={{ maxWidth: 130, display: "inline-block" }}
+          >
+            {Object.keys(uiLogicInfo).map(key =>
+              <option value={key}>{key.replace(/_/g, " ")}</option>
+            )}
+          </FormControl>
+        );
+
+        const isMultiple = true;
+
         return (
           <FormGroup>
             {controlLabelWithRemove}
-            <FormControl
-              required={isRequired}
-              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
-              componentClass="select"
-              placeholder="select"
-              multiple={input.Type == "CategoricalMultiple"}
-            >
-              {input.Categories.map((category, idx) =>
-                <option key={`${category}-idx`} value={category}>
-                  {category}
-                </option>
-              )}
-            </FormControl>
+            <div>
+              {operatorUi}
+              <FormControl
+                required={isRequired}
+                name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
+                componentClass="select"
+                placeholder="select"
+                multiple={isMultiple}
+                style={{
+                  maxWidth: 200,
+                  display: "inline-block",
+                  verticalAlign: "top",
+                  marginLeft: 10
+                }}
+              >
+                {input.Categories.map((category, idx) =>
+                  <option key={`${category}-idx`} value={category}>
+                    {category}
+                  </option>
+                )}
+              </FormControl>
+            </div>
           </FormGroup>
         );
       case "Boolean":
@@ -135,18 +174,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
           </FormGroup>
         );
       case "Integer":
-        // TODO: more operators for all data types
-
-        // right side - multiple
-        // is_one_of
-        // contain_all_of
-        // contain_at_least_one_of
-
-        // right side - single
-        // is_equal_to
-        // contains_substring
-        // contains
-        // is_not
+        // TODO (high-pri): more operators for all data types
 
         const { Min, Max } = input;
 
