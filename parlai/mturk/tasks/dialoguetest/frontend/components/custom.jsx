@@ -45,7 +45,16 @@ class QueryForm extends React.Component {
   constructor(props) {
     super(props);
     this.addFormFieldRef = React.createRef();
+    this.state = {
+      values: {}
+    };
   }
+
+  onChangeValue = (key, value) => {
+    this.setState({
+      values: { ...this.state.values, [key]: value }
+    });
+  };
 
   onSubmit = event => {
     event.preventDefault();
@@ -77,12 +86,12 @@ class QueryForm extends React.Component {
         if (element.type === "checkbox") {
           // Todo (low-pri): Clean this up as soon as back-end handles this properly
           parameters[key] = element.checked ? "True" : "False";
-        } else if (element.type === "select-one" || element.type === "number") {
+        } else if (element.type === "select-one") {
           let { value } = element;
-          const parsedValue = parseFloat(value);
-          value = isNaN(parsedValue) ? value : parsedValue;
-
-          parameters[key] = `${operatorWrapper(parsedValue)}`;
+          parameters[key] = `${operatorWrapper(JSON.stringify(value))}`;
+        } else if (element.type === "number") {
+          let { value } = element;
+          parameters[key] = `${operatorWrapper(value)}`;
         } else if (element.type === "select-multiple") {
           // Todo (high-pri)
           const selectedOptions = Array.from(
@@ -103,7 +112,7 @@ class QueryForm extends React.Component {
 
     console.log("constraints", constraints);
     const queryString = `? ${JSON.stringify(constraints)}`;
-    console.log("sending ?", queryString);
+    console.log("sending", queryString);
     this.props.onMessageSend(queryString, {}, () => console.log("done"));
   };
 
@@ -157,7 +166,9 @@ class QueryForm extends React.Component {
           json,
           category,
           activeAndRequiredFormFields,
-          removeFormField
+          removeFormField,
+          this.state.values,
+          this.onChangeValue
         )}
 
         <Button

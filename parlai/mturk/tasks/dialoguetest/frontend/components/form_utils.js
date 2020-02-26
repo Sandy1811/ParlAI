@@ -52,7 +52,14 @@ function ControlLabelWithRemove(props) {
   );
 }
 
-export function jsonToForm(json, category, activeFormFields, removeFormField) {
+export function jsonToForm(
+  json,
+  category,
+  activeFormFields,
+  removeFormField,
+  values,
+  onChangeValue
+) {
   const inputByName = _.keyBy(json.input, "Name");
 
   return activeFormFields.map(formFieldName => {
@@ -67,33 +74,40 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
       />
     );
     switch (input.Type) {
-      case "LongString":
+      case "LongString": {
+        const fieldName = `${constants.FIELD_VALUE_PREFIX}${input.Name}`;
         return (
           <FormGroup>
             {controlLabelWithRemove}
             <FormControl
               required={isRequired}
-              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
+              name={fieldName}
               componentClass="textarea"
               placeholder="textarea"
+              value={values[fieldName]}
+              onChange={event => onChangeValue(fieldName, event.target.value)}
             />
           </FormGroup>
         );
-
-      case "ShortString":
+      }
+      case "ShortString": {
+        const fieldName = `${constants.FIELD_VALUE_PREFIX}${input.Name}`;
         return (
           <FormGroup>
             {controlLabelWithRemove}
             <FormControl
-              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
+              name={fieldName}
               required={isRequired}
               componentClass="input"
               style={{ maxWidth: 400 }}
+              value={values[fieldName]}
+              onChange={event => onChangeValue(fieldName, event.target.value)}
             />
           </FormGroup>
         );
+      }
       case "Categorical":
-      case "CategoricalMultiple":
+      case "CategoricalMultiple": {
         const uiLogicInfo = {
           Categorical: {
             is_equal_to: "SingleSelect",
@@ -109,12 +123,18 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
           }
         }[input.Type];
 
+        const operatorFieldName = `${constants.FIELD_OPERATOR_PREFIX}${input.Name}`;
+        const fieldName = `${constants.FIELD_VALUE_PREFIX}${input.Name}`;
+
         const operatorUi = (
           <FormControl
-            name={`${constants.FIELD_OPERATOR_PREFIX}${input.Name}`}
+            name={operatorFieldName}
             componentClass="select"
             placeholder={Object.keys(uiLogicInfo)[0]}
             style={{ maxWidth: 130, display: "inline-block" }}
+            value={values[operatorFieldName]}
+            onChange={event =>
+              onChangeValue(operatorFieldName, event.target.value)}
           >
             {Object.keys(uiLogicInfo).map(key =>
               <option value={key}>{key.replace(/_/g, " ")}</option>
@@ -122,7 +142,8 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
           </FormControl>
         );
 
-        const isMultiple = true;
+        const isMultiple =
+          uiLogicInfo[values[operatorFieldName]] === "MultiSelect";
 
         return (
           <FormGroup>
@@ -131,10 +152,22 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
               {operatorUi}
               <FormControl
                 required={isRequired}
-                name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
+                name={fieldName}
                 componentClass="select"
                 placeholder="select"
                 multiple={isMultiple}
+                value={values[fieldName]}
+                onChange={event => {
+                  if (event.target.multiple) {
+                    const selectedOptions = Array.from(
+                      event.target.querySelectorAll("option:checked"),
+                      e => e.value
+                    );
+                    onChangeValue(fieldName, selectedOptions);
+                  } else {
+                    onChangeValue(fieldName, event.target.value);
+                  }
+                }}
                 style={{
                   maxWidth: 200,
                   display: "inline-block",
@@ -151,12 +184,16 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
             </div>
           </FormGroup>
         );
-      case "Boolean":
+      }
+      case "Boolean": {
+        const fieldName = `${constants.FIELD_VALUE_PREFIX}${input.Name}`;
         return (
           <FormGroup>
             <Checkbox
-              name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
+              name={fieldName}
               required={isRequired}
+              value={values[fieldName]}
+              onChange={event => onChangeValue(fieldName, event.target.checked)}
               inline
             >
               {input.Name}
@@ -173,10 +210,14 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
             </Button>
           </FormGroup>
         );
-      case "Integer":
+      }
+      case "Integer": {
         // TODO (high-pri): more operators for all data types
 
         const { Min, Max } = input;
+
+        const operatorFieldName = `${constants.FIELD_OPERATOR_PREFIX}${input.Name}`;
+        const fieldName = `${constants.FIELD_VALUE_PREFIX}${input.Name}`;
 
         return (
           <FormGroup controlId="formControlsNumber">
@@ -184,10 +225,13 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
             <div>
               <FormControl
                 required={isRequired}
-                name={`${constants.FIELD_OPERATOR_PREFIX}${input.Name}`}
+                name={operatorFieldName}
                 componentClass="select"
                 placeholder="is"
                 style={{ maxWidth: 130, display: "inline-block" }}
+                value={values[operatorFieldName]}
+                onChange={event =>
+                  onChangeValue(operatorFieldName, event.target.value)}
               >
                 <option value="is_equal_to">is equal to</option>
                 <option value="is_greater_than">is greater than</option>
@@ -196,7 +240,7 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
               </FormControl>
               <FormControl
                 required={isRequired}
-                name={`${constants.FIELD_VALUE_PREFIX}${input.Name}`}
+                name={fieldName}
                 componentClass="input"
                 type="number"
                 min={Min}
@@ -206,10 +250,13 @@ export function jsonToForm(json, category, activeFormFields, removeFormField) {
                   display: "inline-block",
                   marginLeft: 20
                 }}
+                value={values[fieldName]}
+                onChange={event => onChangeValue(fieldName, event.target.value)}
               />
             </div>
           </FormGroup>
         );
+      }
     }
   });
 }
