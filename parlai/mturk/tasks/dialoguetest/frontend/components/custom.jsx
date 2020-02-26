@@ -41,6 +41,8 @@ import { apartmentJson } from "./mocks.js";
 import * as constants from "./constants";
 import "./jitter_workaround";
 
+const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
+
 class WizardResponse extends React.Component {
   constructor(props) {
     super(props);
@@ -62,7 +64,6 @@ class WizardResponse extends React.Component {
       this.setState({ sending: true });
 
       if (shouldSuggest && !this.state.textval.startsWith("?")) {
-        const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
         this.props.onMessageSend(
           `${selectionConstants.request_suggestions_prefix}${this.state
             .textval}`,
@@ -89,6 +90,20 @@ class WizardResponse extends React.Component {
     this.setState({ textval: "" + value });
   }
 
+  shouldAskForSuggestion() {
+    let shouldAskForSuggestion = false;
+    for (const message of this.props.messages) {
+      if (message.id === "KnowledgeBase") {
+        shouldAskForSuggestion = true;
+      }
+      if (message.text.startsWith(selectionConstants.pick_suggestion_prefix)) {
+        shouldAskForSuggestion = false;
+      }
+    }
+
+    return shouldAskForSuggestion;
+  }
+
   render() {
     let pane_style = {
       paddingLeft: "25px",
@@ -110,8 +125,7 @@ class WizardResponse extends React.Component {
       float: "left",
       marginLeft: "10px"
     };
-    const shouldSuggest =
-      this.props.messages.find(msg => msg.id === "KnowledgeBase") != null;
+    const shouldSuggest = this.shouldAskForSuggestion();
 
     let text_input = (
       <FormControl
