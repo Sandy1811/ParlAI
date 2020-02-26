@@ -72,7 +72,10 @@ class WOZKnowledgeBaseAgent(Agent):
             for constraint in constraints
             for name, expr in constraint.items()
         ]
-        return result[0]
+        if result:
+            return result[0]
+        else:
+            return {}
 
     def _parse_json(self, constraints: List[Dict[Text, Text]]) -> Dict[Text, Any]:
         result = [
