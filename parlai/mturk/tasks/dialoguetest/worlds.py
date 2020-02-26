@@ -260,9 +260,11 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
             self.mturk_agent,
         )
         message = self.mturk_agent.act()
+        echo.log_write(f"onboarding wizard: {message}")
         if is_disconnected(message):
             self.episodeDone = True
             return
+        self.mturk_agent.passed_onboarding = True
         # if message.get("text", "") != "ready":
         #     self.block_loop()
         #     self.episodeDone = True
@@ -295,7 +297,9 @@ class UserOnboardingWorld(MTurkOnboardWorld):
             "Write 'ready' when you are ready and press [Enter].",
             self.mturk_agent,
         )
-        self.mturk_agent.act(timeout=60)
+        message = self.mturk_agent.act()
+        echo.log_write(f"onboarding user: {message}")
+        self.mturk_agent.passed_onboarding = True
         send_mturk_message(
             "Please wait for the virtual assistant to join the conversation...",
             self.mturk_agent,

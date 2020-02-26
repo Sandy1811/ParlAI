@@ -72,6 +72,9 @@ class WOZKnowledgeBaseAgent(Agent):
     def get_status(self):
         return AssignState.STATUS_DONE
 
+    def set_status(self, *args, **kwargs) -> None:
+        pass
+
     @property
     def worker_id(self):
         return None
@@ -83,6 +86,10 @@ class WOZKnowledgeBaseAgent(Agent):
     @property
     def feedback(self):
         return None  # ToDo: Implement
+
+    @property
+    def submitted_hit(self) -> bool:
+        return True
 
 
 class WOZDummyAgent(Agent):

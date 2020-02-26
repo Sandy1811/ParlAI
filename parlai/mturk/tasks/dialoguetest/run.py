@@ -21,6 +21,8 @@ def main():
     and configuring it for the qa_data_collection task.
     """
 
+    echo.log_write("START")
+
     # Get relevant arguments
     argparser = ParlaiParser(False, False)
     argparser.add_parlai_data_path()
@@ -31,7 +33,7 @@ def main():
 
     qualification_manager = MTurkQualificationManager()
     qualification_manager.require_min_approved_hits(10)
-    qualification_manager.require_locales(["DE", "US", "CA", "GB", "AU", "NZ"])
+    # qualification_manager.require_locales(["DE", "US", "CA", "GB", "AU", "NZ"])
 
     # Set the task name to be the folder name
     opt["task"] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
@@ -62,9 +64,11 @@ def main():
     # queue for a task world.
     def run_onboard(worker):
         nonlocal role_index
+        echo.log_write(f"run_onboard for {worker.worker_id}")
         role = mturk_agent_roles[role_index % len(mturk_agent_roles)]
         role_index += 1
         worker.demo_role = role
+        worker.passed_onboarding = False
         if role == "Wizard":
             worker.update_agent_id("Wizard")
             world = WizardOnboardingWorld(opt=opt, mturk_agent=worker)
@@ -76,7 +80,14 @@ def main():
 
         while not world.episode_done():
             world.parley()
-        print(f"{worker.worker_id} passed onboarding")
+
+        if worker.passed_onboarding:
+            print(f"{worker.worker_id} passed onboarding")
+            echo.log_write(f"{worker.worker_id} passed onboarding")
+        else:
+            print(f"{worker.worker_id} failed onboarding")
+            echo.log_write(f"{worker.worker_id} failed onboarding")
+            worker.demo_role = "none"
 
         world.shutdown()
         return world.prep_save_data([worker])

@@ -34,7 +34,7 @@ class MTurkQualificationManager:
             {
                 "QualificationTypeId": "00000000000000000040",
                 "Comparator": "GreaterThan",
-                "IntegerValue": min_approved_hits,
+                "IntegerValues": [min_approved_hits],
                 "RequiredToPreview": True,
             }
         )
@@ -44,7 +44,7 @@ class MTurkQualificationManager:
             {
                 "QualificationTypeId": "00000000000000000060",
                 "Comparator": "EqualTo",
-                "IntegerValue": 1 if adult else 0,
+                "IntegerValues": [1] if adult else [0],
                 "RequiredToPreview": True,
             }
         )
