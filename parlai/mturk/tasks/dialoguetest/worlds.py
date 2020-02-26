@@ -152,6 +152,7 @@ DUMMY_FORM_DESCRIPTION = [
         "db": "apartment",
         "function": "generic_sample",
         "returns_count": True,
+        "schema_url": "https://upload.wikimedia.org/wikipedia/commons/6/65/Difficult_editor_-_flow_chart.png",
     },
     {
         "input": [
@@ -225,6 +226,7 @@ DUMMY_FORM_DESCRIPTION = [
         "db": "ride",
         "function": "ride_status",
         "returns_count": False,
+        "schema_url": "http://www.texample.net/media/tikz/examples/PNG/simple-flow-chart.png",
     },
 ]
 
