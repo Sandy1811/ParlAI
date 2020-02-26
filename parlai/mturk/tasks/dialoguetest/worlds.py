@@ -378,11 +378,11 @@ class WOZWorld(MTurkTaskWorld):
             wizard_message, command, parameters = self.get_new_wizard_message()
 
         if command and command == WORKER_PICK_SUGGESTION:
-            message = {
+            wizard_message = {
                 "id": self.wizard_agent.id,
                 "text": parameters,
             }
-            self.wizard_agent.observe(message)
+            self.wizard_agent.observe(wizard_message)
 
         self.deal_with_wizard_command(command, parameters)
 
