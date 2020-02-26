@@ -53,6 +53,10 @@ class WOZKnowledgeBaseAgent(Agent):
                 "text": f"Found {count} apartments. Example: {json.dumps(apartment)}.",
             }
         except Exception as e:
+            print("Error: ", e)
+            import traceback
+            traceback.print_exc()
+
             reply = {
                 "id": "KnowledgeBase",
                 "text": f"Could not interpret your query: {e}",

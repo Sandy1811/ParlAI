@@ -693,22 +693,25 @@ def rebuild_source():
     for task, task_dir in copy_dirs.items():
         was_built = False
         if 'package.json' in os.listdir(task_dir):
+            if not "dialoguetest" in task_dir:
+                print(f"Skipping compilation of {task_dir}")
+                continue
             # need to build this component first
             os.chdir(task_dir)
-            packages_installed = subprocess.call(['npm', 'install'])
-            if packages_installed != 0:
-                raise Exception(
-                    'please make sure npm is installed, otherwise '
-                    'view the above error for more info.'
-                )
+            # packages_installed = subprocess.call(['npm', 'install'])
+            # if packages_installed != 0:
+            #     raise Exception(
+            #         'please make sure npm is installed, otherwise '
+            #         'view the above error for more info.'
+            #     )
 
-            webpack_complete = subprocess.call(['npm', 'run', 'dev'])
-            if webpack_complete != 0:
-                raise Exception(
-                    'Webpack appears to have failed to build your '
-                    'frontend. See the above error for more '
-                    'information.'
-                )
+            # webpack_complete = subprocess.call(['npm', 'run', 'dev'])
+            # if webpack_complete != 0:
+            #     raise Exception(
+            #         'Webpack appears to have failed to build your '
+            #         'frontend. See the above error for more '
+            #         'information.'
+            #     )
             was_built = True
 
         os.chdir(here)
@@ -749,12 +752,13 @@ def rebuild_source():
     )
 
     # build the full react server
-    packages_installed = subprocess.call(['npm', 'install'])
-    if packages_installed != 0:
-        raise Exception(
-            'please make sure npm is installed, otherwise view '
-            'the above error for more info.'
-        )
+    print("Skipping npm install for high-level frontend")
+    # packages_installed = subprocess.call(['npm', 'install'])
+    # if packages_installed != 0:
+    #     raise Exception(
+    #         'please make sure npm is installed, otherwise view '
+    #         'the above error for more info.'
+    #     )
 
     webpack_complete = subprocess.call(['npm', 'run', 'dev'])
     if webpack_complete != 0:

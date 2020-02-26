@@ -60,6 +60,7 @@ class KnowledgeBaseItem:
     def match(self, constraints: Dict[Text, Any]) -> bool:
         for parameter_name, constraint in constraints.items():
             row_value = self._settings.get(parameter_name)
+            print(f"{parameter_name} = {row_value}")
             if not callable(constraint) and row_value != constraint:
                 return False
             elif callable(constraint) and not constraint(row_value):
