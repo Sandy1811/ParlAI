@@ -1,4 +1,4 @@
-from typing import Dict, Text, Any, Optional, List
+from typing import Dict, Text, Any, Optional, List, Union
 
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
@@ -74,11 +74,22 @@ class WOZKnowledgeBaseAgent(Agent):
         ]
         return result[0]
 
-    def _parse(self, text: Text) -> Dict[Text, Any]:
-        if text.startswith("["):
-            return self._parse_new(text)
+    def _parse_json(self, constraints: List[Dict[Text, Text]]) -> Dict[Text, Any]:
+        result = [
+            {name: eval(expr)}
+            for constraint in constraints
+            for name, expr in constraint.items()
+        ]
+        return result[0]
+
+    def _parse(self, text: Union[Text, List]) -> Dict[Text, Any]:
+        if isinstance(text, list):
+            return self._parse_json(text)
         else:
-            return self._parse_old(text)
+            if text.startswith("["):
+                return self._parse_new(text)
+            else:
+                return self._parse_old(text)
 
     def get_messages(self) -> List[Dict[Text, Any]]:
         # Note: Messages must contain a 'text' field
@@ -187,6 +198,9 @@ class WOZDummyAgent(Agent):
     def get_status(self):
         return AssignState.STATUS_DONE
 
+    def set_status(self, *args, **kwargs):
+        pass
+
     @property
     def worker_id(self):
         return None
@@ -198,3 +212,6 @@ class WOZDummyAgent(Agent):
     @property
     def feedback(self):
         return None  # ToDo: Implement
+
+    def submitted_hit(self) -> bool:
+        return True
