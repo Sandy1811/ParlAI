@@ -86,9 +86,12 @@ class QueryForm extends React.Component {
         if (element.type === "checkbox") {
           // Todo (low-pri): Clean this up as soon as back-end handles this properly
           parameters[key] = element.checked ? "True" : "False";
-        } else if (element.type === "select-one" || element.type === "number") {
+        } else if (element.type === "select-one") {
           let { value } = element;
           parameters[key] = `${operatorWrapper(JSON.stringify(value))}`;
+        } else if (element.type === "number") {
+          let { value } = element;
+          parameters[key] = `${operatorWrapper(value)}`;
         } else if (element.type === "select-multiple") {
           // Todo (high-pri)
           const selectedOptions = Array.from(
