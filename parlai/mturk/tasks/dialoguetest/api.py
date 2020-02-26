@@ -4,6 +4,8 @@ from typing import Dict, Text, Any, List, Optional
 
 
 def is_equal_to(value):
+    if isinstance(value, list):
+        return lambda x: set(x) == set(value)
     return lambda x: x == value
 
 
