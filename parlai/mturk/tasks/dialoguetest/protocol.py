@@ -16,6 +16,8 @@ COMMAND_REVIEW = ALL_CONSTANTS["back_to_front"]["command_review"]
 MESSAGE_COMPLETE_PREFIX = ALL_CONSTANTS["front_to_back"]["complete_prefix"]
 MESSAGE_DONE_PREFIX = ALL_CONSTANTS["front_to_back"]["done_prefix"]
 MESSAGE_QUERY_PREFIX = ALL_CONSTANTS["front_to_back"]["query_prefix"]
+MESSAGE_SELECT_1_PREFIX = ALL_CONSTANTS["front_to_back"]["select_kb_entry_prefix"]
+MESSAGE_SELECT_2_PREFIX = ALL_CONSTANTS["front_to_back"]["select_reference_kb_entry_prefix"]
 
 WORKER_COMMAND_COMPLETE = "complete"
 WORKER_COMMAND_DONE = "done"

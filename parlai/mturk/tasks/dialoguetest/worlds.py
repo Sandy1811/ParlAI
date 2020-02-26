@@ -24,7 +24,8 @@ from parlai.mturk.tasks.dialoguetest.protocol import (
     WORKER_COMMAND_DONE,
     WORKER_DISCONNECTED,
     extract_command_message,
-    COMMAND_SETUP,
+    MESSAGE_SELECT_1_PREFIX,
+    MESSAGE_SELECT_2_PREFIX,
     send_setup_command,
 )
 
@@ -360,10 +361,11 @@ class WOZWorld(MTurkTaskWorld):
 
         wizard_message, command, parameters = self.get_new_wizard_message()
         # Handle communication between the wizard and the knowledge base
-        while command and command == WORKER_COMMAND_QUERY:
-            self.kb_agent.observe({"query": parameters})
-            kb_message, _, _ = self.get_new_knowledgebase_message()
-            self.wizard_agent.observe(kb_message)
+        while command in [WORKER_COMMAND_QUERY, MESSAGE_SELECT_1_PREFIX, MESSAGE_SELECT_2_PREFIX]:
+            if command == WORKER_COMMAND_QUERY:
+                self.kb_agent.observe({"query": parameters})
+                kb_message, _, _ = self.get_new_knowledgebase_message()
+                self.wizard_agent.observe(kb_message)
             wizard_message, command, parameters = self.get_new_wizard_message()
 
         self.deal_with_wizard_command(command, parameters)
