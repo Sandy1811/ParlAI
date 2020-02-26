@@ -41,6 +41,8 @@ import { apartmentJson } from "./mocks.js";
 import * as constants from "./constants";
 import "./jitter_workaround";
 
+const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
+
 class WizardResponse extends React.Component {
   constructor(props) {
     super(props);
@@ -62,7 +64,6 @@ class WizardResponse extends React.Component {
       this.setState({ sending: true });
 
       if (shouldSuggest && !this.state.textval.startsWith("?")) {
-        const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
         this.props.onMessageSend(
           `${selectionConstants.request_suggestions_prefix}${this.state
             .textval}`,
@@ -89,6 +90,20 @@ class WizardResponse extends React.Component {
     this.setState({ textval: "" + value });
   }
 
+  shouldAskForSuggestion() {
+    let shouldAskForSuggestion = false;
+    for (const message of this.props.messages) {
+      if (message.id === "KnowledgeBase") {
+        shouldAskForSuggestion = true;
+      }
+      if (message.text.startsWith(selectionConstants.pick_suggestion_prefix)) {
+        shouldAskForSuggestion = false;
+      }
+    }
+
+    return shouldAskForSuggestion;
+  }
+
   render() {
     let pane_style = {
       paddingLeft: "25px",
@@ -110,8 +125,7 @@ class WizardResponse extends React.Component {
       float: "left",
       marginLeft: "10px"
     };
-    const shouldSuggest =
-      this.props.messages.find(msg => msg.id === "KnowledgeBase") != null;
+    const shouldSuggest = this.shouldAskForSuggestion();
 
     let text_input = (
       <FormControl
@@ -444,6 +458,8 @@ class LeftPane extends React.Component {
             <Col sm={9}>
               <Tab.Content animation={false} mountOnEnter={true}>
                 {dbNames.map((dbName, dbIndex) => {
+                  const imgUrl =
+                    setupMessage.form_description[dbIndex].schema_url;
                   return (
                     <Tab.Pane
                       eventKey={dbIndex}
@@ -457,12 +473,10 @@ class LeftPane extends React.Component {
                       >
                         <Tab eventKey={1} title="Your Instruction Schema">
 
-                          <img
-                            style={{ width: "100%" }}
-                            src={
-                              setupMessage.form_description[dbIndex].schema_url
-                            }
-                          />
+                          <a href={imgUrl} target="_blank">
+
+                            <img style={{ width: "100%" }} src={imgUrl} />
+                          </a>
                         </Tab>
                         <Tab eventKey={2} title="Knowledge Base">
                           <h4>User's requirements for {dbName}:</h4>
@@ -499,7 +513,8 @@ export default {
   XLeftPane: {
     Wizard: LeftPane,
     User: LeftPane,
-    Onboarding: LeftPane
+    Onboarding: LeftPane,
+    waiting: LeftPane
   },
   XMessageList: {
     Wizard: MessageList,

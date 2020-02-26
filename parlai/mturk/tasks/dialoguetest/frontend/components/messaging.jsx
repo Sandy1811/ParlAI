@@ -35,6 +35,9 @@ const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
 const supply_suggestions_prefix = "supply_suggestions";
 
 function getSelectionInfo(originalMessages) {
+  // This function determines which KB reply is currently in the
+  // <selected> and <compare to> state.
+
   let selectedMessage = null;
   let compareToMessage = null;
 
@@ -190,6 +193,26 @@ function KnowledgeBaseMessage(props) {
 }
 
 class ChatMessage extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { textval: "", sending: false };
+  }
+
+  handleKeyPress(e) {
+    if (e.key === "Enter") {
+      this.props.onMessageSend(this.state.textval, {}, () =>
+        this.setState({ textval: "", sending: false })
+      );
+
+      e.stopPropagation();
+      e.nativeEvent.stopImmediatePropagation();
+    }
+  }
+
+  updateValue(value) {
+    this.setState({ textval: "" + value });
+  }
+
   render() {
     let float_loc = "left";
     let alert_class = "alert-warning";
@@ -212,14 +235,10 @@ class ChatMessage extends React.Component {
       );
     }
 
-    const isDummyMessage =
-      this.props.command != null &&
-      this.props.command.startsWith(supply_suggestions_prefix);
-
     const isKB = this.props.agent_id === "KnowledgeBase";
     let message = null;
 
-    if (isDummyMessage) {
+    if (this.props.isSuggestionMessage) {
       // TODO (low-pri): if the backend provides JSON instead, we can use JSON.parse()
       const suggestions = eval(
         this.props.command.slice(supply_suggestions_prefix.length)
@@ -242,8 +261,32 @@ class ChatMessage extends React.Component {
               >
                 {suggestion}
               </Button>
+
             </div>
           )}
+          <FormControl
+            type="text"
+            id="id_text_input"
+            style={{
+              width: "80%",
+              height: "100%",
+              float: "left",
+              fontSize: "16px"
+            }}
+            value={this.state.textval}
+            placeholder="Please enter here..."
+            onKeyPress={e => this.handleKeyPress(e)}
+            onChange={e => this.updateValue(e.target.value)}
+          />
+
+          <Button
+            className="btn btn-primary"
+            id="id_send_msg_button"
+            disabled={this.state.textval == ""}
+            onClick={() => this.tryMessageSend()}
+          >
+            Send
+          </Button>
         </div>
       );
     } else if (isKB) {
@@ -312,7 +355,12 @@ export class MessageList extends React.Component {
     }
 
     return messages.map((m, idx) => {
-      const dontRender = shouldNotRender(m);
+      const isSuggestionMessage =
+        m.command != null && m.command.startsWith(supply_suggestions_prefix);
+
+      const dontRender =
+        shouldNotRender(m) ||
+        (isSuggestionMessage && idx != messages.length - 1);
 
       return dontRender && !constants.DEBUG_FLAGS.RENDER_INVISIBLE_MESSAGES
         ? null
@@ -328,6 +376,7 @@ export class MessageList extends React.Component {
               message_id={m.message_id}
               duration={this.props.is_review ? m.duration : undefined}
               selectionInfo={selectionInfo}
+              isSuggestionMessage={isSuggestionMessage}
             />
           </div>;
     });
