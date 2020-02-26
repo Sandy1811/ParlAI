@@ -69,7 +69,7 @@ def extract_command_message(
             parameters = None
         elif text.startswith(MESSAGE_PICK_SUGGESTION_PREFIX):
             command = WORKER_PICK_SUGGESTION
-            parameters = text[len(WORKER_PICK_SUGGESTION):].strip()
+            parameters = text[len(MESSAGE_PICK_SUGGESTION_PREFIX):].strip()
 
     return command, parameters
 
