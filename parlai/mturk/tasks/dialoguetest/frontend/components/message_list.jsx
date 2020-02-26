@@ -143,9 +143,6 @@ function KnowledgeBaseMessage(props) {
       props.onMessageSend(`${prefix} ${props.message_id}`, {}, () =>
         console.log("sent selection")
       );
-
-      // select_kb_entry_prefix
-      // select_reference_kb_entry_prefix
     };
 
     return (

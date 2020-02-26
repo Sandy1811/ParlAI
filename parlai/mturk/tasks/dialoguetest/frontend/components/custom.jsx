@@ -69,39 +69,42 @@ class QueryForm extends React.Component {
     for (const element of form.elements) {
       if (element.name.startsWith(constants.FIELD_VALUE_PREFIX)) {
         const key = element.name.slice(constants.FIELD_VALUE_PREFIX.length);
-
-        // ? { "Level": api.is_greater_than(10) }
+        const operator = operators[key];
+        const operatorWrapper = operator == null
+          ? val => val
+          : val => `api.${operator}(${val})`;
 
         if (element.type === "checkbox") {
-          // Todo: Clean this up as soon as back-end handles this properly
+          // Todo (low-pri): Clean this up as soon as back-end handles this properly
           parameters[key] = element.checked ? "##True##" : "##False##";
         } else if (element.type === "select-one" || element.type === "number") {
-          const { value } = element;
+          let { value } = element;
           const parsedValue = parseFloat(value);
-          const operator = operators[key];
+          value = isNaN(parsedValue) ? value : parsedValue;
 
-          const operatorEndings = ["", ""];
-          if (operator != null) {
-            operatorEndings[0] = `api.${operator}(`;
-            operatorEndings[1] = `)`;
-          }
-
-          parameters[key] = isNaN(parsedValue)
-            ? value
-            : `##${operatorEndings[0]}${parsedValue}${operatorEndings[1]}##`;
+          parameters[key] = `##${operatorWrapper(parsedValue)}##`;
         } else if (element.type === "select-multiple") {
-          // Todo
-          console.warning("not implemented yet");
+          // Todo (high-pri)
+          const selectedOptions = Array.from(
+            element.querySelectorAll("option:checked"),
+            e => e.value
+          );
+          const selectedOptionsJSON = JSON.stringify(selectedOptions).replace(
+            /"/g,
+            "'"
+          );
+
+          parameters[key] = `##${operatorWrapper(selectedOptionsJSON)}##`;
         }
       }
     }
+
     console.log("parameters", parameters);
-    console.log("sending ?", parameters);
-    this.props.onMessageSend(
-      `? ${JSON.stringify(parameters).replace(/"##/g, "").replace(/##"/g, "")}`,
-      {},
-      () => console.log("done")
-    );
+    const queryString = `? ${JSON.stringify(parameters)
+      .replace(/"##/g, "")
+      .replace(/##"/g, "")}`;
+    console.log("sending ?", queryString);
+    this.props.onMessageSend(queryString, {}, () => console.log("done"));
   };
 
   render() {
@@ -214,7 +217,7 @@ class NumericResponse extends React.Component {
     if (this.state.textval != "" && this.props.active && !this.state.sending) {
       this.setState({ sending: true });
 
-      if (shouldSuggest) {
+      if (shouldSuggest && !this.state.textval.startsWith("?")) {
         const selectionConstants = constants.PROTOCOL_CONSTANTS.front_to_back;
         this.props.onMessageSend(
           `${selectionConstants.request_suggestions_prefix}${this.state
@@ -238,12 +241,8 @@ class NumericResponse extends React.Component {
     }
   }
 
-  updateValue(amount) {
-    // if ((amount != "" && isNaN(amount)) || amount < 0) {
-    //   return;
-    // }
-    // amount = amount == "" ? 0 : amount;
-    this.setState({ textval: "" + amount });
+  updateValue(value) {
+    this.setState({ textval: "" + value });
   }
 
   render() {
