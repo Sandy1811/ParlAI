@@ -141,7 +141,11 @@ export class QueryForm extends React.Component {
     }
 
     console.log("constraints", constraints);
-    const queryString = `? ${JSON.stringify(constraints)}`;
+    // TODO: johannes
+    const queryString = `? ${JSON.stringify({
+      db: this.props.category,
+      constraints
+    })}`;
     console.log("sending", queryString);
     this.props.onMessageSend(queryString, {}, () => console.log("done"));
   };
