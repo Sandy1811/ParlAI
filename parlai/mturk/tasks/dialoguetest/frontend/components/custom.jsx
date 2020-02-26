@@ -642,7 +642,13 @@ class LeftPane extends React.Component {
                         animation={false}
                       >
                         <Tab eventKey={1} title="Your Instruction Schema">
-                          Instruction Schema Image
+
+                          <img
+                            style={{ width: "100%" }}
+                            src={
+                              setupMessage.form_description[dbIndex].schema_url
+                            }
+                          />
                         </Tab>
                         <Tab eventKey={2} title="Knowledge Base">
                           <h4>User's requirements for {dbName}:</h4>
