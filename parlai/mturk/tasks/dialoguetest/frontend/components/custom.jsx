@@ -513,7 +513,8 @@ export default {
   XLeftPane: {
     Wizard: LeftPane,
     User: LeftPane,
-    Onboarding: LeftPane
+    Onboarding: LeftPane,
+    waiting: LeftPane
   },
   XMessageList: {
     Wizard: MessageList,
