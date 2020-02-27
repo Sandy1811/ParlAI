@@ -24,12 +24,12 @@ def main():
     echo.log_write("START")
 
     # Get relevant arguments
-    argparser = ParlaiParser(False, False)
-    argparser.add_parlai_data_path()
-    argparser.add_mturk_args()
-    WOZDummyAgent.add_cmdline_args(argparser)
-    WOZKnowledgeBaseAgent.add_cmdline_args(argparser)
-    opt = argparser.parse_args()
+    arg_parser = ParlaiParser(False, False)
+    arg_parser.add_parlai_data_path()
+    arg_parser.add_mturk_args()
+    WOZDummyAgent.add_cmdline_args(arg_parser)
+    WOZKnowledgeBaseAgent.add_cmdline_args(arg_parser)
+    opt = arg_parser.parse_args()
 
     qualification_manager = MTurkQualificationManager()
     qualification_manager.require_min_approved_hits(10)
@@ -38,7 +38,7 @@ def main():
     # Set the task name to be the folder name
     opt["task"] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
 
-    # append the contents of task_config.py to the configuration
+    # Append the contents of task_config.py to the configuration
     opt.update(task_config)
 
     # Select an agent_id that worker agents will be assigned in their world
