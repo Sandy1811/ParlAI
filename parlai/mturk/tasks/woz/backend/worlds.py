@@ -167,10 +167,20 @@ class WOZWorld(MTurkTaskWorld):
 
         self.num_turns += 1
 
+        if self.num_turns % 2 == 1:
+            self.parley_user()
+        else:
+            self.parley_wizard_and_knowledgebase()
+
+        if self.num_turns >= self.max_turns:
+            self.episodeDone = True
+
+    def parley_user(self) -> bool:
         user_command = command_from_message(self.user.act(), self.user)
         if isinstance(user_command, UtterCommand):
             if not self.evaluating:
                 self.wizard.observe(user_command.message)
+                return False
         elif isinstance(user_command, DialogueCompletedCommand):
             self.send_command(COMMAND_REVIEW, self.wizard)
             self.send_command(COMMAND_REVIEW, self.user)
@@ -183,15 +193,16 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard,
             )
             self.episodeDone = True
-            return
+            return True
         elif isinstance(user_command, TaskDoneCommand):
             send_mturk_message(
                 "Thank you for evaluating! Please wait for the assistant to agree...",
                 self.user,
             )
             self.episodeDone = True
-            return
+            return True
 
+    def parley_wizard_and_knowledgebase(self) -> bool:
         wizard_message, command, parameters = self.get_new_wizard_message()
         # Handle communication between the wizard and the knowledge base
         while command in [
@@ -219,9 +230,7 @@ class WOZWorld(MTurkTaskWorld):
 
         if not self.evaluating:
             self.user.observe(wizard_message)
-
-        if self.num_turns >= self.max_turns:
-            self.episodeDone = True
+        return False
 
     @echo.echo_out(output=echo.log_write, prefix="get_new_user_message() = ")
     def get_new_user_message(self):
