@@ -2,7 +2,7 @@
 from typing import Text, Optional, Dict, Any, Tuple, List
 
 from parlai.core.agents import Agent
-import parlai.mturk.tasks.dialoguetest.echo as echo
+import parlai.mturk.tasks.woz.echo as echo
 import os, json
 
 with open(

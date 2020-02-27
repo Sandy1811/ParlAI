@@ -15,8 +15,8 @@ from parlai.mturk.core.agents import (
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
-import parlai.mturk.tasks.dialoguetest.echo as echo
-from parlai.mturk.tasks.dialoguetest.protocol import (
+import parlai.mturk.tasks.woz.echo as echo
+from parlai.mturk.tasks.woz.protocol import (
     WORKER_COMMAND_QUERY,
     WORKER_COMMAND_COMPLETE,
     COMMAND_REVIEW,

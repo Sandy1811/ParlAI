@@ -4,11 +4,11 @@ from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.shared_utils import AssignState
-import parlai.mturk.tasks.dialoguetest.api as api
+import parlai.mturk.tasks.woz.api as api
 import os
 import json
 
-from parlai.mturk.tasks.dialoguetest import echo
+from parlai.mturk.tasks.woz import echo
 
 
 class WOZKnowledgeBaseAgent(Agent):

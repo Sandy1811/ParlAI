@@ -8,11 +8,11 @@ from parlai.mturk.core.mturk_manager import MTurkManager
 
 import os
 
-import parlai.mturk.tasks.dialoguetest.echo as echo
-from parlai.mturk.tasks.dialoguetest.task_config import task_config
-from parlai.mturk.tasks.dialoguetest.utils import MTurkQualificationManager
-from parlai.mturk.tasks.dialoguetest.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld
-from parlai.mturk.tasks.dialoguetest.woz_agents import WOZKnowledgeBaseAgent, WOZDummyAgent
+import parlai.mturk.tasks.woz.echo as echo
+from parlai.mturk.tasks.woz.task_config import task_config
+from parlai.mturk.tasks.woz.utils import MTurkQualificationManager
+from parlai.mturk.tasks.woz.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld
+from parlai.mturk.tasks.woz.woz_agents import WOZKnowledgeBaseAgent, WOZDummyAgent
 
 
 def main():
