@@ -11,13 +11,19 @@ from parlai.mturk.core.agents import (
     MTURK_DISCONNECT_MESSAGE,
     RETURN_MESSAGE,
     TIMEOUT_MESSAGE,
-    MTurkAgent)
+    MTurkAgent,
+)
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.woz.echo as echo
-from parlai.mturk.tasks.woz.backend.commands import command_from_message, UtterCommand, DialogueCompletedCommand, \
-    TaskDoneCommand
+from parlai.mturk.tasks.woz.backend.commands import (
+    command_from_message,
+    UtterCommand,
+    DialogueCompletedCommand,
+    TaskDoneCommand,
+    ReviewCommand,
+)
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 from parlai.mturk.tasks.woz.protocol import (
     WORKER_COMMAND_QUERY,
@@ -30,7 +36,10 @@ from parlai.mturk.tasks.woz.protocol import (
     WORKER_SELECT_1,
     WORKER_SELECT_2,
     send_setup_command,
-    WORKER_REQUEST_SUGGESTIONS, COMMAND_SUPPLY_SUGGESTIONS, WORKER_PICK_SUGGESTION)
+    WORKER_REQUEST_SUGGESTIONS,
+    COMMAND_SUPPLY_SUGGESTIONS,
+    WORKER_PICK_SUGGESTION,
+)
 
 
 def is_disconnected(act):
@@ -182,8 +191,8 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard.observe(user_command.message)
                 return False
         elif isinstance(user_command, DialogueCompletedCommand):
-            self.send_command(COMMAND_REVIEW, self.wizard)
-            self.send_command(COMMAND_REVIEW, self.user)
+            self.wizard.observe(ReviewCommand().message)
+            self.user.observe(ReviewCommand().message)
             send_mturk_message(
                 "Thank you for chatting. Now please review your conversation.",
                 self.user,
@@ -264,12 +273,12 @@ class WOZWorld(MTurkTaskWorld):
     def get_new_knowledgebase_message(self):
         message = self.knowledgebase.act()
         self.events.append(
-            {"type": "KnowledgeBaseMessage", "message": message, }
+            {"type": "KnowledgeBaseMessage", "message": message,}
         )
         return message, None, None
 
     def deal_with_wizard_command(
-            self, command: Optional[Text], parameters: Optional[Text]
+        self, command: Optional[Text], parameters: Optional[Text]
     ) -> None:
         if command is None:
             return
@@ -296,7 +305,7 @@ class WOZWorld(MTurkTaskWorld):
             self.episodeDone = True
 
     def deal_with_user_command(
-            self, command: Optional[Text], parameters: Optional[Text]
+        self, command: Optional[Text], parameters: Optional[Text]
     ) -> None:
         if command is None:
             return
@@ -326,7 +335,7 @@ class WOZWorld(MTurkTaskWorld):
     )
     def send_command(self, command: Text, recipient: Agent) -> None:
         self.events.append(
-            {"type": "WorldCommand", "command": command, "recipient": recipient.id, }
+            {"type": "WorldCommand", "command": command, "recipient": recipient.id,}
         )
         message = {
             "id": recipient.id,

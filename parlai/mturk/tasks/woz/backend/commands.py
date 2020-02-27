@@ -68,9 +68,7 @@ class WorkerCommand(AgentCommand):
         raise NotImplementedError()
 
     @staticmethod
-    def from_message(
-        sender: Agent, **kwargs,
-    ) -> Optional["Command"]:
+    def from_message(sender: Agent, **kwargs,) -> Optional["Command"]:
         raise NotImplementedError()
 
 
@@ -100,10 +98,7 @@ class BackendCommand(Command):
         raise NotImplementedError()
 
     @staticmethod
-    def from_message(
-        sender: Agent,
-        **kwargs
-    ) -> Optional["Command"]:
+    def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
         raise NotImplementedError()
 
 
@@ -177,6 +172,24 @@ class SetupCommand(BackendCommand):
             form_description=form_description,
             role=role,
         )
+
+
+class ReviewCommand(BackendCommand):
+    def __init__(self) -> None:
+        super(ReviewCommand, self).__init__()
+        self._command_name = all_constants()["back_to_front"]["command_review"]
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {
+            "id": recipient.id,
+            "text": "",
+            "command": self._command_name,
+        }
+
+    @staticmethod
+    def from_message(sender: Agent, **kwargs,) -> Optional["Command"]:
+        return ReviewCommand()
 
 
 class QueryCommand(WizardCommand):
@@ -311,7 +324,9 @@ def command_from_message(
         constants["front_to_back"]["complete_prefix"]: DialogueCompletedCommand,
         constants["front_to_back"]["done_prefix"]: TaskDoneCommand,
         constants["front_to_back"]["select_kb_entry_prefix"]: SelectPrimaryCommand,
-        constants["front_to_back"]["select_reference_kb_entry_prefix"]: SelectSecondaryCommand,
+        constants["front_to_back"][
+            "select_reference_kb_entry_prefix"
+        ]: SelectSecondaryCommand,
         constants["front_to_back"]["query_prefix"]: QueryCommand,
     }
 
