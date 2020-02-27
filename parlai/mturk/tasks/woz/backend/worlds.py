@@ -138,6 +138,11 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         return self.mturk_agent
 
 
+SETUP_STAGE = 0
+DIALOGUE_STAGE = 1
+EVALUATION_STAGE = 2
+
+
 class WOZWorld(MTurkTaskWorld):
     """
     Wizard-of-Oz world.
@@ -146,17 +151,18 @@ class WOZWorld(MTurkTaskWorld):
     collector_agent_id = 'Moderator'
 
     def __init__(self, opt, agents):
+        super(WOZWorld, self).__init__(opt, mturk_agent=None)
         self.knowledgebase = None
         for agent in agents:
             if agent.demo_role == 'User':
                 self.user = agent
             elif agent.demo_role == 'Wizard':
                 self.wizard = agent
-            else:  # Knowledge Base
+            else:
                 self.knowledgebase = agent
-        self.episodeDone = False
-        self.turns = 0
-        self.evaluating = False
+
+        self._episode_done = False
+        self._stage = SETUP_STAGE
         self.events = []
 
         self.num_turns = -1
@@ -164,32 +170,26 @@ class WOZWorld(MTurkTaskWorld):
         self.min_turns = 5
 
     def parley(self):
-        """
-        Let the user and the wizard have a turn each.
-        """
-
-        if self.num_turns < 0:
+        if self._stage == SETUP_STAGE:
             self.setup_interface()
             self.tell_workers_to_start()
             self.num_turns = 0
-            return
+            self._stage = DIALOGUE_STAGE
+        elif self._stage == DIALOGUE_STAGE:
+            self.num_turns += 1
+            if self.num_turns % 2 == 1:
+                self._parley_dialogue_user()
+            else:
+                self._parley_dialogue_wizard_and_knowledgebase()
+        elif self._stage == EVALUATION_STAGE:
+            self._parley_evaluation(self.user)
+            self._parley_evaluation(self.wizard)
+            self._episode_done = True
 
-        self.num_turns += 1
-
-        if self.num_turns % 2 == 1:
-            self.parley_user()
-        else:
-            self.parley_wizard_and_knowledgebase()
-
-        if self.num_turns >= self.max_turns:
-            self.episodeDone = True
-
-    def parley_user(self) -> bool:
+    def _parley_dialogue_user(self) -> None:
         user_command = command_from_message(self.user.act(), self.user)
         if isinstance(user_command, UtterCommand):
-            if not self.evaluating:
-                self.wizard.observe(user_command.message)
-                return False
+            self.wizard.observe(user_command.message)
         elif isinstance(user_command, DialogueCompletedCommand):
             self.wizard.observe(ReviewCommand().message)
             self.user.observe(ReviewCommand().message)
@@ -201,17 +201,13 @@ class WOZWorld(MTurkTaskWorld):
                 "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user.",
                 self.wizard,
             )
-            self.episodeDone = True
-            return True
-        elif isinstance(user_command, TaskDoneCommand):
-            send_mturk_message(
-                "Thank you for evaluating! Please wait for the assistant to agree...",
-                self.user,
+            self._stage = EVALUATION_STAGE
+        else:
+            raise RuntimeError(
+                f"User command not allowed in dialogue stage: {user_command.message}"
             )
-            self.episodeDone = True
-            return True
 
-    def parley_wizard_and_knowledgebase(self) -> bool:
+    def _parley_dialogue_wizard_and_knowledgebase(self) -> bool:
         wizard_message, command, parameters = self.get_new_wizard_message()
         # Handle communication between the wizard and the knowledge base
         while command in [
@@ -237,9 +233,24 @@ class WOZWorld(MTurkTaskWorld):
 
         self.deal_with_wizard_command(command, parameters)
 
-        if not self.evaluating:
-            self.user.observe(wizard_message)
+        self.user.observe(wizard_message)
         return False
+
+    def _parley_evaluation(self, agent) -> None:
+        user_command = command_from_message(agent.act(blocking=False), agent)
+        if isinstance(user_command, TaskDoneCommand):
+            send_mturk_message(
+                "Thank you for evaluating! Goodbye.", agent,
+            )
+        elif isinstance(user_command, UtterCommand):
+            send_mturk_message(
+                "Thank you for your feedback! Please also complete the form on the left.",
+                agent,
+            )
+        else:
+            raise RuntimeError(
+                f"Command not allowed for {agent.id} in evaluation stage: {user_command.message}"
+            )
 
     @echo.echo_out(output=echo.log_write, prefix="get_new_user_message() = ")
     def get_new_user_message(self):
@@ -285,7 +296,6 @@ class WOZWorld(MTurkTaskWorld):
         elif command == WORKER_COMMAND_COMPLETE:
             self.send_command(COMMAND_REVIEW, self.wizard)
             self.send_command(COMMAND_REVIEW, self.user)
-            self.evaluating = True
             send_mturk_message(
                 "Thank you for chatting. Now please review your conversation.",
                 self.wizard,
@@ -299,10 +309,10 @@ class WOZWorld(MTurkTaskWorld):
                 "Thank you for evaluating! Please wait for the user to agree...",
                 self.wizard,
             )
-            self.episodeDone = True
+            self._episode_done = True
         elif command == WORKER_DISCONNECTED:
             send_mturk_message("Sorry, the assistant disconnected...", self.user)
-            self.episodeDone = True
+            self._episode_done = True
 
     def deal_with_user_command(
         self, command: Optional[Text], parameters: Optional[Text]
@@ -325,10 +335,10 @@ class WOZWorld(MTurkTaskWorld):
                 "Thank you for evaluating! Please wait for the assistant to agree...",
                 self.user,
             )
-            self.episodeDone = True
+            self._episode_done = True
         elif command == WORKER_DISCONNECTED:
             send_mturk_message("Sorry, the user disconnected...", self.user)
-            self.episodeDone = True
+            self._episode_done = True
 
     @echo.echo_in(
         output=echo.log_write, prolog={"command": None, "recipient": (lambda a: a.id)}
@@ -370,7 +380,7 @@ class WOZWorld(MTurkTaskWorld):
         )
 
     def episode_done(self):
-        return self.episodeDone
+        return self._episode_done
 
     def shutdown(self):
         # Parallel shutdown of agents
