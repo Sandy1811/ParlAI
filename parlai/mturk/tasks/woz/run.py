@@ -11,7 +11,7 @@ import os
 import parlai.mturk.tasks.woz.echo as echo
 from parlai.mturk.tasks.woz.task_config import task_config
 from parlai.mturk.tasks.woz.utils import MTurkQualificationManager
-from parlai.mturk.tasks.woz.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld
+from parlai.mturk.tasks.woz.backend.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld
 from parlai.mturk.tasks.woz.woz_agents import WOZKnowledgeBaseAgent, WOZDummyAgent
 
 
@@ -145,6 +145,8 @@ def main():
             # run the world to completion
             while not world.episode_done():
                 world.parley()
+
+            print("task complete")
 
             # shutdown and review the work
             world.shutdown()
