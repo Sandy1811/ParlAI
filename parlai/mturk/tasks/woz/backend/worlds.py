@@ -3,8 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-from datetime import datetime
-from typing import Text, Optional, List
+from typing import Text, List
 
 from parlai.core.agents import Agent
 from parlai.mturk.core.agents import (
@@ -13,6 +12,7 @@ from parlai.mturk.core.agents import (
     TIMEOUT_MESSAGE,
     MTurkAgent,
 )
+from parlai.mturk.core.shared_utils import print_and_log
 from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
@@ -23,22 +23,13 @@ from parlai.mturk.tasks.woz.backend.commands import (
     DialogueCompletedCommand,
     TaskDoneCommand,
     ReviewCommand,
-)
+    QueryCommand, SelectPrimaryCommand, SelectSecondaryCommand, RequestSuggestionsCommand, PickSuggestionCommand,
+    SupplySuggestionsCommand)
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 from parlai.mturk.tasks.woz.protocol import (
-    WORKER_COMMAND_QUERY,
-    WORKER_COMMAND_COMPLETE,
-    COMMAND_REVIEW,
     send_mturk_message,
-    WORKER_COMMAND_DONE,
-    WORKER_DISCONNECTED,
-    extract_command_message,
-    WORKER_SELECT_1,
-    WORKER_SELECT_2,
     send_setup_command,
-    WORKER_REQUEST_SUGGESTIONS,
     COMMAND_SUPPLY_SUGGESTIONS,
-    WORKER_PICK_SUGGESTION,
 )
 
 
@@ -148,8 +139,6 @@ class WOZWorld(MTurkTaskWorld):
     Wizard-of-Oz world.
     """
 
-    collector_agent_id = 'Moderator'
-
     def __init__(self, opt, agents):
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
         self.knowledgebase = None
@@ -165,9 +154,7 @@ class WOZWorld(MTurkTaskWorld):
         self._stage = SETUP_STAGE
         self.events = []
 
-        self.num_turns = -1
-        self.max_turns = 300
-        self.min_turns = 5
+        self.num_turns = 1
 
     def parley(self):
         if self._stage == SETUP_STAGE:
@@ -176,23 +163,23 @@ class WOZWorld(MTurkTaskWorld):
             self.num_turns = 0
             self._stage = DIALOGUE_STAGE
         elif self._stage == DIALOGUE_STAGE:
-            self.num_turns += 1
-            if self.num_turns % 2 == 1:
-                self._parley_dialogue_user()
+            if self.num_turns % 2 == 0:
+                self.num_turns += self._parley_dialogue_user()
             else:
-                self._parley_dialogue_wizard_and_knowledgebase()
+                self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
         elif self._stage == EVALUATION_STAGE:
             self._parley_evaluation(self.user)
             self._parley_evaluation(self.wizard)
             self._episode_done = True
 
-    def _parley_dialogue_user(self) -> None:
+    def _parley_dialogue_user(self) -> int:
         user_command = command_from_message(self.user.act(), self.user)
         if isinstance(user_command, UtterCommand):
             self.wizard.observe(user_command.message)
+            return 1
         elif isinstance(user_command, DialogueCompletedCommand):
-            self.wizard.observe(ReviewCommand().message)
-            self.user.observe(ReviewCommand().message)
+            self.wizard.observe(ReviewCommand(self.wizard).message)
+            self.user.observe(ReviewCommand(self.user).message)
             send_mturk_message(
                 "Thank you for chatting. Now please review your conversation.",
                 self.user,
@@ -202,42 +189,59 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard,
             )
             self._stage = EVALUATION_STAGE
+            return 1
         else:
             raise RuntimeError(
                 f"User command not allowed in dialogue stage: {user_command.message}"
             )
 
-    def _parley_dialogue_wizard_and_knowledgebase(self) -> bool:
-        wizard_message, command, parameters = self.get_new_wizard_message()
-        # Handle communication between the wizard and the knowledge base
-        while command in [
-            WORKER_COMMAND_QUERY,
-            WORKER_SELECT_1,
-            WORKER_SELECT_2,
-            WORKER_REQUEST_SUGGESTIONS,
-        ]:
-            if command == WORKER_COMMAND_QUERY:
-                self.knowledgebase.observe({"query": parameters})
-                kb_message, _, _ = self.get_new_knowledgebase_message()
-                self.wizard.observe(kb_message)
-            elif command == WORKER_REQUEST_SUGGESTIONS:
-                self.send_suggestions(["1", "2", "3"], self.wizard)
-            wizard_message, command, parameters = self.get_new_wizard_message()
+    def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
+        wizard_command = command_from_message(self.wizard.act(), self.wizard)
 
-        if command and command == WORKER_PICK_SUGGESTION:
-            wizard_message = {
-                "id": self.wizard.id,
-                "text": parameters,
-            }
-            self.wizard.observe(wizard_message)
-
-        self.deal_with_wizard_command(command, parameters)
-
-        self.user.observe(wizard_message)
-        return False
+        if isinstance(wizard_command, UtterCommand):
+            self.user.observe(wizard_command.message)
+            return 1
+        elif isinstance(wizard_command, QueryCommand):
+            self.knowledgebase.observe(wizard_command.message)
+            self.wizard.observe(self.knowledgebase.act())
+            return 0
+        elif isinstance(wizard_command, DialogueCompletedCommand):
+            self.wizard.observe(ReviewCommand(self.wizard).message)
+            self.user.observe(ReviewCommand(self.user).message)
+            send_mturk_message(
+                "Thank you for chatting. Now please review your conversation.",
+                self.wizard,
+            )
+            send_mturk_message(
+                "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant.",
+                self.user,
+            )
+            self._stage = EVALUATION_STAGE
+            return 1
+        elif isinstance(wizard_command, SelectPrimaryCommand):
+            return 0
+        elif isinstance(wizard_command, SelectSecondaryCommand):
+            return 0
+        elif isinstance(wizard_command, RequestSuggestionsCommand):
+            suggestions = ["1", "2", "3"]
+            self.wizard.observe(SupplySuggestionsCommand(self.wizard, suggestions).message)
+            return 0
+        elif isinstance(wizard_command, PickSuggestionCommand):
+            self.wizard.observe(wizard_command.message)
+            self.user.observe(wizard_command.message)
+            return 1
+        else:
+            print_and_log(45, f"Wizard command not allowed in dialogue stage: {wizard_command.message}", True)
+            raise RuntimeError(
+                f"Wizard command not allowed in dialogue stage: {wizard_command.message}"
+            )
 
     def _parley_evaluation(self, agent) -> None:
-        user_command = command_from_message(agent.act(blocking=False), agent)
+        if isinstance(agent, MTurkAgent):
+            user_command = command_from_message(agent.act(blocking=False), agent)
+        else:
+            user_command = command_from_message(agent.act(), agent)
+
         if isinstance(user_command, TaskDoneCommand):
             send_mturk_message(
                 "Thank you for evaluating! Goodbye.", agent,
@@ -251,94 +255,6 @@ class WOZWorld(MTurkTaskWorld):
             raise RuntimeError(
                 f"Command not allowed for {agent.id} in evaluation stage: {user_command.message}"
             )
-
-    @echo.echo_out(output=echo.log_write, prefix="get_new_user_message() = ")
-    def get_new_user_message(self):
-        message = self.user.act()
-        command, parameters = extract_command_message(message)
-        self.events.append(
-            {
-                "type": "UserMessage",
-                "message": message,
-                "command": command,
-                "parameters": parameters,
-            }
-        )
-        return message, command, parameters
-
-    @echo.echo_out(output=echo.log_write, prefix="get_new_wizard_message() = ")
-    def get_new_wizard_message(self):
-        message = self.wizard.act()
-        command, parameters = extract_command_message(message)
-        self.events.append(
-            {
-                "type": "WizardMessage",
-                "message": message,
-                "command": command,
-                "parameters": parameters,
-            }
-        )
-        return message, command, parameters
-
-    @echo.echo_out(output=echo.log_write, prefix="get_new_knowledgebase_message() = ")
-    def get_new_knowledgebase_message(self):
-        message = self.knowledgebase.act()
-        self.events.append(
-            {"type": "KnowledgeBaseMessage", "message": message,}
-        )
-        return message, None, None
-
-    def deal_with_wizard_command(
-        self, command: Optional[Text], parameters: Optional[Text]
-    ) -> None:
-        if command is None:
-            return
-        elif command == WORKER_COMMAND_COMPLETE:
-            self.send_command(COMMAND_REVIEW, self.wizard)
-            self.send_command(COMMAND_REVIEW, self.user)
-            send_mturk_message(
-                "Thank you for chatting. Now please review your conversation.",
-                self.wizard,
-            )
-            send_mturk_message(
-                "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant.",
-                self.user,
-            )
-        elif command == WORKER_COMMAND_DONE:
-            send_mturk_message(
-                "Thank you for evaluating! Please wait for the user to agree...",
-                self.wizard,
-            )
-            self._episode_done = True
-        elif command == WORKER_DISCONNECTED:
-            send_mturk_message("Sorry, the assistant disconnected...", self.user)
-            self._episode_done = True
-
-    def deal_with_user_command(
-        self, command: Optional[Text], parameters: Optional[Text]
-    ) -> None:
-        if command is None:
-            return
-        elif command == WORKER_COMMAND_COMPLETE:
-            self.send_command(COMMAND_REVIEW, self.wizard)
-            self.send_command(COMMAND_REVIEW, self.user)
-            send_mturk_message(
-                "Thank you for chatting. Now please review your conversation.",
-                self.user,
-            )
-            send_mturk_message(
-                "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user.",
-                self.wizard,
-            )
-        elif command == WORKER_COMMAND_DONE:
-            send_mturk_message(
-                "Thank you for evaluating! Please wait for the assistant to agree...",
-                self.user,
-            )
-            self._episode_done = True
-        elif command == WORKER_DISCONNECTED:
-            send_mturk_message("Sorry, the user disconnected...", self.user)
-            self._episode_done = True
 
     @echo.echo_in(
         output=echo.log_write, prolog={"command": None, "recipient": (lambda a: a.id)}

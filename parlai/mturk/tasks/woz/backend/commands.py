@@ -37,6 +37,7 @@ class Command:
         sender: Agent,
         text: Optional[Text] = None,
         extracted_from_text: Optional[Text] = None,
+        suggestions: Optional[List[Text]] = None,
         task_description: Optional[Text] = None,
         completion_requirements: Optional[List[Text]] = None,
         completion_questions: Optional[List[Text]] = None,
@@ -175,21 +176,22 @@ class SetupCommand(BackendCommand):
 
 
 class ReviewCommand(BackendCommand):
-    def __init__(self) -> None:
+    def __init__(self, recipient: Agent) -> None:
         super(ReviewCommand, self).__init__()
         self._command_name = all_constants()["back_to_front"]["command_review"]
+        self._recipient = recipient
 
     @property
     def message(self) -> Dict[Text, Any]:
         return {
-            "id": recipient.id,
+            # "id": self._recipient.id,
             "text": "",
             "command": self._command_name,
         }
 
     @staticmethod
     def from_message(sender: Agent, **kwargs,) -> Optional["Command"]:
-        return ReviewCommand()
+        return ReviewCommand(recipient=sender)
 
 
 class QueryCommand(WizardCommand):
@@ -310,6 +312,58 @@ class SelectSecondaryCommand(WizardCommand):
         return SelectSecondaryCommand(sender=sender)
 
 
+class RequestSuggestionsCommand(WizardCommand):
+    def __init__(self, sender: Agent, query_text: Text) -> None:
+        super(RequestSuggestionsCommand, self).__init__(sender)
+        self._command_name = "request_suggestions"
+        self._query = query_text
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {"id": self._sender.id, "text": self._query}
+
+    @staticmethod
+    def from_message(sender: Agent, text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+        return RequestSuggestionsCommand(sender=sender, query_text=(text or ""))
+
+
+class SupplySuggestionsCommand(BackendCommand):
+    def __init__(self, recipient: Agent, suggestions: List[Text]) -> None:
+        super(SupplySuggestionsCommand, self).__init__()
+        self._command_name = all_constants()["back_to_front"]["command_supply_suggestions"]
+        self._recipient = recipient
+        self._suggestions = suggestions
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {
+            "id": self._recipient.id,
+            "text": "",
+            "command": self._command_name + str(self._suggestions),
+        }
+
+    @staticmethod
+    def from_message(sender: Agent, suggestions: Optional[List[Text]] = None, **kwargs,) -> Optional["Command"]:
+        return SupplySuggestionsCommand(recipient=sender, suggestions=suggestions)
+
+
+class PickSuggestionCommand(WizardCommand):
+    def __init__(self, sender: Agent, chosen_text: Text) -> None:
+        super(PickSuggestionCommand, self).__init__(sender)
+        self._command_name = "pick_suggestion"
+        self._text = chosen_text
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {"id": self._sender.id, "text": self._text}
+
+    @staticmethod
+    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+        if not extracted_from_text:
+            raise ValueError(f"Chosen message is empty")
+        return PickSuggestionCommand(sender=sender, chosen_text=extracted_from_text)
+
+
 def command_from_message(
     message: Optional[Dict[Text, Any]], sender: Optional[Agent]
 ) -> Optional[Command]:
@@ -327,6 +381,8 @@ def command_from_message(
         constants["front_to_back"][
             "select_reference_kb_entry_prefix"
         ]: SelectSecondaryCommand,
+        constants["front_to_back"]["request_suggestions_prefix"]: RequestSuggestionsCommand,
+        constants["front_to_back"]["pick_suggestion_prefix"]: PickSuggestionCommand,
         constants["front_to_back"]["query_prefix"]: QueryCommand,
     }
 
