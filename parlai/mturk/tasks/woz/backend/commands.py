@@ -273,7 +273,7 @@ class DialogueCompletedCommand(WorkerCommand):
 class TaskDoneCommand(WorkerCommand):
     def __init__(self, sender: Agent) -> None:
         super(TaskDoneCommand, self).__init__(sender)
-        self._command_name = "complete"
+        self._command_name = "done"
 
     @property
     def message(self) -> Dict[Text, Any]:

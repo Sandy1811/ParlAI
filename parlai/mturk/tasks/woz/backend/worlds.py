@@ -3,9 +3,11 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import time
 from typing import Text, List
 
 from parlai.core.agents import Agent
+from parlai.mturk.core import shared_utils
 from parlai.mturk.core.agents import (
     MTURK_DISCONNECT_MESSAGE,
     RETURN_MESSAGE,
@@ -23,8 +25,13 @@ from parlai.mturk.tasks.woz.backend.commands import (
     DialogueCompletedCommand,
     TaskDoneCommand,
     ReviewCommand,
-    QueryCommand, SelectPrimaryCommand, SelectSecondaryCommand, RequestSuggestionsCommand, PickSuggestionCommand,
-    SupplySuggestionsCommand)
+    QueryCommand,
+    SelectPrimaryCommand,
+    SelectSecondaryCommand,
+    RequestSuggestionsCommand,
+    PickSuggestionCommand,
+    SupplySuggestionsCommand,
+)
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 from parlai.mturk.tasks.woz.protocol import (
     send_mturk_message,
@@ -132,6 +139,7 @@ class UserOnboardingWorld(MTurkOnboardWorld):
 SETUP_STAGE = 0
 DIALOGUE_STAGE = 1
 EVALUATION_STAGE = 2
+END_STAGE = 3
 
 
 class WOZWorld(MTurkTaskWorld):
@@ -152,6 +160,7 @@ class WOZWorld(MTurkTaskWorld):
 
         self._episode_done = False
         self._stage = SETUP_STAGE
+        self._received_evaluations = 0
         self.events = []
 
         self.num_turns = 1
@@ -170,7 +179,10 @@ class WOZWorld(MTurkTaskWorld):
         elif self._stage == EVALUATION_STAGE:
             self._parley_evaluation(self.user)
             self._parley_evaluation(self.wizard)
-            self._episode_done = True
+            self._stage = END_STAGE
+        elif self._stage == END_STAGE:
+            if self._received_evaluations >= 2:
+                self._episode_done = True
 
     def _parley_dialogue_user(self) -> int:
         user_command = command_from_message(self.user.act(), self.user)
@@ -224,37 +236,53 @@ class WOZWorld(MTurkTaskWorld):
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             suggestions = ["1", "2", "3"]
-            self.wizard.observe(SupplySuggestionsCommand(self.wizard, suggestions).message)
+            self.wizard.observe(
+                SupplySuggestionsCommand(self.wizard, suggestions).message
+            )
             return 0
         elif isinstance(wizard_command, PickSuggestionCommand):
             self.wizard.observe(wizard_command.message)
             self.user.observe(wizard_command.message)
             return 1
         else:
-            print_and_log(45, f"Wizard command not allowed in dialogue stage: {wizard_command.message}", True)
+            print_and_log(
+                45,
+                f"Wizard command not allowed in dialogue stage: {wizard_command.message}",
+                True,
+            )
             raise RuntimeError(
                 f"Wizard command not allowed in dialogue stage: {wizard_command.message}"
             )
 
     def _parley_evaluation(self, agent) -> None:
-        if isinstance(agent, MTurkAgent):
-            user_command = command_from_message(agent.act(blocking=False), agent)
-        else:
-            user_command = command_from_message(agent.act(), agent)
 
-        if isinstance(user_command, TaskDoneCommand):
-            send_mturk_message(
-                "Thank you for evaluating! Goodbye.", agent,
-            )
-        elif isinstance(user_command, UtterCommand):
-            send_mturk_message(
-                "Thank you for your feedback! Please also complete the form on the left.",
-                agent,
-            )
-        else:
-            raise RuntimeError(
-                f"Command not allowed for {agent.id} in evaluation stage: {user_command.message}"
-            )
+        if not isinstance(agent, MTurkAgent):
+            self._received_evaluations += 1
+            return
+
+        while True:
+            command = command_from_message(agent.act(blocking=False), agent)
+
+            if isinstance(command, UtterCommand):
+                send_mturk_message(
+                    "Thank you for your feedback! Please also complete the form on the left.",
+                    agent,
+                )
+            elif isinstance(command, TaskDoneCommand):
+                send_mturk_message(
+                    "Thank you for evaluating! Goodbye.", agent,
+                )
+                self._received_evaluations += 1
+                return
+            elif (
+                command is None
+            ):
+                # Happens when `agent.act()` returns `None` (can happen since `blocking=False`)
+                time.sleep(shared_utils.THREAD_SHORT_SLEEP)
+            else:
+                raise RuntimeError(
+                    f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}"
+                )
 
     @echo.echo_in(
         output=echo.log_write, prolog={"command": None, "recipient": (lambda a: a.id)}
