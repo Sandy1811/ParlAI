@@ -283,14 +283,14 @@ function CompleteButton(props) {
   return (
     <Button
       className="btn btn-primary"
-      disabled={realMessageCount < constants.FINISHABLE_MESSAGE_COUNT}
+      disabled={props.chat_state !== "text_input"}
       onClick={() => {
         props.onMessageSend("<complete>", {}, () =>
           console.log("sent complete")
         );
       }}
     >
-      I have completed my task
+      The dialogue is complete
     </Button>
   );
 }
