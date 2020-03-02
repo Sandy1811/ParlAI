@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import time
-from typing import Text, List
+from typing import Text, List, Dict, Any
 
 from parlai.core.agents import Agent
 from parlai.mturk.core import shared_utils
@@ -21,6 +21,7 @@ import threading
 import parlai.mturk.tasks.woz.echo as echo
 from parlai.mturk.tasks.woz.backend.commands import (
     command_from_message,
+    all_constants,
     UtterCommand,
     DialogueCompletedCommand,
     TaskDoneCommand,
@@ -33,11 +34,6 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SupplySuggestionsCommand,
 )
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
-from parlai.mturk.tasks.woz.protocol import (
-    send_mturk_message,
-    send_setup_command,
-    COMMAND_SUPPLY_SUGGESTIONS,
-)
 
 
 def is_disconnected(act):
@@ -46,6 +42,32 @@ def is_disconnected(act):
         RETURN_MESSAGE,
         TIMEOUT_MESSAGE,
     ]
+
+
+def send_mturk_message(text: Text, recipient: Agent) -> None:
+    message = {"id": all_constants()["agent_ids"]["system_id"], "text": text}
+    recipient.observe(message)
+
+
+def send_setup_command(
+    task_description: Text,
+    completion_requirements: List[Text],
+    form_description: Dict[Text, Any],
+    completion_questions: List[Text],
+    recipient: Agent,
+):
+    recipient.observe(
+        {
+            "id": recipient.id,
+            "text": "",
+            "command": all_constants()["back_to_front"]["command_setup"],
+            "task_description": task_description,
+            "completion_requirements": completion_requirements,
+            "completion_questions": completion_questions,
+            "form_description": form_description,
+        }
+    )
+
 
 
 class WizardOnboardingWorld(MTurkOnboardWorld):
@@ -365,4 +387,4 @@ class WOZWorld(MTurkTaskWorld):
         return self.user
 
     def send_suggestions(self, suggestions: List[Text], wizard_agent):
-        self.send_command(COMMAND_SUPPLY_SUGGESTIONS + str(suggestions), wizard_agent)
+        self.send_command(all_constants()["back_to_front"]["command_supply_suggestions"] + str(suggestions), wizard_agent)
