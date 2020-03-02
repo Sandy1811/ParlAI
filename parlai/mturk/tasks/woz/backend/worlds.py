@@ -235,7 +235,7 @@ class WOZWorld(MTurkTaskWorld):
         elif isinstance(wizard_command, SelectSecondaryCommand):
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
-            suggestions = ["1", "2", "3"]
+            suggestions = ["message 1", "message 2"]
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )

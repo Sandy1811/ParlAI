@@ -326,6 +326,10 @@ class RequestSuggestionsCommand(WizardCommand):
     def from_message(sender: Agent, text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
         return RequestSuggestionsCommand(sender=sender, query_text=(text or ""))
 
+    @property
+    def query(self) -> Text:
+        return self._query
+
 
 class SupplySuggestionsCommand(BackendCommand):
     def __init__(self, recipient: Agent, suggestions: List[Text]) -> None:

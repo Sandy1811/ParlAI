@@ -91,17 +91,30 @@ class WizardResponse extends React.Component {
   }
 
   shouldAskForSuggestion() {
-    let shouldAskForSuggestion = false;
-    for (const message of this.props.messages) {
-      if (message.id === "KnowledgeBase") {
-        shouldAskForSuggestion = true;
-      }
-      if (message.text.startsWith(selectionConstants.pick_suggestion_prefix)) {
-        shouldAskForSuggestion = false;
-      }
-    }
+    //     let shouldAskForSuggestion = false;
+    //     for (const message of this.props.messages) {
+    //       if (message.id === "KnowledgeBase") {
+    //         shouldAskForSuggestion = true;
+    //       }
+    //       if (message.text.startsWith(selectionConstants.pick_suggestion_prefix)) {
+    //         shouldAskForSuggestion = false;
+    //       }
+    //     }
 
-    return shouldAskForSuggestion;
+    //     let shouldAskForSuggestion = (this.props.agent_id === "Wizard");
+    //     if (this.props.messages.length > 2) {
+    //         let msg = this.props.messages[this.props.messages.length - 1]
+    //         if (msg.text.startsWith("?")) {
+    //             shouldAskForSuggestion = false;
+    //         }
+    //         if (msg.text.startsWith("<")) {
+    //             shouldAskForSuggestion = false;
+    //         }
+    //     }
+    //     return shouldAskForSuggestion;
+
+    //     return (this.props.agent_id === "Wizard");
+    return false;
   }
 
   render() {
