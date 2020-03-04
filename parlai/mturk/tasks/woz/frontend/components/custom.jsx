@@ -306,59 +306,31 @@ function OnboardingView(props) {
   if (taskDescription == null) {
       taskDescription = "taskDescription";
   }
-  return props.agent_id === "User"
-    ? <div id="task-description" style={{ fontSize: "16px" }}>
+  const completionRequirements = setupMessage.completion_requirements
+  const other_agent = props.agent_id === "User" ? "user " : "assistant "
+
+  return (
+    <div id="task-description" style={{ fontSize: "16px" }}>
         <h1>Live Chat</h1>
         <hr style={{ borderTop: "1px solid #555" }} />
         <div>
           {taskDescription}
         </div>
         <br />
-
         <div>
           Your task is complete, when
           <ul>
-            <li>
-              You found an apartment that satisfies at least
-              {" "}<b>4 specific criteria</b> of your choosing (e.g. number of
-              rooms, balcony/elevator availability, etc.) - you might have to
-              make some compromises to find something
-            </li>
-            <li>
-              You have
-              {" "}<b>changed your mind about what you want at least once</b>
-              {" "}during the conversation
-            </li>
-            <li>
-              You said <b>goodbye</b> (or similar) at the end of your dialogue
-            </li>
+            {completionRequirements.map(req => {return (<li> {req} </li>);})}
           </ul>
-          At the end of this dialogue, you will have to judge if the assistant
-          fulfilled his/her task.<br />
-
-          <CompleteButton {...props} />
-        </div>
-      </div>
-    : <div id="task-description" style={{ fontSize: "16px" }}>
-        <h1>Live Chat</h1>
-        <hr style={{ borderTop: "1px solid #555" }} />
-        <div>
-          {taskDescription}
-        </div>
-        <div>
-          Your task is complete, when
-          <ul>
-            <li>The user has found a suitable apartment</li>
-            <li>The user has said 'goodbye' (or similar)</li>
-          </ul>
-
-          At the end of this dialogue, you will have to judge if the user
+          At the end of this dialogue, you will have to judge if the {other_agent}
           fulfilled his/her task.<br />
         </div>
         <div id="ask_accept">
-          If you are ready, please click "Accept HIT" to start this task.<br />
+          <br />
+          If you are ready, please type "ready" and click [Send].<br />
         </div>
-      </div>;
+      </div>
+  );
 }
 
 class TaskDescription extends React.Component {
