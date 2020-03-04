@@ -312,10 +312,6 @@ function OnboardingView(props) {
           At the end of this dialogue, you will have to judge if the {other_agent}
           fulfilled his/her task.<br />
         </div>
-        <div id="ask_accept">
-          <br />
-          If you are ready, please type "ready" and click [Send].<br />
-        </div>
       </div>
   );
 }
@@ -376,13 +372,26 @@ class LeftPane extends React.Component {
 
     if (
       this.props.world_state === "onboarding" ||
-      this.props.agent_id === "User" ||
       isInReview
     ) {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
           <TaskDescription {...this.props} isInReview={isInReview} />
           {this.props.children}
+          <br />If you are ready, please type "ready" and click [Send].<br />
+        </div>
+      );
+    }
+
+    if (
+      this.props.agent_id === "User"
+    ) {
+      return (
+        <div id="left-pane" className={pane_size} style={frame_style}>
+          <TaskDescription {...this.props} isInReview={isInReview} />
+          {this.props.children}
+          <hr />
+          <CompleteButton {...this.props} />
         </div>
       );
     }
