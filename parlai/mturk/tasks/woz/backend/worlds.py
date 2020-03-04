@@ -95,6 +95,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         return True
 
     def parley(self):
+        self.setup_interface()
         self.mturk_agent.observe({"id": "Wizard", "text": "", "command": "setup"})
         send_mturk_message(
             "Take your time to read your task description on the left. "
@@ -126,6 +127,22 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     def get_task_agent(self):
         return self.mturk_agent
 
+    def setup_interface(self):
+        for agent in [self.mturk_agent]:
+            send_setup_command(
+                task_description=f"Dummy task description for {agent.id}",
+                completion_requirements=[
+                    f"Dummy requirement 1 for {agent.id}",
+                    f"Dummy requirement 2 for {agent.id}",
+                ],
+                completion_questions=[
+                    f"Dummy QA 1 for {agent.id}",
+                    f"Dummy QA 2 for {agent.id}",
+                ],
+                form_description=DUMMY_FORM_DESCRIPTION,
+                recipient=agent,
+            )
+
 
 class UserOnboardingWorld(MTurkOnboardWorld):
     """
@@ -136,6 +153,7 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     """
 
     def parley(self):
+        self.setup_interface()
         self.mturk_agent.observe({"id": "User", "text": "", "command": "setup"})
         send_mturk_message(
             "Take your time to read your task description on the left. "
@@ -156,6 +174,22 @@ class UserOnboardingWorld(MTurkOnboardWorld):
 
     def get_task_agent(self):
         return self.mturk_agent
+
+    def setup_interface(self):
+        for agent in [self.mturk_agent]:
+            send_setup_command(
+                task_description=f"Dummy task description for {agent.id}",
+                completion_requirements=[
+                    f"Dummy requirement 1 for {agent.id}",
+                    f"Dummy requirement 2 for {agent.id}",
+                ],
+                completion_questions=[
+                    f"Dummy QA 1 for {agent.id}",
+                    f"Dummy QA 2 for {agent.id}",
+                ],
+                form_description=DUMMY_FORM_DESCRIPTION,
+                recipient=agent,
+            )
 
 
 SETUP_STAGE = 0

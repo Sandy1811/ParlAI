@@ -296,19 +296,22 @@ function CompleteButton(props) {
 }
 
 function OnboardingView(props) {
+  const setupMessage = props.messages.find(
+    msg => msg.command === "setup" && msg.form_description != null
+  );
+  if (setupMessage == null) {
+    return "Waiting for initialization...";
+  }
+  const taskDescription = setupMessage.task_description
+  if (taskDescription == null) {
+      taskDescription = "taskDescription";
+  }
   return props.agent_id === "User"
     ? <div id="task-description" style={{ fontSize: "16px" }}>
         <h1>Live Chat</h1>
         <hr style={{ borderTop: "1px solid #555" }} />
         <div>
-          You recently started a <b>new job in Sydney</b> and need to find an
-          apartment to live in.
-          For now, you stay in a hotel, but that is expensive, so you'll
-          {" "}<b>want to find something soon</b>.
-          A friend of yours recommended the virtual assistant that you are
-          about
-          to talk to now.
-          Maybe it can help you find something you like?
+          {taskDescription}
         </div>
         <br />
 
@@ -340,24 +343,7 @@ function OnboardingView(props) {
         <h1>Live Chat</h1>
         <hr style={{ borderTop: "1px solid #555" }} />
         <div>
-          You play the role of a <b>virtual assistant</b> that helps people
-          find an apartment in Sydney.
-          The user that you talk to may sometimes change his/her mind and may
-          not be sure what he/she wants.
-          Your task is to be as helpful to the user as possible in any case,
-          but
-          {" "}
-          <b>
-            you cannot do anything but searching and discussing apartments
-          </b>.
-          So if the user wants you to make coffee, you should explain that you
-          cannot do this.
-          If you feel like you should provide the user with an example
-          apartment, <b>just make up a description</b>.
-
-          Users may even be rude or uncooperative, but you are beyond this and
-          {" "}<b>always keep a patient, level tone</b>.
-          <br />
+          {taskDescription}
         </div>
         <div>
           Your task is complete, when
@@ -450,6 +436,10 @@ class LeftPane extends React.Component {
     }
 
     const dbNames = setupMessage.form_description.map(desc => desc.db);
+    //     const taskDescription = setupMessage.task_description
+    //     if (taskDescription == null) {
+    //         taskDescription = "taskDescription"
+    //     }
 
     return (
       <div id="left-pane" className={pane_size} style={frame_style}>
@@ -484,7 +474,7 @@ class LeftPane extends React.Component {
                         onSelect={this.handleSelectTab}
                         animation={false}
                       >
-                        <Tab eventKey={1} title="Your Instruction Schema">
+                        <Tab eventKey={1} title="Instructions">
 
                           <a href={imgUrl} target="_blank">
 
