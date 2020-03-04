@@ -1,0 +1,32 @@
+{
+  "title": "Apartment Search",
+  "name": "Apartment",
+  "version": 1,
+  "api_names": [
+    "apartment_search"
+  ],
+  "instructions": {
+    "User": {
+      "task_description": "You recently started a new job in Berlin and need to find an apartment to live in. For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. A friend of yours recommended the virtual assistant that you are about to talk to now. Maybe it can help you find something you like?",
+      "completion_requirements": [
+        "You have found an apartment you like",
+        "You have changed your mind about what you are looking for, at least once during the dialogue"
+      ],
+      "completion_questions": [
+        "...find you a suitable apartment?",
+        "...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "Be helpful...",
+      "completion_requirements": [
+        "You have found an apartment that the user likes",
+        "You said 'goodbye' (or similar) at the end of the dialogue"
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

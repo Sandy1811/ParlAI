@@ -3,6 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import json
+import os
 import time
 from typing import Text, List, Dict, Any
 
@@ -32,7 +34,7 @@ from parlai.mturk.tasks.woz.backend.commands import (
     RequestSuggestionsCommand,
     PickSuggestionCommand,
     SupplySuggestionsCommand,
-)
+    SetupCommand)
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 
 
@@ -95,8 +97,10 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         return True
 
     def parley(self):
-        self.setup_interface()
-        self.mturk_agent.observe({"id": "Wizard", "text": "", "command": "setup"})
+        # self.setup_interface()
+        # self.mturk_agent.observe({"id": "Wizard", "text": "", "command": "setup"})
+        setup = SetupCommand(scenario="apartment_search_v1", role="Wizard")
+        self.mturk_agent.observe(setup.message)
         send_mturk_message(
             "Take your time to read your task description on the left. "
             "Write 'ready' when you are ready to see an example, and press [Enter].",
@@ -330,9 +334,7 @@ class WOZWorld(MTurkTaskWorld):
                 )
                 self._received_evaluations += 1
                 return
-            elif (
-                command is None
-            ):
+            elif command is None:
                 # Happens when `agent.act()` returns `None` (can happen since `blocking=False`)
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
             else:
@@ -421,4 +423,8 @@ class WOZWorld(MTurkTaskWorld):
         return self.user
 
     def send_suggestions(self, suggestions: List[Text], wizard_agent):
-        self.send_command(all_constants()["back_to_front"]["command_supply_suggestions"] + str(suggestions), wizard_agent)
+        self.send_command(
+            all_constants()["back_to_front"]["command_supply_suggestions"]
+            + str(suggestions),
+            wizard_agent,
+        )

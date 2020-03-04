@@ -4,6 +4,7 @@ from typing import Text, Dict, Any, List, Optional, Union
 
 from parlai.core.agents import Agent
 import parlai.mturk.tasks.woz.api as api
+from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 
 __all_constants = None
 
@@ -129,20 +130,33 @@ class UtterCommand(WorkerCommand):
 class SetupCommand(BackendCommand):
     def __init__(
         self,
-        task_description: Text,
-        completion_requirements: List[Text],
-        form_description: Dict[Text, Any],
-        completion_questions: List[Text],
+        scenario: Text,
         role: Text,
     ) -> None:
         super(SetupCommand, self).__init__()
         self._command_name = all_constants()["back_to_front"]["command_setup"]
 
-        self._task_description = task_description
-        self._completion_requirements = completion_requirements
-        self._form_description = form_description
-        self._completion_questions = completion_questions
-        self._role = role
+        scenario_file_name = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "..",
+            "scenarios",
+            scenario + ".json",
+        )
+        if not os.path.exists(scenario_file_name):
+            raise FileNotFoundError(f"Could not find '{scenario_file_name}'.")
+        with open(scenario_file_name, "r", ) as file:
+            scenario = json.load(file)
+
+        self._command_name = all_constants()["back_to_front"]["command_setup"]
+
+        try:
+            self._task_description = scenario["instructions"][role]["task_description"]
+            self._completion_requirements = scenario["instructions"][role]["completion_requirements"]
+            self._form_description = DUMMY_FORM_DESCRIPTION
+            self._completion_questions = scenario["instructions"][role]["completion_questions"]
+            self._role = role
+        except KeyError as error:
+            raise ImportError(f"Invalid scenario file '{scenario_file_name}': {error}.")
 
     @property
     def message(self) -> Dict[Text, Any]:
@@ -158,21 +172,9 @@ class SetupCommand(BackendCommand):
 
     @staticmethod
     def from_message(
-        sender: Agent,
-        task_description: Optional[Text] = None,
-        completion_requirements: Optional[List[Text]] = None,
-        completion_questions: Optional[List[Text]] = None,
-        form_description: Optional[Dict[Text, Any]] = None,
-        role: Optional[Text] = None,
         **kwargs,
     ) -> Optional["Command"]:
-        return SetupCommand(
-            task_description=task_description,
-            completion_requirements=completion_requirements,
-            completion_questions=completion_questions,
-            form_description=form_description,
-            role=role,
-        )
+        raise RuntimeError("SetupCommand cannot be created from message.")
 
 
 class ReviewCommand(BackendCommand):
