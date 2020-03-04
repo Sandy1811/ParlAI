@@ -223,7 +223,9 @@ function ReviewForm(props) {
           }
         }
 
-        props.onMessageSend(`<done> ${parameters}`, {}, () =>
+        const parameter_string = JSON.stringify(parameters);
+
+        props.onMessageSend(`<done> ${parameter_string}`, {}, () =>
           console.log("sent done with", parameters)
         );
       }}
