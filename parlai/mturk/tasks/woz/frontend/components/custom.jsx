@@ -201,6 +201,15 @@ function ReviewForm(props) {
       msg => msg.id === props.agent_id && msg.text.startsWith("<done>")
     ) != null;
 
+  const setupMessage = props.messages.find(
+    msg => msg.command === "setup" && msg.form_description != null
+  );
+  if (setupMessage == null) {
+    return "Waiting for initialization...";
+  }
+  const completionQuestions = setupMessage.completion_questions
+  const other_agent = props.agent_id === "User" ? "user " : "assistant "
+
   return (
     <form
       onSubmit={event => {
@@ -221,39 +230,15 @@ function ReviewForm(props) {
     >
       <div>Thank you for the conversation.</div>
       <br />
-      {props.agent_id === "Wizard"
-        ? <div>
-            Did the user...<br />
+      <div>
+        Did the {other_agent}...<br />
 
-            <div style={{ marginLeft: 20 }}>
-              <Checkbox name="ok_user_found">... find an apartment?</Checkbox>
-              <Checkbox name="ok_user_demands">
-                ... require at least 4 specific criteria?
-              </Checkbox>
-              <Checkbox name="ok_user_change">
-                ... change his/her mind about what he/she wants at any point?
-              </Checkbox>
-            </div>
+        <div style={{ marginLeft: 20 }}>
+          {completionQuestions.map((q, i) => {return (<Checkbox name={"ch_" + i}> {q} </Checkbox>);})}
+        </div>
 
-            {unsure_hint}
-          </div>
-        : <div>
-            Did the assistant... <br />
-
-            <div style={{ marginLeft: 20 }}>
-              <Checkbox name="ok_wizard_found">
-                ... find an apartment for you?
-              </Checkbox>
-              <Checkbox name="ok_wizard_bye">
-                ... say goodbye at the end of the dialogue?
-                {" "}
-              </Checkbox>
-              <Checkbox name="ok_wizard_polite">
-                ... stay polite and patient throughout the conversation?
-              </Checkbox>
-            </div>
-            {unsure_hint}
-          </div>}
+        {unsure_hint}
+      </div>
 
       <Button className="btn btn-primary" disabled={hasReviewed} type="submit">
         Confirm
