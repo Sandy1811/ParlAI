@@ -294,7 +294,7 @@ function OnboardingView(props) {
       taskDescription = "taskDescription";
   }
   const completionRequirements = setupMessage.completion_requirements
-  const other_agent = props.agent_id === "User" ? "user " : "assistant "
+  const other_agent = props.agent_id === "User" ? "assistant " : "user "
 
   return (
     <div id="task-description" style={{ fontSize: "16px" }}>
@@ -370,10 +370,7 @@ class LeftPane extends React.Component {
     const isInReview =
       this.props.messages.find(msg => msg.command === "review") != null;
 
-    if (
-      this.props.world_state === "onboarding" ||
-      isInReview
-    ) {
+    if (this.props.world_state === "onboarding") {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
           <TaskDescription {...this.props} isInReview={isInReview} />
@@ -381,11 +378,14 @@ class LeftPane extends React.Component {
           <br />If you are ready, please type "ready" and click [Send].<br />
         </div>
       );
-    }
-
-    if (
-      this.props.agent_id === "User"
-    ) {
+    } else if (isInReview) {
+      return (
+        <div id="left-pane" className={pane_size} style={frame_style}>
+          <TaskDescription {...this.props} isInReview={isInReview} />
+          {this.props.children}
+        </div>
+      );
+    } else if (this.props.agent_id === "User") {
       return (
         <div id="left-pane" className={pane_size} style={frame_style}>
           <TaskDescription {...this.props} isInReview={isInReview} />
