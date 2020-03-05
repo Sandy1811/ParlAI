@@ -1,0 +1,148 @@
+{
+  "input": [
+    {
+      "Name": "Level",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Level"
+    },
+    {
+      "Name": "MaxLevel",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Max Level"
+    },
+    {
+      "Name": "HasBalcony",
+      "Type": "Boolean",
+      "ReadableName": "Has Balcony"
+    },
+    {
+      "Name": "BalconySide",
+      "Type": "Categorical",
+      "Categories": [
+        "east",
+        "north",
+        "south",
+        "west"
+      ],
+      "ReadableName": "Balcony Side"
+    },
+    {
+      "Name": "HasElevator",
+      "Type": "Boolean",
+      "ReadableName": "Has Elevator"
+    },
+    {
+      "Name": "NumRooms",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 7,
+      "ReadableName": "Num Rooms"
+    },
+    {
+      "Name": "FloorSquareMeters",
+      "Type": "Integer",
+      "Min": 10,
+      "Max": 350,
+      "ReadableName": "Floor Square Meters"
+    },
+    {
+      "Name": "NearbyPOIs",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park"
+      ],
+      "ReadableName": "Nearby POIs"
+    },
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Level",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Level"
+    },
+    {
+      "Name": "MaxLevel",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 15,
+      "ReadableName": "Max Level"
+    },
+    {
+      "Name": "HasBalcony",
+      "Type": "Boolean",
+      "ReadableName": "Has Balcony"
+    },
+    {
+      "Name": "BalconySide",
+      "Type": "Categorical",
+      "Categories": [
+        "east",
+        "north",
+        "south",
+        "west"
+      ],
+      "ReadableName": "Balcony Side"
+    },
+    {
+      "Name": "HasElevator",
+      "Type": "Boolean",
+      "ReadableName": "Has Elevator"
+    },
+    {
+      "Name": "NumRooms",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 7,
+      "ReadableName": "Num Rooms"
+    },
+    {
+      "Name": "FloorSquareMeters",
+      "Type": "Integer",
+      "Min": 10,
+      "Max": 350,
+      "ReadableName": "Floor Square Meters"
+    },
+    {
+      "Name": "NearbyPOIs",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park"
+      ],
+      "ReadableName": "Nearby POIs"
+    },
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    }
+  ],
+  "required": [],
+  "db": "apartment",
+  "function": "generic_sample",
+  "returns_count": true
+}

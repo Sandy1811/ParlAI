@@ -1,0 +1,59 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "Shadyside Inn",
+        "Hilton Hotel",
+        "Hyatt Hotel",
+        "Old Town Inn"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "StartDate",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 31,
+      "ReadableName": "Start Date"
+    },
+    {
+      "Name": "EndDate",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 31,
+      "ReadableName": "End Date"
+    },
+    {
+      "Name": "CustomerName",
+      "Type": "ShortString",
+      "ReadableName": "Customer Name"
+    },
+    {
+      "Name": "CustomerRequest",
+      "Type": "LongString",
+      "ReadableName": "Customer Request"
+    }
+  ],
+  "output": [
+    {
+      "Name": "ReservationStatus",
+      "Type": "Categorical",
+      "Categories": [
+        "Reservation Confirmed",
+        "Reservation Failed"
+      ],
+      "ReadableName": "Reservation Status"
+    }
+  ],
+  "required": [
+    "Name",
+    "StartDate",
+    "EndDate",
+    "CustomerName"
+  ],
+  "db": "hotel",
+  "function": "hotel_reserve",
+  "returns_count": false
+}

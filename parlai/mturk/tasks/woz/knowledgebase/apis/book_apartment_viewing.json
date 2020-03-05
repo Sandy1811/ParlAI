@@ -1,0 +1,75 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "Day",
+      "Type": "Categorical",
+      "Categories": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "ReadableName": "Day"
+    },
+    {
+      "Name": "StartTimeHour",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 20,
+      "ReadableName": "Start Time Hour"
+    },
+    {
+      "Name": "EndTimeHour",
+      "Type": "Integer",
+      "Min": 2,
+      "Max": 22,
+      "ReadableName": "End Time Hour"
+    },
+    {
+      "Name": "RenterName",
+      "Type": "ShortString",
+      "ReadableName": "Renter Name"
+    },
+    {
+      "Name": "ApplicationFeePaid",
+      "Type": "Boolean",
+      "ReadableName": "Application Fee Paid"
+    },
+    {
+      "Name": "Message",
+      "Type": "LongString",
+      "ReadableName": "Message"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Message",
+      "Type": "ShortString",
+      "ReadableName": "Message"
+    }
+  ],
+  "required": [
+    "Name",
+    "RenterName",
+    "Day",
+    "StartTimeHour",
+    "EndTimeHour",
+    "ApplicationFeePaid"
+  ],
+  "db": "schedule",
+  "function": "book_apartment_viewing",
+  "returns_count": false
+}

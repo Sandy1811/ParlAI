@@ -3,7 +3,7 @@ import os
 from typing import Text, Dict, Any, List, Optional, Union
 
 from parlai.core.agents import Agent
-import parlai.mturk.tasks.woz.api as api
+import parlai.mturk.tasks.woz.knowledgebase.api as api
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 
 __all_constants = None

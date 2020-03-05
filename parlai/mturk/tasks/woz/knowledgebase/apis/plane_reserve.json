@@ -1,0 +1,28 @@
+{
+  "input": [
+    {
+      "Name": "id",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 1000,
+      "ReadableName": "id"
+    }
+  ],
+  "output": [
+    {
+      "Name": "ReservationStatus",
+      "Type": "Categorical",
+      "Categories": [
+        "Request Confirmed",
+        "Request Failed"
+      ],
+      "ReadableName": "Reservation Status"
+    }
+  ],
+  "required": [
+    "id"
+  ],
+  "db": "plane",
+  "function": "plane_reserve",
+  "returns_count": false
+}

@@ -1,0 +1,156 @@
+{
+  "input": [
+    {
+      "Name": "ItemType",
+      "Type": "Categorical",
+      "Categories": [
+        "Clothing",
+        "Shoe",
+        "Electronic",
+        "Phone",
+        "Appliance",
+        "Furniture",
+        "Toy"
+      ],
+      "ReadableName": "Item Type"
+    },
+    {
+      "Name": "Price",
+      "Type": "Integer",
+      "Min": 5,
+      "Max": 1000,
+      "ReadableName": "Price"
+    },
+    {
+      "Name": "ItemName",
+      "Type": "Categorical",
+      "Categories": [
+        "Blue Item",
+        "Red Item",
+        "Green Item",
+        "Black Item",
+        "White Item"
+      ],
+      "ReadableName": "Item Name"
+    },
+    {
+      "Name": "ItemSize",
+      "Type": "Categorical",
+      "Categories": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "Enabled": "!lambda p: p[\"ItemType\"] == \"Clothing\"",
+      "ReadableName": "Item Size"
+    },
+    {
+      "Name": "ItemSize",
+      "Type": "Integer",
+      "Min": 5,
+      "Max": 13,
+      "Enabled": "!lambda p: p[\"ItemType\"] == \"Shoe\"",
+      "ReadableName": "Item Size"
+    },
+    {
+      "Name": "ShippingSpeed",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "Same Day",
+        "1 Business Day",
+        "2 Business Days",
+        "3 Business Days",
+        "7 Business Days"
+      ],
+      "ReadableName": "Shipping Speed"
+    },
+    {
+      "Name": "ItemNumber",
+      "Type": "Integer",
+      "Min": 100,
+      "Max": 999,
+      "ReadableName": "Item Number"
+    }
+  ],
+  "output": [
+    {
+      "Name": "ItemType",
+      "Type": "Categorical",
+      "Categories": [
+        "Clothing",
+        "Shoe",
+        "Electronic",
+        "Phone",
+        "Appliance",
+        "Furniture",
+        "Toy"
+      ],
+      "ReadableName": "Item Type"
+    },
+    {
+      "Name": "Price",
+      "Type": "Integer",
+      "Min": 5,
+      "Max": 1000,
+      "ReadableName": "Price"
+    },
+    {
+      "Name": "ItemName",
+      "Type": "Categorical",
+      "Categories": [
+        "Blue Item",
+        "Red Item",
+        "Green Item",
+        "Black Item",
+        "White Item"
+      ],
+      "ReadableName": "Item Name"
+    },
+    {
+      "Name": "ItemSize",
+      "Type": "Categorical",
+      "Categories": [
+        "XS",
+        "S",
+        "M",
+        "L",
+        "XL"
+      ],
+      "Enabled": "!lambda p: p[\"ItemType\"] == \"Clothing\"",
+      "ReadableName": "Item Size"
+    },
+    {
+      "Name": "ItemSize",
+      "Type": "Integer",
+      "Min": 5,
+      "Max": 13,
+      "Enabled": "!lambda p: p[\"ItemType\"] == \"Shoe\"",
+      "ReadableName": "Item Size"
+    },
+    {
+      "Name": "ShippingSpeed",
+      "Type": "CategoricalMultiple",
+      "Categories": [
+        "Same Day",
+        "1 Business Day",
+        "2 Business Days",
+        "3 Business Days",
+        "7 Business Days"
+      ],
+      "ReadableName": "Shipping Speed"
+    },
+    {
+      "Name": "ItemNumber",
+      "Type": "Integer",
+      "Min": 100,
+      "Max": 999,
+      "ReadableName": "Item Number"
+    }
+  ],
+  "required": [],
+  "db": "shopping",
+  "function": "generic_sample",
+  "returns_count": true
+}

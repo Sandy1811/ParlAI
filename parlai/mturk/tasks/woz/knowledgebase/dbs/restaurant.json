@@ -1,0 +1,37 @@
+[
+  {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": ["Cactus Club", "Tamarind", "Legume", "Lucca", "The Porch"]
+  },
+  {
+      "Name": "Cost",
+      "Type": "Categorical",
+      "Categories": ["Cheap", "Moderate", "Expensive"]
+  },
+  {"Name": "TakesReservations", "Type": "Boolean"},
+  {"Name": "DoesDelivery", "Type": "Boolean"},
+  {"Name": "AverageRating", "Type": "Integer", "Min": 1, "Max": 5},
+  {
+      "Name": "Food",
+      "Type": "Categorical",
+      "Categories": [
+          "Pizza",
+          "Chinese",
+          "Indian",
+          "Burgers",
+          "Italian",
+          "Thai",
+          "Steak"
+      ]
+  },
+  {"Name": "AverageWaitMinutes", "Type": "Integer", "Min": 0, "Max": 60},
+  {"Name": "OpenTimeHour", "Type": "Integer", "Min": 6, "Max": 10},
+  {"Name": "CloseTimeHour", "Type": "Integer", "Min": 15, "Max": 23},
+  {"Name": "MaxPartySize", "Type": "Integer", "Min": 2, "Max": 50},
+  {
+      "Name": "Location",
+      "Type": "Categorical",
+      "Categories": ["South", "West", "East", "North", "Center"]
+  }
+]

@@ -1,0 +1,55 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "Cactus Club",
+        "Tamarind",
+        "Legume",
+        "Lucca",
+        "The Porch"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "Time",
+      "Type": "Integer",
+      "Min": 6,
+      "Max": 23,
+      "ReadableName": "Time"
+    },
+    {
+      "Name": "PartySize",
+      "Type": "Integer",
+      "Min": 2,
+      "Max": 50,
+      "ReadableName": "Party Size"
+    },
+    {
+      "Name": "CustomerName",
+      "Type": "ShortString",
+      "ReadableName": "Customer Name"
+    }
+  ],
+  "output": [
+    {
+      "Name": "ReservationStatus",
+      "Type": "Categorical",
+      "Categories": [
+        "Reservation Confirmed",
+        "Reservation Failed"
+      ],
+      "ReadableName": "Reservation Status"
+    }
+  ],
+  "required": [
+    "Name",
+    "Time",
+    "PartySize",
+    "CustomerName"
+  ],
+  "db": "restaurant",
+  "function": "restaurant_reserve",
+  "returns_count": false
+}

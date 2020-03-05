@@ -1,0 +1,70 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "Dr. Johnson",
+        "Dr. Morgan",
+        "Dr. Alexis"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "Day",
+      "Type": "Categorical",
+      "Categories": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "ReadableName": "Day"
+    },
+    {
+      "Name": "StartTimeHour",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 20,
+      "ReadableName": "Start Time Hour"
+    },
+    {
+      "Name": "EndTimeHour",
+      "Type": "Integer",
+      "Min": 2,
+      "Max": 22,
+      "ReadableName": "End Time Hour"
+    },
+    {
+      "Name": "PatientName",
+      "Type": "ShortString",
+      "ReadableName": "Patient Name"
+    },
+    {
+      "Name": "Symptoms",
+      "Type": "LongString",
+      "ReadableName": "Symptoms"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Message",
+      "Type": "ShortString",
+      "ReadableName": "Message"
+    }
+  ],
+  "required": [
+    "Name",
+    "PatientName",
+    "Day",
+    "StartTimeHour",
+    "EndTimeHour",
+    "Symptoms"
+  ],
+  "db": "schedule",
+  "function": "book_doctor_appointment",
+  "returns_count": false
+}

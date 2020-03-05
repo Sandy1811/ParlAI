@@ -1,0 +1,59 @@
+{
+  "input": [
+    {
+      "Name": "ShippingSpeed",
+      "Type": "Categorical",
+      "Categories": [
+        "Same Day",
+        "1 Business Day",
+        "2 Business Days",
+        "3 Business Days",
+        "7 Business Days"
+      ],
+      "ReadableName": "Shipping Speed"
+    },
+    {
+      "Name": "ItemNumber",
+      "Type": "Integer",
+      "Min": 100,
+      "Max": 999,
+      "ReadableName": "Item Number"
+    },
+    {
+      "Name": "Address",
+      "Type": "ShortString",
+      "ReadableName": "Address"
+    },
+    {
+      "Name": "CreditCardInfo",
+      "Type": "ShortString",
+      "ReadableName": "Credit Card Info"
+    },
+    {
+      "Name": "CustomerName",
+      "Type": "ShortString",
+      "ReadableName": "Customer Name"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Message",
+      "Type": "Categorical",
+      "Categories": [
+        "Sorry we were unabled to process the order. Please check the item number of the shipping speed.",
+        "Order confirmed. Your item will be shipped soon"
+      ],
+      "ReadableName": "Message"
+    }
+  ],
+  "required": [
+    "ShippingSpeed",
+    "ItemNumber",
+    "Address",
+    "CreditCardInfo",
+    "CustomerName"
+  ],
+  "db": "shopping",
+  "function": "shopping_order_item",
+  "returns_count": false
+}

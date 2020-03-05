@@ -1,0 +1,169 @@
+{
+  "input": [
+    {
+      "Name": "DepartureCity",
+      "Type": "Categorical",
+      "Categories": [
+        "Los Angeles",
+        "San Francisco",
+        "Chicago",
+        "Detroit",
+        "New York City",
+        "Pittsburgh"
+      ],
+      "ReadableName": "Departure City"
+    },
+    {
+      "Name": "ArrivalCity",
+      "Type": "Categorical",
+      "Categories": [
+        "Los Angeles",
+        "San Francisco",
+        "Chicago",
+        "Detroit",
+        "New York City",
+        "Pittsburgh"
+      ],
+      "ReadableName": "Arrival City"
+    },
+    {
+      "Name": "Price",
+      "Type": "Integer",
+      "Min": 150,
+      "Max": 500,
+      "ReadableName": "Price"
+    },
+    {
+      "Name": "Date",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 31,
+      "ReadableName": "Date"
+    },
+    {
+      "Name": "Class",
+      "Type": "Categorical",
+      "Categories": [
+        "First",
+        "Business",
+        "Economy"
+      ],
+      "ReadableName": "Class"
+    },
+    {
+      "Name": "DurationHours",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 8,
+      "ReadableName": "Duration Hours"
+    },
+    {
+      "Name": "Airline",
+      "Type": "Categorical",
+      "Categories": [
+        "American",
+        "United",
+        "Delta",
+        "Virgin"
+      ],
+      "ReadableName": "Airline"
+    },
+    {
+      "Name": "id",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 1000,
+      "ReadableName": "id"
+    }
+  ],
+  "output": [
+    {
+      "Name": "DepartureCity",
+      "Type": "Categorical",
+      "Categories": [
+        "Los Angeles",
+        "San Francisco",
+        "Chicago",
+        "Detroit",
+        "New York City",
+        "Pittsburgh"
+      ],
+      "ReadableName": "Departure City"
+    },
+    {
+      "Name": "ArrivalCity",
+      "Type": "Categorical",
+      "Categories": [
+        "Los Angeles",
+        "San Francisco",
+        "Chicago",
+        "Detroit",
+        "New York City",
+        "Pittsburgh"
+      ],
+      "ReadableName": "Arrival City"
+    },
+    {
+      "Name": "Price",
+      "Type": "Integer",
+      "Min": 150,
+      "Max": 500,
+      "ReadableName": "Price"
+    },
+    {
+      "Name": "Date",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 31,
+      "ReadableName": "Date"
+    },
+    {
+      "Name": "SeatsAvailable",
+      "Type": "Boolean",
+      "ReadableName": "Seats Available"
+    },
+    {
+      "Name": "Class",
+      "Type": "Categorical",
+      "Categories": [
+        "First",
+        "Business",
+        "Economy"
+      ],
+      "ReadableName": "Class"
+    },
+    {
+      "Name": "DurationHours",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 8,
+      "ReadableName": "Duration Hours"
+    },
+    {
+      "Name": "Airline",
+      "Type": "Categorical",
+      "Categories": [
+        "American",
+        "United",
+        "Delta",
+        "Virgin"
+      ],
+      "ReadableName": "Airline"
+    },
+    {
+      "Name": "id",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 1000,
+      "ReadableName": "id"
+    }
+  ],
+  "required": [
+    "DepartureCity",
+    "ArrivalCity",
+    "Date"
+  ],
+  "db": "plane",
+  "function": "plane_search",
+  "returns_count": true
+}

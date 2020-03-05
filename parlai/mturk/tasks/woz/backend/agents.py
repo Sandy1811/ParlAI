@@ -6,7 +6,7 @@ from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.shared_utils import AssignState
-from parlai.mturk.tasks.woz import api
+from parlai.mturk.tasks.woz.knowledgebase import api
 from parlai.mturk.tasks.woz.backend.commands import Command, QueryCommand
 
 

@@ -1,0 +1,28 @@
+{
+  "input": [
+    {
+      "Name": "id",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 1000,
+      "ReadableName": "id"
+    }
+  ],
+  "output": [
+    {
+      "Name": "ChangeStatus",
+      "Type": "Categorical",
+      "Categories": [
+        "Your trip has been successfuly changed.",
+        "We are unable to change your trip."
+      ],
+      "ReadableName": "Change Status"
+    }
+  ],
+  "required": [
+    "id"
+  ],
+  "db": "ride",
+  "function": "ride_change",
+  "returns_count": false
+}

@@ -1,0 +1,561 @@
+import json
+import os
+import random
+
+from itertools import combinations
+from typing import Dict, Text, Any, List, Optional
+
+
+def is_equal_to(value):
+    return lambda x: x == value
+
+
+def contains(value):
+    return lambda x: value in x
+
+
+def is_one_of(value):
+    return lambda x: x in value
+
+
+def is_greater_than(value):
+    return lambda x: x >= value
+
+
+def is_less_than(value):
+    return lambda x: x <= value
+
+
+def contain_all_of(value):
+    return lambda x: all([e in x for e in value])
+
+
+def contain_at_least_one_of(value):
+    return lambda x: all([e in value for e in x])
+
+
+def is_not(constraint):
+    return lambda x: not constraint(x)
+
+
+def contains_substring(value):
+    return lambda x: value in x
+
+
+is_equal_to, contains, is_one_of, is_greater_than, is_less_than, contain_all_of, contain_at_least_one_of, is_not, contains_substring,
+
+
+class KnowledgeBaseItem:
+    def __init__(self, settings):
+        self._id = hash(str(settings))
+        self._settings = settings
+
+    def __str__(self):
+        return str(self._settings)
+
+    def __hash__(self):
+        return self._id
+
+    def __eq__(self, other: "KnowledgeBaseItem") -> bool:
+        return self._id == other._id
+
+    def match(self, constraints: Dict[Text, Any]) -> bool:
+        for parameter_name, constraint in constraints.items():
+            row_value = self._settings.get(parameter_name)
+            if not callable(constraint) and row_value != constraint:
+                return False
+            elif callable(constraint) and not constraint(row_value):
+                return False
+        return True
+
+
+class KnowledgeBaseAPI:
+    descriptor_templates = {"General": lambda s: "{}".format(s)}
+
+    def __init__(
+        self,
+        num_items: int = 1,
+        all_parameters: Dict[Text, Any] = None,
+        required_parameters: Optional[List[Text]] = None,
+    ):
+        self._dataset = []
+        self.parameters = all_parameters or []
+        self.required_parameters = required_parameters or []
+        self._generate(num_items)
+
+    def _generate(self, num_items: int) -> None:
+        for n in range(num_items):
+            self._dataset.append(self._create_random_item(n))
+
+    def _create_random_item(self, identification_number: int) -> KnowledgeBaseItem:
+        # Build the settings by randomly choosing from the options
+        # or from the constraints
+        settings = {"id": identification_number}
+        for parameter in self.parameters:
+            settings.update(self._random_value(parameter, settings))
+
+        return KnowledgeBaseItem(settings)
+
+    def _random_value(
+        self, parameter: Dict[Text, Any], settings: Dict[Text, Any]
+    ) -> Dict[Text, Any]:
+
+        check_enabled = parameter.get("Enabled")
+        if callable(check_enabled) and not check_enabled(settings):
+            return {}
+
+        if parameter.get("Type") == "Integer":
+            _min = parameter.get("Min", 0)
+            _max = parameter.get("Max", 100)
+            _min = _min(settings) if callable(_min) else _min
+            _max = _max(settings) if callable(_max) else _max
+            return {parameter["Name"]: random.randint(_min, _max)}
+        elif parameter.get("Type") == "Categorical":
+            return {parameter["Name"]: random.choice(parameter.get("Categories"))}
+        elif parameter.get("Type") == "Boolean":
+            return {parameter["Name"]: random.choice([False, True])}
+        else:
+            raise ValueError(
+                f"Unknown parameter type '{parameter.get('Type')}' for parameter '{parameter.get('Name')}'."
+            )
+
+    def lookup(self, constraints: Dict[Text, Any]) -> List[KnowledgeBaseItem]:
+        self._check_if_required_parameters_provided(constraints)
+
+        return [item for item in self._dataset if item.match(constraints)]
+
+    def get_all(
+        self, constraints: Optional[Dict[Text, Any]] = dict()
+    ) -> Optional[KnowledgeBaseItem]:
+        filtered_items = self.lookup(constraints)
+        return filtered_items
+
+    def sample(
+        self, constraints: Optional[Dict[Text, Any]] = dict()
+    ) -> Optional[KnowledgeBaseItem]:
+        filtered_items = self.lookup(constraints)
+        if filtered_items:
+            return random.choice(filtered_items), len(filtered_items)
+        else:
+            return None, 0
+
+    def _check_if_required_parameters_provided(self, constraints):
+        for parameter_name in self.required_parameters:
+            if parameter_name not in constraints:
+                raise ValueError(
+                    f"Parameter '{parameter_name}' is required but was not provided."
+                )
+
+
+def load_db(fn):
+    """
+    Given a JSON file corresponding to a DB, generate the object
+    """
+    print("Loaded DB:", fn)
+    parameters = json.load(open(fn))
+
+    # Handle the python expressions in the parameter
+    for param in parameters:
+        for k, v in param.items():
+            if type(v) is str and v[0] == "!":
+                param[k] = eval(v[1:])
+
+    return KnowledgeBaseAPI(num_items=100, all_parameters=parameters)
+
+
+def generic_sample(api, constraints: Optional[Dict[Text, Any]] = dict()):
+    row, count = api.sample(constraints)
+    return row._settings, count
+
+
+def restaurant_reserve(restaurant_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = ["Reservation Confirmed", "Reservation Failed"]
+    new_constraints = {
+        "Name": constraints["Name"],
+        "TakesReservations": True,
+        "MaxPartySize": is_greater_than(constraints["PartySize"]),
+        "OpenTimeHour": is_less_than(constraints["Time"]),
+        "CloseTimeHour": is_greater_than(constraints["Time"]),
+    }
+
+    row, _ = restaurant_api.sample(new_constraints)
+    if row is None:
+        return {"ReservationStatus": outputs[1]}, -1
+    else:
+        return {"ReservationStatus": random.choice(outputs)}, -1
+
+
+def hotel_reserve(hotel_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = ["Reservation Confirmed", "Reservation Failed"]
+    new_constraints = {
+        "Name": constraints["Name"],
+        "TakesReservations": True,
+    }
+
+    row, _ = hotel_api.sample(new_constraints)
+    if row is None:
+        return {"ReservationStatus": outputs[1]}, -1
+    else:
+        return {"ReservationStatus": random.choice(outputs)}, -1
+
+
+def hotel_service_request(hotel_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = ["Request Confirmed", "Request Failed"]
+
+    new_constraints = {
+        "Name": constraints["Name"],
+        "Service": True,
+        "ServiceStartHour": is_less_than(constraints["Time"]),
+        "ServiceStopHour": is_greater_than(constraints["Time"]),
+    }
+
+    row, _ = hotel_api.sample(new_constraints)
+    if row is None:
+        return {"RequestStatus": outputs[1]}, -1
+    else:
+        return {"RequestStatus": outputs[0]}, -1
+
+
+def plane_search(plane_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    return plane_api.sample(dict(constraints, SeatsAvailable=True))
+
+
+def plane_reserve(plane_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = ["Reservation Confirmed", "Reservation Failed"]
+    row, _ = plane_api.sample(dict(constraints, SeatsAvailable=True))
+    if row is None:
+        return {"ReservationStatus": outputs[1]}, -1
+    else:
+        return {"ReservationStatus": outputs[0]}, -1
+
+
+def trip_directions(trip_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    new_constraints = {
+        "TravelMode": constraints["TravelMode"],
+    }
+
+    # Only need this logic for transit
+    if constraints["TravelMode"] == "Transit":
+        new_constraints["DepartureTime"] = is_greater_than(constraints["DepartureTime"])
+
+        rows = trip_api.get_all(new_constraints)
+        row = min(rows, key=lambda e: e._settings.get("DepartureTime"))
+    else:
+        row, _ = trip_api.sample(new_constraints)
+
+    return row._settings, -1
+
+
+def trip_traffic(trip_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    new_constraints = {
+        "TravelMode": constraints["TravelMode"],
+    }
+
+    # Only need this logic for transit
+    if constraints["TravelMode"] == "Transit":
+        new_constraints["DepartureTime"] = is_greater_than(constraints["DepartureTime"])
+
+        rows = trip_api.get_all(new_constraints)
+        row = min(rows, key=lambda e: e._settings.get("TripLengthMinutes"))
+    else:
+        row, _ = trip_api.sample(new_constraints)
+
+    return row._settings, -1
+
+
+def book_ride(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    del constraints["DepartureLocation"]
+    del constraints["ArrivalLocation"]
+    row, count = ride_api.sample(constraints)
+    return row._settings, -1
+
+
+def ride_status(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    ride_status_outputs = [
+        "Your driver is dropping off another passenger.",
+        "Your ride is on its way.",
+        "Your driver is arriving.",
+    ]
+    ride_wait_outputs = [
+        "{0} minutes away".format(random.randint(0, 5)) for _ in range(30)
+    ]
+
+    new_constraints = {
+        "id": constraints["id"],
+    }
+    row, _ = ride_api.sample(new_constraints)
+
+    return (
+        dict(
+            **row._settings,
+            RideStatus=random.choice(ride_status_outputs),
+            RideWait=random.choice(ride_wait_outputs),
+        ),
+        -1,
+    )
+
+
+def ride_change(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = [
+        "Your trip has been successfuly changed.",
+        "We are unable to change your trip.",
+    ]
+
+    if "DepartureLocation" not in constraints and "ArrivalLocation" not in constraints:
+        raise ValueError(
+            f"One of DepartureLocation or ArrivalLocation must be provided."
+        )
+
+    new_constraints = {
+        "id": constraints["id"],
+        "AllowsChanges": True,
+    }
+    row, _ = ride_api.sample(new_constraints)
+
+    if row is None:
+        return {"ChangeStatus": outputs[1]}
+    else:
+        return {"ChangeStatus": outputs[0]}
+
+
+def bank_balance(bank_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    new_constraints = {
+        "BankName": constraints["BankName"],
+    }
+    row, count = bank_api.sample(new_constraints)
+    return row._settings, -1
+
+
+def bank_fraud_report(bank_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    new_constraints = {
+        "BankName": constraints["BankName"],
+    }
+
+    row, _ = bank_api.sample(new_constraints)
+    if row is not None:
+        return {"Confirmation": "Fraud report submitted successfully."}, -1
+    else:
+        return {"Confirmation": "Error finding bank account."}, -1
+
+
+def shopping_order_item(shopping_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    new_constraints = {
+        "ItemNumber": constraints["ItemNumber"],
+        "ShippingSpeed": contains(constraints["ShippingSpeed"]),
+    }
+
+    row, _ = shopping_api.sample(new_constraints)
+
+    if row is None:
+        return (
+            dict(
+                Message="Sorry we were unable to process the order. Please check the item number or the shipping speed."
+            ),
+            -1,
+        )
+    else:
+        return dict(Message="Order confirmed. Your item will be shipped soon."), -1
+
+
+def shopping_order_status(null_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = [
+        "Your order is being processed. It will be shipped soon.",
+        "Your order is on its way.",
+        "Your order is arriving soon.",
+        "There is a delay in your order.",
+    ]
+
+    return dict(Message=random.choice(outputs)), -1
+
+
+def schedule_meeting(schedule_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = [
+        "Your meeting has been successfuly scheduled.",
+        "{0} has a conflicting meeting at that time. Try another meeting time.".format(
+            constraints["Name"]
+        ),
+    ]
+
+    new_constraints = {
+        "Name": constraints["Name"],
+        "Day": constraints["Day"],
+        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
+        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
+    }
+
+    row, _ = schedule_api.sample(new_constraints)
+    if row is None:
+        return dict(Message=outputs[0]), -1
+    else:
+        return dict(Message=outputs[1]), -1
+
+
+def book_doctor_appointment(
+    schedule_api, constraints: Optional[Dict[Text, Any]] = dict()
+):
+    outputs = [
+        "Your appointment has been successfuly scheduled.",
+        "{0} has a conflicting meeting at that time. Try another time or another doctor.".format(
+            constraints["Name"]
+        ),
+    ]
+    new_constraints = {
+        "Name": constraints["Name"],
+        "Day": constraints["Day"],
+        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
+        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
+    }
+    row, _ = schedule_api.sample(new_constraints)
+    if row is None:
+        return dict(Message=outputs[0]), -1
+    else:
+        return dict(Message=outputs[1]), -1
+
+
+def book_apartment_viewing(
+    schedule_api, constraints: Optional[Dict[Text, Any]] = dict()
+):
+    outputs = [
+        "Your apartment viewing has been successfuly scheduled.",
+        "That time is unavailable for {0}. Please try another time.".format(
+            constraints["Name"]
+        ),
+    ]
+    new_constraints = {
+        "Name": constraints["Name"],
+        "Day": constraints["Day"],
+        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
+        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
+    }
+    row, _ = schedule_api.sample(new_constraints)
+    if row is None:
+        required_items = [
+            "Passport",
+            "Proof of Income",
+            "SCHUFA certificate",
+            "Bank Statement",
+        ]
+        return (
+            dict(
+                Message=outputs[0]
+                + " Please bring {0} and {1} with you.".format(
+                    random.choice(required_items), random.choice(required_items)
+                )
+            ),
+            -1,
+        )
+    else:
+        return dict(Message=outputs[1]), -1
+
+
+def followup_doctor_appointment(
+    null_api, constraints: Optional[Dict[Text, Any]] = dict()
+):
+    outputs = [
+        "You must take your medicine 2 times a day before meals.",
+        "Take your medicine before you go to sleep. If you experience nausea, please contact your doctor immediately.",
+    ]
+
+    return dict(Message=random.choice(outputs)), -1
+
+
+def party_plan(schedule_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    schedule_outputs = [
+        "Your event has been successfuly scheduled.",
+        "{0} is booked at that time. Try another meeting time or another venue.".format(
+            constraints["Name"]
+        ),
+    ]
+    size_outputs = [
+        "Your event has been successfuly scheduled.",
+        "{0} is too small for your party. Try another venue.".format(
+            constraints["Name"]
+        ),
+    ]
+
+    new_constraints = {
+        "Name": constraints["Name"],
+        "Day": constraints["Day"],
+        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
+        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
+    }
+    row, _ = schedule_api.sample(new_constraints)
+    if row is not None:
+        return dict(Message=schedule_outputs[1]), -1
+
+    new_constraints = {
+        "Name": constraints["Name"],
+        "SizeLimit": is_greater_than(constraints["NumberGuests"]),
+    }
+    row, _ = schedule_api.sample(new_constraints)
+    if row is not None:
+        return dict(Message=size_outputs[0]), -1
+    else:
+        return dict(Message=size_outputs[1]), -1
+
+
+def party_rsvp(schedule_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    return dict(Message="Thank you for your RSVP. See you there."), -1
+
+
+def spaceship_access_codes(null_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = [
+        "The code is 431931",
+        "Sorry, you are not authorized to receive the code. Please obtain a clearance code from the Captain.",
+    ]
+
+    if (
+        constraints["UserRank"] not in ["Captain", "First Officer"]
+        and constraints["CodeType"] != "Clearance"
+    ):
+        return dict(Message=outputs[1]), -1
+    else:
+        return dict(Message=outputs[0]), -1
+
+
+def spaceship_life_support(null_api, constraints: Optional[Dict[Text, Any]] = dict()):
+    outputs = ["Successful! Door opened"]
+    return dict(Message=outputs[0]), -1
+
+
+dbs = {"null": None}
+
+
+def load_databases() -> None:
+    # Load all DBs
+    global dbs
+    db_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dbs")
+    print(f"Loading databeses from '{db_dir}'.")
+    for filename in os.listdir(db_dir):
+        if filename[0] == ".":
+            continue
+        dbs[os.path.splitext(filename)[0]] = load_db(
+            os.path.join(os.path.dirname(os.path.abspath(__file__)), "dbs", filename)
+        )
+
+
+def call_api(api_name, constraints):
+    with open(
+        os.path.join(
+            os.path.dirname(os.path.abspath(__file__)), "apis", api_name + ".json"
+        ),
+        "r"
+    ) as file:
+        api_schema = json.load(file)
+    api_fn = eval(api_schema["function"])
+    api_obj = dbs[api_schema["db"]]
+
+    for parameter in api_schema["required"]:
+        if parameter not in constraints:
+            raise ValueError(
+                f"Parameter '{parameter}' is required but was not provided."
+            )
+
+    res, count = api_fn(api_obj, constraints)
+    if api_schema["returns_count"]:
+        return res, count
+    else:
+        return res
+
+
+load_databases()

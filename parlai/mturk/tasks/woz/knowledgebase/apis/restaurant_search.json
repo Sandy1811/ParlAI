@@ -1,0 +1,196 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "Cactus Club",
+        "Tamarind",
+        "Legume",
+        "Lucca",
+        "The Porch"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "Cost",
+      "Type": "Categorical",
+      "Categories": [
+        "Cheap",
+        "Moderate",
+        "Expensive"
+      ],
+      "ReadableName": "Cost"
+    },
+    {
+      "Name": "TakesReservations",
+      "Type": "Boolean",
+      "ReadableName": "Takes Reservations"
+    },
+    {
+      "Name": "DoesDelivery",
+      "Type": "Boolean",
+      "ReadableName": "Does Delivery"
+    },
+    {
+      "Name": "AverageRating",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 5,
+      "ReadableName": "Average Rating"
+    },
+    {
+      "Name": "Food",
+      "Type": "Categorical",
+      "Categories": [
+        "Pizza",
+        "Chinese",
+        "Indian",
+        "Burgers",
+        "Italian",
+        "Thai",
+        "Steak"
+      ],
+      "ReadableName": "Food"
+    },
+    {
+      "Name": "AverageWaitMinutes",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 60,
+      "ReadableName": "Average Wait Minutes"
+    },
+    {
+      "Name": "OpenTimeHour",
+      "Type": "Integer",
+      "Min": 6,
+      "Max": 10,
+      "ReadableName": "Open Time Hour"
+    },
+    {
+      "Name": "CloseTimeHour",
+      "Type": "Integer",
+      "Min": 15,
+      "Max": 23,
+      "ReadableName": "Close Time Hour"
+    },
+    {
+      "Name": "MaxPartySize",
+      "Type": "Integer",
+      "Min": 2,
+      "Max": 50,
+      "ReadableName": "Max Party Size"
+    },
+    {
+      "Name": "Location",
+      "Type": "Categorical",
+      "Categories": [
+        "South",
+        "West",
+        "East",
+        "North",
+        "Center"
+      ],
+      "ReadableName": "Location"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "Cactus Club",
+        "Tamarind",
+        "Legume",
+        "Lucca",
+        "The Porch"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "Cost",
+      "Type": "Categorical",
+      "Categories": [
+        "Cheap",
+        "Moderate",
+        "Expensive"
+      ],
+      "ReadableName": "Cost"
+    },
+    {
+      "Name": "TakesReservations",
+      "Type": "Boolean",
+      "ReadableName": "Takes Reservations"
+    },
+    {
+      "Name": "DoesDelivery",
+      "Type": "Boolean",
+      "ReadableName": "Does Delivery"
+    },
+    {
+      "Name": "AverageRating",
+      "Type": "Integer",
+      "Min": 1,
+      "Max": 5,
+      "ReadableName": "Average Rating"
+    },
+    {
+      "Name": "Food",
+      "Type": "Categorical",
+      "Categories": [
+        "Pizza",
+        "Chinese",
+        "Indian",
+        "Burgers",
+        "Italian",
+        "Thai",
+        "Steak"
+      ],
+      "ReadableName": "Food"
+    },
+    {
+      "Name": "AverageWaitMinutes",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 60,
+      "ReadableName": "Average Wait Minutes"
+    },
+    {
+      "Name": "OpenTimeHour",
+      "Type": "Integer",
+      "Min": 6,
+      "Max": 10,
+      "ReadableName": "Open Time Hour"
+    },
+    {
+      "Name": "CloseTimeHour",
+      "Type": "Integer",
+      "Min": 15,
+      "Max": 23,
+      "ReadableName": "Close Time Hour"
+    },
+    {
+      "Name": "MaxPartySize",
+      "Type": "Integer",
+      "Min": 2,
+      "Max": 50,
+      "ReadableName": "Max Party Size"
+    },
+    {
+      "Name": "Location",
+      "Type": "Categorical",
+      "Categories": [
+        "South",
+        "West",
+        "East",
+        "North",
+        "Center"
+      ],
+      "ReadableName": "Location"
+    }
+  ],
+  "required": [],
+  "db": "restaurant",
+  "function": "generic_sample",
+  "returns_count": true
+}

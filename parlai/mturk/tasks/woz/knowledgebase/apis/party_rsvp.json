@@ -1,0 +1,66 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "Southside Venue",
+        "North Heights Venue",
+        "West Bay Venue"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "ArrivalTime",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 20,
+      "ReadableName": "Arrival Time"
+    },
+    {
+      "Name": "HostName",
+      "Type": "ShortString",
+      "ReadableName": "Host Name"
+    },
+    {
+      "Name": "GuestName",
+      "Type": "ShortString",
+      "ReadableName": "Guest Name"
+    },
+    {
+      "Name": "NumberGuests",
+      "Type": "Integer",
+      "Min": 3,
+      "Max": 10,
+      "ReadableName": "Number Guests"
+    },
+    {
+      "Name": "NeedParking",
+      "Type": "Boolean",
+      "ReadableName": "Need Parking"
+    },
+    {
+      "Name": "DietaryRestrictions",
+      "Type": "LongString",
+      "ReadableName": "Dietary Restrictions"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Message",
+      "Type": "ShortString",
+      "ReadableName": "Message"
+    }
+  ],
+  "required": [
+    "Name",
+    "HostName",
+    "GuestName",
+    "ArrivalTime",
+    "NumberGuests",
+    "NeedParking"
+  ],
+  "db": "schedule",
+  "function": "party_rsvp",
+  "returns_count": false
+}

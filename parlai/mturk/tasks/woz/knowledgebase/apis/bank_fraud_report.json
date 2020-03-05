@@ -1,0 +1,74 @@
+{
+  "input": [
+    {
+      "Name": "BankName",
+      "Type": "Categorical",
+      "Categories": [
+        "Chase",
+        "Bank of America",
+        "PNC",
+        "Wells Fargo"
+      ],
+      "ReadableName": "Bank Name"
+    },
+    {
+      "Name": "AccountNumber",
+      "Type": "ShortString",
+      "ReadableName": "Account Number"
+    },
+    {
+      "Name": "FullName",
+      "Type": "ShortString",
+      "ReadableName": "Full Name"
+    },
+    {
+      "Name": "DateOfBirth",
+      "Type": "ShortString",
+      "ReadableName": "Date Of Birth"
+    },
+    {
+      "Name": "PIN",
+      "Type": "ShortString",
+      "ReadableName": "PIN"
+    },
+    {
+      "Name": "SecurityAnswer1",
+      "Type": "ShortString",
+      "ReadableName": "Security Answer 1"
+    },
+    {
+      "Name": "SecurityAnswer2",
+      "Type": "ShortString",
+      "ReadableName": "Security Answer 2"
+    },
+    {
+      "Name": "FraudReport",
+      "Type": "LongString",
+      "ReadableName": "Fraud Report"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Confirmation",
+      "Type": "Categorical",
+      "Categories": [
+        "Fraud report submitted successfully.",
+        "Error finding bank account"
+      ],
+      "ReadableName": "Confirmation"
+    }
+  ],
+  "required": [
+    "AccountNumber",
+    "FullName",
+    "BankName",
+    "DateOfBirth",
+    "PIN",
+    "SecurityAnswer1",
+    "SecurityAnswer2",
+    "FraudReport"
+  ],
+  "db": "bank",
+  "function": "bank_fraud_report",
+  "returns_count": false
+}

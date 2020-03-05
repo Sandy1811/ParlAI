@@ -1,0 +1,80 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "John",
+        "Michael",
+        "Southside Venue",
+        "Dr. Johnson",
+        "North Heights Venue",
+        "Dr. Morgan",
+        "Fred",
+        "George",
+        "Dr. Alexis",
+        "Conference Room 43",
+        "Conference Room 91",
+        "One on Center Apartments",
+        "Shadyside Apartments",
+        "North Hill Apartments"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "Day",
+      "Type": "Categorical",
+      "Categories": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "ReadableName": "Day"
+    },
+    {
+      "Name": "StartTimeHour",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 20,
+      "ReadableName": "Start Time Hour"
+    },
+    {
+      "Name": "EndTimeHour",
+      "Type": "Integer",
+      "Min": 2,
+      "Max": 22,
+      "ReadableName": "End Time Hour"
+    },
+    {
+      "Name": "UserName",
+      "Type": "ShortString",
+      "ReadableName": "User Name"
+    },
+    {
+      "Name": "MeetingReason",
+      "Type": "LongString",
+      "ReadableName": "Meeting Reason"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Message",
+      "Type": "ShortString",
+      "ReadableName": "Message"
+    }
+  ],
+  "required": [
+    "Name",
+    "UserName",
+    "Day",
+    "StartTimeHour",
+    "EndTimeHour"
+  ],
+  "db": "schedule",
+  "function": "schedule_meeting",
+  "returns_count": false
+}

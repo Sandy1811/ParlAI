@@ -1,0 +1,82 @@
+{
+  "input": [
+    {
+      "Name": "Name",
+      "Type": "Categorical",
+      "Categories": [
+        "Southside Venue",
+        "North Heights Venue",
+        "West Bay Venue"
+      ],
+      "ReadableName": "Name"
+    },
+    {
+      "Name": "Day",
+      "Type": "Categorical",
+      "Categories": [
+        "Sunday",
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday"
+      ],
+      "ReadableName": "Day"
+    },
+    {
+      "Name": "StartTimeHour",
+      "Type": "Integer",
+      "Min": 0,
+      "Max": 20,
+      "ReadableName": "Start Time Hour"
+    },
+    {
+      "Name": "EndTimeHour",
+      "Type": "Integer",
+      "Min": 2,
+      "Max": 22,
+      "ReadableName": "End Time Hour"
+    },
+    {
+      "Name": "HostName",
+      "Type": "ShortString",
+      "ReadableName": "Host Name"
+    },
+    {
+      "Name": "NumberGuests",
+      "Type": "Integer",
+      "Min": 3,
+      "Max": 100,
+      "ReadableName": "Number Guests"
+    },
+    {
+      "Name": "FoodRequest",
+      "Type": "LongString",
+      "ReadableName": "Food Request"
+    },
+    {
+      "Name": "DrinksRequest",
+      "Type": "LongString",
+      "ReadableName": "Drinks Request"
+    }
+  ],
+  "output": [
+    {
+      "Name": "Message",
+      "Type": "ShortString",
+      "ReadableName": "Message"
+    }
+  ],
+  "required": [
+    "Name",
+    "HostName",
+    "Day",
+    "StartTimeHour",
+    "EndTimeHour",
+    "NumberGuests"
+  ],
+  "db": "schedule",
+  "function": "party_plan",
+  "returns_count": false
+}
