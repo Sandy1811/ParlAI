@@ -107,7 +107,7 @@ function KnowledgeBaseMessage(props) {
     return message;
   }
 
-  const regex = /Found ([0-9]+)/;
+  const regex = /Found ([0-9\-]+)/;
   let count = null;
   const m = regex.exec(message);
   if (m != null) {

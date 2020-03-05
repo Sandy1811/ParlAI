@@ -150,9 +150,22 @@ class SetupCommand(BackendCommand):
         self._command_name = all_constants()["back_to_front"]["command_setup"]
 
         try:
+            form_description = {}
+            for api_name in scenario["api_names"]:
+                api_file_name = os.path.join(
+                    os.path.dirname(os.path.abspath(__file__)),
+                    "..",
+                    "knowledgebase",
+                    "apis",
+                    api_name + ".json",
+                )
+                with open(api_file_name, "r") as file:
+                    api_description = json.load(file)
+                form_description[api_name] = api_description
+
             self._task_description = scenario["instructions"][role]["task_description"]
             self._completion_requirements = scenario["instructions"][role]["completion_requirements"]
-            self._form_description = DUMMY_FORM_DESCRIPTION
+            self._form_description = form_description
             self._completion_questions = scenario["instructions"][role]["completion_questions"]
             self._role = role
         except KeyError as error:

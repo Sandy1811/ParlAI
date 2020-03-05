@@ -88,7 +88,7 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
         try:
             constraints, api_name = self._parse(query)
 
-            apartment, count = api.call_api("apartment_search", constraints=constraints)
+            apartment, count = api.call_api(api_name, constraints=constraints)
             reply = {
                 "id": "KnowledgeBase",
                 "text": f"Found {count} apartments in {api_name}. Example: {json.dumps(apartment)}.",

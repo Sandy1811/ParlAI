@@ -403,7 +403,8 @@ class LeftPane extends React.Component {
       return "Waiting for initialization...";
     }
 
-    const dbNames = setupMessage.form_description.map(desc => desc.db);
+    //const dbNames = setupMessage.form_description.map(desc => desc.db);
+    const apiNames = Object.keys(setupMessage.form_description)
     //     const taskDescription = setupMessage.task_description
     //     if (taskDescription == null) {
     //         taskDescription = "taskDescription"
@@ -417,23 +418,23 @@ class LeftPane extends React.Component {
               sm={3}
               style={{
                 marginTop: 50,
-                display: dbNames.length <= 1 ? "none" : undefined
+                display: apiNames.length <= 1 ? "none" : undefined
               }}
             >
               <Nav bsStyle="pills" stacked>
-                {dbNames.map((tabName, idx) =>
+                {apiNames.map((tabName, idx) =>
                   <NavItem eventKey={idx}>{_.capitalize(tabName)}</NavItem>
                 )}
               </Nav>
             </Col>
             <Col sm={9}>
               <Tab.Content animation={false} mountOnEnter={true}>
-                {dbNames.map((dbName, dbIndex) => {
+                {apiNames.map((apiName, apiIndex) => {
                   const imgUrl =
-                    setupMessage.form_description[dbIndex].schema_url;
+                    setupMessage.form_description[apiName].schema_url;
                   return (
                     <Tab.Pane
-                      eventKey={dbIndex}
+                      eventKey={apiIndex}
                       animation={false}
                       mountOnEnter={true}
                     >
@@ -450,12 +451,12 @@ class LeftPane extends React.Component {
                           </a>
                         </Tab>
                         <Tab eventKey={2} title="Knowledge Base">
-                          <h4>User's requirements for {dbName}:</h4>
+                          <h4>User's requirements for {apiName}:</h4>
                           <QueryForm
                             {...this.props}
-                            category={dbName}
+                            category={apiName}
                             formDescription={
-                              setupMessage.form_description[dbIndex]
+                              setupMessage.form_description[apiName]
                             }
                           />
                         </Tab>

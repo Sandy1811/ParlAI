@@ -3,7 +3,12 @@
   "name": "Apartment",
   "version": 1,
   "api_names": [
-    "apartment_search"
+    "apartment_search",
+    "hotel_reserve"
+  ],
+  "schema_urls": [
+    "http://www.texample.net/media/tikz/examples/PNG/simple-flow-chart.png",
+    "https://upload.wikimedia.org/wikipedia/commons/6/65/Difficult_editor_-_flow_chart.png"
   ],
   "instructions": {
     "User": {

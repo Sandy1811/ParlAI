@@ -559,8 +559,13 @@ def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[T
     api_fn = eval(api_schema["function"])
     api_obj = dbs[api_schema["db"]]
 
+    if constraints:
+        all_provided_parameters = set.union(*[set(c) for c in constraints])
+    else:
+        all_provided_parameters = set()
+
     for parameter in api_schema["required"]:
-        if parameter not in constraints:
+        if parameter not in all_provided_parameters:
             raise ValueError(
                 f"Parameter '{parameter}' is required but was not provided."
             )
@@ -569,7 +574,7 @@ def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[T
     if api_schema["returns_count"]:
         return res, count
     else:
-        return res
+        return res, -1
 
 
 load_databases()
