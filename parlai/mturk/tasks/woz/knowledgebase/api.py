@@ -533,7 +533,22 @@ def load_databases() -> None:
         )
 
 
-def call_api(api_name, constraints: Dict[Text, Any]) -> Union[Tuple[Dict[Text, Any], int], Dict[Text, Any]]:
+def constraint_and(constraint1, constraint2):
+    return lambda x: constraint1(x) and constraint2(x)
+
+
+def constraint_list_to_dict(constraints: List[Dict[Text, Any]]) -> Dict[Text, Any]:
+    result = {}
+    for constraint in constraints:
+        for name, constraint_function in constraint.items():
+            if name not in result:
+                result[name] = constraint_function
+            else:
+                result[name] = constraint_and(result[name], constraint_function)
+    return result
+
+
+def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[Text, Any], int], Dict[Text, Any]]:
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "apis", api_name + ".json"
@@ -550,7 +565,7 @@ def call_api(api_name, constraints: Dict[Text, Any]) -> Union[Tuple[Dict[Text, A
                 f"Parameter '{parameter}' is required but was not provided."
             )
 
-    res, count = api_fn(api_obj, constraints)
+    res, count = api_fn(api_obj, constraint_list_to_dict(constraints))
     if api_schema["returns_count"]:
         return res, count
     else:

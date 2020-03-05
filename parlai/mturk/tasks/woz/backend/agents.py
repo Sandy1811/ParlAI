@@ -1,4 +1,4 @@
-from typing import List, Dict, Text, Any, Union
+from typing import List, Dict, Text, Any, Union, Tuple
 import os
 import json
 
@@ -86,11 +86,12 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
             return {"text": "Knowledge base invoked with empty query."}
 
         try:
-            constraints = self._parse(query)
+            constraints, api_name = self._parse(query)
+
             apartment, count = api.call_api("apartment_search", constraints=constraints)
             reply = {
                 "id": "KnowledgeBase",
-                "text": f"Found {count} apartments. Example: {json.dumps(apartment)}.",
+                "text": f"Found {count} apartments in {api_name}. Example: {json.dumps(apartment)}.",
             }
         except Exception as e:
             reply = {
@@ -102,37 +103,19 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
 
         return reply
 
-    def _parse_old(self, text: Text) -> Dict[Text, Any]:
-        return eval(text)
+    def _parse(self, text: Text) -> Tuple[List[Dict[Text, Any]], Text]:
+        data = eval(text)
+        assert isinstance(data, dict)
+        assert "constraints" in data
+        assert "db" in data
 
-    def _parse_new(self, text: Text) -> Dict[Text, Any]:
-        constraints = eval(text)
-        result = [
+        constraints = [
             {name: eval(expr)}
-            for constraint in constraints
+            for constraint in data["constraints"]
             for name, expr in constraint.items()
         ]
-        if result:
-            return result[0]
-        else:
-            return {}
 
-    def _parse_json(self, constraints: List[Dict[Text, Text]]) -> Dict[Text, Any]:
-        result = [
-            {name: eval(expr)}
-            for constraint in constraints
-            for name, expr in constraint.items()
-        ]
-        return result[0]
-
-    def _parse(self, text: Union[Text, List]) -> Dict[Text, Any]:
-        if isinstance(text, list):
-            return self._parse_json(text)
-        else:
-            if text.startswith("["):
-                return self._parse_new(text)
-            else:
-                return self._parse_old(text)
+        return constraints, data["db"]
 
 
 class WOZDummyAgent(NonMTurkAgent):
