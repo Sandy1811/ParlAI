@@ -2,8 +2,9 @@ import json
 import os
 import random
 
+# noinspection PyUnresolvedReferences
 from itertools import combinations
-from typing import Dict, Text, Any, List, Optional
+from typing import Dict, Text, Any, List, Optional, Tuple, Union
 
 
 def is_equal_to(value):
@@ -40,9 +41,6 @@ def is_not(constraint):
 
 def contains_substring(value):
     return lambda x: value in x
-
-
-is_equal_to, contains, is_one_of, is_greater_than, is_less_than, contain_all_of, contain_at_least_one_of, is_not, contains_substring,
 
 
 class KnowledgeBaseItem:
@@ -96,8 +94,9 @@ class KnowledgeBaseAPI:
 
         return KnowledgeBaseItem(settings)
 
+    @staticmethod
     def _random_value(
-        self, parameter: Dict[Text, Any], settings: Dict[Text, Any]
+            parameter: Dict[Text, Any], settings: Dict[Text, Any]
     ) -> Dict[Text, Any]:
 
         check_enabled = parameter.get("Enabled")
@@ -125,15 +124,15 @@ class KnowledgeBaseAPI:
         return [item for item in self._dataset if item.match(constraints)]
 
     def get_all(
-        self, constraints: Optional[Dict[Text, Any]] = dict()
-    ) -> Optional[KnowledgeBaseItem]:
-        filtered_items = self.lookup(constraints)
+        self, constraints: Optional[Dict[Text, Any]] = None
+    ) -> List[KnowledgeBaseItem]:
+        filtered_items = self.lookup(constraints or {})
         return filtered_items
 
     def sample(
-        self, constraints: Optional[Dict[Text, Any]] = dict()
-    ) -> Optional[KnowledgeBaseItem]:
-        filtered_items = self.lookup(constraints)
+        self, constraints: Optional[Dict[Text, Any]] = None
+    ) -> Tuple[Optional[KnowledgeBaseItem], int]:
+        filtered_items = self.lookup(constraints or {})
         if filtered_items:
             return random.choice(filtered_items), len(filtered_items)
         else:
@@ -163,12 +162,12 @@ def load_db(fn):
     return KnowledgeBaseAPI(num_items=100, all_parameters=parameters)
 
 
-def generic_sample(api, constraints: Optional[Dict[Text, Any]] = dict()):
-    row, count = api.sample(constraints)
+def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
+    row, count = api.sample(constraints or {})
     return row._settings, count
 
 
-def restaurant_reserve(restaurant_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     new_constraints = {
         "Name": constraints["Name"],
@@ -185,7 +184,7 @@ def restaurant_reserve(restaurant_api, constraints: Optional[Dict[Text, Any]] = 
         return {"ReservationStatus": random.choice(outputs)}, -1
 
 
-def hotel_reserve(hotel_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     new_constraints = {
         "Name": constraints["Name"],
@@ -199,7 +198,7 @@ def hotel_reserve(hotel_api, constraints: Optional[Dict[Text, Any]] = dict()):
         return {"ReservationStatus": random.choice(outputs)}, -1
 
 
-def hotel_service_request(hotel_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
     outputs = ["Request Confirmed", "Request Failed"]
 
     new_constraints = {
@@ -216,11 +215,11 @@ def hotel_service_request(hotel_api, constraints: Optional[Dict[Text, Any]] = di
         return {"RequestStatus": outputs[0]}, -1
 
 
-def plane_search(plane_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def plane_search(plane_api, constraints: Dict[Text, Any]):
     return plane_api.sample(dict(constraints, SeatsAvailable=True))
 
 
-def plane_reserve(plane_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def plane_reserve(plane_api, constraints: Dict[Text, Any]):
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     row, _ = plane_api.sample(dict(constraints, SeatsAvailable=True))
     if row is None:
@@ -229,7 +228,7 @@ def plane_reserve(plane_api, constraints: Optional[Dict[Text, Any]] = dict()):
         return {"ReservationStatus": outputs[0]}, -1
 
 
-def trip_directions(trip_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def trip_directions(trip_api, constraints: Dict[Text, Any]):
     new_constraints = {
         "TravelMode": constraints["TravelMode"],
     }
@@ -246,7 +245,7 @@ def trip_directions(trip_api, constraints: Optional[Dict[Text, Any]] = dict()):
     return row._settings, -1
 
 
-def trip_traffic(trip_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def trip_traffic(trip_api, constraints: Dict[Text, Any]):
     new_constraints = {
         "TravelMode": constraints["TravelMode"],
     }
@@ -263,14 +262,14 @@ def trip_traffic(trip_api, constraints: Optional[Dict[Text, Any]] = dict()):
     return row._settings, -1
 
 
-def book_ride(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def book_ride(ride_api, constraints: Dict[Text, Any]):
     del constraints["DepartureLocation"]
     del constraints["ArrivalLocation"]
     row, count = ride_api.sample(constraints)
     return row._settings, -1
 
 
-def ride_status(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def ride_status(ride_api, constraints: Dict[Text, Any]):
     ride_status_outputs = [
         "Your driver is dropping off another passenger.",
         "Your ride is on its way.",
@@ -295,9 +294,9 @@ def ride_status(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
     )
 
 
-def ride_change(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def ride_change(ride_api, constraints: Dict[Text, Any]):
     outputs = [
-        "Your trip has been successfuly changed.",
+        "Your trip has been successfully changed.",
         "We are unable to change your trip.",
     ]
 
@@ -318,7 +317,7 @@ def ride_change(ride_api, constraints: Optional[Dict[Text, Any]] = dict()):
         return {"ChangeStatus": outputs[0]}
 
 
-def bank_balance(bank_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def bank_balance(bank_api, constraints: Dict[Text, Any]):
     new_constraints = {
         "BankName": constraints["BankName"],
     }
@@ -326,7 +325,7 @@ def bank_balance(bank_api, constraints: Optional[Dict[Text, Any]] = dict()):
     return row._settings, -1
 
 
-def bank_fraud_report(bank_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def bank_fraud_report(bank_api, constraints: Dict[Text, Any]):
     new_constraints = {
         "BankName": constraints["BankName"],
     }
@@ -338,7 +337,7 @@ def bank_fraud_report(bank_api, constraints: Optional[Dict[Text, Any]] = dict())
         return {"Confirmation": "Error finding bank account."}, -1
 
 
-def shopping_order_item(shopping_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def shopping_order_item(shopping_api, constraints: Dict[Text, Any]):
     new_constraints = {
         "ItemNumber": constraints["ItemNumber"],
         "ShippingSpeed": contains(constraints["ShippingSpeed"]),
@@ -357,7 +356,7 @@ def shopping_order_item(shopping_api, constraints: Optional[Dict[Text, Any]] = d
         return dict(Message="Order confirmed. Your item will be shipped soon."), -1
 
 
-def shopping_order_status(null_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def shopping_order_status(null_api, constraints: Dict[Text, Any]):
     outputs = [
         "Your order is being processed. It will be shipped soon.",
         "Your order is on its way.",
@@ -368,7 +367,7 @@ def shopping_order_status(null_api, constraints: Optional[Dict[Text, Any]] = dic
     return dict(Message=random.choice(outputs)), -1
 
 
-def schedule_meeting(schedule_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):
     outputs = [
         "Your meeting has been successfuly scheduled.",
         "{0} has a conflicting meeting at that time. Try another meeting time.".format(
@@ -391,7 +390,7 @@ def schedule_meeting(schedule_api, constraints: Optional[Dict[Text, Any]] = dict
 
 
 def book_doctor_appointment(
-    schedule_api, constraints: Optional[Dict[Text, Any]] = dict()
+    schedule_api, constraints: Dict[Text, Any]
 ):
     outputs = [
         "Your appointment has been successfuly scheduled.",
@@ -413,7 +412,7 @@ def book_doctor_appointment(
 
 
 def book_apartment_viewing(
-    schedule_api, constraints: Optional[Dict[Text, Any]] = dict()
+    schedule_api, constraints: Dict[Text, Any]
 ):
     outputs = [
         "Your apartment viewing has been successfuly scheduled.",
@@ -449,7 +448,7 @@ def book_apartment_viewing(
 
 
 def followup_doctor_appointment(
-    null_api, constraints: Optional[Dict[Text, Any]] = dict()
+    null_api, constraints: Dict[Text, Any]
 ):
     outputs = [
         "You must take your medicine 2 times a day before meals.",
@@ -459,7 +458,7 @@ def followup_doctor_appointment(
     return dict(Message=random.choice(outputs)), -1
 
 
-def party_plan(schedule_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def party_plan(schedule_api, constraints: Dict[Text, Any]):
     schedule_outputs = [
         "Your event has been successfuly scheduled.",
         "{0} is booked at that time. Try another meeting time or another venue.".format(
@@ -494,11 +493,11 @@ def party_plan(schedule_api, constraints: Optional[Dict[Text, Any]] = dict()):
         return dict(Message=size_outputs[1]), -1
 
 
-def party_rsvp(schedule_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def party_rsvp(schedule_api, constraints: Dict[Text, Any]):
     return dict(Message="Thank you for your RSVP. See you there."), -1
 
 
-def spaceship_access_codes(null_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def spaceship_access_codes(null_api, constraints: Dict[Text, Any]):
     outputs = [
         "The code is 431931",
         "Sorry, you are not authorized to receive the code. Please obtain a clearance code from the Captain.",
@@ -513,7 +512,7 @@ def spaceship_access_codes(null_api, constraints: Optional[Dict[Text, Any]] = di
         return dict(Message=outputs[0]), -1
 
 
-def spaceship_life_support(null_api, constraints: Optional[Dict[Text, Any]] = dict()):
+def spaceship_life_support(null_api, constraints: Dict[Text, Any]):
     outputs = ["Successful! Door opened"]
     return dict(Message=outputs[0]), -1
 
@@ -525,7 +524,7 @@ def load_databases() -> None:
     # Load all DBs
     global dbs
     db_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "dbs")
-    print(f"Loading databeses from '{db_dir}'.")
+    print(f"Loading databases from '{db_dir}'.")
     for filename in os.listdir(db_dir):
         if filename[0] == ".":
             continue
@@ -534,7 +533,7 @@ def load_databases() -> None:
         )
 
 
-def call_api(api_name, constraints):
+def call_api(api_name, constraints: Dict[Text, Any]) -> Union[Tuple[Dict[Text, Any], int], Dict[Text, Any]]:
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "apis", api_name + ".json"
