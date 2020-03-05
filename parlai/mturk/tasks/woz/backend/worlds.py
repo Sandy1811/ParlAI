@@ -97,8 +97,6 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         return True
 
     def parley(self):
-        # self.setup_interface()
-        # self.mturk_agent.observe({"id": "Wizard", "text": "", "command": "setup"})
         setup = SetupCommand(scenario="apartment_search_v1", role="Wizard")
         self.mturk_agent.observe(setup.message)
         send_mturk_message(
@@ -131,22 +129,6 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     def get_task_agent(self):
         return self.mturk_agent
 
-    def setup_interface(self):
-        for agent in [self.mturk_agent]:
-            send_setup_command(
-                task_description=f"Dummy task description for {agent.id}",
-                completion_requirements=[
-                    f"Dummy requirement 1 for {agent.id}",
-                    f"Dummy requirement 2 for {agent.id}",
-                ],
-                completion_questions=[
-                    f"Dummy QA 1 for {agent.id}",
-                    f"Dummy QA 2 for {agent.id}",
-                ],
-                form_description=DUMMY_FORM_DESCRIPTION,
-                recipient=agent,
-            )
-
 
 class UserOnboardingWorld(MTurkOnboardWorld):
     """
@@ -157,8 +139,8 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     """
 
     def parley(self):
-        self.setup_interface()
-        self.mturk_agent.observe({"id": "User", "text": "", "command": "setup"})
+        setup = SetupCommand(scenario="apartment_search_v1", role="User")
+        self.mturk_agent.observe(setup.message)
         send_mturk_message(
             "Take your time to read your task description on the left. "
             "Write 'ready' when you are ready and press [Enter].",
@@ -178,22 +160,6 @@ class UserOnboardingWorld(MTurkOnboardWorld):
 
     def get_task_agent(self):
         return self.mturk_agent
-
-    def setup_interface(self):
-        for agent in [self.mturk_agent]:
-            send_setup_command(
-                task_description=f"Dummy task description for {agent.id}",
-                completion_requirements=[
-                    f"Dummy requirement 1 for {agent.id}",
-                    f"Dummy requirement 2 for {agent.id}",
-                ],
-                completion_questions=[
-                    f"Dummy QA 1 for {agent.id}",
-                    f"Dummy QA 2 for {agent.id}",
-                ],
-                form_description=DUMMY_FORM_DESCRIPTION,
-                recipient=agent,
-            )
 
 
 SETUP_STAGE = 0
@@ -227,7 +193,8 @@ class WOZWorld(MTurkTaskWorld):
 
     def parley(self):
         if self._stage == SETUP_STAGE:
-            self.setup_interface()
+            self.wizard.observe(SetupCommand(scenario="apartment_search_v1", role="Wizard").message)
+            self.user.observe(SetupCommand(scenario="apartment_search_v1", role="User").message)
             self.tell_workers_to_start()
             self.num_turns = 0
             self._stage = DIALOGUE_STAGE
@@ -355,22 +322,6 @@ class WOZWorld(MTurkTaskWorld):
             "command": command,
         }
         recipient.observe(message)
-
-    def setup_interface(self):
-        for agent in [self.user, self.wizard]:
-            send_setup_command(
-                task_description=f"Dummy task description for {agent.id}",
-                completion_requirements=[
-                    f"Dummy requirement 1 for {agent.id}",
-                    f"Dummy requirement 2 for {agent.id}",
-                ],
-                completion_questions=[
-                    f"Dummy QA 1 for {agent.id}",
-                    f"Dummy QA 2 for {agent.id}",
-                ],
-                form_description=DUMMY_FORM_DESCRIPTION,
-                recipient=agent,
-            )
 
     def tell_workers_to_start(self):
         send_mturk_message(

@@ -7,7 +7,7 @@
   ],
   "instructions": {
     "User": {
-      "task_description": "You recently started a new job in Berlin and need to find an apartment to live in. For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. A friend of yours recommended the virtual assistant that you are about to talk to now. Maybe it can help you find something you like?",
+      "task_description": "You recently started a new job in Sydney and need to <b>find an apartment</b> to live in. For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. A friend of yours recommended the virtual assistant that you are about to talk to now. Maybe it can help you find something you like?",
       "completion_requirements": [
         "You have found an apartment you like",
         "You have changed your mind about what you are looking for, at least once during the dialogue"
