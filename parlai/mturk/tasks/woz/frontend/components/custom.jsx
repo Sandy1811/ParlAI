@@ -423,7 +423,7 @@ class LeftPane extends React.Component {
             >
               <Nav bsStyle="pills" stacked>
                 {apiNames.map((tabName, idx) =>
-                  <NavItem eventKey={idx}>{_.capitalize(tabName)}</NavItem>
+                  <NavItem eventKey={idx}>{_.capitalize(tabName.replace(/_/g, "\n"))}</NavItem>
                 )}
               </Nav>
             </Col>
