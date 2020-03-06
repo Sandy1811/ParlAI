@@ -148,6 +148,7 @@ class SetupCommand(BackendCommand):
             scenario = json.load(file)
 
         self._command_name = all_constants()["back_to_front"]["command_setup"]
+        image_not_found_url = "https://stockpictures.io/wp-content/uploads/2020/01/image-not-found-big.png"
 
         try:
             form_description = {}
@@ -162,6 +163,7 @@ class SetupCommand(BackendCommand):
                 with open(api_file_name, "r") as file:
                     api_description = json.load(file)
                 form_description[api_name] = api_description
+                form_description[api_name]["schema_url"] = scenario["schema_urls"].get(api_name, image_not_found_url)
 
             self._task_description = scenario["instructions"][role]["task_description"]
             self._completion_requirements = scenario["instructions"][role]["completion_requirements"]

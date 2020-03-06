@@ -121,6 +121,13 @@
       "ReadableName": "Floor Square Meters"
     },
     {
+      "Name": "Price",
+      "Type": "Integer",
+      "Min": 400,
+      "Max": 5000,
+      "ReadableName": "Price per month (cold) in EUR"
+    },
+    {
       "Name": "NearbyPOIs",
       "Type": "CategoricalMultiple",
       "Categories": [

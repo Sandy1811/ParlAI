@@ -4,12 +4,13 @@
   "version": 1,
   "api_names": [
     "apartment_search",
-    "hotel_reserve"
+    "book_apartment_viewing",
+    "book_doctor_appointment",
+    "followup_doctor_appointment"
   ],
-  "schema_urls": [
-    "http://www.texample.net/media/tikz/examples/PNG/simple-flow-chart.png",
-    "https://upload.wikimedia.org/wikipedia/commons/6/65/Difficult_editor_-_flow_chart.png"
-  ],
+  "schema_urls": {
+    "restaurant_reserve": "https://drive.google.com/uc?id=1bxfq5L3adNhqsk5NN_TOMU9VanYDmflp"
+  },
   "instructions": {
     "User": {
       "task_description": "You recently started a new job in Sydney and need to <b>find an apartment</b> to live in. For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. A friend of yours recommended the virtual assistant that you are about to talk to now. Maybe it can help you find something you like?",
@@ -25,8 +26,8 @@
     "Wizard": {
       "task_description": "Be helpful...",
       "completion_requirements": [
-        "You have found an apartment that the user likes",
-        "You said 'goodbye' (or similar) at the end of the dialogue"
+        "You have found an apartment that the user likes,",
+        "or the user says goodbye."
       ],
       "completion_questions": [
         "...change his/her mind about what he/she wants at any time?",
