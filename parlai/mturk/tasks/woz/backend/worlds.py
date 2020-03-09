@@ -3,8 +3,6 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
-import json
-import os
 import time
 from typing import Text, List, Dict, Any
 
@@ -21,6 +19,7 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.woz.echo as echo
+from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZTutorAgent
 from parlai.mturk.tasks.woz.backend.commands import (
     command_from_message,
     all_constants,
@@ -35,7 +34,6 @@ from parlai.mturk.tasks.woz.backend.commands import (
     PickSuggestionCommand,
     SupplySuggestionsCommand,
     SetupCommand)
-from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 
 
 def is_disconnected(act):
@@ -176,13 +174,21 @@ class WOZWorld(MTurkTaskWorld):
     def __init__(self, opt, agents):
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
         self.knowledgebase = None
+        self.user_tutor = None
+        self.user = None
+        self.wizard = None
         for agent in agents:
-            if agent.demo_role == 'User':
+            if agent.demo_role == "User":
                 self.user = agent
-            elif agent.demo_role == 'Wizard':
+            elif agent.demo_role == "Wizard":
                 self.wizard = agent
-            else:
+            elif agent.demo_role == "KnowledgeBase":
                 self.knowledgebase = agent
+            elif agent.demo_role == "UserTutor":
+                self.user_tutor = agent
+
+        assert self.user
+        assert self.wizard
 
         self._episode_done = False
         self._stage = SETUP_STAGE
@@ -201,6 +207,7 @@ class WOZWorld(MTurkTaskWorld):
         elif self._stage == DIALOGUE_STAGE:
             if self.num_turns % 2 == 0:
                 self.num_turns += self._parley_dialogue_user()
+                self._parley_dialogue_user_tutor()
             else:
                 self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
         elif self._stage == EVALUATION_STAGE:
@@ -234,6 +241,13 @@ class WOZWorld(MTurkTaskWorld):
             raise RuntimeError(
                 f"User command not allowed in dialogue stage: {user_command.message}"
             )
+
+    def _parley_dialogue_user_tutor(self) -> None:
+        if self.user_tutor:
+            self.user_tutor.observe(self.events)
+            tutor_message = self.user_tutor.act()
+            if tutor_message:
+                send_mturk_message(tutor_message["text"], self.user)
 
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)

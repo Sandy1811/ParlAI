@@ -11,8 +11,16 @@ import os
 import parlai.mturk.tasks.woz.echo as echo
 from parlai.mturk.tasks.woz.task_config import task_config
 from parlai.mturk.tasks.woz.utils import MTurkQualificationManager
-from parlai.mturk.tasks.woz.backend.worlds import WizardOnboardingWorld, UserOnboardingWorld, WOZWorld
-from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZDummyAgent
+from parlai.mturk.tasks.woz.backend.worlds import (
+    WizardOnboardingWorld,
+    UserOnboardingWorld,
+    WOZWorld,
+)
+from parlai.mturk.tasks.woz.backend.agents import (
+    WOZKnowledgeBaseAgent,
+    WOZDummyAgent,
+    WOZTutorAgent,
+)
 
 
 def main():
@@ -135,6 +143,14 @@ def main():
 
             kb_agent = WOZKnowledgeBaseAgent(options=opt)
             workers += [kb_agent]
+
+            user_tutor_agent = WOZTutorAgent(options=opt, rules=[])
+            user_tutor_agent.demo_role = "UserTutor"
+            user_tutor_agent.add_rule(
+                WOZTutorAgent.num_turns_condition(min_num_turns=4),
+                {"text": "XYZ", "id": "Tutor"}
+            )
+            workers += [user_tutor_agent]
 
             if opt["dummy_user"]:
                 dummy_user = WOZDummyAgent(opt, "User")

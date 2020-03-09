@@ -236,6 +236,7 @@ class ChatMessage extends React.Component {
     }
 
     const isKB = this.props.agent_id === "KnowledgeBase";
+    const isSYS = this.props.agent_id === "MTurk System";
     let message = null;
 
     if (this.props.isSuggestionMessage) {
@@ -294,7 +295,7 @@ class ChatMessage extends React.Component {
     } else {
       message = this.props.message;
     }
-    const onlyVisibleMsg = isKB ? " (Only visible to you)" : null;
+    const onlyVisibleMsg = (isKB || isSYS) ? " (Only visible to you)" : null;
 
     return (
       <div

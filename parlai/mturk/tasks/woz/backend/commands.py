@@ -317,6 +317,12 @@ class DialogueCompletedCommand(WorkerCommand):
     def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
         return DialogueCompletedCommand(sender=sender)
 
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+        }
+
 
 class TaskDoneCommand(WorkerCommand):
     def __init__(self, sender: Agent) -> None:

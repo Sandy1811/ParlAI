@@ -187,10 +187,11 @@ class WOZTutorAgent(NonMTurkAgent):
         """Adds command line arguments for this agent."""
         pass
 
-    def __init__(self, opt: Opt, rules: List[Dict[Text, Any]]) -> None:
+    def __init__(self, options: Opt, rules: List[Dict[Text, Any]]) -> None:
         """Initialize this agent."""
-        super().__init__(opt)
+        super().__init__(options)
         self.id = "Tutor"
+        self.demo_role = None
         self._num_messages_sent = 0
         self._messages = []
 
@@ -202,7 +203,7 @@ class WOZTutorAgent(NonMTurkAgent):
 
     def act(self) -> Dict[Text, Any]:
         for i, rule in enumerate(self._rules):
-            if rule.get("condition", self.constant_condition(False))[self._event_history]:
+            if rule.get("condition", self.constant_condition(False))(self._event_history):
                 return rule["message"]
 
         return {}
