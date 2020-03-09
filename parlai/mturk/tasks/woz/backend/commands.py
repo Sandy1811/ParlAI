@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Text, Dict, Any, List, Optional, Union
+from typing import Text, Dict, Any, List, Optional, Union, Tuple
 
 from parlai.core.agents import Agent
 import parlai.mturk.tasks.woz.knowledgebase.api as api
@@ -243,11 +243,15 @@ class ReviewCommand(BackendCommand):
 
 
 class QueryCommand(WizardCommand):
+
+    command_name = "query"
+
     def __init__(self, query: Text, sender: Agent) -> None:
         super(QueryCommand, self).__init__(sender)
-        self._command_name = "query"
+        self._command_name = self.command_name
 
         self._query = query
+        self._constraints, self._api_name = self._parse(self._query)
 
     @property
     def message(self) -> Dict[Text, Any]:
@@ -263,45 +267,34 @@ class QueryCommand(WizardCommand):
 
     @property
     def constraints(self) -> List[Dict[Text, Any]]:
-        return self._parse(self._query)
+        return self._constraints
 
     @property
-    def topic(self) -> Text:
-        return "Apartments"  # ToDo: Implement topic property
+    def api_name(self) -> Text:
+        return self._api_name
 
-    def _parse_old(
-        self, text: Text
-    ) -> List[Dict[Text, Any]]:  # ToDo: remove when front end sends json
-        return eval(text)
+    def _parse(self, text: Text) -> Tuple[List[Dict[Text, Any]], Text]:
+        data = eval(text)
+        assert isinstance(data, dict)
+        assert "constraints" in data
+        assert "db" in data
 
-    def _parse_new(self, text: Text) -> List[Dict[Text, Any]]:
-        constraints = eval(text)
-        result = [
+        constraints = [
             {name: eval(expr)}
-            for constraint in constraints
+            for constraint in data["constraints"]
             for name, expr in constraint.items()
         ]
-        if result:
-            return result
-        else:
-            return [{}]
 
-    def _parse_json(self, constraints: List[Dict[Text, Text]]) -> List[Dict[Text, Any]]:
-        result = [
-            {name: eval(expr)}
-            for constraint in constraints
-            for name, expr in constraint.items()
-        ]
-        return result
+        return constraints, data["db"]
 
-    def _parse(self, text: Union[Text, List]) -> List[Dict[Text, Any]]:
-        if isinstance(text, list):
-            return self._parse_json(text)
-        else:
-            if text.startswith("["):
-                return self._parse_new(text)
-            else:
-                return self._parse_old(text)
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "Constraints": self._constraints,
+            "API": self._api_name
+        }
 
 
 class DialogueCompletedCommand(WorkerCommand):

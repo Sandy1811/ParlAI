@@ -6,10 +6,11 @@
     "apartment_search",
     "book_apartment_viewing",
     "book_doctor_appointment",
-    "followup_doctor_appointment"
+    "followup_doctor_appointment",
+    "restaurant_reserve"
   ],
   "schema_urls": {
-    "restaurant_reserve": "https://drive.google.com/uc?id=1bxfq5L3adNhqsk5NN_TOMU9VanYDmflp"
+    "restaurant_reserve": "https://drive.google.com/uc?id=1iT2isMc7FW1iXvIEOQkpofNpWMYXjYVkdtvjwRhGcYw"
   },
   "instructions": {
     "User": {

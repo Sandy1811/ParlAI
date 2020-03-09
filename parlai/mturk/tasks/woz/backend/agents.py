@@ -64,7 +64,7 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
 
     def observe(self, message: Union[Dict[Text, Any], QueryCommand]) -> None:
         if isinstance(message, QueryCommand):
-            pass
+            self.observation = message
         else:
             super(WOZKnowledgeBaseAgent, self).observe(message)
 
@@ -74,24 +74,18 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
         Returns:
             Message with reply
         """
-        observation = self.observation
 
-        if observation is None:
+        if self.observation is None:
             return {"text": "Knowledge base invoked without observation."}
 
-        query = observation.get("query")
-        # echo.log_write(f"KBQuery: {query}")
-
-        if not query:
-            return {"text": "Knowledge base invoked with empty query."}
-
         try:
-            constraints, api_name = self._parse(query)
+            constraints = self.observation.constraints
+            api_name = self.observation.api_name
 
-            apartment, count = api.call_api(api_name, constraints=constraints)
+            items, count = api.call_api(api_name, constraints=constraints)
             reply = {
                 "id": "KnowledgeBase",
-                "text": f"Found {count} apartments in {api_name}. Example: {json.dumps(apartment)}.",
+                "text": f"Found {count} items in {api_name}. Example: {json.dumps(items)}.",
             }
         except Exception as e:
             reply = {
@@ -102,20 +96,6 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
         self._messages.append(reply)
 
         return reply
-
-    def _parse(self, text: Text) -> Tuple[List[Dict[Text, Any]], Text]:
-        data = eval(text)
-        assert isinstance(data, dict)
-        assert "constraints" in data
-        assert "db" in data
-
-        constraints = [
-            {name: eval(expr)}
-            for constraint in data["constraints"]
-            for name, expr in constraint.items()
-        ]
-
-        return constraints, data["db"]
 
 
 class WOZDummyAgent(NonMTurkAgent):
@@ -202,14 +182,31 @@ class WOZTutorAgent(NonMTurkAgent):
         self._event_history = observation
 
     def act(self) -> Dict[Text, Any]:
-        for i, rule in enumerate(self._rules):
-            if rule.get("condition", self.constant_condition(False))(self._event_history):
+        for rule in self._rules:
+            if rule.get("triggers_left", 1) > 0 and rule.get(
+                "condition", self.constant_condition(False)
+            )(self._event_history):
+                if "triggers_left" in rule:
+                    rule["triggers_left"] -= 1
                 return rule["message"]
 
         return {}
 
-    def add_rule(self, condition: Callable, message: Dict[Text, Any]) -> None:
-        self._rules.append({"condition": condition, "message": message})
+    def add_rule(
+        self, condition: Callable, text: Text, max_times_triggered: Optional[int] = None
+    ) -> None:
+        if max_times_triggered:
+            self._rules.append(
+                {
+                    "condition": condition,
+                    "message": {"text": text},
+                    "triggers_left": max_times_triggered,
+                }
+            )
+        else:
+            self._rules.append(
+                {"condition": condition, "message": {"text": text},}
+            )
 
     @staticmethod
     def num_turns_condition(
@@ -220,6 +217,39 @@ class WOZTutorAgent(NonMTurkAgent):
             return lambda history: (_min_num_turns <= len(history) <= max_num_turns)
         else:
             return lambda history: (_min_num_turns <= len(history))
+
+    @staticmethod
+    def kb_changed_condition(
+        previous_api_name: Optional[Text] = None, new_api_name: Optional[Text] = None
+    ) -> Callable:
+        def wizard_changed_kb(history):
+            if not history:
+                return False
+            api_name_stack = []
+            for event in history[:-1]:
+                if event.get("Action") == QueryCommand.command_name:
+                    api_name_stack.append(event.get("API"))
+                if event.get("Agent") == "User":
+                    if api_name_stack:
+                        api_name_stack = [api_name_stack[-1]]
+            if len(api_name_stack) <= 1:
+                return False
+            elif previous_api_name and new_api_name:
+                return (api_name_stack[-2] == previous_api_name) and (
+                    api_name_stack[-1] == new_api_name
+                )
+            elif previous_api_name:
+                return (api_name_stack[-2] == previous_api_name) and (
+                    api_name_stack[-1] != previous_api_name
+                )
+            elif new_api_name:
+                return (api_name_stack[-2] != new_api_name) and (
+                    api_name_stack[-1] == new_api_name
+                )
+            else:
+                return api_name_stack[-2] != api_name_stack[-1]
+
+        return wizard_changed_kb
 
     @staticmethod
     def constant_condition(const: bool) -> Callable:

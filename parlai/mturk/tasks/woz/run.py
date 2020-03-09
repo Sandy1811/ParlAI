@@ -147,8 +147,14 @@ def main():
             user_tutor_agent = WOZTutorAgent(options=opt, rules=[])
             user_tutor_agent.demo_role = "UserTutor"
             user_tutor_agent.add_rule(
-                WOZTutorAgent.num_turns_condition(min_num_turns=4),
-                {"text": "XYZ", "id": "Tutor"}
+                WOZTutorAgent.num_turns_condition(min_num_turns=6),
+                "If it makes sense at this point in the conversation, please change your mind about something.",
+                max_times_triggered=1
+            )
+            user_tutor_agent.add_rule(
+                WOZTutorAgent.kb_changed_condition(),
+                "Within the next few turns, try to refer to something you've said earlier in the conversation.",
+                max_times_triggered=2
             )
             workers += [user_tutor_agent]
 

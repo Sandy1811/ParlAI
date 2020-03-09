@@ -257,7 +257,7 @@ class WOZWorld(MTurkTaskWorld):
             self.user.observe(wizard_command.message)
             return 1
         elif isinstance(wizard_command, QueryCommand):
-            self.knowledgebase.observe(wizard_command.message)
+            self.knowledgebase.observe(wizard_command)
             kb_message = self.knowledgebase.act()
             # self.events.append(kb_message.event)
             self.wizard.observe(kb_message)
