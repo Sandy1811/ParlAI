@@ -213,6 +213,7 @@ class WOZWorld(MTurkTaskWorld):
 
     def _parley_dialogue_user(self) -> int:
         user_command = command_from_message(self.user.act(), self.user)
+        self.events.append(user_command.event)
         if isinstance(user_command, UtterCommand):
             self.wizard.observe(user_command.message)
             return 1
@@ -236,13 +237,16 @@ class WOZWorld(MTurkTaskWorld):
 
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
+        self.events.append(wizard_command.event)
 
         if isinstance(wizard_command, UtterCommand):
             self.user.observe(wizard_command.message)
             return 1
         elif isinstance(wizard_command, QueryCommand):
             self.knowledgebase.observe(wizard_command.message)
-            self.wizard.observe(self.knowledgebase.act())
+            kb_message = self.knowledgebase.act()
+            # self.events.append(kb_message.event)
+            self.wizard.observe(kb_message)
             return 0
         elif isinstance(wizard_command, DialogueCompletedCommand):
             self.wizard.observe(ReviewCommand(self.wizard).message)

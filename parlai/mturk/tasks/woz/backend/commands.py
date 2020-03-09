@@ -47,6 +47,10 @@ class Command:
     ) -> Optional["Command"]:
         raise NotImplementedError()
 
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        raise NotImplementedError()
+
 
 class AgentCommand(Command):
     def __init__(self, sender: Optional[Agent] = None):
@@ -60,6 +64,10 @@ class AgentCommand(Command):
     def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
         raise NotImplementedError()
 
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        raise NotImplementedError()
+
 
 class WorkerCommand(AgentCommand):
     def __init__(self, sender: Optional[Agent] = None):
@@ -71,6 +79,10 @@ class WorkerCommand(AgentCommand):
 
     @staticmethod
     def from_message(sender: Agent, **kwargs,) -> Optional["Command"]:
+        raise NotImplementedError()
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
         raise NotImplementedError()
 
 
@@ -90,6 +102,13 @@ class WizardCommand(WorkerCommand):
     ) -> Optional["Command"]:
         raise NotImplementedError()
 
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name
+        }
+
 
 class BackendCommand(Command):
     def __init__(self):
@@ -102,6 +121,10 @@ class BackendCommand(Command):
     @staticmethod
     def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
         raise NotImplementedError()
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return None
 
 
 class UtterCommand(WorkerCommand):
@@ -125,6 +148,14 @@ class UtterCommand(WorkerCommand):
         if text is None:
             raise ValueError("No text given")
         return UtterCommand(text=text, sender=sender)
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "Text": self._text
+        }
 
 
 class SetupCommand(BackendCommand):
@@ -304,7 +335,7 @@ class TaskDoneCommand(WorkerCommand):
 class SelectPrimaryCommand(WizardCommand):
     def __init__(self, sender: Agent) -> None:
         super(SelectPrimaryCommand, self).__init__(sender)
-        self._command_name = "complete"
+        self._command_name = "select_primary"
 
     @property
     def message(self) -> Dict[Text, Any]:
@@ -318,7 +349,7 @@ class SelectPrimaryCommand(WizardCommand):
 class SelectSecondaryCommand(WizardCommand):
     def __init__(self, sender: Agent) -> None:
         super(SelectSecondaryCommand, self).__init__(sender)
-        self._command_name = "complete"
+        self._command_name = "select_secondary"
 
     @property
     def message(self) -> Dict[Text, Any]:

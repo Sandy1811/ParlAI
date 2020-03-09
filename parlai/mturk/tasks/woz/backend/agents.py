@@ -1,4 +1,4 @@
-from typing import List, Dict, Text, Any, Union, Tuple
+from typing import List, Dict, Text, Any, Union, Tuple, Callable, Optional
 import os
 import json
 
@@ -132,9 +132,7 @@ class WOZDummyAgent(NonMTurkAgent):
             help="File of candidate responses to choose from",
         )
         parser.add_argument(
-            "--dummy-user",
-            action="store_true",
-            help="Use a dummy user",
+            "--dummy-user", action="store_true", help="Use a dummy user",
         )
 
     def __init__(self, opt: Opt, role: Text) -> None:
@@ -150,8 +148,10 @@ class WOZDummyAgent(NonMTurkAgent):
                 with open(opt.get("dummy_responses"), "r", encoding="utf-8") as file:
                     self.response_candidates = file.read().split("\n")
             except FileNotFoundError:
-                self.response_candidates = [f"I am a dummy agent that didn't find "
-                                            f"replies in '{os.path.abspath(opt.get('dummy_responses'))}'."]
+                self.response_candidates = [
+                    f"I am a dummy agent that didn't find "
+                    f"replies in '{os.path.abspath(opt.get('dummy_responses'))}'."
+                ]
         else:
             self.response_candidates = None
 
@@ -179,3 +179,47 @@ class WOZDummyAgent(NonMTurkAgent):
         self._messages.append(reply)
 
         return reply
+
+
+class WOZTutorAgent(NonMTurkAgent):
+    @staticmethod
+    def add_cmdline_args(parser) -> None:
+        """Adds command line arguments for this agent."""
+        pass
+
+    def __init__(self, opt: Opt, rules: List[Dict[Text, Any]]) -> None:
+        """Initialize this agent."""
+        super().__init__(opt)
+        self.id = "Tutor"
+        self._num_messages_sent = 0
+        self._messages = []
+
+        self._rules = rules  # Conditions on dialogue history + responses that should be uttered if those conditions are satisfied
+        self._event_history = None  # Entire dialogue history (to be observed)
+
+    def observe(self, observation):
+        self._event_history = observation
+
+    def act(self) -> Dict[Text, Any]:
+        for i, rule in enumerate(self._rules):
+            if rule.get("condition", self.constant_condition(False))[self._event_history]:
+                return rule["message"]
+
+        return {}
+
+    def add_rule(self, condition: Callable, message: Dict[Text, Any]) -> None:
+        self._rules.append({"condition": condition, "message": message})
+
+    @staticmethod
+    def num_turns_condition(
+        min_num_turns: Optional[int], max_num_turns: Optional[int] = None
+    ) -> Callable:
+        _min_num_turns = min_num_turns or 0
+        if max_num_turns is not None:
+            return lambda history: (_min_num_turns <= len(history) <= max_num_turns)
+        else:
+            return lambda history: (_min_num_turns <= len(history))
+
+    @staticmethod
+    def constant_condition(const: bool) -> Callable:
+        return lambda _: const
