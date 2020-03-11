@@ -326,6 +326,7 @@ class DialogueCompletedCommand(WorkerCommand):
     def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
         return DialogueCompletedCommand(sender=sender)
 
+    @property
     def event(self) -> Optional[Dict[Text, Any]]:
         return {
             "Agent": self._sender.id,

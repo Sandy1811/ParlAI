@@ -210,7 +210,7 @@ class WOZWorld(MTurkTaskWorld):
         self._episode_done = False
         self._stage = SETUP_STAGE
         self._received_evaluations = 0
-        self.events = []  # ToDo: Fix bug: Somewhere a callable is added to this
+        self.events = []
 
         self.num_turns = 1
 
