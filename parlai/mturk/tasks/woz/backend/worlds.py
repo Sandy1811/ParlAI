@@ -7,6 +7,7 @@ import time
 from typing import Text, List, Dict, Any
 
 from parlai.core.agents import Agent
+from parlai.core.opt import Opt
 from parlai.mturk.core import shared_utils
 from parlai.mturk.core.agents import (
     MTURK_DISCONNECT_MESSAGE,
@@ -78,6 +79,11 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     worker uses the interface
     """
 
+    def __init__(self, opt: Opt, mturk_agent: Agent):
+        super(WizardOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
+        self._scenario = opt.get("scenario")
+        assert self._scenario
+
     def block_loop(self):
         print(f'Worker {self.mturk_agent.worker_id} failed onboarding.')
         send_mturk_message(
@@ -95,7 +101,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         return True
 
     def parley(self):
-        setup = SetupCommand(scenario="apartment_search_v1", role="Wizard")
+        setup = SetupCommand(scenario=self._scenario, role="Wizard")
         self.mturk_agent.observe(setup.message)
         send_mturk_message(
             "Take your time to read your task description on the left. "
@@ -136,8 +142,13 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     worker uses the interface
     """
 
+    def __init__(self, opt: Opt, mturk_agent: Agent):
+        super(UserOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
+        self._scenario = opt.get("scenario")
+        assert self._scenario
+
     def parley(self):
-        setup = SetupCommand(scenario="apartment_search_v1", role="User")
+        setup = SetupCommand(scenario=self._scenario, role="User")
         self.mturk_agent.observe(setup.message)
         send_mturk_message(
             "Take your time to read your task description on the left. "
@@ -187,8 +198,11 @@ class WOZWorld(MTurkTaskWorld):
             elif agent.demo_role == "UserTutor":
                 self.user_tutor = agent
 
+        self._scenario = opt.get("scenario")
+
         assert self.user
         assert self.wizard
+        assert self._scenario
 
         self._episode_done = False
         self._stage = SETUP_STAGE
@@ -199,8 +213,8 @@ class WOZWorld(MTurkTaskWorld):
 
     def parley(self):
         if self._stage == SETUP_STAGE:
-            self.wizard.observe(SetupCommand(scenario="apartment_search_v1", role="Wizard").message)
-            self.user.observe(SetupCommand(scenario="apartment_search_v1", role="User").message)
+            self.wizard.observe(SetupCommand(scenario=self._scenario, role="Wizard").message)
+            self.user.observe(SetupCommand(scenario=self._scenario, role="User").message)
             self.tell_workers_to_start()
             self.num_turns = 0
             self._stage = DIALOGUE_STAGE
@@ -396,4 +410,14 @@ class WOZWorld(MTurkTaskWorld):
             all_constants()["back_to_front"]["command_supply_suggestions"]
             + str(suggestions),
             wizard_agent,
+        )
+
+    @staticmethod
+    def add_cmdline_args(parser):
+        parser = parser.add_argument_group('WOZWorld arguments')
+        parser.add_argument(
+            "--scenario",
+            type=str,
+            default="simple",
+            help="Scenario name",
         )

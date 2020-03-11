@@ -37,6 +37,7 @@ def main():
     arg_parser.add_mturk_args()
     WOZDummyAgent.add_cmdline_args(arg_parser)
     WOZKnowledgeBaseAgent.add_cmdline_args(arg_parser)
+    WOZWorld.add_cmdline_args(arg_parser)
     opt = arg_parser.parse_args()
 
     qualification_manager = MTurkQualificationManager()
@@ -156,6 +157,7 @@ def main():
                 "Within the next few turns, try to refer to something you've said earlier in the conversation.",
                 max_times_triggered=2
             )
+            # Prompt user: use a negation!
             workers += [user_tutor_agent]
 
             if opt["dummy_user"]:

@@ -176,6 +176,7 @@ class SetupCommand(BackendCommand):
         if not os.path.exists(scenario_file_name):
             raise FileNotFoundError(f"Could not find '{scenario_file_name}'.")
         with open(scenario_file_name, "r", ) as file:
+            print(f"loading {scenario_file_name}")
             scenario = json.load(file)
 
         self._command_name = all_constants()["back_to_front"]["command_setup"]

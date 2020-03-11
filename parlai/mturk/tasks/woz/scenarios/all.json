@@ -1,0 +1,60 @@
+{
+  "title": "All",
+  "name": "All",
+  "version": 1,
+  "api_names": [
+    "apartment_search",
+    "bank_balance",
+    "bank_fraud_report",
+    "book_apartment_viewing",
+    "book_doctor_appointment",
+    "book_ride",
+    "followup_doctor_appointment",
+    "hotel_reserve",
+    "hotel_search",
+    "hotel_service_request",
+    "movie_search",
+    "party_plan",
+    "party_rsvp",
+    "plane_reserve",
+    "plane_search",
+    "restaurant_reserve",
+    "restaurant_search",
+    "ride_change",
+    "ride_status",
+    "schedule_meeting",
+    "shopping_order_item",
+    "shopping_order_status",
+    "shopping_search",
+    "spaceship_access_codes",
+    "spaceship_life_support",
+    "weather"
+  ],
+  "schema_urls": {
+    "restaurant_reserve": "https://drive.google.com/uc?id=1V8ixTpp7Kazlbu1zcGCVcuDan-Pp6cOv"
+  },
+  "instructions": {
+    "User": {
+      "task_description": "YAA ou recently started a new job in Sydney and need to <b>find an apartment</b> to live in. For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. A friend of yours recommended the virtual assistant that you are about to talk to now. Maybe it can help you find something you like?",
+      "completion_requirements": [
+        "AA You have found an apartment you like",
+        "AA You have changed your mind about what you are looking for, at least once during the dialogue"
+      ],
+      "completion_questions": [
+        "AA ...find you a suitable apartment?",
+        "AA ...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "AA Be helpful...",
+      "completion_requirements": [
+        "AA You have found an apartment that the user likes,",
+        "AA or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}
