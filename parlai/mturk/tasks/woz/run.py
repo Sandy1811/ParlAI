@@ -154,8 +154,15 @@ def main():
             )
             user_tutor_agent.add_rule(
                 WOZTutorAgent.kb_changed_condition(),
-                "Within the next few turns, try to refer to something you've said earlier in the conversation.",
-                max_times_triggered=2
+                "It looks like you are changing subjects. If it makes sense in the next few turns, please refer back to the previous topic.",
+                max_times_triggered=2,
+                probability=0.7
+            )
+            user_tutor_agent.add_rule(
+                WOZTutorAgent.random_turn_condition(8, 30),
+                "Within the next few turns, try to refer to something you've said at the beginning of the conversation.",
+                max_times_triggered=1,
+                probability=0.7
             )
             # Prompt user: use a negation!
             workers += [user_tutor_agent]

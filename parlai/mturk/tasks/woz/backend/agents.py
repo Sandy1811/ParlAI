@@ -1,3 +1,4 @@
+import random
 from typing import List, Dict, Text, Any, Union, Tuple, Callable, Optional
 import os
 import json
@@ -186,6 +187,10 @@ class WOZTutorAgent(NonMTurkAgent):
             if rule.get("triggers_left", 1) > 0 and rule.get(
                 "condition", self.constant_condition(False)
             )(self._event_history):
+                if rule.get("probability", 1.0) < 1.0 and random.uniform(
+                    0.0, 1.0
+                ) > rule.get("probability", 1.0):
+                    continue
                 if "triggers_left" in rule:
                     rule["triggers_left"] -= 1
                 return rule["message"]
@@ -193,7 +198,11 @@ class WOZTutorAgent(NonMTurkAgent):
         return {}
 
     def add_rule(
-        self, condition: Callable, text: Text, max_times_triggered: Optional[int] = None
+        self,
+        condition: Callable,
+        text: Text,
+        max_times_triggered: Optional[int] = None,
+        probability: float = 1.0,
     ) -> None:
         if max_times_triggered:
             self._rules.append(
@@ -201,6 +210,7 @@ class WOZTutorAgent(NonMTurkAgent):
                     "condition": condition,
                     "message": {"text": text},
                     "triggers_left": max_times_triggered,
+                    "probability": probability,
                 }
             )
         else:
@@ -214,9 +224,15 @@ class WOZTutorAgent(NonMTurkAgent):
     ) -> Callable:
         _min_num_turns = min_num_turns or 0
         if max_num_turns is not None:
-            return lambda history: (_min_num_turns <= len(history) <= max_num_turns)
+            return lambda history: (_min_num_turns <= num_turns(history) <= max_num_turns)
         else:
-            return lambda history: (_min_num_turns <= len(history))
+            return lambda history: (_min_num_turns <= num_turns(history))
+
+    @staticmethod
+    def random_turn_condition(min_num_turns: Optional[int], max_num_turns: int) -> Callable:
+        assert max_num_turns > (min_num_turns or 0)
+        n = random.randint(min_num_turns or 0, max_num_turns)
+        return lambda history: num_turns(history) == n
 
     @staticmethod
     def kb_changed_condition(
@@ -254,3 +270,10 @@ class WOZTutorAgent(NonMTurkAgent):
     @staticmethod
     def constant_condition(const: bool) -> Callable:
         return lambda _: const
+
+def num_turns(history: List[Dict[Text, Any]]) -> int:
+    result = 0
+    for event in history:
+        if event.get("Agent") == "User":
+            result += 1
+    return result
