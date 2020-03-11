@@ -3,6 +3,7 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.mturk_manager import MTurkManager
 
@@ -21,6 +22,35 @@ from parlai.mturk.tasks.woz.backend.agents import (
     WOZDummyAgent,
     WOZTutorAgent,
 )
+
+
+def create_user_tutor(opt: Opt):
+    user_tutor_agent = WOZTutorAgent(options=opt, rules=[])
+    user_tutor_agent.demo_role = "UserTutor"
+    user_tutor_agent.add_rule(
+        WOZTutorAgent.num_turns_condition(min_num_turns=6),
+        "If it makes sense at this point in the conversation, please change your mind about something.",
+        max_times_triggered=1
+    )
+    user_tutor_agent.add_rule(
+        WOZTutorAgent.kb_changed_condition(),
+        "It looks like you are changing subjects. If it makes sense in the next few turns, please refer back to the previous topic.",
+        max_times_triggered=2,
+        probability=0.7
+    )
+    user_tutor_agent.add_rule(
+        WOZTutorAgent.random_turn_condition(8, 30),
+        "Within the next few turns, try to refer to something you've said at the beginning of the conversation.",
+        max_times_triggered=1,
+        probability=0.7
+    )
+    user_tutor_agent.add_rule(
+        WOZTutorAgent.random_turn_condition(3, 40),
+        "Next time you ask for something, please use a negation. For example 'I don't want X', or 'without X', etc.",
+        max_times_triggered=2,
+        probability=0.9
+    )
+    return user_tutor_agent
 
 
 def main():
@@ -145,26 +175,7 @@ def main():
             kb_agent = WOZKnowledgeBaseAgent(options=opt)
             workers += [kb_agent]
 
-            user_tutor_agent = WOZTutorAgent(options=opt, rules=[])
-            user_tutor_agent.demo_role = "UserTutor"
-            user_tutor_agent.add_rule(
-                WOZTutorAgent.num_turns_condition(min_num_turns=6),
-                "If it makes sense at this point in the conversation, please change your mind about something.",
-                max_times_triggered=1
-            )
-            user_tutor_agent.add_rule(
-                WOZTutorAgent.kb_changed_condition(),
-                "It looks like you are changing subjects. If it makes sense in the next few turns, please refer back to the previous topic.",
-                max_times_triggered=2,
-                probability=0.7
-            )
-            user_tutor_agent.add_rule(
-                WOZTutorAgent.random_turn_condition(8, 30),
-                "Within the next few turns, try to refer to something you've said at the beginning of the conversation.",
-                max_times_triggered=1,
-                probability=0.7
-            )
-            # Prompt user: use a negation!
+            user_tutor_agent = create_user_tutor(opt)
             workers += [user_tutor_agent]
 
             if opt["dummy_user"]:

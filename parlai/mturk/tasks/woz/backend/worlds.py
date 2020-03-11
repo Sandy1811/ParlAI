@@ -418,6 +418,6 @@ class WOZWorld(MTurkTaskWorld):
         parser.add_argument(
             "--scenario",
             type=str,
-            default="simple",
+            default="all",
             help="Scenario name",
         )

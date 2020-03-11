@@ -271,6 +271,7 @@ class WOZTutorAgent(NonMTurkAgent):
     def constant_condition(const: bool) -> Callable:
         return lambda _: const
 
+
 def num_turns(history: List[Dict[Text, Any]]) -> int:
     result = 0
     for event in history:
