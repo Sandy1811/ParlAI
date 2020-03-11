@@ -215,7 +215,7 @@ class WOZTutorAgent(NonMTurkAgent):
             )
         else:
             self._rules.append(
-                {"condition": condition, "message": {"text": text},}
+                {"condition": condition, "message": {"text": "<guide>" + text},}
             )
 
     @staticmethod

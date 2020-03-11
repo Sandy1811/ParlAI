@@ -34,7 +34,9 @@ from parlai.mturk.tasks.woz.backend.commands import (
     RequestSuggestionsCommand,
     PickSuggestionCommand,
     SupplySuggestionsCommand,
-    SetupCommand)
+    SetupCommand,
+    GuideCommand,
+)
 
 
 def is_disconnected(act):
@@ -68,7 +70,6 @@ def send_setup_command(
             "form_description": form_description,
         }
     )
-
 
 
 class WizardOnboardingWorld(MTurkOnboardWorld):
@@ -150,18 +151,20 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     def parley(self):
         setup = SetupCommand(scenario=self._scenario, role="User")
         self.mturk_agent.observe(setup.message)
-        send_mturk_message(
-            "Take your time to read your task description on the left. "
-            "Write 'ready' when you are ready and press [Enter].",
-            self.mturk_agent,
+        self.mturk_agent.observe(
+            GuideCommand(
+                "Take your time to read your task description on the left. "
+                "Write 'ready' when you are ready and press [Enter]."
+            ).message
         )
         message = self.mturk_agent.act()
         echo.log_write(f"onboarding user: {message}")
         self.mturk_agent.passed_onboarding = True
-        send_mturk_message(
-            "Please wait for the virtual assistant to join the conversation...",
-            self.mturk_agent,
-        )
+        self.mturk_agent.observe(
+            GuideCommand(
+                "Please wait for the virtual assistant to join the conversation..."
+            ).message
+        ),
         self.episodeDone = True
 
     def get_model_agent(self):
@@ -207,14 +210,18 @@ class WOZWorld(MTurkTaskWorld):
         self._episode_done = False
         self._stage = SETUP_STAGE
         self._received_evaluations = 0
-        self.events = []
+        self.events = []  # ToDo: Fix bug: Somewhere a callable is added to this
 
         self.num_turns = 1
 
     def parley(self):
         if self._stage == SETUP_STAGE:
-            self.wizard.observe(SetupCommand(scenario=self._scenario, role="Wizard").message)
-            self.user.observe(SetupCommand(scenario=self._scenario, role="User").message)
+            self.wizard.observe(
+                SetupCommand(scenario=self._scenario, role="Wizard").message
+            )
+            self.user.observe(
+                SetupCommand(scenario=self._scenario, role="User").message
+            )
             self.tell_workers_to_start()
             self.num_turns = 0
             self._stage = DIALOGUE_STAGE
@@ -241,13 +248,15 @@ class WOZWorld(MTurkTaskWorld):
         elif isinstance(user_command, DialogueCompletedCommand):
             self.wizard.observe(ReviewCommand(self.wizard).message)
             self.user.observe(ReviewCommand(self.user).message)
-            send_mturk_message(
-                "Thank you for chatting. Now please review your conversation.",
-                self.user,
+            self.user.observe(
+                GuideCommand(
+                    "Thank you for chatting. Now please review your conversation."
+                ).message
             )
-            send_mturk_message(
-                "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user.",
-                self.wizard,
+            self.user.observe(
+                GuideCommand(
+                    "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user."
+                ).message
             )
             self._stage = EVALUATION_STAGE
             return 1
@@ -260,8 +269,9 @@ class WOZWorld(MTurkTaskWorld):
         if self.user_tutor:
             self.user_tutor.observe(self.events)
             tutor_message = self.user_tutor.act()
-            if tutor_message:
-                send_mturk_message(tutor_message["text"], self.user)
+            tutor_command = command_from_message(tutor_message, self.user_tutor)
+            if isinstance(tutor_message, GuideCommand):
+                self.user.observe(tutor_message.message)
 
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
@@ -279,13 +289,15 @@ class WOZWorld(MTurkTaskWorld):
         elif isinstance(wizard_command, DialogueCompletedCommand):
             self.wizard.observe(ReviewCommand(self.wizard).message)
             self.user.observe(ReviewCommand(self.user).message)
-            send_mturk_message(
-                "Thank you for chatting. Now please review your conversation.",
-                self.wizard,
+            self.wizard.observe(
+                GuideCommand(
+                    "Thank you for chatting. Now please review your conversation."
+                ).message
             )
-            send_mturk_message(
-                "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant.",
-                self.user,
+            self.user.observe(
+                GuideCommand(
+                    "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant."
+                ).message
             )
             self._stage = EVALUATION_STAGE
             return 1
@@ -323,13 +335,14 @@ class WOZWorld(MTurkTaskWorld):
             command = command_from_message(agent.act(blocking=False), agent)
 
             if isinstance(command, UtterCommand):
-                send_mturk_message(
-                    "Thank you for your feedback! Please also complete the form on the left.",
-                    agent,
+                agent.observe(
+                    GuideCommand(
+                        "Thank you for your feedback! Please also complete the form on the left."
+                    ).message
                 )
             elif isinstance(command, TaskDoneCommand):
-                send_mturk_message(
-                    "Thank you for evaluating! Goodbye.", agent,
+                agent.observe(
+                    GuideCommand("Thank you for evaluating! Goodbye.").message
                 )
                 self._received_evaluations += 1
                 return
@@ -356,12 +369,13 @@ class WOZWorld(MTurkTaskWorld):
         recipient.observe(message)
 
     def tell_workers_to_start(self):
-        send_mturk_message(
-            "The assistant is ready. Go ahead, say hello!", self.user,
+        self.user.observe(
+            GuideCommand("The assistant is ready. Go ahead, say hello!").message
         )
-        send_mturk_message(
-            "A user has joined the chat. Please wait for him/her to start the conversation.",
-            self.wizard,
+        self.wizard.observe(
+            GuideCommand(
+                "A user has joined the chat. Please wait for him/her to start the conversation."
+            ).message
         )
 
     def episode_done(self):
@@ -416,8 +430,5 @@ class WOZWorld(MTurkTaskWorld):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('WOZWorld arguments')
         parser.add_argument(
-            "--scenario",
-            type=str,
-            default="all",
-            help="Scenario name",
+            "--scenario", type=str, default="all", help="Scenario name",
         )

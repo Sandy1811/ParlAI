@@ -104,10 +104,7 @@ class WizardCommand(WorkerCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {
-            "Agent": self._sender.id,
-            "Action": self._command_name
-        }
+        return {"Agent": self._sender.id, "Action": self._command_name}
 
 
 class BackendCommand(Command):
@@ -154,16 +151,12 @@ class UtterCommand(WorkerCommand):
         return {
             "Agent": self._sender.id,
             "Action": self._command_name,
-            "Text": self._text
+            "Text": self._text,
         }
 
 
 class SetupCommand(BackendCommand):
-    def __init__(
-        self,
-        scenario: Text,
-        role: Text,
-    ) -> None:
+    def __init__(self, scenario: Text, role: Text,) -> None:
         super(SetupCommand, self).__init__()
         self._command_name = all_constants()["back_to_front"]["command_setup"]
 
@@ -175,7 +168,7 @@ class SetupCommand(BackendCommand):
         )
         if not os.path.exists(scenario_file_name):
             raise FileNotFoundError(f"Could not find '{scenario_file_name}'.")
-        with open(scenario_file_name, "r", ) as file:
+        with open(scenario_file_name, "r",) as file:
             scenario = json.load(file)
 
         self._command_name = all_constants()["back_to_front"]["command_setup"]
@@ -194,12 +187,18 @@ class SetupCommand(BackendCommand):
                 with open(api_file_name, "r") as file:
                     api_description = json.load(file)
                 form_description[api_name] = api_description
-                form_description[api_name]["schema_url"] = scenario["schema_urls"].get(api_name, image_not_found_url)
+                form_description[api_name]["schema_url"] = scenario["schema_urls"].get(
+                    api_name, image_not_found_url
+                )
 
             self._task_description = scenario["instructions"][role]["task_description"]
-            self._completion_requirements = scenario["instructions"][role]["completion_requirements"]
+            self._completion_requirements = scenario["instructions"][role][
+                "completion_requirements"
+            ]
             self._form_description = form_description
-            self._completion_questions = scenario["instructions"][role]["completion_questions"]
+            self._completion_questions = scenario["instructions"][role][
+                "completion_questions"
+            ]
             self._role = role
         except KeyError as error:
             raise ImportError(f"Invalid scenario file '{scenario_file_name}': {error}.")
@@ -217,10 +216,27 @@ class SetupCommand(BackendCommand):
         }
 
     @staticmethod
-    def from_message(
-        **kwargs,
-    ) -> Optional["Command"]:
+    def from_message(**kwargs,) -> Optional["Command"]:
         raise RuntimeError("SetupCommand cannot be created from message.")
+
+
+class GuideCommand(BackendCommand):
+
+    _command_name = "guide"
+
+    def __init__(self, text: Text) -> None:
+        super(GuideCommand, self).__init__()
+        self._text = text
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {"id": all_constants()["agent_ids"]["system_id"], "text": self._text}
+
+    @staticmethod
+    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+        if extracted_from_text is None:
+            raise ValueError("No text for GuideCommand.")
+        return GuideCommand(text=extracted_from_text)
 
 
 class ReviewCommand(BackendCommand):
@@ -293,7 +309,7 @@ class QueryCommand(WizardCommand):
             "Agent": self._sender.id,
             "Action": self._command_name,
             "Constraints": self._constraints,
-            "API": self._api_name
+            "API": self._api_name,
         }
 
 
@@ -370,7 +386,9 @@ class RequestSuggestionsCommand(WizardCommand):
         return {"id": self._sender.id, "text": self._query}
 
     @staticmethod
-    def from_message(sender: Agent, text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+    def from_message(
+        sender: Agent, text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
         return RequestSuggestionsCommand(sender=sender, query_text=(text or ""))
 
     @property
@@ -381,7 +399,9 @@ class RequestSuggestionsCommand(WizardCommand):
 class SupplySuggestionsCommand(BackendCommand):
     def __init__(self, recipient: Agent, suggestions: List[Text]) -> None:
         super(SupplySuggestionsCommand, self).__init__()
-        self._command_name = all_constants()["back_to_front"]["command_supply_suggestions"]
+        self._command_name = all_constants()["back_to_front"][
+            "command_supply_suggestions"
+        ]
         self._recipient = recipient
         self._suggestions = suggestions
 
@@ -394,7 +414,9 @@ class SupplySuggestionsCommand(BackendCommand):
         }
 
     @staticmethod
-    def from_message(sender: Agent, suggestions: Optional[List[Text]] = None, **kwargs,) -> Optional["Command"]:
+    def from_message(
+        sender: Agent, suggestions: Optional[List[Text]] = None, **kwargs,
+    ) -> Optional["Command"]:
         return SupplySuggestionsCommand(recipient=sender, suggestions=suggestions)
 
 
@@ -409,7 +431,9 @@ class PickSuggestionCommand(WizardCommand):
         return {"id": self._sender.id, "text": self._text}
 
     @staticmethod
-    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+    def from_message(
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
         if not extracted_from_text:
             raise ValueError(f"Chosen message is empty")
         return PickSuggestionCommand(sender=sender, chosen_text=extracted_from_text)
@@ -418,7 +442,7 @@ class PickSuggestionCommand(WizardCommand):
 def command_from_message(
     message: Optional[Dict[Text, Any]], sender: Optional[Agent]
 ) -> Optional[Command]:
-    if message is None:
+    if not message:
         return None
 
     text = message.get("text", "")
@@ -432,9 +456,12 @@ def command_from_message(
         constants["front_to_back"][
             "select_reference_kb_entry_prefix"
         ]: SelectSecondaryCommand,
-        constants["front_to_back"]["request_suggestions_prefix"]: RequestSuggestionsCommand,
+        constants["front_to_back"][
+            "request_suggestions_prefix"
+        ]: RequestSuggestionsCommand,
         constants["front_to_back"]["pick_suggestion_prefix"]: PickSuggestionCommand,
         constants["front_to_back"]["query_prefix"]: QueryCommand,
+        "<guide>": GuideCommand
     }
 
     # Add information extracted from the `text` property (magic strings)
