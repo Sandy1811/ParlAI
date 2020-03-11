@@ -1,6 +1,6 @@
-import React from "react";
-import ReactDOM from "react-dom";
-import _ from "lodash";
+import React from 'react';
+import ReactDOM from 'react-dom';
+import _ from 'lodash';
 
 import {
   Glyphicon,
@@ -24,9 +24,9 @@ import {
   Form,
   Tabs,
   Tab,
-  HelpBlock
-} from "react-bootstrap";
-import * as constants from "./constants";
+  HelpBlock,
+} from 'react-bootstrap';
+import * as constants from './constants';
 
 export class QueryForm extends React.Component {
   constructor(props) {
@@ -44,14 +44,14 @@ export class QueryForm extends React.Component {
 
     this.state = {
       addedFormFields: [],
-      formFieldData: {}
+      formFieldData: {},
     };
   }
 
   addFormField = fieldName => {
     const id = this.formFieldIdCounter++;
     this.setState({
-      addedFormFields: [...this.state.addedFormFields, { fieldName, id }]
+      addedFormFields: [...this.state.addedFormFields, { fieldName, id }],
     });
   };
 
@@ -59,7 +59,7 @@ export class QueryForm extends React.Component {
     this.setState({
       addedFormFields: this.state.addedFormFields.filter(fieldNameWithId => {
         return fieldNameWithId.id !== fieldId;
-      })
+      }),
     });
   };
 
@@ -67,8 +67,8 @@ export class QueryForm extends React.Component {
     this.setState({
       formFieldData: {
         ...this.state.formFieldData,
-        [newFormField.id]: newFormField
-      }
+        [newFormField.id]: newFormField,
+      },
     });
   };
 
@@ -77,27 +77,27 @@ export class QueryForm extends React.Component {
       id: formFieldId,
       fieldName: null,
       value: null,
-      operatorValue: null
+      operatorValue: null,
     };
 
     for (const element of form.elements) {
-      if (element.getAttribute("data-form-field-id") !== `${formFieldId}`) {
+      if (element.getAttribute('data-form-field-id') !== `${formFieldId}`) {
         continue;
       }
-      if (element.getAttribute("data-is-operator") === "true") {
+      if (element.getAttribute('data-is-operator') === 'true') {
         formDatum.operatorValue = element.value;
       } else {
-        formDatum.fieldName = element.getAttribute("data-field-name");
+        formDatum.fieldName = element.getAttribute('data-field-name');
 
-        if (element.type === "checkbox") {
+        if (element.type === 'checkbox') {
           formDatum.value = element.checked;
-        } else if (element.type === "select-one") {
+        } else if (element.type === 'select-one') {
           formDatum.value = element.value;
-        } else if (element.type === "number") {
+        } else if (element.type === 'number') {
           formDatum.value = element.value;
-        } else if (element.type === "select-multiple") {
+        } else if (element.type === 'select-multiple') {
           const selectedOptions = Array.from(
-            element.querySelectorAll("option:checked"),
+            element.querySelectorAll('option:checked'),
             e => e.value
           );
           formDatum.value = selectedOptions;
@@ -122,13 +122,12 @@ export class QueryForm extends React.Component {
       }
 
       const operator = formField.operatorValue;
-      const operatorWrapper = operator == null
-        ? val => val
-        : val => `api.${operator}(${val})`;
+      const operatorWrapper =
+        operator == null ? val => val : val => `api.${operator}(${val})`;
 
       let value = formField.value;
-      if (typeof value === "boolean") {
-        value = value ? "True" : "False";
+      if (typeof value === 'boolean') {
+        value = value ? 'True' : 'False';
       } else if (isNaN(value)) {
         value = JSON.stringify(value);
       } else {
@@ -136,18 +135,18 @@ export class QueryForm extends React.Component {
       }
 
       constraints.push({
-        [formField.fieldName]: `${operatorWrapper(value)}`
+        [formField.fieldName]: `${operatorWrapper(value)}`,
       });
     }
 
-    console.log("constraints", constraints);
+    console.log('constraints', constraints);
     //    const queryString = `? ${JSON.stringify(constraints)}`;
     const queryString = `? ${JSON.stringify({
       db: this.props.category,
-      constraints
+      constraints,
     })}`;
-    console.log("sending", queryString);
-    this.props.onMessageSend(queryString, {}, () => console.log("done"));
+    console.log('sending', queryString);
+    this.props.onMessageSend(queryString, {}, () => console.log('done'));
   };
 
   render() {
@@ -164,7 +163,7 @@ export class QueryForm extends React.Component {
         fieldName,
         id: fieldName,
         operatorValue: null,
-        value: null
+        value: null,
       }))
       .concat(this.state.addedFormFields);
 
@@ -176,12 +175,12 @@ export class QueryForm extends React.Component {
           <div>
             <FormControl
               componentClass="select"
-              style={{ maxWidth: 130, display: "inline-block" }}
+              style={{ maxWidth: 130, display: 'inline-block' }}
               ref={this.addFormFieldRef}
             >
-              {json.input.map(input =>
+              {json.input.map(input => (
                 <option value={input.Name}>{input.Name}</option>
-              )}
+              ))}
             </FormControl>
             <Button
               className="btn"
@@ -208,7 +207,7 @@ export class QueryForm extends React.Component {
 
         <Button
           className="btn btn-primary"
-          disabled={this.props.chat_state !== "text_input"}
+          disabled={this.props.chat_state !== 'text_input'}
           type="submit"
         >
           Find example
@@ -233,12 +232,11 @@ function ControlLabelWithRemove(props) {
     <ControlLabel>
       {props.formFieldName}
       <Button
-        style={{ border: 0, padding: "3px 6px", background: "transparent" }}
+        style={{ border: 0, padding: '3px 6px', background: 'transparent' }}
         onClick={() => props.onRemove(props.formFieldId)}
       >
         <Glyphicon glyph="remove" />
       </Button>
-
     </ControlLabel>
   );
 }
@@ -250,12 +248,14 @@ export function jsonToForm(
   formFieldData,
   onChangeValue
 ) {
-  const inputByName = _.keyBy(json.input, "Name");
+  const inputByName = _.keyBy(json.input, 'Name');
   return activeFormFields.map(formFieldWithId => {
     const formFieldName = formFieldWithId.fieldName;
     const formFieldId = formFieldWithId.id;
 
     const input = inputByName[formFieldName];
+    console.log(formFieldName);
+    console.log(input);
     const isRequired = json.required.indexOf(input.Name) >= 0;
     const controlLabelWithRemove = (
       <ControlLabelWithRemove
@@ -269,11 +269,11 @@ export function jsonToForm(
       id: formFieldId,
       fieldName: formFieldName,
       value: null,
-      operatorValue: null
+      operatorValue: null,
     };
 
     switch (input.Type) {
-      case "LongString": {
+      case 'LongString': {
         return (
           <FormGroup>
             {controlLabelWithRemove}
@@ -289,13 +289,14 @@ export function jsonToForm(
               onChange={event =>
                 onChangeValue({
                   ...formFieldDatum,
-                  value: event.target.value
-                })}
+                  value: event.target.value,
+                })
+              }
             />
           </FormGroup>
         );
       }
-      case "ShortString": {
+      case 'ShortString': {
         return (
           <FormGroup>
             {controlLabelWithRemove}
@@ -311,34 +312,35 @@ export function jsonToForm(
               onChange={event =>
                 onChangeValue({
                   ...formFieldDatum,
-                  value: event.target.value
-                })}
+                  value: event.target.value,
+                })
+              }
             />
           </FormGroup>
         );
       }
-      case "Categorical":
-      case "CategoricalMultiple": {
+      case 'Categorical':
+      case 'CategoricalMultiple': {
         const uiLogicInfo = {
           Categorical: {
-            is_equal_to: "SingleSelect",
-            is_one_of: "MultiSelect"
+            is_equal_to: 'SingleSelect',
+            is_one_of: 'MultiSelect',
             // Todo: Probably easier if the back-end provides "is_not_equal" ?
             // is_not: "SingleSelect"
           },
           CategoricalMultiple: {
-            is_equal_to: "MultiSelect",
-            contains: "SingleSelect",
-            contain_all_of: "MultiSelect",
-            contain_at_least_one_of: "MultiSelect"
-          }
+            is_equal_to: 'MultiSelect',
+            contains: 'SingleSelect',
+            contain_all_of: 'MultiSelect',
+            contain_at_least_one_of: 'MultiSelect',
+          },
         }[input.Type];
 
         const operatorUi = (
           <FormControl
             componentClass="select"
             placeholder={Object.keys(uiLogicInfo)[0]}
-            style={{ maxWidth: 130, display: "inline-block" }}
+            style={{ maxWidth: 130, display: 'inline-block' }}
             data-form-field-id={formFieldDatum.id}
             data-is-operator={true}
             data-field-name={formFieldDatum.fieldName}
@@ -346,17 +348,18 @@ export function jsonToForm(
             onChange={event =>
               onChangeValue({
                 ...formFieldDatum,
-                operatorValue: event.target.value
-              })}
+                operatorValue: event.target.value,
+              })
+            }
           >
-            {Object.keys(uiLogicInfo).map(key =>
-              <option value={key}>{key.replace(/_/g, " ")}</option>
-            )}
+            {Object.keys(uiLogicInfo).map(key => (
+              <option value={key}>{key.replace(/_/g, ' ')}</option>
+            ))}
           </FormControl>
         );
 
         const isMultiple =
-          uiLogicInfo[formFieldDatum.operatorValue] === "MultiSelect";
+          uiLogicInfo[formFieldDatum.operatorValue] === 'MultiSelect';
 
         return (
           <FormGroup>
@@ -376,38 +379,38 @@ export function jsonToForm(
                 onChange={event => {
                   if (event.target.multiple) {
                     const selectedOptions = Array.from(
-                      event.target.querySelectorAll("option:checked"),
+                      event.target.querySelectorAll('option:checked'),
                       e => e.value
                     );
                     onChangeValue({
                       ...formFieldDatum,
-                      value: selectedOptions
+                      value: selectedOptions,
                     });
                   } else {
                     onChangeValue({
                       ...formFieldDatum,
-                      value: event.target.value
+                      value: event.target.value,
                     });
                   }
                 }}
                 style={{
                   maxWidth: 200,
-                  display: "inline-block",
-                  verticalAlign: "top",
-                  marginLeft: 10
+                  display: 'inline-block',
+                  verticalAlign: 'top',
+                  marginLeft: 10,
                 }}
               >
-                {input.Categories.map((category, idx) =>
+                {input.Categories.map((category, idx) => (
                   <option key={`${category}-idx`} value={category}>
                     {category}
                   </option>
-                )}
+                ))}
               </FormControl>
             </div>
           </FormGroup>
         );
       }
-      case "Boolean": {
+      case 'Boolean': {
         return (
           <FormGroup>
             <Checkbox
@@ -420,8 +423,9 @@ export function jsonToForm(
               onChange={event =>
                 onChangeValue({
                   ...formFieldDatum,
-                  value: event.target.checked
-                })}
+                  value: event.target.checked,
+                })
+              }
               inline
             >
               {input.Name}
@@ -429,8 +433,8 @@ export function jsonToForm(
             <Button
               style={{
                 border: 0,
-                padding: "3px 6px",
-                background: "transparent"
+                padding: '3px 6px',
+                background: 'transparent',
               }}
               onClick={() => removeFormField(formFieldId)}
             >
@@ -439,7 +443,7 @@ export function jsonToForm(
           </FormGroup>
         );
       }
-      case "Integer": {
+      case 'Integer': {
         // TODO (high-pri): more operators for all data types
 
         const { Min, Max } = input;
@@ -454,13 +458,14 @@ export function jsonToForm(
                 data-form-field-id={formFieldDatum.id}
                 data-is-operator={true}
                 data-field-name={formFieldDatum.fieldName}
-                style={{ maxWidth: 180, display: "inline-block" }}
+                style={{ maxWidth: 180, display: 'inline-block' }}
                 value={formFieldDatum.operatorValue}
                 onChange={event =>
                   onChangeValue({
                     ...formFieldDatum,
-                    operatorValue: event.target.value
-                  })}
+                    operatorValue: event.target.value,
+                  })
+                }
               >
                 <option value="is_equal_to">is equal to</option>
                 <option value="is_greater_than">is greater than</option>
@@ -479,15 +484,16 @@ export function jsonToForm(
                 max={Max}
                 style={{
                   maxWidth: 150,
-                  display: "inline-block",
-                  marginLeft: 20
+                  display: 'inline-block',
+                  marginLeft: 20,
                 }}
                 value={formFieldDatum.value}
                 onChange={event =>
                   onChangeValue({
                     ...formFieldDatum,
-                    value: parseFloat(event.target.value)
-                  })}
+                    value: parseFloat(event.target.value),
+                  })
+                }
               />
             </div>
           </FormGroup>

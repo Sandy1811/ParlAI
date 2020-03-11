@@ -10,11 +10,7 @@
     {
       "Name": "TravelMode",
       "Type": "Categorical",
-      "Categories": [
-        "Transit",
-        "Driving",
-        "Walking"
-      ],
+      "Categories": ["Transit", "Driving", "Walking"],
       "ReadableName": "Travel Mode"
     },
     {
@@ -32,6 +28,16 @@
       "Max": 5,
       "Enabled": "!lambda p: p[\"TravelMode\"] == \"Transit\"",
       "ReadableName": "Price"
+    },
+    {
+      "Name": "DepartureLocation",
+      "Type": "ShortString",
+      "ReadableName": "Departure Location"
+    },
+    {
+      "Name": "ArrivalLocation",
+      "Type": "ShortString",
+      "ReadableName": "Arrival Location"
     }
   ],
   "output": [
@@ -45,11 +51,7 @@
     {
       "Name": "TravelMode",
       "Type": "Categorical",
-      "Categories": [
-        "Transit",
-        "Driving",
-        "Walking"
-      ],
+      "Categories": ["Transit", "Driving", "Walking"],
       "ReadableName": "Travel Mode"
     },
     {
