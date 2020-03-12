@@ -6,6 +6,7 @@
     "hotel_reserve",
     "hotel_search",
     "hotel_service_request",
+    "book_ride",
     "ride_change",
     "ride_status"
   ],
