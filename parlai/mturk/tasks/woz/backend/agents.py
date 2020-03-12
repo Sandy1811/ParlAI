@@ -245,12 +245,12 @@ class WOZInstructorAgent(NonMTurkAgent):
 
     @staticmethod
     def random_turn_condition(
-        min_num_turns: Optional[int], max_num_turns: int
+        min_num_turns: Optional[int], max_num_turns: int, count: int = 1
     ) -> Callable:
         assert max_num_turns > (min_num_turns or 0)
-        n = random.randint(min_num_turns or 0, max_num_turns)
-        print(f"should trigger on turn {n}")
-        return lambda history: num_turns(history) == n
+        n = random.sample(range(min_num_turns or 0, max_num_turns), count)
+        print(f"Will trigger on turns {n}")
+        return lambda history: num_turns(history) in n
 
     @staticmethod
     def kb_changed_condition(

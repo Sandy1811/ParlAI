@@ -434,5 +434,5 @@ class WOZWorld(MTurkTaskWorld):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('WOZWorld arguments')
         parser.add_argument(
-            "--scenario", type=str, default="all", help="Scenario name",
+            "--scenario", type=str, default="hotel+ride_v1", help="Scenario name",
         )
