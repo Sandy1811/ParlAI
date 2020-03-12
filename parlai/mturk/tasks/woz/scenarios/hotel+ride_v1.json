@@ -3,10 +3,9 @@
   "name": "Hotel+Ride",
   "version": 1,
   "api_names": [
-    "hotel_reserve",
-    "hotel_search",
-    "hotel_service_request",
     "book_ride",
+    "hotel_search",
+    "hotel_reserve",
     "ride_change",
     "ride_status"
   ],
