@@ -1,0 +1,37 @@
+{
+  "Steps": [
+    {
+      "Guide": "Hello. This is a training dialogue that you have to master before you can talk to real users. Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'."
+      ]
+    },
+    {
+      "Guide": "Great! \nOn the left side of the screen you see a flow chart that you should follow whenever possible. We will now simulate a user for you to chat with and explain this chart along the way. Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'."
+      ]
+    },
+    { "User": "Hello" },
+    {
+      "Wizard": "Hello.",
+      "Corrections": [
+        "Please greet the user with 'Hello.'",
+        "No. Just type 'Hello.' and click on 'Send'."
+      ]
+    },
+    { "User": "Lookup something" },
+    {
+      "Wizard": { "Action": "query", "API": "apartment_search" },
+      "Corrections": [
+        "At this point, you should query the 'apartment_search' knowledge base (see 'Knowledge Base' tab on the left panel)."
+      ]
+    }
+  ]
+}
