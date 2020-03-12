@@ -3,37 +3,19 @@
   "name": "All",
   "version": 1,
   "api_names": [
-    "apartment_search",
-    "bank_balance",
-    "bank_fraud_report",
-    "book_apartment_viewing",
-    "book_doctor_appointment",
     "book_ride",
-    "followup_doctor_appointment",
     "hotel_reserve",
     "hotel_search",
-    "hotel_service_request",
-    "movie_search",
-    "party_plan",
-    "party_rsvp",
-    "plane_reserve",
-    "plane_search",
-    "restaurant_reserve",
-    "restaurant_search",
     "ride_change",
-    "ride_status",
-    "schedule_meeting",
-    "shopping_order_item",
-    "shopping_order_status",
-    "shopping_search",
-    "spaceship_access_codes",
-    "spaceship_life_support",
-    "trip_directions",
-    "trip_traffic",
-    "weather"
+    "ride_status"
   ],
   "schema_urls": {
-    "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png"
+    "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png",
+    "ride_status": "https://i.imgur.com/96PHeZR.jpg",
+    "ride_change": "https://i.imgur.com/NH4MQuu.jpg",
+    "book_ride": "https://i.imgur.com/9CLM6fi.jpg",
+    "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg",
+    "hotel_reserve": "https://i.imgur.com/6x2Bw7d.jpg"
   },
   "instructions": {
     "User": {

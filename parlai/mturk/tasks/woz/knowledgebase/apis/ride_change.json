@@ -6,6 +6,16 @@
       "Min": 1,
       "Max": 1000,
       "ReadableName": "id"
+    },
+    {
+      "Name": "CustomerName",
+      "Type": "ShortString",
+      "ReadableName": "Customer Name"
+    },
+    {
+      "Name": "ChangeDescription",
+      "Type": "ShortString",
+      "ReadableName": "Change Description"
     }
   ],
   "output": [
@@ -19,9 +29,7 @@
       "ReadableName": "Change Status"
     }
   ],
-  "required": [
-    "id"
-  ],
+  "required": ["id", "CustomerName", "ChangeDescription"],
   "db": "ride",
   "function": "ride_change",
   "returns_count": false
