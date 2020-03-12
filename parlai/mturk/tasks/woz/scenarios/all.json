@@ -28,10 +28,12 @@
     "shopping_search",
     "spaceship_access_codes",
     "spaceship_life_support",
+    "trip_directions",
+    "trip_traffic",
     "weather"
   ],
   "schema_urls": {
-    "restaurant_reserve": "https://drive.google.com/uc?id=1V8ixTpp7Kazlbu1zcGCVcuDan-Pp6cOv"
+    "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png"
   },
   "instructions": {
     "User": {
