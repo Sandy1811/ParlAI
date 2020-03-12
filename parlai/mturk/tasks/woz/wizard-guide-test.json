@@ -20,9 +20,15 @@
     },
     {"User": "Lookup something"},
     {
-      "Wizard": {"Action":  "query", "API":  "apartment_search"},
-      "Corrections":  [
+      "Wizard": {"Action": "query", "API": "apartment_search"},
+      "Corrections": [
         "At this point, you should query the 'apartment_search' knowledge base (see 'Knowledge Base' tab on the left panel)."
+      ]
+    },
+    {
+      "Wizard": "Found this...",
+      "Corrections": [
+        "Say 'Found this...'."
       ]
     }
   ]

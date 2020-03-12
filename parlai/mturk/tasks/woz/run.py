@@ -20,35 +20,36 @@ from parlai.mturk.tasks.woz.backend.worlds import (
 from parlai.mturk.tasks.woz.backend.agents import (
     WOZKnowledgeBaseAgent,
     WOZDummyAgent,
-    WOZTutorAgent,
+    WOZInstructorAgent,
     WOZWizardIntroAgent)
 
 
-def create_user_tutor(opt: Opt):
-    user_tutor_agent = WOZTutorAgent(options=opt, rules=[])
+def create_user_instructor(opt: Opt):
+    user_tutor_agent = WOZInstructorAgent(options=opt, rules=[])
     user_tutor_agent.demo_role = "UserTutor"
     user_tutor_agent.add_rule(
-        WOZTutorAgent.num_turns_condition(min_num_turns=6),
+        WOZInstructorAgent.num_turns_condition(min_num_turns=6),
         "If it makes sense at this point in the conversation, please change your mind about something.",
-        max_times_triggered=1
+        max_times_triggered=1,
+        target="User"
     )
     user_tutor_agent.add_rule(
-        WOZTutorAgent.kb_changed_condition(),
+        WOZInstructorAgent.kb_changed_condition(),
         "It looks like you are changing subjects. If it makes sense in the next few turns, please refer back to the previous topic.",
         max_times_triggered=2,
-        probability=0.7
+        target="User"
     )
     user_tutor_agent.add_rule(
-        WOZTutorAgent.random_turn_condition(8, 30),
+        WOZInstructorAgent.random_turn_condition(2, 5),
         "Within the next few turns, try to refer to something you've said at the beginning of the conversation.",
         max_times_triggered=1,
-        probability=0.7
+        target="User"
     )
     user_tutor_agent.add_rule(
-        WOZTutorAgent.random_turn_condition(3, 40),
+        WOZInstructorAgent.random_turn_condition(3, 10),
         "Next time you ask for something, please use a negation. For example 'I don't want X', or 'without X', etc.",
         max_times_triggered=2,
-        probability=0.9
+        target="User"
     )
     return user_tutor_agent
 
@@ -73,7 +74,7 @@ def main():
 
     # opt["dummy_user"] = True
     # opt["dummy_responses"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/test_user_replies.txt"
-    # opt["wizard_intro"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/wizard-intro-1.json"
+    # opt["wizard_intro"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/wizard-guide-test.json"
 
     qualification_manager = MTurkQualificationManager()
     qualification_manager.require_min_approved_hits(10)
@@ -180,7 +181,7 @@ def main():
             kb_agent = WOZKnowledgeBaseAgent(options=opt)
             workers += [kb_agent]
 
-            # user_tutor_agent = create_user_tutor(opt)
+            user_tutor_agent = create_user_instructor(opt)
             # workers += [user_tutor_agent]
 
             if opt["dummy_user"]:
@@ -191,7 +192,7 @@ def main():
                 workers += [dummy_user]
 
             # Create the task world
-            world = WOZWorld(opt=opt, agents=workers)
+            world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
             # run the world to completion
             while not world.episode_done():
                 world.parley()

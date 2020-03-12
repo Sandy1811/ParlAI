@@ -155,6 +155,33 @@ class UtterCommand(WorkerCommand):
         }
 
 
+class SilentCommand(WorkerCommand):
+
+    _command_name = "silent"
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {
+            "id": self._sender.id,
+            "text": "<silent>",
+        }
+
+    @staticmethod
+    def from_message(
+            sender: Agent, text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
+        if text is None:
+            raise ValueError("No text given")
+        return UtterCommand(text=text, sender=sender)
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+        }
+
+
 class SetupCommand(BackendCommand):
     def __init__(self, scenario: Text, role: Text,) -> None:
         super(SetupCommand, self).__init__()

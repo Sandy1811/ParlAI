@@ -4,7 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import time
-from typing import Text, List, Dict, Any
+from typing import Text, List, Dict, Any, Optional
 
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
@@ -20,7 +20,7 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.woz.echo as echo
-from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZTutorAgent, WOZWizardIntroAgent
+from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZInstructorAgent, WOZWizardIntroAgent
 from parlai.mturk.tasks.woz.backend.commands import (
     command_from_message,
     all_constants,
@@ -36,7 +36,7 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SupplySuggestionsCommand,
     SetupCommand,
     GuideCommand,
-)
+    SilentCommand)
 
 
 def is_disconnected(act):
@@ -186,10 +186,10 @@ class WOZWorld(MTurkTaskWorld):
     Wizard-of-Oz world.
     """
 
-    def __init__(self, opt, agents):
+    def __init__(self, opt, agents, observers: Optional[List[Agent]] = None):
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
+        self.observers = observers or []
         self.knowledgebase = None
-        self.user_tutor = None
         self.user = None
         self.wizard = None
         for agent in agents:
@@ -199,8 +199,6 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard = agent
             elif agent.demo_role == "KnowledgeBase":
                 self.knowledgebase = agent
-            elif agent.demo_role == "UserTutor":
-                self.user_tutor = agent
 
         self._scenario = opt.get("scenario")
 
@@ -226,15 +224,10 @@ class WOZWorld(MTurkTaskWorld):
             self.tell_workers_to_start()
             self.num_turns = 0
             self._stage = WIZARD_INTRO_STAGE if isinstance(self.user, WOZWizardIntroAgent) else DIALOGUE_STAGE
-        elif self._stage == WIZARD_INTRO_STAGE:
-            if self.num_turns % 2 == 0:
-                self.num_turns += self._parley_dialogue_user()
-            else:
-                self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
         elif self._stage == DIALOGUE_STAGE:
+            self._parley_observers()
             if self.num_turns % 2 == 0:
                 self.num_turns += self._parley_dialogue_user()
-                self._parley_dialogue_user_tutor()
             else:
                 self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
         elif self._stage == EVALUATION_STAGE:
@@ -245,11 +238,22 @@ class WOZWorld(MTurkTaskWorld):
             if self._received_evaluations >= 2:
                 self._episode_done = True
 
+    def _parley_observers(self) -> None:
+        for observer in self.observers:
+            observer.observe(self.events)
+            message_to_user, message_to_wizard = observer.act()
+            if message_to_user:
+                self.user.observe(message_to_user)
+            if message_to_wizard:
+                self.wizard.observe(message_to_wizard)
+
     def _parley_dialogue_user(self) -> int:
         user_command = command_from_message(self.user.act(), self.user)
         self.events.append(user_command.event)
         if isinstance(user_command, UtterCommand):
             self.wizard.observe(user_command.message)
+            return 1
+        elif isinstance(user_command, SilentCommand):
             return 1
         elif isinstance(user_command, DialogueCompletedCommand):
             self.wizard.observe(ReviewCommand(self.wizard).message)
@@ -259,7 +263,7 @@ class WOZWorld(MTurkTaskWorld):
                     "Thank you for chatting. Now please review your conversation."
                 ).message
             )
-            self.user.observe(
+            self.wizard.observe(
                 GuideCommand(
                     "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user."
                 ).message
@@ -271,23 +275,14 @@ class WOZWorld(MTurkTaskWorld):
                 f"User command not allowed in dialogue stage: {user_command.message}"
             )
 
-    def _parley_dialogue_user_tutor(self) -> None:
-        if self.user_tutor:
-            self.user_tutor.observe(self.events)
-            tutor_message = self.user_tutor.act()
-            tutor_command = command_from_message(tutor_message, self.user_tutor)
-            if isinstance(tutor_message, GuideCommand):
-                self.user.observe(tutor_message.message)
-
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
         self.events.append(wizard_command.event)
-        if isinstance(self.user, WOZWizardIntroAgent):
-            self.user.observe(wizard_command.message)
-            return 1
 
         if isinstance(wizard_command, UtterCommand):
             self.user.observe(wizard_command.message)
+            return 1
+        elif isinstance(wizard_command, SilentCommand):
             return 1
         elif isinstance(wizard_command, QueryCommand):
             self.knowledgebase.observe(wizard_command)
