@@ -21,7 +21,7 @@ from parlai.mturk.tasks.woz.backend.agents import (
     WOZKnowledgeBaseAgent,
     WOZDummyAgent,
     WOZTutorAgent,
-)
+    WOZWizardIntroAgent)
 
 
 def create_user_tutor(opt: Opt):
@@ -68,7 +68,12 @@ def main():
     WOZDummyAgent.add_cmdline_args(arg_parser)
     WOZKnowledgeBaseAgent.add_cmdline_args(arg_parser)
     WOZWorld.add_cmdline_args(arg_parser)
+    WOZWizardIntroAgent.add_cmdline_args(arg_parser)
     opt = arg_parser.parse_args()
+
+    # opt["dummy_user"] = True
+    # opt["dummy_responses"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/test_user_replies.txt"
+    # opt["wizard_intro"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/wizard-intro-1.json"
 
     qualification_manager = MTurkQualificationManager()
     qualification_manager.require_min_approved_hits(10)
@@ -175,11 +180,14 @@ def main():
             kb_agent = WOZKnowledgeBaseAgent(options=opt)
             workers += [kb_agent]
 
-            user_tutor_agent = create_user_tutor(opt)
-            workers += [user_tutor_agent]
+            # user_tutor_agent = create_user_tutor(opt)
+            # workers += [user_tutor_agent]
 
             if opt["dummy_user"]:
-                dummy_user = WOZDummyAgent(opt, "User")
+                if opt["wizard_intro"]:
+                    dummy_user = WOZWizardIntroAgent(opt, "User")
+                else:
+                    dummy_user = WOZDummyAgent(opt, "User")
                 workers += [dummy_user]
 
             # Create the task world

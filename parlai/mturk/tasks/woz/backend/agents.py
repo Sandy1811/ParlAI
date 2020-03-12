@@ -8,7 +8,8 @@ from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.tasks.woz.knowledgebase import api
-from parlai.mturk.tasks.woz.backend.commands import Command, QueryCommand
+from parlai.mturk.tasks.woz.backend.commands import Command, QueryCommand, GuideCommand, DialogueCompletedCommand, \
+    UtterCommand
 
 
 class NonMTurkAgent(Agent):
@@ -270,6 +271,82 @@ class WOZTutorAgent(NonMTurkAgent):
     @staticmethod
     def constant_condition(const: bool) -> Callable:
         return lambda _: const
+
+
+class WOZWizardIntroAgent(NonMTurkAgent):
+    @staticmethod
+    def add_cmdline_args(parser) -> None:
+        """Add command line arguments for this agent."""
+        parser = parser.add_argument_group('DummyAgent arguments')
+        parser.add_argument(
+            "--wizard-intro",
+            type=str,
+            default=None,
+            help="File with wizard intro tutorial",
+        )
+
+    def __init__(self, opt: Opt, role: Text) -> None:
+        """Initialize this agent."""
+        super().__init__(opt)
+        self.id = "WizardIntroAgent"
+        self.role = role
+        self.demo_role = role
+        self._num_messages_sent = 0
+        self._step_index = 0
+        self._correction_index = 0
+        self._messages = []
+        self.worker_succeeded = False
+        if opt.get("wizard_intro"):
+            with open(opt.get("wizard_intro"), "r") as file:
+                self.guidelines = json.load(file)
+            self.steps = self.guidelines.get("Steps", [])
+        else:
+            self.guidelines = None
+            self.steps = []
+
+    def observe(self, observation: Dict[Text, Any]) -> None:
+        self.observation = observation
+
+    def act(self) -> Optional[Dict[Text, Any]]:
+        """Generates a response to the last observation.
+
+        Returns:
+            Message with reply
+        """
+        if not self.guidelines:
+            return GuideCommand("Dummy guide command.").message
+
+        self._num_messages_sent += 1
+
+        reply = None
+        while reply is None:
+            if self._step_index > len(self.steps):
+                self.worker_succeeded = True
+                return DialogueCompletedCommand(sender=self).message
+            current_step = self.steps[self._step_index]
+            if "Guide" in current_step:
+                self._step_index += 1
+                self._correction_index = 0
+                reply = GuideCommand(text=current_step["Guide"]).message
+            elif "Wizard" in current_step:
+                if isinstance(current_step["Wizard"], str) and self.observation.get("text", "").lower().strip() == current_step["Wizard"]:
+                    self._step_index += 1
+                    self._correction_index = 0
+                elif isinstance(current_step["Wizard"], dict) and self.observation == current_step["Wizard"]:
+                    self._step_index += 1
+                    self._correction_index = 0
+                else:
+                    corrections = current_step.get("Corrections", [])
+                    if self._correction_index >= len(corrections):
+                        reply = DialogueCompletedCommand(sender=self).message
+                    else:
+                        reply = GuideCommand(text=corrections[self._correction_index]+f" (You sent {self.observation})").message
+                        self._correction_index += 1
+            elif "User" in current_step:
+                self._step_index += 1
+                self._correction_index = 0
+                reply = UtterCommand(text=current_step["User"], sender=self).message
+        return reply
 
 
 def num_turns(history: List[Dict[Text, Any]]) -> int:

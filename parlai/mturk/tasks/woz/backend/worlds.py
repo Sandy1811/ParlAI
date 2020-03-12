@@ -20,7 +20,7 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.woz.echo as echo
-from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZTutorAgent
+from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZTutorAgent, WOZWizardIntroAgent
 from parlai.mturk.tasks.woz.backend.commands import (
     command_from_message,
     all_constants,
@@ -178,6 +178,7 @@ SETUP_STAGE = 0
 DIALOGUE_STAGE = 1
 EVALUATION_STAGE = 2
 END_STAGE = 3
+WIZARD_INTRO_STAGE = 4
 
 
 class WOZWorld(MTurkTaskWorld):
@@ -224,7 +225,12 @@ class WOZWorld(MTurkTaskWorld):
             )
             self.tell_workers_to_start()
             self.num_turns = 0
-            self._stage = DIALOGUE_STAGE
+            self._stage = WIZARD_INTRO_STAGE if isinstance(self.user, WOZWizardIntroAgent) else DIALOGUE_STAGE
+        elif self._stage == WIZARD_INTRO_STAGE:
+            if self.num_turns % 2 == 0:
+                self.num_turns += self._parley_dialogue_user()
+            else:
+                self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
         elif self._stage == DIALOGUE_STAGE:
             if self.num_turns % 2 == 0:
                 self.num_turns += self._parley_dialogue_user()
@@ -276,6 +282,9 @@ class WOZWorld(MTurkTaskWorld):
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
         self.events.append(wizard_command.event)
+        if isinstance(self.user, WOZWizardIntroAgent):
+            self.user.observe(wizard_command.message)
+            return 1
 
         if isinstance(wizard_command, UtterCommand):
             self.user.observe(wizard_command.message)
