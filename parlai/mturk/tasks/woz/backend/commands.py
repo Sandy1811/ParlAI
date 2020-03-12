@@ -168,7 +168,7 @@ class SilentCommand(WorkerCommand):
 
     @staticmethod
     def from_message(
-            sender: Agent, text: Optional[Text] = None, **kwargs
+        sender: Agent, text: Optional[Text] = None, **kwargs
     ) -> Optional["Command"]:
         if text is None:
             raise ValueError("No text given")
@@ -260,7 +260,9 @@ class GuideCommand(BackendCommand):
         return {"id": all_constants()["agent_ids"]["system_id"], "text": self._text}
 
     @staticmethod
-    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+    def from_message(
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
         if extracted_from_text is None:
             raise ValueError("No text for GuideCommand.")
         return GuideCommand(text=extracted_from_text)
@@ -489,7 +491,7 @@ def command_from_message(
         ]: RequestSuggestionsCommand,
         constants["front_to_back"]["pick_suggestion_prefix"]: PickSuggestionCommand,
         constants["front_to_back"]["query_prefix"]: QueryCommand,
-        "<guide>": GuideCommand
+        "<guide>": GuideCommand,
     }
 
     # Add information extracted from the `text` property (magic strings)

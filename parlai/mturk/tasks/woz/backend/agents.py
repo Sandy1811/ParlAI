@@ -14,7 +14,8 @@ from parlai.mturk.tasks.woz.backend.commands import (
     GuideCommand,
     DialogueCompletedCommand,
     UtterCommand,
-    SilentCommand)
+    SilentCommand,
+)
 
 
 class NonMTurkAgent(Agent):
@@ -227,7 +228,7 @@ class WOZInstructorAgent(NonMTurkAgent):
                 "message": {"text": text, "id": "MTurk System"},
                 "triggers_left": max_times_triggered,
                 "probability": probability,
-                "target": target
+                "target": target,
             }
         )
 
