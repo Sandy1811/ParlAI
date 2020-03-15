@@ -265,6 +265,7 @@ def trip_traffic(trip_api, constraints: Dict[Text, Any]):
 def book_ride(ride_api, constraints: Dict[Text, Any]):
     del constraints["DepartureLocation"]
     del constraints["ArrivalLocation"]
+    del constraints["CustomerName"]
     row, count = ride_api.sample(constraints)
     return row._settings, -1
 
@@ -299,11 +300,6 @@ def ride_change(ride_api, constraints: Dict[Text, Any]):
         "Your trip has been successfully changed.",
         "We are unable to change your trip.",
     ]
-
-    if "DepartureLocation" not in constraints and "ArrivalLocation" not in constraints:
-        raise ValueError(
-            f"One of DepartureLocation or ArrivalLocation must be provided."
-        )
 
     new_constraints = {
         "id": constraints["id"],
