@@ -34,25 +34,23 @@
       "Name": "CustomerRequest",
       "Type": "LongString",
       "ReadableName": "Customer Request"
+    },
+    {
+      "Name": "RequestType",
+      "Type": "Categorical",
+      "Categories": ["Check", "Book"],
+      "ReadableName": "RequestType"
     }
   ],
   "output": [
     {
-      "Name": "ReservationStatus",
+      "Name": "Message",
       "Type": "Categorical",
-      "Categories": [
-        "Reservation Confirmed",
-        "Reservation Failed"
-      ],
-      "ReadableName": "Reservation Status"
+      "Categories": ["Reservation Confirmed", "Reservation Failed"],
+      "ReadableName": "Message"
     }
   ],
-  "required": [
-    "Name",
-    "StartDate",
-    "EndDate",
-    "CustomerName"
-  ],
+  "required": ["Name", "StartDate", "EndDate", "CustomerName", "RequestType"],
   "db": "hotel",
   "function": "hotel_reserve",
   "returns_count": false
