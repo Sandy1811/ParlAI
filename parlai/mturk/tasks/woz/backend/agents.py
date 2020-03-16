@@ -354,7 +354,9 @@ class WOZWizardIntroAgent(NonMTurkAgent):
                 if not self.observation:
                     self._correction_index = 0
                     reply = SilentCommand(sender=self.user).message
-                elif step_condition_satisfied(current_step["Wizard"], self.observation or {}):
+                elif step_condition_satisfied(
+                    current_step["Wizard"], self.observation or {}
+                ):
                     self._step_index += 1
                 else:
                     corrections = current_step.get("Corrections", [])
@@ -382,7 +384,8 @@ def step_condition_satisfied(
     step: Union[str, Dict[Text, Any]], observation: Dict[Text, Any]
 ) -> bool:
     return (isinstance(step, str) and similar(observation.get("Text", ""), step)) or (
-        isinstance(step, dict) and all([similar(step[k], observation[k]) for k in step if k in observation])
+        isinstance(step, dict)
+        and all([similar(step[k], observation[k]) for k in step if k in observation])
     )
 
 

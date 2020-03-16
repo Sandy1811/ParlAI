@@ -583,4 +583,3 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
     @staticmethod
     def add_cmdline_args(parser):
         pass
-

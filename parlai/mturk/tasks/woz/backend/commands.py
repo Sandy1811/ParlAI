@@ -347,7 +347,10 @@ class DialogueCompletedCommand(WorkerCommand):
 
     @property
     def message(self) -> Dict[Text, Any]:
-        return {"id": self._sender.id, "text": all_constants()["front_to_back"]["complete_prefix"]}
+        return {
+            "id": self._sender.id,
+            "text": all_constants()["front_to_back"]["complete_prefix"],
+        }
 
     @staticmethod
     def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
@@ -490,7 +493,7 @@ def command_from_message(
         constants["front_to_back"]["pick_suggestion_prefix"]: PickSuggestionCommand,
         constants["front_to_back"]["query_prefix"]: QueryCommand,
         "<guide>": GuideCommand,
-        "<silent>": SilentCommand
+        "<silent>": SilentCommand,
     }
 
     # Add information extracted from the `text` property (magic strings)
