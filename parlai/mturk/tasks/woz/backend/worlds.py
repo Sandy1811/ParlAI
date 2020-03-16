@@ -20,7 +20,11 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.woz.echo as echo
-from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZInstructorAgent, WOZWizardIntroAgent
+from parlai.mturk.tasks.woz.backend.agents import (
+    WOZKnowledgeBaseAgent,
+    WOZInstructorAgent,
+    WOZWizardIntroAgent,
+)
 from parlai.mturk.tasks.woz.backend.commands import (
     command_from_message,
     all_constants,
@@ -36,7 +40,8 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SupplySuggestionsCommand,
     SetupCommand,
     GuideCommand,
-    SilentCommand)
+    SilentCommand,
+)
 
 
 def is_disconnected(act):
@@ -223,7 +228,11 @@ class WOZWorld(MTurkTaskWorld):
             )
             self.tell_workers_to_start()
             self.num_turns = 0
-            self._stage = WIZARD_INTRO_STAGE if isinstance(self.user, WOZWizardIntroAgent) else DIALOGUE_STAGE
+            self._stage = (
+                WIZARD_INTRO_STAGE
+                if isinstance(self.user, WOZWizardIntroAgent)
+                else DIALOGUE_STAGE
+            )
         elif self._stage == DIALOGUE_STAGE:
             self._parley_observers()
             if self.num_turns % 2 == 0:
