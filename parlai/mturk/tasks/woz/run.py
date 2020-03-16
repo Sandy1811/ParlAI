@@ -16,7 +16,7 @@ from parlai.mturk.tasks.woz.backend.worlds import (
     WizardOnboardingWorld,
     UserOnboardingWorld,
     WOZWorld,
-)
+    WOZWizardTutorialWorld)
 from parlai.mturk.tasks.woz.backend.agents import (
     WOZKnowledgeBaseAgent,
     WOZDummyAgent,
@@ -198,6 +198,8 @@ def main():
 
             # Create the task world
             world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
+            # world = WOZWizardTutorialWorld(opt=opt, agents=workers)
+
             # run the world to completion
             while not world.episode_done():
                 world.parley()

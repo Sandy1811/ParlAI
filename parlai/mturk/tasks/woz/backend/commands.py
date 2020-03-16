@@ -170,9 +170,7 @@ class SilentCommand(WorkerCommand):
     def from_message(
         sender: Agent, text: Optional[Text] = None, **kwargs
     ) -> Optional["Command"]:
-        if text is None:
-            raise ValueError("No text given")
-        return UtterCommand(text=text, sender=sender)
+        return SilentCommand(sender=sender)
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
@@ -349,7 +347,7 @@ class DialogueCompletedCommand(WorkerCommand):
 
     @property
     def message(self) -> Dict[Text, Any]:
-        return {"id": self._sender.id, "text": ""}
+        return {"id": self._sender.id, "text": all_constants()["front_to_back"]["complete_prefix"]}
 
     @staticmethod
     def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
@@ -492,6 +490,7 @@ def command_from_message(
         constants["front_to_back"]["pick_suggestion_prefix"]: PickSuggestionCommand,
         constants["front_to_back"]["query_prefix"]: QueryCommand,
         "<guide>": GuideCommand,
+        "<silent>": SilentCommand
     }
 
     # Add information extracted from the `text` property (magic strings)
