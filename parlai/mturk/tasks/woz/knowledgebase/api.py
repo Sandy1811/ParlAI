@@ -185,6 +185,9 @@ def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
 
 
 def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
+    if constraints["RequestType"] != "Book":
+        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     new_constraints = {
         "Name": constraints["Name"],
@@ -193,9 +196,9 @@ def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
 
     row, _ = hotel_api.sample(new_constraints)
     if row is None:
-        return {"ReservationStatus": outputs[1]}, -1
+        return {"Message": outputs[1]}, -1
     else:
-        return {"ReservationStatus": random.choice(outputs)}, -1
+        return {"Message": random.choice(outputs)}, -1
 
 
 def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
@@ -263,8 +266,13 @@ def trip_traffic(trip_api, constraints: Dict[Text, Any]):
 
 
 def book_ride(ride_api, constraints: Dict[Text, Any]):
+    if constraints["RequestType"] == "Book":
+      return dict(Message="Ride booked."), -1
+
+    del constraints["RequestType"]
     del constraints["DepartureLocation"]
     del constraints["ArrivalLocation"]
+    del constraints["CustomerName"]
     row, count = ride_api.sample(constraints)
     return row._settings, -1
 
@@ -279,20 +287,13 @@ def ride_status(ride_api, constraints: Dict[Text, Any]):
         "{0} minutes away".format(random.randint(0, 5)) for _ in range(30)
     ]
 
-    new_constraints = {
-        "id": constraints["id"],
-    }
-    row, _ = ride_api.sample(new_constraints)
-
     return (
         dict(
-            **row._settings,
             RideStatus=random.choice(ride_status_outputs),
             RideWait=random.choice(ride_wait_outputs),
         ),
         -1,
     )
-
 
 def ride_change(ride_api, constraints: Dict[Text, Any]):
     outputs = [
@@ -300,21 +301,7 @@ def ride_change(ride_api, constraints: Dict[Text, Any]):
         "We are unable to change your trip.",
     ]
 
-    if "DepartureLocation" not in constraints and "ArrivalLocation" not in constraints:
-        raise ValueError(
-            f"One of DepartureLocation or ArrivalLocation must be provided."
-        )
-
-    new_constraints = {
-        "id": constraints["id"],
-        "AllowsChanges": True,
-    }
-    row, _ = ride_api.sample(new_constraints)
-
-    if row is None:
-        return {"ChangeStatus": outputs[1]}
-    else:
-        return {"ChangeStatus": outputs[0]}
+    return {"ChangeStatus": random.choice(outputs)}, -1
 
 
 def bank_balance(bank_api, constraints: Dict[Text, Any]):

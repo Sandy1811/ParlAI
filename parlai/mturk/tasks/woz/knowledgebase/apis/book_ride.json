@@ -22,48 +22,31 @@
     {
       "Name": "ServiceProvider",
       "Type": "Categorical",
-      "Categories": [
-        "Uber",
-        "Lyft",
-        "Taxi"
-      ],
+      "Categories": ["Uber", "Lyft", "Taxi"],
       "ReadableName": "Service Provider"
     },
     {
       "Name": "DriverName",
       "Type": "Categorical",
-      "Categories": [
-        "Mark",
-        "John",
-        "Dave",
-        "Connor",
-        "Alex"
-      ],
+      "Categories": ["Mark", "John", "Dave", "Connor", "Alex"],
       "ReadableName": "Driver Name"
     },
     {
       "Name": "CarModel",
       "Type": "Categorical",
-      "Categories": [
-        "Honda",
-        "Toyota",
-        "Corolla",
-        "Tesla",
-        "BMW",
-        "Ford"
-      ],
+      "Categories": ["Honda", "Toyota", "Corolla", "Tesla", "BMW", "Ford"],
       "ReadableName": "Car Model"
+    },
+    {
+      "Name": "RequestType",
+      "Type": "Categorical",
+      "Categories": ["Check", "Book"],
+      "ReadableName": "Request Type"
     },
     {
       "Name": "LicensePlate",
       "Type": "Categorical",
-      "Categories": [
-        "432 LSA",
-        "313 EA9",
-        "901 FSA",
-        "019 EAS",
-        "031 NGA"
-      ],
+      "Categories": ["432 LSA", "313 EA9", "901 FSA", "019 EAS", "031 NGA"],
       "ReadableName": "License Plate"
     },
     {
@@ -105,48 +88,25 @@
     {
       "Name": "ServiceProvider",
       "Type": "Categorical",
-      "Categories": [
-        "Uber",
-        "Lyft",
-        "Taxi"
-      ],
+      "Categories": ["Uber", "Lyft", "Taxi"],
       "ReadableName": "Service Provider"
     },
     {
       "Name": "DriverName",
       "Type": "Categorical",
-      "Categories": [
-        "Mark",
-        "John",
-        "Dave",
-        "Connor",
-        "Alex"
-      ],
+      "Categories": ["Mark", "John", "Dave", "Connor", "Alex"],
       "ReadableName": "Driver Name"
     },
     {
       "Name": "CarModel",
       "Type": "Categorical",
-      "Categories": [
-        "Honda",
-        "Toyota",
-        "Corolla",
-        "Tesla",
-        "BMW",
-        "Ford"
-      ],
+      "Categories": ["Honda", "Toyota", "Corolla", "Tesla", "BMW", "Ford"],
       "ReadableName": "Car Model"
     },
     {
       "Name": "LicensePlate",
       "Type": "Categorical",
-      "Categories": [
-        "432 LSA",
-        "313 EA9",
-        "901 FSA",
-        "019 EAS",
-        "031 NGA"
-      ],
+      "Categories": ["432 LSA", "313 EA9", "901 FSA", "019 EAS", "031 NGA"],
       "ReadableName": "License Plate"
     },
     {
@@ -160,7 +120,8 @@
   "required": [
     "CustomerName",
     "DepartureLocation",
-    "ArrivalLocation"
+    "ArrivalLocation",
+    "RequestType"
   ],
   "db": "ride",
   "function": "book_ride",
