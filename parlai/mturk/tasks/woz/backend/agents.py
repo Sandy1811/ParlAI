@@ -306,7 +306,7 @@ class WOZWizardIntroAgent(NonMTurkAgent):
     def __init__(self, opt: Opt, role: Text) -> None:
         """Initialize this agent."""
         super().__init__(opt)
-        self.id = "User"  # "MTurk System"
+        self.id = "User"  # or "MTurk System" - changes on act()
         self.role = role
         self.demo_role = role
         self._num_messages_sent = 0
@@ -326,7 +326,6 @@ class WOZWizardIntroAgent(NonMTurkAgent):
 
     def observe(self, event: Dict[Text, Any]) -> None:
         self.observation = event
-        print(f"observing: {event}")
 
     def act(self) -> Optional[Dict[Text, Any]]:
         """Generates a response to the last observation.
@@ -350,12 +349,10 @@ class WOZWizardIntroAgent(NonMTurkAgent):
                 self._step_index += 1
                 self._correction_index = 0
                 self.observation = None
-                print(f"unsetting observation in Guide")
                 reply = GuideCommand(text=current_step["Guide"]).message
             elif "Wizard" in current_step:
                 if not self.observation:
                     self._correction_index = 0
-                    print(f"remaining silent")
                     reply = SilentCommand(sender=self.user).message
                 elif step_condition_satisfied(current_step["Wizard"], self.observation or {}):
                     self._step_index += 1
@@ -370,13 +367,11 @@ class WOZWizardIntroAgent(NonMTurkAgent):
                         ).message
                         self._correction_index += 1
                     self.observation = None
-                    print(f"correcting")
             elif "User" in current_step:
                 self.id = "User"
                 self._step_index += 1
                 self._correction_index = 0
                 self.observation = None
-                print(f"unsetting observation in User")
                 reply = UtterCommand(
                     text=current_step["User"], sender=self.user
                 ).message
