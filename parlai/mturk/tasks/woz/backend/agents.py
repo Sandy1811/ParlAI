@@ -306,7 +306,7 @@ class WOZWizardIntroAgent(NonMTurkAgent):
     def __init__(self, opt: Opt, role: Text) -> None:
         """Initialize this agent."""
         super().__init__(opt)
-        self.id = "MTurk System"
+        self.id = "User"  # or "MTurk System" - changes on act()
         self.role = role
         self.demo_role = role
         self._num_messages_sent = 0
@@ -345,14 +345,19 @@ class WOZWizardIntroAgent(NonMTurkAgent):
                 return DialogueCompletedCommand(sender=self.user).message
             current_step = self.steps[self._step_index]
             if "Guide" in current_step:
+                self.id = "MTurk System"
                 self._step_index += 1
                 self._correction_index = 0
+                self.observation = None
                 reply = GuideCommand(text=current_step["Guide"]).message
             elif "Wizard" in current_step:
-                if step_condition_satisfied(current_step["Wizard"], self.observation):
-                    self._step_index += 1
+                if not self.observation:
                     self._correction_index = 0
                     reply = SilentCommand(sender=self.user).message
+                elif step_condition_satisfied(
+                    current_step["Wizard"], self.observation or {}
+                ):
+                    self._step_index += 1
                 else:
                     corrections = current_step.get("Corrections", [])
                     if self._correction_index >= len(corrections):
@@ -363,9 +368,12 @@ class WOZWizardIntroAgent(NonMTurkAgent):
                             + f" (You sent {self.observation})"
                         ).message
                         self._correction_index += 1
+                    self.observation = None
             elif "User" in current_step:
+                self.id = "User"
                 self._step_index += 1
                 self._correction_index = 0
+                self.observation = None
                 reply = UtterCommand(
                     text=current_step["User"], sender=self.user
                 ).message
@@ -376,7 +384,8 @@ def step_condition_satisfied(
     step: Union[str, Dict[Text, Any]], observation: Dict[Text, Any]
 ) -> bool:
     return (isinstance(step, str) and similar(observation.get("Text", ""), step)) or (
-        isinstance(step, dict) and all([similar(step[k], observation[k]) for k in step])
+        isinstance(step, dict)
+        and all([similar(step[k], observation[k]) for k in step if k in observation])
     )
 
 
