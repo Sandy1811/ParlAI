@@ -39,7 +39,7 @@
     },
     {
       "Name": "RequestType",
-      "Type": "Categorical",
+      "Type": "RequestType",
       "Categories": ["Check", "Book"],
       "ReadableName": "Request Type"
     },
