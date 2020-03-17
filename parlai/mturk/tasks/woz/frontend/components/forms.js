@@ -210,7 +210,7 @@ export class QueryForm extends React.Component {
           disabled={this.props.chat_state !== 'text_input'}
           type="submit"
         >
-          Find example
+          Query
         </Button>
       </form>
     );

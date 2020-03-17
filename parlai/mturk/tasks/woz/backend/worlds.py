@@ -422,7 +422,7 @@ class WOZWorld(MTurkTaskWorld):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('WOZWorld arguments')
         parser.add_argument(
-            "--scenario", type=str, default="hotel+ride_v1", help="Scenario name",
+            "--scenario", type=str, default="book_ride_tutorial", help="Scenario name",
         )
 
 
@@ -503,9 +503,9 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
             self._stage = EVALUATION_STAGE
             return 1
         elif isinstance(wizard_command, SelectPrimaryCommand):
-            return 0
+            return 1
         elif isinstance(wizard_command, SelectSecondaryCommand):
-            return 0
+            return 1
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             suggestions = ["message 1", "message 2"]
             self.wizard.observe(

@@ -79,7 +79,7 @@ def main():
 
     # opt["dummy_user"] = True
     # opt["dummy_responses"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/test_user_replies.txt"
-    # opt["wizard_intro"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/wizard-guide-test.json"
+    # opt["wizard_intro"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/tutorial_wizard_book-ride.json"
 
     qualification_manager = MTurkQualificationManager()
     qualification_manager.require_min_approved_hits(10)
