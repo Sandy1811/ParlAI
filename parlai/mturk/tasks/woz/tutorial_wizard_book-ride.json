@@ -1,0 +1,131 @@
+{
+  "Steps": [
+    {
+      "Guide": "Hello. This is a training dialogue that you have to master before you can talk to real users. Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'.",
+        "Please make sure don't type anything else. Just type 'ok' in the input field below and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "Great! \nOn the left side of the screen you see a flow chart that you should follow whenever possible. We will now simulate a user for you to chat with and explain this chart along the way. Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'.",
+        "Please make sure don't type anything else. Just type 'ok' in the input field below and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    { "User": "Hello" },
+    {
+      "Guide": "The user is greeting you without providing any further information. In this case, just say 'Hello, how can I help?'. "
+    },
+    {
+      "Wizard": "Hello, how can I help?",
+      "Corrections": [
+        "Please greet the user with 'Hello, how can I help?'",
+        "No. Just type 'Hello, how can I help?' and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    { "User": "I need to book a ride to Hogwarts." },
+    {
+      "Guide": "Here the user has already provided the first piece of information that you need (see the top-most box in the flow chart). \nStep by step, ask the user for the remaining required information."
+    },
+    {
+      "Wizard": { "Action": "utter" , "TextRegex": "^.*name.*" },
+      "Corrections": [
+        "This doesn't look right. You should ask for the customer name first.",
+        "No, please ask 'What is your name, please?'.",
+        "Sorry, that's still incorrect.",
+        "No. One more try..."
+      ]
+    },
+    { "User": "Albus Dumbledore." },
+    {
+      "Wizard": { "Action": "utter" , "TextRegex": "^.*(from|depart).*" },
+      "Corrections": [
+        "This doesn't look right. Did you ask for departure location?",
+        "No, please ask 'Where will you be travelling from?'.",
+        "Sorry, that's still incorrect.",
+        "No. One more try..."
+      ]
+    },
+    { "User": "I need Sirius to pick me up at the front entrance of Central Station" },
+    {
+      "Guide": "Have a look at the flow chart. \nBy now you have collected all the required information (top blue box) and even one additional piece of information from the purple box below. Now you should click the 'Knowledge Base' tab and enter this information into the form. Then click the 'Query' button."
+    },
+    {
+      "Wizard": { "Action": "query", "API": "book_ride", "Constraints":  [{
+        "CustomerName": "\"Albus Dumbledore\""
+      }, {
+        "DepartureLocation": "\"front entrance of Central Station\""
+      }, {
+        "ArrivalLocation": "\"Hogwarts\""
+      }, {
+        "DriverName": "\"Sirius\""
+      }]},
+      "Corrections": [
+        "That doesn't seem right. Did you query the knowledge base with all the right information? Try again.",
+        "No. Make sure you don't forget to add the driver name, and you write 'front entrance of Central Station' as point of departure.",
+        "Still not quite right. Don't write anything. Just fill in the form and click on the 'Query' button under the form.",
+        "Something is still wrong. Try again.",
+        "No. You have two more attempts...",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "Great! Now have a look at the result of the knowledge base query. Describe to the user what you searched for (confirming his/her inputs), what you have found, and ask if you should make a booking. This step is indicated by the lower blue box in the flow chart."
+    },
+    {
+      "Wizard": { "Action": "utter", "TextRegex": "^.*(albus).*" },
+      "Corrections": [
+        "Hmm... Did you mention the customer's name? You should confirm the user's inputs AND inform him about the result of your query.",
+        "No, that still doesn't seem right.",
+        "No. One more try.."
+      ]
+    },
+    {"User":  "Spiffing! Yes, I'd like to book that."},
+    {
+      "Guide": "Follow the arrow in the diagram that goes through 'Yes'. You see that now you should send the same knowledge base query again, but with the 'Request type' flag set to 'Book'. "
+    },
+    {
+      "Wizard": { "Action": "query", "API": "book_ride" },
+      "Corrections": [
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "Very good! \nNow follow the last step of the diagram. Here, you should FIRST select on the knowledge base item that contains the detailed information of the ride you just booked (earlier in this dialogue). Then confirm the ride with id and license plate number to the user."
+    },
+    {
+      "Wizard": { "Action":  "select_primary" },
+      "Corrections": [
+        "No, you first have to select the knowledge base item that you are referring to (earlier in this dialogue).",
+        "Still not correct. Please scroll up until you find the message from the knowledge base that contains the license plate number. Then click on its 'Selected' button.",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Wizard": { "Action": "utter", "TextRegex": "^.*(license).*" },
+      "Corrections": [
+        "Did you mention the license plate number?",
+        "Please mention something like 'license plate: ...'.",
+        "No. One more try..."
+      ]
+    },
+    {"User":  "Thank you, and goodbye!"},
+    {
+      "Guide": "Very good! The user is satisfied and says goodbye. You have successfully completed this tutorial! \nNote, that in a real dialogue, there will be a button on the left panel that you should click once the user has said goodbye."
+    }
+  ]
+}

@@ -2,6 +2,7 @@ import random
 from typing import List, Dict, Text, Any, Union, Tuple, Callable, Optional
 import os
 import json
+import re
 
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
@@ -9,7 +10,6 @@ from parlai.core.params import ParlaiParser
 from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.tasks.woz.knowledgebase import api
 from parlai.mturk.tasks.woz.backend.commands import (
-    Command,
     QueryCommand,
     GuideCommand,
     DialogueCompletedCommand,
@@ -352,12 +352,12 @@ class WOZWizardIntroAgent(NonMTurkAgent):
                 reply = GuideCommand(text=current_step["Guide"]).message
             elif "Wizard" in current_step:
                 if not self.observation:
-                    self._correction_index = 0
                     reply = SilentCommand(sender=self.user).message
                 elif step_condition_satisfied(
                     current_step["Wizard"], self.observation or {}
                 ):
                     self._step_index += 1
+                    self.observation = None
                 else:
                     corrections = current_step.get("Corrections", [])
                     if self._correction_index >= len(corrections):
@@ -365,7 +365,6 @@ class WOZWizardIntroAgent(NonMTurkAgent):
                     else:
                         reply = GuideCommand(
                             text=corrections[self._correction_index]
-                            + f" (You sent {self.observation})"
                         ).message
                         self._correction_index += 1
                     self.observation = None
@@ -383,10 +382,39 @@ class WOZWizardIntroAgent(NonMTurkAgent):
 def step_condition_satisfied(
     step: Union[str, Dict[Text, Any]], observation: Dict[Text, Any]
 ) -> bool:
-    return (isinstance(step, str) and similar(observation.get("Text", ""), step)) or (
-        isinstance(step, dict)
-        and all([similar(step[k], observation[k]) for k in step if k in observation])
-    )
+    if isinstance(step, str):
+        return similar(observation.get("Text", ""), step)
+    elif isinstance(step, dict):
+
+        if "TextRegex" in step:
+            if (
+                re.fullmatch(
+                    step["TextRegex"], observation.get("Text", ""), flags=re.IGNORECASE
+                )
+                is None
+            ):
+                return False
+            del step["TextRegex"]
+
+        if "Constraints" in step:
+            if "Constraints" not in observation:
+                return False
+            observed_constraints = observation["Constraints"]
+            print(observed_constraints)
+            print(step["Constraints"])
+            for expected_constraint in step["Constraints"]:
+                try:
+                    observed_constraint = select_first(observed_constraints, lambda c: constraint_name(c) == constraint_name(expected_constraint))
+                except (StopIteration, ValueError):
+                    print(f"missing key for {expected_constraint}")
+                    return False
+
+                if not similar(constraint_value(expected_constraint), constraint_value(observed_constraint)):
+                    print(f"wrong value for {expected_constraint} vs {observed_constraint}")
+                    return False
+            del step["Constraints"]
+
+        return all([similar(step[k], observation[k]) for k in step if k in observation])
 
 
 def similar(a: Any, b: Any):
@@ -394,6 +422,41 @@ def similar(a: Any, b: Any):
         return a.lower().strip() == b.lower().strip()
     else:
         return a == b
+
+
+def select_first(iterable, condition = lambda x: True):
+    """
+    Returns the first item in the `iterable` that
+    satisfies the `condition`.
+
+    If the condition is not given, returns the first item of
+    the iterable.
+
+    Raises `StopIteration` if no item satysfing the condition is found.
+
+    >>> select_first( (1,2,3), condition=lambda x: x % 2 == 0)
+    2
+    >>> select_first(range(3, 100))
+    3
+    >>> select_first( () )
+    Traceback (most recent call last):
+    ...
+    StopIteration
+    """
+
+    return next(x for x in iterable if condition(x))
+
+
+def constraint_name(constraint: Dict[Text, Any]):
+    if len(constraint) != 1:
+        raise ValueError(f"Constraint {constraint} does not have single item.")
+    return list(constraint.keys())[0]
+
+
+def constraint_value(constraint: Dict[Text, Any]):
+    if len(constraint) != 1:
+        raise ValueError(f"Constraint {constraint} does not have single item.")
+    return list(constraint.values())[0]
 
 
 def num_turns(history: List[Dict[Text, Any]]) -> int:

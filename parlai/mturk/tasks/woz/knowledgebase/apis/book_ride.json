@@ -13,11 +13,11 @@
       "ReadableName": "Allows Changes"
     },
     {
-      "Name": "DurationMinutes",
+      "Name": "MinutesTillPickup",
       "Type": "Integer",
       "Min": 5,
       "Max": 30,
-      "ReadableName": "Duration Minutes"
+      "ReadableName": "Minutes until pickup"
     },
     {
       "Name": "ServiceProvider",
@@ -28,7 +28,7 @@
     {
       "Name": "DriverName",
       "Type": "Categorical",
-      "Categories": ["Mark", "John", "Dave", "Connor", "Alex"],
+      "Categories": ["Mark", "Ella", "Dave", "Zoe", "Alex", "Sirius"],
       "ReadableName": "Driver Name"
     },
     {

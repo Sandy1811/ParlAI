@@ -292,9 +292,12 @@ class QueryCommand(WizardCommand):
     def __init__(self, query: Text, sender: Agent) -> None:
         super(QueryCommand, self).__init__(sender)
         self._command_name = self.command_name
+        self._constraints = None
+        self._constraints_raw = None
+        self._api_name = None
 
         self._query = query
-        self._constraints, self._api_name = self._parse(self._query)
+        self._parse(self._query)
 
     @property
     def message(self) -> Dict[Text, Any]:
@@ -316,26 +319,32 @@ class QueryCommand(WizardCommand):
     def api_name(self) -> Text:
         return self._api_name
 
-    def _parse(self, text: Text) -> Tuple[List[Dict[Text, Any]], Text]:
+    def _parse(self, text: Text) -> None:
         data = eval(text)
         assert isinstance(data, dict)
         assert "constraints" in data
         assert "db" in data
 
-        constraints = [
+        self._constraints = [
             {name: eval(expr)}
             for constraint in data["constraints"]
             for name, expr in constraint.items()
         ]
 
-        return constraints, data["db"]
+        self._constraints_raw = [
+            {name: expr}
+            for constraint in data["constraints"]
+            for name, expr in constraint.items()
+        ]
+
+        self._api_name = data["db"]
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
         return {
             "Agent": self._sender.id,
             "Action": self._command_name,
-            "Constraints": self._constraints,
+            "Constraints": self._constraints_raw,
             "API": self._api_name,
         }
 
@@ -382,13 +391,16 @@ class SelectPrimaryCommand(WizardCommand):
     def __init__(self, sender: Agent) -> None:
         super(SelectPrimaryCommand, self).__init__(sender)
         self._command_name = "select_primary"
+        print("Creating SelectPrimaryCommand")
 
     @property
     def message(self) -> Dict[Text, Any]:
-        return {"id": self._sender.id, "text": ""}
+        print("Constructing message from SelectPrimaryCommand")
+        return {"id": self._sender.id, "text": all_constants()["front_to_back"]["select_kb_entry_prefix"]}
 
     @staticmethod
-    def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
+    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+        print(f"Constructing SelectPrimaryCommand from message {extracted_from_text}")
         return SelectPrimaryCommand(sender=sender)
 
 
@@ -399,7 +411,7 @@ class SelectSecondaryCommand(WizardCommand):
 
     @property
     def message(self) -> Dict[Text, Any]:
-        return {"id": self._sender.id, "text": ""}
+        return {"id": self._sender.id, "text": all_constants()["front_to_back"]["select_reference_kb_entry_prefix"]}
 
     @staticmethod
     def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
