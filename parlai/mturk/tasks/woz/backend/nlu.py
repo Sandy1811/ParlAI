@@ -23,7 +23,7 @@ class NLUServerConnection:
         comparing: bool = False,
         max_num_suggestions: int = 3,
     ) -> List[Text]:
-        response = self.query(f"{'true' if comparing else 'false'}:{domain}:{text}")
+        response = self.query(f"{'true' if comparing else 'false'}:{domain or 'general'}:{text}")
         suggestions = [
             intent["name"] for intent in response["intent_ranking"]
         ]  # ToDo: Make sure this is sorted by confidence
