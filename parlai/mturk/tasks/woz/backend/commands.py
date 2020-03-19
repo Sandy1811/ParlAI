@@ -388,34 +388,69 @@ class TaskDoneCommand(WorkerCommand):
 
 
 class SelectPrimaryCommand(WizardCommand):
-    def __init__(self, sender: Agent) -> None:
+    def __init__(self, sender: Agent, item: Dict[Text, Any]) -> None:
         super(SelectPrimaryCommand, self).__init__(sender)
         self._command_name = "select_primary"
-        print("Creating SelectPrimaryCommand")
+        self._item = item
+        print(f"Creating SelectPrimaryCommand: {item}")
+
+    @property
+    def item(self):
+        return self._item
 
     @property
     def message(self) -> Dict[Text, Any]:
         print("Constructing message from SelectPrimaryCommand")
-        return {"id": self._sender.id, "text": all_constants()["front_to_back"]["select_kb_entry_prefix"]}
+        return {
+            "id": self._sender.id,
+            "text": all_constants()["front_to_back"]["select_kb_entry_prefix"]
+            + str(self._item),
+        }
 
     @staticmethod
-    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+    def from_message(
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
         print(f"Constructing SelectPrimaryCommand from message {extracted_from_text}")
-        return SelectPrimaryCommand(sender=sender)
+        item = json.loads(extracted_from_text)
+        return SelectPrimaryCommand(sender=sender, item=item)
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {"Agent": self._sender.id, "Action": self._command_name}
 
 
 class SelectSecondaryCommand(WizardCommand):
-    def __init__(self, sender: Agent) -> None:
+    def __init__(self, sender: Agent, item: Dict[Text, Any]) -> None:
         super(SelectSecondaryCommand, self).__init__(sender)
         self._command_name = "select_secondary"
+        self._item = item
+        print(f"Creating SelectSecondaryCommand: {item}")
+
+    @property
+    def item(self):
+        return self._item
 
     @property
     def message(self) -> Dict[Text, Any]:
-        return {"id": self._sender.id, "text": all_constants()["front_to_back"]["select_reference_kb_entry_prefix"]}
+        print("Constructing message from SelectSecondaryCommand")
+        return {
+            "id": self._sender.id,
+            "text": all_constants()["front_to_back"]["select_reference_kb_entry_prefix"]
+            + str(self._item),
+        }
 
     @staticmethod
-    def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
-        return SelectSecondaryCommand(sender=sender)
+    def from_message(
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
+        print(f"Constructing SelectSecondaryCommand from message {extracted_from_text}")
+        item = json.loads(extracted_from_text)
+        return SelectSecondaryCommand(sender=sender, item=item)
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {"Agent": self._sender.id, "Action": self._command_name}
 
 
 class RequestSuggestionsCommand(WizardCommand):

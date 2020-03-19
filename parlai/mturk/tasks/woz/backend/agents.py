@@ -94,6 +94,7 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
             reply = {
                 "id": "KnowledgeBase",
                 "text": f"Found {count} items in {api_name}. Example: {json.dumps(items)}.",
+                "example_item": items,
             }
         except Exception as e:
             reply = {
