@@ -504,7 +504,6 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
     def _parley_wizard(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
         self.store_wizard_event(wizard_command.event)
-        self.tutor.observe(wizard_command.event)
 
         if isinstance(wizard_command, UtterCommand):
             return 1
@@ -565,6 +564,7 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
         _event = event
         _event["PrimaryItem"] = self._primary_kb_item
         _event["SecondaryItem"] = self._secondary_kb_item
+        self.tutor.observe(_event)
         self.events.append(_event)
 
     def episode_done(self):

@@ -204,18 +204,11 @@
       "Guide": "Very good! \nNow follow the last step of the diagram. Confirm the ride with id and license plate number to the user."
     },
     {
-      "Wizard": { "Action":  "select_primary" },
+      "Wizard": { "Action": "utter", "TextRegex": "^.*(license).*", "PrimaryItem": {"DriverName": "Sirius"} },
       "Corrections": [
-        "No, you first have to select the knowledge base item that you are referring to (earlier in this dialogue).",
-        "Still not correct. Please scroll up until you find the message from the knowledge base that contains the license plate number. Then click on its 'Selected' button.",
-        "No. One more try..."
-      ]
-    },
-    {
-      "Wizard": { "Action": "utter", "TextRegex": "^.*(license).*" },
-      "Corrections": [
-        "Did you mention the license plate number?",
-        "Please mention something like 'license plate: ...'.",
+        "Not quite right. Remember that you first have to select the knowledge base item that you get the information from (scroll up and select the right item).",
+        "No. Did you mention the license plate number?",
+        "Please make sure you've selected the right item and mention something like 'license plate: ...'.",
         "No. One more try..."
       ]
     },

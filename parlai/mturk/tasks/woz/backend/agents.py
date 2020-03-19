@@ -415,6 +415,32 @@ def step_condition_satisfied(
                     return False
             del step["Constraints"]
 
+        if "PrimaryItem" in step:
+            print("Needs primary item.")
+            if not observation.get("PrimaryItem"):
+                print(f"Primary item not in observation {observation}")
+                return False
+            observed_item = observation.get("PrimaryItem")
+            for key, value in step.get("PrimaryItem", {}).items():
+                if key not in observed_item:
+                    print(f"Key not in observation {observation}")
+                    return False
+                if not similar(value, observed_item.get(key, "")):
+                    print(f"Value for {key} not correct {observation}")
+                    return False
+            del step["PrimaryItem"]
+
+        if "SecondaryItem" in step:
+            if not observation.get("SecondaryItem"):
+                return False
+            observed_item = observation.get("SecondaryItem")
+            for key, value in step.get("SecondaryItem", {}).items():
+                if key not in observed_item:
+                    return False
+                if not similar(key, observed_item.get(key, "")):
+                    return False
+            del step["SecondaryItem"]
+
         return all([similar(step[k], observation[k]) for k in step if k in observation])
 
 
