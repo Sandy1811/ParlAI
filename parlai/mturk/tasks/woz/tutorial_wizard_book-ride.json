@@ -1,7 +1,7 @@
 {
   "Steps": [
     {
-      "Guide": "Hello. This is a training dialogue that you have to master before you can talk to real users. Send 'ok' to proceed."
+      "Guide": "Hello, welcome to this tutorial. Before you can talk to real users, you have to get to know this user interface and the details of your task. I will explain everything to you step-by-step. Send 'ok' to proceed."
     },
     {
       "Wizard": "ok",
@@ -13,7 +13,91 @@
       ]
     },
     {
-      "Guide": "Great! \nOn the left side of the screen you see a flow chart that you should follow whenever possible. We will now simulate a user for you to chat with and explain this chart along the way. Send 'ok' to proceed."
+      "Guide": "Great! \nOn the left side of the screen you see two tabs. The first tab titled 'Instructions' shows a flow chart that you should follow during the dialogue whenever possible. The second tab shows a form that you can use to query a knowledge base. Send 'ok' to learn more."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'.",
+        "Please make sure don't type anything else. Just type 'ok' in the input field below and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "About the 'Instructions' tab: \nThe flow chart on the 'Instructions' tab tells you how you should respond to users when they behave according to plan. This might not always be possible, though, so sometimes you'll have to improvise. Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'.",
+        "Please make sure don't type anything else. Just type 'ok' in the input field below and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "More about the 'Instructions' tab: \nIf the flow chart is too small for you to read, you can click on it and it will open as a new tab. I will explain the meaning of the boxes in that chart later. Just remember: At any point in a dialogue, always make sure you know where you are on that chart! Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'.",
+        "Please make sure don't type anything else. Just type 'ok' in the input field below and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "About the 'Knowledge Base' tab: \nThe 'Knowledge Base' tab is a list of constraints and a 'Query' button. You can add constraints by selecting the kind of constraint in the top drop-down box and click on 'Add Constraint'. Some constraints you always have to know about before you can make a query. These are already listed (but not filled out), e.g. 'Customer Name', 'Departure Location', and others. During the dialogue, you will learn what the user is looking for, and enter his/her requirements into the form. The flow chart under the 'Instructions' tab indicates at what point in the dialogue you should click the 'Query' button. Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'.",
+        "Please make sure don't type anything else. Just type 'ok' in the input field below and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "So... What is the 'Add Constraint' button for?"
+    },
+    {
+      "Wizard": { "Action": "utter" , "TextRegex": "^.*constraint.*" },
+      "Corrections": [
+        "I don't think so... But I might misunderstand if you misspelled something. Try again.",
+        "No. I mean, what does the 'Add Constraint' button add to your query?",
+        "Hmm... Still doesn't look right.",
+        "Ok, just write 'It adds a new constraint to the form'."
+      ]
+    },
+    {
+      "Guide": "Ok. And when should you use the 'Query' button?"
+    },
+    {
+      "Wizard": { "Action": "utter" , "TextRegex": "^.*(chart|instruction).*" },
+      "Corrections": [
+        "I don't think so... But I might misunderstand if you misspelled something. Try again.",
+        "No. Remember what you should always be aware of during the dialogue. Try again.",
+        "Hmm... Still doesn't look right.",
+        "Ok, just write 'When the flow chart tells me to'."
+      ]
+    },
+    {
+      "Guide": "Good! In some situations you may need to improvise, but stick to the flow chart whenever possible and query the knowledge base as few times as possible! Send 'ok' to proceed."
+    },
+    {
+      "Wizard": "ok",
+      "Corrections": [
+        "You have to type 'ok' in the input field below and click on 'Send'.",
+        "Please make sure don't type anything else. Just type 'ok' in the input field below and click on 'Send'.",
+        "Still not correct. Try again.",
+        "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "Ok, it's time for you to chat with a user. I will simulate one for you. Send 'ok' when you are ready!"
     },
     {
       "Wizard": "ok",
@@ -39,7 +123,7 @@
     },
     { "User": "I need to book a ride to Hogwarts." },
     {
-      "Guide": "Here the user has already provided the first piece of information that you need (see the top-most box in the flow chart). \nStep by step, ask the user for the remaining required information."
+      "Guide": "Here the user has already provided the first piece of information that you need (see the top-most box in the flow chart). Step by step, ask the user for the remaining required information."
     },
     {
       "Wizard": { "Action": "utter" , "TextRegex": "^.*name.*" },
@@ -62,7 +146,7 @@
     },
     { "User": "I need Sirius to pick me up at the front entrance of Central Station" },
     {
-      "Guide": "Have a look at the flow chart. \nBy now you have collected all the required information (top blue box) and even one additional piece of information from the purple box below. Now you should click the 'Knowledge Base' tab and enter this information into the form. Then click the 'Query' button."
+      "Guide": "Have a look at the flow chart. \nBy now you have collected all the required information (top blue box) and even one additional piece of information from the purple box below. Now you should click the 'Knowledge Base' tab and enter this information into the form. Leave the 'Request Type' field to 'Check', because you don't want to execute a booking just yet. Then click the 'Query' button, since the flow chart tells you to."
     },
     {
       "Wizard": { "Action": "query", "API": "book_ride", "Constraints":  [{
@@ -81,6 +165,18 @@
         "Something is still wrong. Try again.",
         "No. You have two more attempts...",
         "No. One more try..."
+      ]
+    },
+    {
+      "Guide": "Well done. Note that the response of the knowledge base appears as a bubble in this dialogue window. This is only visible to you, and so you'll have to describe to the user what you've found. When you do that, you should let us know which of the knowledge base items you are looking at (there might be several). To do so, you can click the 'Selected' button in any knowledge base item. Whenever you generate a new item (by clicking 'Query'), that item is always selected by default. So... why should you sometimes scroll up the dialogue history?"
+    },
+    {
+      "Wizard": { "Action": "utter", "TextRegex": "^.*(select).*" },
+      "Corrections": [
+        "So we know what item you are describing, but what do you have to do (besides scrolling back) before you describe a knowledge base item?",
+        "No, that still doesn't seem right.",
+        "No. Just write 'I scroll up and select the item that I want to describe, so you know what I am talking about'.",
+        "Nope. Typo?"
       ]
     },
     {
@@ -105,7 +201,7 @@
       ]
     },
     {
-      "Guide": "Very good! \nNow follow the last step of the diagram. Here, you should FIRST select on the knowledge base item that contains the detailed information of the ride you just booked (earlier in this dialogue). Then confirm the ride with id and license plate number to the user."
+      "Guide": "Very good! \nNow follow the last step of the diagram. Confirm the ride with id and license plate number to the user."
     },
     {
       "Wizard": { "Action":  "select_primary" },
@@ -125,7 +221,7 @@
     },
     {"User":  "Thank you, and goodbye!"},
     {
-      "Guide": "Very good! The user is satisfied and says goodbye. You have successfully completed this tutorial! \nNote, that in a real dialogue, there will be a button on the left panel that you should click once the user has said goodbye."
+      "Guide": "Very good! The user is satisfied and says goodbye. You have successfully completed this tutorial and earned the qualification to talk to real users! \nNote, that in a real dialogue, there will be a button on the left panel that you should click once the user has said goodbye."
     }
   ]
 }

@@ -192,7 +192,7 @@ export class QueryForm extends React.Component {
               }}
               style={{ marginLeft: 20 }}
             >
-              Add Field
+              Add Constraint
             </Button>
           </div>
         </FormGroup>
