@@ -412,7 +412,8 @@ class SelectPrimaryCommand(WizardCommand):
         sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
     ) -> Optional["Command"]:
         print(f"Constructing SelectPrimaryCommand from message {extracted_from_text}")
-        item = json.loads(extracted_from_text)
+        _, item_text = extracted_from_text.strip().split("|", 1)
+        item = json.loads(item_text)
         return SelectPrimaryCommand(sender=sender, item=item)
 
     @property
@@ -445,7 +446,8 @@ class SelectSecondaryCommand(WizardCommand):
         sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
     ) -> Optional["Command"]:
         print(f"Constructing SelectSecondaryCommand from message {extracted_from_text}")
-        item = json.loads(extracted_from_text)
+        _, item_text = extracted_from_text.strip().split("|", 1)
+        item = json.loads(item_text)
         return SelectSecondaryCommand(sender=sender, item=item)
 
     @property

@@ -51,7 +51,9 @@ function getSelectionInfo(originalMessages) {
       ? select_kb_entry_prefix
       : select_reference_kb_entry_prefix;
 
-    return message.slice(prefix.length).trim();
+    const message_id_content_separator_position = message.indexOf("|")
+
+    return message.slice(prefix.length, message_id_content_separator_position).trim();
   };
 
   // Iterate through all messages to find
@@ -148,7 +150,7 @@ function KnowledgeBaseMessage(props) {
 
       const example_string = message.slice(needlePosition + needle.length, -1);
 
-      props.onMessageSend(`${prefix} ${example_string}`, {}, () =>
+      props.onMessageSend(`${prefix} ${props.message_id}|${example_string}`, {}, () =>
         console.log("sent selection")
       );
     };
