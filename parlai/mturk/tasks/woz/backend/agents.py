@@ -401,32 +401,31 @@ def step_condition_satisfied(
             if "Constraints" not in observation:
                 return False
             observed_constraints = observation["Constraints"]
-            print(observed_constraints)
-            print(step["Constraints"])
             for expected_constraint in step["Constraints"]:
                 try:
-                    observed_constraint = select_first(observed_constraints, lambda c: constraint_name(c) == constraint_name(expected_constraint))
+                    observed_constraint = select_first(
+                        observed_constraints,
+                        lambda c: constraint_name(c)
+                        == constraint_name(expected_constraint),
+                    )
                 except (StopIteration, ValueError):
-                    print(f"missing key for {expected_constraint}")
                     return False
 
-                if not similar(constraint_value(expected_constraint), constraint_value(observed_constraint)):
-                    print(f"wrong value for {expected_constraint} vs {observed_constraint}")
+                if not similar(
+                    constraint_value(expected_constraint),
+                    constraint_value(observed_constraint),
+                ):
                     return False
             del step["Constraints"]
 
         if "PrimaryItem" in step:
-            print("Needs primary item.")
             if not observation.get("PrimaryItem"):
-                print(f"Primary item not in observation {observation}")
                 return False
             observed_item = observation.get("PrimaryItem")
             for key, value in step.get("PrimaryItem", {}).items():
                 if key not in observed_item:
-                    print(f"Key not in observation {observation}")
                     return False
                 if not similar(value, observed_item.get(key, "")):
-                    print(f"Value for {key} not correct {observation}")
                     return False
             del step["PrimaryItem"]
 
@@ -451,7 +450,7 @@ def similar(a: Any, b: Any):
         return a == b
 
 
-def select_first(iterable, condition = lambda x: True):
+def select_first(iterable, condition=lambda x: True):
     """
     Returns the first item in the `iterable` that
     satisfies the `condition`.
