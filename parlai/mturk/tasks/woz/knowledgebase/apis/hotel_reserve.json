@@ -16,14 +16,14 @@
       "Type": "Integer",
       "Min": 1,
       "Max": 31,
-      "ReadableName": "Start Date"
+      "ReadableName": "Start Day (1 - 31)"
     },
     {
       "Name": "EndDate",
       "Type": "Integer",
       "Min": 1,
       "Max": 31,
-      "ReadableName": "End Date"
+      "ReadableName": "End Day (1 - 31)"
     },
     {
       "Name": "CustomerName",
@@ -37,9 +37,9 @@
     },
     {
       "Name": "RequestType",
-      "Type": "Categorical",
+      "Type": "RequestType",
       "Categories": ["Check", "Book"],
-      "ReadableName": "RequestType"
+      "ReadableName": "Request Type"
     }
   ],
   "output": [
