@@ -201,6 +201,9 @@ class WOZWorld(MTurkTaskWorld):
 
         self.num_turns = 1
 
+        self._primary_kb_item = None
+        self._secondary_kb_item = None
+
     def parley(self):
         if self._stage == SETUP_STAGE:
             self.wizard.observe(
@@ -265,7 +268,7 @@ class WOZWorld(MTurkTaskWorld):
 
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
-        self.events.append(wizard_command.event)
+        self.store_wizard_event(wizard_command.event)
 
         if isinstance(wizard_command, UtterCommand):
             self.user.observe(wizard_command.message)
@@ -275,6 +278,8 @@ class WOZWorld(MTurkTaskWorld):
         elif isinstance(wizard_command, QueryCommand):
             self.knowledgebase.observe(wizard_command)
             kb_message = self.knowledgebase.act()
+            self._primary_kb_item = kb_message.get("example_item")
+            self._secondary_kb_item = None
             # self.events.append(kb_message.event)
             self.wizard.observe(kb_message)
             return 0
@@ -294,8 +299,11 @@ class WOZWorld(MTurkTaskWorld):
             self._stage = EVALUATION_STAGE
             return 1
         elif isinstance(wizard_command, SelectPrimaryCommand):
+            self._primary_kb_item = wizard_command.item
+            self._secondary_kb_item = None
             return 0
         elif isinstance(wizard_command, SelectSecondaryCommand):
+            self._secondary_kb_item = wizard_command.item
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             suggestions = ["message 1", "message 2"]
@@ -345,6 +353,12 @@ class WOZWorld(MTurkTaskWorld):
                 raise RuntimeError(
                     f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}"
                 )
+
+    def store_wizard_event(self, event):
+        _event = event
+        _event["PrimaryItem"] = self._primary_kb_item
+        _event["SecondaryItem"] = self._secondary_kb_item
+        self.events.append(_event)
 
     @echo.echo_in(
         output=echo.log_write, prolog={"command": None, "recipient": (lambda a: a.id)}
@@ -454,6 +468,9 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
 
         self.num_turns = 1
 
+        self._primary_kb_item = None
+        self._secondary_kb_item = None
+
     def parley(self):
         if self._stage == SETUP_STAGE:
             self.wizard.observe(
@@ -486,8 +503,7 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
 
     def _parley_wizard(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
-        self.events.append(wizard_command.event)
-        self.tutor.observe(wizard_command.event)
+        self.store_wizard_event(wizard_command.event)
 
         if isinstance(wizard_command, UtterCommand):
             return 1
@@ -496,6 +512,8 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
         elif isinstance(wizard_command, QueryCommand):
             self.knowledgebase.observe(wizard_command)
             kb_message = self.knowledgebase.act()
+            self._primary_kb_item = kb_message.get("example_item")
+            self._secondary_kb_item = None
             # self.events.append(kb_message.event)
             self.wizard.observe(kb_message)
             return 1
@@ -503,9 +521,12 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
             self._stage = EVALUATION_STAGE
             return 1
         elif isinstance(wizard_command, SelectPrimaryCommand):
-            return 1
+            self._primary_kb_item = wizard_command.item
+            self._secondary_kb_item = None
+            return 0
         elif isinstance(wizard_command, SelectSecondaryCommand):
-            return 1
+            self._secondary_kb_item = wizard_command.item
+            return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             suggestions = ["message 1", "message 2"]
             self.wizard.observe(
@@ -538,6 +559,13 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
         while not is_disconnected(message):
             send_mturk_message("Please return the HIT.", self.wizard)
             message = self.wizard.act()
+
+    def store_wizard_event(self, event):
+        _event = event
+        _event["PrimaryItem"] = self._primary_kb_item
+        _event["SecondaryItem"] = self._secondary_kb_item
+        self.tutor.observe(_event)
+        self.events.append(_event)
 
     def episode_done(self):
         return self._episode_done
