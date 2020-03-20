@@ -2,7 +2,7 @@ from typing import List, Text
 
 
 class MTurkQualificationManager:
-    def __init__(self):
+    def __init__(self) -> None:
         self.qualifications = []
 
     def require_locales(self, country_codes: List[Text]) -> None:
@@ -39,12 +39,21 @@ class MTurkQualificationManager:
             }
         )
 
-    def require_age(self, adult: bool = True) -> None:
+    def require_adult(self, adult: bool = True) -> None:
         self.qualifications.append(
             {
                 "QualificationTypeId": "00000000000000000060",
                 "Comparator": "EqualTo",
                 "IntegerValues": [1] if adult else [0],
+                "RequiredToPreview": True,
+            }
+        )
+
+    def require_existence(self, qualification_id: Text, exists: bool = True) -> None:
+        self.qualifications.append(
+            {
+                "QualificationTypeId": qualification_id,
+                "Comparator": "Exists" if exists else "DoesNotExist",
                 "RequiredToPreview": True,
             }
         )

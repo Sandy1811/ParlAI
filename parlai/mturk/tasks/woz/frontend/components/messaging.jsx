@@ -301,6 +301,13 @@ class ChatMessage extends React.Component {
     }
     const onlyVisibleMsg = (isKB || isSYS) ? " (Only visible to you)" : null;
 
+    let msg_color = undefined;
+    if (isKB) {
+        msg_color = "#f4cdcc";  // light red
+    } else if (isSYS) {
+        msg_color = "#FDEFB6";  // light yellow
+    }
+
     return (
       <div
         className={"row"}
@@ -316,7 +323,7 @@ class ChatMessage extends React.Component {
           style={{
             float: float_loc,
             display: "table",
-            backgroundColor: onlyVisibleMsg ? "#FDEFB6" : undefined,
+            backgroundColor: msg_color,
             color: onlyVisibleMsg ? "rgb(88, 90, 94)" : undefined
           }}
         >

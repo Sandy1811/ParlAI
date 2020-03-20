@@ -5,18 +5,21 @@
 # LICENSE file in the root directory of this source tree.
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
+from parlai.mturk.core import mturk_utils
 from parlai.mturk.core.mturk_manager import MTurkManager
 
 import os
 
 import parlai.mturk.tasks.woz.echo as echo
+from parlai.mturk.tasks.woz.knowledgebase import api
 from parlai.mturk.tasks.woz.task_config import task_config
-from parlai.mturk.tasks.woz.utils import MTurkQualificationManager
+from parlai.mturk.tasks.woz.qualify import MTurkQualificationManager
 from parlai.mturk.tasks.woz.backend.worlds import (
     WizardOnboardingWorld,
     UserOnboardingWorld,
     WOZWorld,
-    WOZWizardTutorialWorld)
+    WOZWizardTutorialWorld,
+)
 from parlai.mturk.tasks.woz.backend.agents import (
     WOZKnowledgeBaseAgent,
     WOZDummyAgent,
@@ -80,10 +83,26 @@ def main():
     # opt["dummy_user"] = True
     # opt["dummy_responses"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/test_user_replies.txt"
     # opt["wizard_intro"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/tutorial_wizard_book-ride.json"
-
-    qualification_manager = MTurkQualificationManager()
-    qualification_manager.require_min_approved_hits(10)
-    # qualification_manager.require_locales(["DE", "US", "CA", "GB", "AU", "NZ"])
+    if opt["wizard_intro"]:
+        opt["dummy_user"] = True
+        api.dbs["ride"].add_item(
+            {
+                "id": 1000,
+                "Price": 20,
+                "ServiceProvider": "Uber",
+                "DriverName": "Zoe",
+            }
+        )
+        api.dbs["ride"].add_item(
+            {
+                "id": 1001,
+                "Price": 21,
+                "ServiceProvider": "Taxi",
+                "DriverName": "Sirius",
+                "CarModel": "Tesla",
+                "LicensePlate": "MAG 1C",
+            }
+        )
 
     # Set the task name to be the folder name
     opt["task"] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
@@ -105,6 +124,30 @@ def main():
 
     mturk_manager.setup_server(
         task_directory_path=os.path.dirname(os.path.abspath(__file__))
+    )
+
+    has_passed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
+        "WOZ-HasPassedWizardTutorial-20200320",
+        "Workers with this qualification have passed the wizard tutorial in its state from 2020-03-20.",
+        opt["is_sandbox"],
+    )
+
+    has_failed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
+        "WOZ-HasFailedWizardTutorial-20200320",
+        "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-20.",
+        opt["is_sandbox"],
+    )
+
+    opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200320"
+
+    qualification_manager = MTurkQualificationManager()
+    qualification_manager.require_min_approved_hits(10)
+    qualification_manager.require_locales(
+        ["DE", "US", "CA", "GB", "AU", "NZ", "IN", "ZA", "SE"]
+    )
+    qualification_manager.require_existence(
+        has_passed_wizard_tutorial_20200320_qualification,
+        exists=(opt["wizard_intro"] is None),
     )
 
     role_index = 0
@@ -151,7 +194,7 @@ def main():
         # Set up the sockets and threads to receive workers
         mturk_manager.ready_to_accept_workers()
 
-        # Create the hits as specified by command line arguments
+        # Create the HITs
         mturk_manager.create_hits(qualifications=qualification_manager.qualifications)
 
         # Check workers eligiblity acts as a filter, and should return
@@ -197,8 +240,14 @@ def main():
                 workers += [dummy_user]
 
             # Create the task world
-            world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
-            # world = WOZWizardTutorialWorld(opt=opt, agents=workers)
+            if opt["wizard_intro"]:
+                world = WOZWizardTutorialWorld(
+                    opt=opt,
+                    agents=workers,
+                    qualification_on_success=has_passed_wizard_tutorial_20200320_qualification,
+                )
+            else:
+                world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
 
             # run the world to completion
             while not world.episode_done():

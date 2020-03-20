@@ -121,7 +121,10 @@ export class QueryForm extends React.Component {
         formField = this.deriveFormDatumFromDOM(form, formFieldWithId.id);
       }
 
-      const operator = formField.operatorValue;
+      let operator = formField.operatorValue;
+      if (formField.fieldName === "RequestType") {  // Johannes: Dirty bug fix
+        operator = null;
+      }
       const operatorWrapper =
         operator == null ? val => val : val => `api.${operator}(${val})`;
 

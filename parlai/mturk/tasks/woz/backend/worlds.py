@@ -8,7 +8,7 @@ from typing import Text, List, Dict, Any, Optional
 
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
-from parlai.mturk.core import shared_utils
+from parlai.mturk.core import shared_utils, mturk_utils
 from parlai.mturk.core.agents import (
     MTURK_DISCONNECT_MESSAGE,
     RETURN_MESSAGE,
@@ -441,8 +441,15 @@ class WOZWorld(MTurkTaskWorld):
 
 
 class WOZWizardTutorialWorld(MTurkTaskWorld):
-    def __init__(self, opt, agents, observers: Optional[List[Agent]] = None):
+    def __init__(
+        self,
+        opt,
+        agents,
+        observers: Optional[List[Agent]] = None,
+        qualification_on_success: Optional[Text] = None,
+    ) -> None:
         super(WOZWizardTutorialWorld, self).__init__(opt, mturk_agent=None)
+        self.opt = opt
         self.observers = observers or []
         self.knowledgebase = None
         self.tutor = None
@@ -456,6 +463,7 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
                 self.knowledgebase = agent
 
         self._scenario = opt.get("scenario")
+        self._qualification_on_success = qualification_on_success
 
         assert self.tutor
         assert self.wizard
@@ -594,7 +602,16 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
         # self.mturk_agent.reject_work()
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
-        pass
+        if self.tutor.worker_succeeded:
+            if self._qualification_on_success:
+                mturk_utils.give_worker_qualification(
+                    self.wizard.worker_id,
+                    self._qualification_on_success,
+                    is_sandbox=self.opt["is_sandbox"],
+                )
+            self.wizard.approve_work()
+        else:
+            self.wizard.block_worker(reason="Failed wizard tutorial of 2020-03-20")
 
     def get_custom_task_data(self):
         # brings important data together for the task, to later be used for
