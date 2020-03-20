@@ -222,6 +222,14 @@
         "No. One more try..."
       ]
     },
+    {
+      "Wizard": { "Action": "utter", "TextRegex": "^.*(tesla).*" },
+      "Corrections": [
+        "You should mention the car's model here. Try again.",
+        "No, that's not right. Try again.",
+        "No. One more try..."
+      ]
+    },
     {"User":  "Spiffing! Yes, I'd like to book that."},
     {
       "Guide": "Follow the arrow in the diagram that goes through 'Yes'. You see that now you should send the same knowledge base query again, but with the 'Request type' flag set to 'Book'. "

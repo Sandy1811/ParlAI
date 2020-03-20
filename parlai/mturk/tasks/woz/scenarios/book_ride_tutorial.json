@@ -15,16 +15,29 @@
   },
   "instructions": {
     "User": {
-      "task_description": "You are at the South entrance to the Central Station and want to book a Lyft ride to Wayne Tower.",
-      "completion_requirements": [],
-      "completion_questions": []
+      "task_description": "You are at the South entrance to the Central Station and want to book a Lyft ride to Wellington Road 12. During the dialogue you might get additional instructions from the MTurk System.",
+      "completion_requirements": [
+        "The assistant has booked you a ride that satisfies the criteria above, or told you that no such ride is available.",
+        "You have followed all the additional instructions that we send to you during the chat (labeled as 'MTurk System').",
+        "You have said 'goodbye' to the assistant.",
+        "You have answered the questionnaire at the end of the dialogue."
+      ],
+      "completion_questions": [
+        "find you a ride that suits you?",
+        "stay polite and helpful throughout the conversation?"
+      ]
     },
     "Wizard": {
-      "task_description": "This is a tutorial. Follow the system's instructions and help the user book a car ride.",
+      "task_description": "Follow the system's instructions and help the user book a car ride.",
       "completion_requirements": [
-        "The system says you have succeeded."
+        "The user is satisfied and has said goodbye.",
+        "You have answered the questionnaire at the end of the dialogue."
       ],
-      "completion_questions": []
+      "completion_questions": [
+        "behave in a friendly manner throughout the dialogue?",
+        "change his/her mind at least once?",
+        "use a negation (s.a. 'I don't want to take a taxi') at any point?"
+      ]
     }
   }
 }

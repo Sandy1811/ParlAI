@@ -342,7 +342,7 @@ class WOZWorld(MTurkTaskWorld):
                 )
             elif isinstance(command, TaskDoneCommand):
                 agent.observe(
-                    GuideCommand("Thank you for evaluating! Goodbye.").message
+                    GuideCommand("Thank you for evaluating! Goodbye. (You may have to wait for your partner to confirm.)").message
                 )
                 self._received_evaluations += 1
                 return
@@ -526,8 +526,10 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
             self.wizard.observe(kb_message)
             return 1
         elif isinstance(wizard_command, DialogueCompletedCommand):
-            self._stage = EVALUATION_STAGE
-            return 1
+            send_mturk_message(
+                "You cannot use this functionality during the tutorial.", self.wizard
+            )
+            return 0
         elif isinstance(wizard_command, SelectPrimaryCommand):
             self._primary_kb_item = wizard_command.item
             self._secondary_kb_item = None

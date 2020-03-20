@@ -207,7 +207,7 @@ function ReviewForm(props) {
     return 'Waiting for initialization...';
   }
   const completionQuestions = setupMessage.completion_questions;
-  const other_agent = props.agent_id === 'User' ? 'user ' : 'assistant ';
+  const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
 
   return (
     <form

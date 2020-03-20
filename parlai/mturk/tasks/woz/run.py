@@ -149,6 +149,10 @@ def main():
         has_passed_wizard_tutorial_20200320_qualification,
         exists=(opt["wizard_intro"] is None),
     )
+    qualification_manager.require_existence(
+        has_failed_wizard_tutorial_20200320_qualification,
+        exists=False
+    )
 
     role_index = 0
 
