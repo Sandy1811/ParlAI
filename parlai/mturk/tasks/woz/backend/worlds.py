@@ -204,7 +204,6 @@ class WOZWorld(MTurkTaskWorld):
             elif agent.demo_role == "UserTutor":
                 self.user_tutor = agent
 
-        #self._scenario = opt.get("scenario")
         scenarios_list_fn = os.path.join(
           os.path.dirname(os.path.abspath(__file__)),
           "..",
