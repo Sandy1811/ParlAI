@@ -2,13 +2,7 @@
   "title": "Apartment Search",
   "name": "Apartment",
   "version": 1,
-  "api_names": [
-    "apartment_search",
-    "book_apartment_viewing",
-    "book_doctor_appointment",
-    "followup_doctor_appointment",
-    "restaurant_reserve"
-  ],
+  "api_names": ["apartment_search"],
   "schema_urls": {
     "restaurant_reserve": "https://drive.google.com/uc?id=1iT2isMc7FW1iXvIEOQkpofNpWMYXjYVkdtvjwRhGcYw"
   },

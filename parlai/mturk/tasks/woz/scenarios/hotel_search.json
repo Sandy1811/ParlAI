@@ -1,0 +1,30 @@
+{
+  "title": "Hotel Search",
+  "name": "Hotel Search",
+  "version": 1,
+  "api_names": ["hotel_search"],
+  "schema_urls": {
+    "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg"
+  },
+  "instructions": {
+    "User": {
+      "task_description": "Search for a hotel.",
+      "completion_requirements": ["You have found a hotel."],
+      "completion_questions": [
+        "AA ...find you a suitable apartment?",
+        "AA ...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "AA Be helpful...",
+      "completion_requirements": [
+        "AA You have found an apartment that the user likes,",
+        "AA or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

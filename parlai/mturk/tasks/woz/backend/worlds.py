@@ -3,6 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import os
+import random
 import time
 from typing import Text, List, Dict, Any
 
@@ -202,7 +204,15 @@ class WOZWorld(MTurkTaskWorld):
             elif agent.demo_role == "UserTutor":
                 self.user_tutor = agent
 
-        self._scenario = opt.get("scenario")
+        #self._scenario = opt.get("scenario")
+        scenarios_list_fn = os.path.join(
+          os.path.dirname(os.path.abspath(__file__)),
+          "..",
+          "scenarios",
+          opt.get("scenario_list") + ".txt",
+        )
+        scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
+        self._scenario = random.choice(scenarios_list)
 
         assert self.user
         assert self.wizard
@@ -440,4 +450,7 @@ class WOZWorld(MTurkTaskWorld):
         parser = parser.add_argument_group('WOZWorld arguments')
         parser.add_argument(
             "--scenario", type=str, default="all", help="Scenario name",
+        )
+        parser.add_argument(
+            "--scenario_list", type=str, default="all_scenarios", help="Scenario list",
         )
