@@ -162,6 +162,7 @@
         "That doesn't seem right. Did you query the knowledge base with all the right information? Try again.",
         "No. Make sure you don't forget to add a constraint on the price, and you write 'front entrance of Central Station' as point of departure.",
         "No... Maybe you chose 'price is less than 42'? But it should be 'price is less than 43', since 42 is still ok.",
+        "No. Many people tend to pick a particular price here, but you should select 'is less than' and '43'. If you did that, then something else must be wrong. Try again.",
         "Still not quite right. Don't write anything. Just fill in the form and click on the 'Query' button under the form.",
         "Something is still wrong. Try again.",
         "No. You have two more attempts...",
@@ -197,6 +198,7 @@
       "Wizard": { "Action": "utter", "TextRegex": "^.*(provider|model).*(provider|model).*" },
       "Corrections": [
         "Hmm... Did you mention all three things listed in Box 4? Try again.",
+        "No, you should list the four items in Box 4 in the flow chart. Try again.",
         "No, that still doesn't seem right.",
         "No. One more try.."
       ]
