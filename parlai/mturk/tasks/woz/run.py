@@ -142,8 +142,9 @@ def main():
 
     qualification_manager = MTurkQualificationManager()
     qualification_manager.require_min_approved_hits(10)
+    qualification_manager.require_min_approval_rate(98)
     qualification_manager.require_locales(
-        ["DE", "US", "CA", "GB", "AU", "NZ", "IN", "ZA", "SE"]
+        ["DE", "US", "CA", "GB", "AU", "NZ", "ZA", "SE"]
     )
     qualification_manager.require_existence(
         has_passed_wizard_tutorial_20200320_qualification,

@@ -39,6 +39,16 @@ class MTurkQualificationManager:
             }
         )
 
+    def require_min_approval_rate(self, min_approval_rate: int) -> None:
+        self.qualifications.append(
+            {
+                "QualificationTypeId": "000000000000000000L0",
+                "Comparator": "GreaterThan",
+                "IntegerValues": [min_approval_rate],
+                "RequiredToPreview": True,
+            }
+        )
+
     def require_adult(self, adult: bool = True) -> None:
         self.qualifications.append(
             {
