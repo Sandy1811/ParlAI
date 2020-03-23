@@ -262,7 +262,7 @@
     },
     {"User":  "Thank you, and goodbye!"},
     {
-      "Guide": "Very good! The user is satisfied and says goodbye. You have successfully completed this tutorial and earned the qualification to talk to real users! \nNote, that in a real dialogue, there will be a button on the left panel that you should click once the user has said goodbye."
+      "Guide": "Very good! The user is satisfied and says goodbye. You have successfully completed this tutorial and earned the qualification to talk to real users! \nNote, that in a real dialogue, you should click the 'dialogue completed' button on the left panel once the user has said goodbye.\nAlso note, that the next task might not be immediately available. Hope to see you again, later!"
     }
   ]
 }
