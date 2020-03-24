@@ -141,16 +141,21 @@ def main():
     opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200320"
 
     qualification_manager = MTurkQualificationManager()
-    qualification_manager.require_min_approved_hits(40)
-    qualification_manager.require_min_approval_rate(98)
     if opt["wizard_intro"]:
         qualification_manager.require_locales(
             ["DE", "US", "CA", "GB", "AU", "NZ", "ZA", "SE"]
         )
-    qualification_manager.require_existence(
-        has_passed_wizard_tutorial_20200320_qualification,
-        exists=(opt["wizard_intro"] is None),
-    )
+        qualification_manager.require_min_approved_hits(40)
+        qualification_manager.require_min_approval_rate(98)
+        qualification_manager.require_existence(
+            has_passed_wizard_tutorial_20200320_qualification,
+            exists=False,
+        )
+    else:
+        qualification_manager.require_existence(
+            has_passed_wizard_tutorial_20200320_qualification,
+            exists=True,
+        )
     qualification_manager.require_existence(
         has_failed_wizard_tutorial_20200320_qualification,
         exists=False
