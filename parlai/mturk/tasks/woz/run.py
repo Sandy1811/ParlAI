@@ -132,20 +132,32 @@ def main():
         opt["is_sandbox"],
     )
 
+    has_passed_wizard_tutorial_20200324_qualification = mturk_utils.find_or_create_qualification(
+        "WOZ-HasPassedWizardTutorial-20200324",
+        "Workers with this qualification have passed the wizard tutorial in its state from 2020-03-24.",
+        opt["is_sandbox"],
+    )
+
     has_failed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
         "WOZ-HasFailedWizardTutorial-20200320",
         "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-20.",
         opt["is_sandbox"],
     )
 
-    opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200320"
+    has_failed_wizard_tutorial_20200324_qualification = mturk_utils.find_or_create_qualification(
+        "WOZ-HasFailedWizardTutorial-20200324",
+        "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-24.",
+        opt["is_sandbox"],
+    )
+
+    opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200324"
 
     qualification_manager = MTurkQualificationManager()
     if opt["wizard_intro"]:
         qualification_manager.require_locales(
-            ["DE", "US", "CA", "GB", "AU", "NZ", "ZA", "SE"]
+            ["US", "CA", "GB", "AU", "NZ"]
         )
-        qualification_manager.require_min_approved_hits(40)
+        qualification_manager.require_min_approved_hits(10000)
         qualification_manager.require_min_approval_rate(98)
         qualification_manager.require_existence(
             has_passed_wizard_tutorial_20200320_qualification,
@@ -255,7 +267,7 @@ def main():
                 world = WOZWizardTutorialWorld(
                     opt=opt,
                     agents=workers,
-                    qualification_on_success=has_passed_wizard_tutorial_20200320_qualification,
+                    qualification_on_success=has_passed_wizard_tutorial_20200324_qualification,
                 )
             else:
                 world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
