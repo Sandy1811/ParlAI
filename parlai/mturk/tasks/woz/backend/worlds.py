@@ -500,6 +500,8 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
 
     def _parley_tutor(self) -> int:
         tutor_command = command_from_message(self.tutor.act(), self.tutor)
+        self.store_tutor_event(tutor_command.event)
+
         if isinstance(tutor_command, DialogueCompletedCommand):
             self._stage = EVALUATION_STAGE
             return 1
@@ -577,6 +579,9 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
         self.tutor.observe(_event)
         self.events.append(_event)
 
+    def store_tutor_event(self, event):
+        self.events.append(event)
+
     def episode_done(self):
         return self._episode_done
 
@@ -619,7 +624,7 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
         # brings important data together for the task, to later be used for
         # creating the dataset. If data requires pickling, put it in a field
         # called 'needs-pickle'.
-        return {"events": self.events}
+        return {"Events": self.events, "WizardWorkerID": self.wizard.worker_id}
 
     def get_model_agent(self):
         return self.wizard
