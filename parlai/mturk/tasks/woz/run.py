@@ -219,6 +219,9 @@ def main():
 
         # Create the HITs
         mturk_manager.create_hits(qualifications=qualification_manager.qualifications)
+        print("Qualification Requirements:")
+        for q in qualification_manager.qualifications:
+            print(f"  {q}")
 
         # Check workers eligiblity acts as a filter, and should return
         # the list of all workers currently eligible to work on the task
