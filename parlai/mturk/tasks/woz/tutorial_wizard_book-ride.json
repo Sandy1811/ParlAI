@@ -198,7 +198,7 @@
       "Wizard": { "Action": "utter", "TextRegex": "^.*(provider|model).*(provider|model).*" },
       "Corrections": [
         "Hmm... Did you mention all three things listed in Box 4? Try again.",
-        "No, you should list the four items in Box 4 in the flow chart. Try again.",
+        "No, you should list the three items in Box 4 in the flow chart. Try again.",
         "No, that still doesn't seem right.",
         "No. One more try.."
       ]
