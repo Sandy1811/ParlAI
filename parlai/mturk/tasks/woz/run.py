@@ -165,11 +165,15 @@ def main():
         )
     else:
         qualification_manager.require_existence(
-            has_passed_wizard_tutorial_20200320_qualification,
+            has_passed_wizard_tutorial_20200324_qualification,
             exists=True,
         )
     qualification_manager.require_existence(
         has_failed_wizard_tutorial_20200320_qualification,
+        exists=False
+    )
+    qualification_manager.require_existence(
+        has_failed_wizard_tutorial_20200324_qualification,
         exists=False
     )
 
