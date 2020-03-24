@@ -1,6 +1,7 @@
 import json
 import os
 from typing import Text, Dict, Any, List, Optional, Union, Tuple
+import time
 
 from parlai.core.agents import Agent
 import parlai.mturk.tasks.woz.knowledgebase.api as api
@@ -104,7 +105,11 @@ class WizardCommand(WorkerCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "UnixTime": int(time.time()),
+        }
 
 
 class BackendCommand(Command):
@@ -152,6 +157,7 @@ class UtterCommand(WorkerCommand):
             "Agent": self._sender.id,
             "Action": self._command_name,
             "Text": self._text,
+            "UnixTime": int(time.time()),
         }
 
 
@@ -177,6 +183,7 @@ class SilentCommand(WorkerCommand):
         return {
             "Agent": self._sender.id,
             "Action": self._command_name,
+            "UnixTime": int(time.time()),
         }
 
 
@@ -346,6 +353,7 @@ class QueryCommand(WizardCommand):
             "Action": self._command_name,
             "Constraints": self._constraints_raw,
             "API": self._api_name,
+            "UnixTime": int(time.time()),
         }
 
 
@@ -370,6 +378,7 @@ class DialogueCompletedCommand(WorkerCommand):
         return {
             "Agent": self._sender.id,
             "Action": self._command_name,
+            "UnixTime": int(time.time()),
         }
 
 
@@ -418,7 +427,7 @@ class SelectPrimaryCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name}
+        return {"Agent": self._sender.id, "Action": self._command_name, "UnixTime": int(time.time())}
 
 
 class SelectSecondaryCommand(WizardCommand):
@@ -452,7 +461,7 @@ class SelectSecondaryCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name}
+        return {"Agent": self._sender.id, "Action": self._command_name, "UnixTime": int(time.time())}
 
 
 class RequestSuggestionsCommand(WizardCommand):
