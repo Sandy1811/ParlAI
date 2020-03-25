@@ -342,7 +342,9 @@ class WOZWorld(MTurkTaskWorld):
                 )
             elif isinstance(command, TaskDoneCommand):
                 agent.observe(
-                    GuideCommand("Thank you for evaluating! Goodbye. (You may have to wait for your partner to confirm.)").message
+                    GuideCommand(
+                        "Thank you for evaluating! Goodbye. (You may have to wait for your partner to confirm.)"
+                    ).message
                 )
                 self._received_evaluations += 1
                 return
@@ -417,7 +419,11 @@ class WOZWorld(MTurkTaskWorld):
         # brings important data together for the task, to later be used for
         # creating the dataset. If data requires pickling, put it in a field
         # called 'needs-pickle'.
-        return {"events": self.events}
+        return {
+            "Events": self.events,
+            "WizardWorkerID": self.wizard.worker_id,
+            "UserWorkerID": self.user.worker_id if hasattr(self.user, "worker_id") else None,
+        }
 
     def get_model_agent(self):
         return self.wizard  # ToDo: Don't know if this is correct

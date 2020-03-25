@@ -9,16 +9,18 @@
     "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png",
     "ride_status": "https://i.imgur.com/96PHeZR.jpg",
     "ride_change": "https://i.imgur.com/NH4MQuu.jpg",
-    "book_ride": "https://drive.google.com/uc?export=view&id=1RCfkiWCZpVAN9cZ4AEi3Osb54ovNLhe3",
+    "book_ride": "https://drive.google.com/uc?export=view&id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
     "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg",
     "hotel_reserve": "https://i.imgur.com/emY7oVA.png"
   },
   "instructions": {
     "User": {
-      "task_description": "You are at the South entrance to the Central Station and want to book a Lyft ride to Wellington Road 12. During the dialogue you might get additional instructions from the MTurk System.",
+      "task_description": "You are at the South entrance to the Central Station and want to book a Taxi ride to Main Street 42. During the dialogue you might get additional instructions from the MTurk System, which you have to follow.",
       "completion_requirements": [
         "The assistant has booked you a ride that satisfies the criteria above, or told you that no such ride is available.",
         "You have followed all the additional instructions that we send to you during the chat (labeled as 'MTurk System').",
+        "You know the driver's name, as well as the license plate and booking id of the car that'll pick you up.",
+        "You know when the car will pick you up.",
         "You have said 'goodbye' to the assistant.",
         "You have answered the questionnaire at the end of the dialogue."
       ],
@@ -28,8 +30,10 @@
       ]
     },
     "Wizard": {
-      "task_description": "Follow the system's instructions and help the user book a car ride.",
+      "task_description": "Help the user book a car ride, follow the flow chart whenever possible, as explained in the tutorial.",
       "completion_requirements": [
+        "You have followed the flow chart on the left pane whenever possible (as explained in the tutorial).",
+        "You have used the knowledge base interface to check for and possibly book rides (as explained in the tutorial).",
         "The user is satisfied and has said goodbye.",
         "You have answered the questionnaire at the end of the dialogue."
       ],

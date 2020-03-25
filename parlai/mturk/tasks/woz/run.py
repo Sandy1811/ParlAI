@@ -32,7 +32,7 @@ def create_user_instructor(opt: Opt):
     user_tutor_agent = WOZInstructorAgent(options=opt, rules=[])
     user_tutor_agent.demo_role = "UserTutor"
     user_tutor_agent.add_rule(
-        WOZInstructorAgent.num_turns_condition(min_num_turns=8),
+        WOZInstructorAgent.num_turns_condition(min_num_turns=5, max_num_turns=15),
         "If it makes sense at this point in the conversation, please change your mind about something.",
         max_times_triggered=1,
         target="User",
@@ -126,56 +126,56 @@ def main():
         task_directory_path=os.path.dirname(os.path.abspath(__file__))
     )
 
-    has_passed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
-        "WOZ-HasPassedWizardTutorial-20200320",
-        "Workers with this qualification have passed the wizard tutorial in its state from 2020-03-20.",
-        opt["is_sandbox"],
-    )
+    # has_passed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
+    #     "WOZ-HasPassedWizardTutorial-20200320",
+    #     "Workers with this qualification have passed the wizard tutorial in its state from 2020-03-20.",
+    #     opt["is_sandbox"],
+    # )
+    #
+    # has_passed_wizard_tutorial_20200324_qualification = mturk_utils.find_or_create_qualification(
+    #     "WOZ-HasPassedWizardTutorial-20200324",
+    #     "Workers with this qualification have passed the wizard tutorial in its state from 2020-03-24.",
+    #     opt["is_sandbox"],
+    # )
+    #
+    # has_failed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
+    #     "WOZ-HasFailedWizardTutorial-20200320",
+    #     "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-20.",
+    #     opt["is_sandbox"],
+    # )
+    #
+    # has_failed_wizard_tutorial_20200324_qualification = mturk_utils.find_or_create_qualification(
+    #     "WOZ-HasFailedWizardTutorial-20200324",
+    #     "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-24.",
+    #     opt["is_sandbox"],
+    # )
 
-    has_passed_wizard_tutorial_20200324_qualification = mturk_utils.find_or_create_qualification(
-        "WOZ-HasPassedWizardTutorial-20200324",
-        "Workers with this qualification have passed the wizard tutorial in its state from 2020-03-24.",
-        opt["is_sandbox"],
-    )
+    # opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200324"
 
-    has_failed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
-        "WOZ-HasFailedWizardTutorial-20200320",
-        "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-20.",
-        opt["is_sandbox"],
-    )
-
-    has_failed_wizard_tutorial_20200324_qualification = mturk_utils.find_or_create_qualification(
-        "WOZ-HasFailedWizardTutorial-20200324",
-        "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-24.",
-        opt["is_sandbox"],
-    )
-
-    opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200324"
-
-    qualification_manager = MTurkQualificationManager()
-    if opt["wizard_intro"]:
-        qualification_manager.require_locales(
-            ["US", "CA", "GB", "AU", "NZ"]
-        )
-        qualification_manager.require_min_approved_hits(10000)
-        qualification_manager.require_min_approval_rate(98)
-        qualification_manager.require_existence(
-            has_passed_wizard_tutorial_20200320_qualification,
-            exists=False,
-        )
-    else:
-        qualification_manager.require_existence(
-            has_passed_wizard_tutorial_20200324_qualification,
-            exists=True,
-        )
-    qualification_manager.require_existence(
-        has_failed_wizard_tutorial_20200320_qualification,
-        exists=False
-    )
-    qualification_manager.require_existence(
-        has_failed_wizard_tutorial_20200324_qualification,
-        exists=False
-    )
+    # qualification_manager = MTurkQualificationManager()
+    # if opt["wizard_intro"]:
+    #     qualification_manager.require_locales(
+    #         ["US", "CA", "GB", "AU", "NZ"]
+    #     )
+    #     qualification_manager.require_min_approved_hits(10000)
+    #     qualification_manager.require_min_approval_rate(98)
+    #     qualification_manager.require_existence(
+    #         has_passed_wizard_tutorial_20200320_qualification,
+    #         exists=False,
+    #     )
+    # else:
+    #     qualification_manager.require_existence(
+    #         has_passed_wizard_tutorial_20200324_qualification,
+    #         exists=True,
+    #     )
+    # qualification_manager.require_existence(
+    #     has_failed_wizard_tutorial_20200320_qualification,
+    #     exists=False
+    # )
+    # qualification_manager.require_existence(
+    #     has_failed_wizard_tutorial_20200324_qualification,
+    #     exists=False
+    # )
 
     role_index = 0
 
@@ -222,10 +222,10 @@ def main():
         mturk_manager.ready_to_accept_workers()
 
         # Create the HITs
-        mturk_manager.create_hits(qualifications=qualification_manager.qualifications)
-        print("Qualification Requirements:")
-        for q in qualification_manager.qualifications:
-            print(f"  {q}")
+        mturk_manager.create_hits(qualifications=None)  # qualification_manager.qualifications
+        # print("Qualification Requirements:")
+        # for q in qualification_manager.qualifications:
+        #     print(f"  {q}")
 
         # Check workers eligiblity acts as a filter, and should return
         # the list of all workers currently eligible to work on the task
@@ -270,14 +270,14 @@ def main():
                 workers += [dummy_user]
 
             # Create the task world
-            if opt["wizard_intro"]:
-                world = WOZWizardTutorialWorld(
-                    opt=opt,
-                    agents=workers,
-                    qualification_on_success=has_passed_wizard_tutorial_20200324_qualification,
-                )
-            else:
-                world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
+            # if opt["wizard_intro"]:
+                # world = WOZWizardTutorialWorld(
+                #     opt=opt,
+                #     agents=workers,
+                #     qualification_on_success=has_passed_wizard_tutorial_20200324_qualification,
+                # )
+            # else:
+            world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
 
             # run the world to completion
             while not world.episode_done():

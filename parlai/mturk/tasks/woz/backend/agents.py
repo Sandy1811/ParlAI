@@ -127,7 +127,7 @@ class WOZDummyAgent(NonMTurkAgent):
     def __init__(self, opt: Union[Opt, dict], role: Text) -> None:
         """Initialize this agent."""
         super().__init__(opt)
-        self.id = "DummyAgent"
+        self.id = "User"
         self.role = role
         self.demo_role = role
         self._num_messages_sent = 0
