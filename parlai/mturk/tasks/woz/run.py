@@ -152,13 +152,13 @@ def main():
 
     # opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200324"
 
-    # qualification_manager = MTurkQualificationManager()
+    qualification_manager = MTurkQualificationManager()
     # if opt["wizard_intro"]:
-    #     qualification_manager.require_locales(
-    #         ["US", "CA", "GB", "AU", "NZ"]
-    #     )
-    #     qualification_manager.require_min_approved_hits(10000)
-    #     qualification_manager.require_min_approval_rate(98)
+    qualification_manager.require_locales(
+        ["US", "CA", "GB", "AU", "NZ", "DE"]
+    )
+    qualification_manager.require_min_approved_hits(10000)
+    qualification_manager.require_min_approval_rate(98)
     #     qualification_manager.require_existence(
     #         has_passed_wizard_tutorial_20200320_qualification,
     #         exists=False,
@@ -222,7 +222,7 @@ def main():
         mturk_manager.ready_to_accept_workers()
 
         # Create the HITs
-        mturk_manager.create_hits(qualifications=None)  # qualification_manager.qualifications
+        mturk_manager.create_hits(qualifications=qualification_manager.qualifications)
         # print("Qualification Requirements:")
         # for q in qualification_manager.qualifications:
         #     print(f"  {q}")
