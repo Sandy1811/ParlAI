@@ -18,7 +18,7 @@ On the Amazon Mechanical Turk web site, the HIT description appears in the expan
 view of search results, and in the HIT and assignment screens.
 """
 task_config['hit_description'] = (
-    "Play an AI assistant or a user that interacts with it to find a ride in the city. The first time you do this task, you will go through an interactive tutorial to earn a qualification for future tasks. "
+    "Play an AI assistant or a user that interacts with it to find a ride in the city. Before you attempt this task for the first time as AI assistant, you should watch the introductory tutorial: https://bit.ly/2UgkAQ6 . "
 )
 
 
@@ -35,7 +35,7 @@ and on the left side of the chat page. Supports HTML formatting.
 #     task_config['task_description'] = file.read()
 task_config['frontend_version'] = 1
 
-intro_test = """In this task you will take one of two roles: You could be a 'user' who wants to find and book a car ride or, alternatively, you could take the role of a 'virtual assistant' that helps the user achieve this goal. The first time you do this task, you will go through an interactive tutorial to earn a qualification for future tasks. \n\nNote: In this task it is important that you follow instructions precisely. In particular, in the assistant's role you will not be paid if you don't follow the flow chart whenever possible. """
+intro_test = """In this task you will take one of two roles: You could be a 'user' who wants to find and book a car ride or, alternatively, you could take the role of a 'virtual assistant' that helps the user achieve this goal. The first time you do this task as the assistant, you have to watch and understand a tutorial video: https://bit.ly/2UgkAQ6 . \n\nNote: In this task it is important that you follow instructions precisely. In particular, in the assistant's role you will not be paid if you don't follow the flow chart whenever possible. """
 
 task_config['task_description'] = intro_test
 task_config['chat_title'] = "Chat"

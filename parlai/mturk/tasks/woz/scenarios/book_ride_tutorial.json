@@ -15,7 +15,7 @@
   },
   "instructions": {
     "User": {
-      "task_description": "You are at the South entrance to the Central Station and want to book a Taxi ride to Main Street 42. During the dialogue you might get additional instructions from the MTurk System, which you have to follow.",
+      "task_description": "You are at the East entrance to the Central Station and want to book a Taxi ride to Main Street 42. During the dialogue you might get additional instructions from the MTurk System, which you have to follow.",
       "completion_requirements": [
         "The assistant has booked you a ride that satisfies the criteria above, or told you that no such ride is available.",
         "You have followed all the additional instructions that we send to you during the chat (labeled as 'MTurk System').",

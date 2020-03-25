@@ -95,16 +95,23 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.observe(setup.message)
         send_mturk_message(
             "Take your time to read your task description on the left. "
-            "Write 'ready' when you are ready to see an example, and press [Enter].",
+            "If you haven't watched the tutorial video yet, please do so now. Here is the link: "
+            "https://bit.ly/2UgkAQ6 . "
+            "Once you are ready, type the name of the example user that appears in the tutorial and hit [Enter].",
             self.mturk_agent,
         )
-        message = {}
-        while message.get("text", "").strip().lower() != "ready":
+        while True:
             message = self.mturk_agent.act()
             echo.log_write(f"onboarding wizard: {message}")
             if is_disconnected(message):
                 self.episodeDone = True
                 return
+            if "gaus" in message.get("text", "").strip().lower():
+                break
+            if "carl" in message.get("text", "").strip().lower():
+                break
+            else:
+                send_mturk_message("That is not correct.", self.mturk_agent)
 
         self.mturk_agent.passed_onboarding = True
         # if message.get("text", "") != "ready":
