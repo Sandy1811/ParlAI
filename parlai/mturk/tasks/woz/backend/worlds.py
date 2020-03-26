@@ -113,6 +113,27 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
             else:
                 send_mturk_message("That is not correct.", self.mturk_agent)
 
+        send_mturk_message(
+            "What does the 'request optional' box tell you to do (as explained in the tutorial video)?"
+            "Once you are ready, type your answer and hit [Enter].",
+            self.mturk_agent,
+        )
+
+        while True:
+            message = self.mturk_agent.act()
+            echo.log_write(f"onboarding wizard: {message}")
+            if is_disconnected(message):
+                self.episodeDone = True
+                return
+            if "tell" in message.get("text", "").strip().lower():
+                break
+            if "inform" in message.get("text", "").strip().lower():
+                break
+            if "mention to" in message.get("text", "").strip().lower():
+                break
+            else:
+                send_mturk_message("That does not seem correct. Try again.", self.mturk_agent)
+
         self.mturk_agent.passed_onboarding = True
         # if message.get("text", "") != "ready":
         #     self.block_loop()

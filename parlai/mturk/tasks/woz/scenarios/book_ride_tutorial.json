@@ -15,12 +15,13 @@
   },
   "instructions": {
     "User": {
-      "task_description": "You are at the East entrance to the Central Station and want to book a Taxi ride to Main Street 42. During the dialogue you might get additional instructions from the MTurk System, which you have to follow.",
+      "task_description": "You are just arriving at the Central Station and want to get to your Hotel. Chat with the assistant to book a ride to your destination (you will have to COME UP WITH a hotel name and other details). You will see additional messages from 'MTruk System' telling you what's happening in your environment. As circumstances change, you should also CHANGE YOUR REQUESTS. If you do not follow these additional instructions, you will not be payed!",
       "completion_requirements": [
-        "The assistant has booked you a ride that satisfies the criteria above, or told you that no such ride is available.",
+        "The assistant has booked you a ride that satisfies the criteria above.",
         "You have followed all the additional instructions that we send to you during the chat (labeled as 'MTurk System').",
         "You know the driver's name, as well as the license plate and booking id of the car that'll pick you up.",
         "You know when the car will pick you up.",
+        "You have changed your mind about at least two criteria (s.a. service provider or pickup time) during the dialogue and have told the assistant so.",
         "You have said 'goodbye' to the assistant.",
         "You have answered the questionnaire at the end of the dialogue."
       ],
@@ -30,7 +31,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Help the user book a car ride, follow the flow chart whenever possible, as explained in the tutorial.",
+      "task_description": "Help the user book a car ride, follow the flow chart whenever possible, as explained in the tutorial. DO NOT USE COMMON KNOWLEDGE / IMAGINATION - everything the assistant that you play knows comes from the knowledge base, so you have to use that! However, don't use it more often than necessary to look for the information that the user seeks.",
       "completion_requirements": [
         "You have followed the flow chart on the left pane whenever possible (as explained in the tutorial).",
         "You have used the knowledge base interface to check for and possibly book rides (as explained in the tutorial).",
