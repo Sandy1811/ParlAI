@@ -191,14 +191,14 @@ class WOZInstructorAgent(NonMTurkAgent):
         self._event_history = history
 
     def act(self) -> Tuple[Dict[Text, Any], Dict[Text, Any]]:
-        print(f"acting on: {self._event_history}")
+        # print(f"acting on: {self._event_history}")
         if not self._event_history:
             return {}, {}
         for rule in self._rules:
             if rule.get("triggers_left", 1) > 0 and rule.get(
                 "condition", self.constant_condition(False)
             )(self._event_history):
-                print(rule["message"])
+                # print(rule["message"])
                 if rule.get("probability", 1.0) < 1.0 and random.uniform(
                     0.0, 1.0
                 ) > rule.get("probability", 1.0):
