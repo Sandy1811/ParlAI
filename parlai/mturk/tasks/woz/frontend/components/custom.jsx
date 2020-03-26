@@ -377,7 +377,7 @@ class LeftPane extends React.Component {
           <TaskDescription {...this.props} isInReview={isInReview} />
           {this.props.children}
           <br />
-          If you are ready, please type "ready" and click [Send].
+          If you are ready, please follow the instructions of the 'MTurk System' bot in the dialogue.
           <br />
         </div>
       );
