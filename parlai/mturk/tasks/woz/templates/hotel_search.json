@@ -1,0 +1,35 @@
+{
+  "title": "Hotel Search",
+  "name": "Hotel Search",
+  "db": "hotel.json",
+  "version": 1,
+  "api_names": ["hotel_search"],
+  "schema_urls": {
+    "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg"
+  },
+  "instructions": {
+    "User": {
+      "task_descriptions": [
+        "Search for a @Cost-1 hotel in the @Location-1 part of town.",
+        "Find a @Cost-1 hotel with a rating higher than @AverageRating-1",
+        "Search for @Name-1 near the @Location-1 part of town."
+      ],
+      "completion_requirements": ["You have found a hotel."],
+      "completion_questions": [
+        "...find you a suitable hotel?",
+        "...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "Be helpful...",
+      "completion_requirements": [
+        "You have found a hotel that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

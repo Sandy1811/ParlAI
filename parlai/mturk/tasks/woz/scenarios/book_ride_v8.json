@@ -1,0 +1,29 @@
+{
+  "title": "Book Ride",
+  "name": "Book Ride",
+  "version": 1,
+  "api_names": ["book_ride"],
+  "db": "ride.json",
+  "schema_urls": { "book_ride": "https://i.imgur.com/XvoZOMC.png" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have booked a ride."],
+      "completion_questions": [
+        "...find you a suitable ride?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "You are John and would like a Lyft from University to Broadway and Main."
+    },
+    "Wizard": {
+      "task_description": "AA ...",
+      "completion_requirements": [
+        "You have found a ride that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "title": "Book Ride",
+  "name": "Book Ride",
+  "version": 1,
+  "api_names": ["book_ride"],
+  "db": "ride.json",
+  "schema_urls": {
+    "book_ride": "https://i.imgur.com/XvoZOMC.png"
+  },
+  "instructions": {
+    "User": {
+      "task_descriptions": [
+        "You want a ride from @Location-1 to @Location-2. Your name is @CustomerName-1.",
+        "You are @CustomerName-1 and would like a @ServiceProvider-1 from @Location-1 to @Location-2.",
+        "You are @CustomerName-1 and would like to go from @Location-1 to @Location-2. Your driver should be @DriverName-1",
+        "You are @CustomerName-1 and would like to travel to @Location-1 from @Location-2 in a @CarModel-1 car"
+      ],
+      "completion_requirements": ["You have booked a ride."],
+      "completion_questions": [
+        "...find you a suitable ride?",
+        "...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "AA ...",
+      "completion_requirements": [
+        "You have found a ride that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

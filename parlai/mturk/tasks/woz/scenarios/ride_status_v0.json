@@ -1,0 +1,29 @@
+{
+  "title": "Ride Status",
+  "name": "All",
+  "db": "ride.json",
+  "version": 1,
+  "api_names": ["ride_status"],
+  "schema_urls": { "ride_status": "https://i.imgur.com/96PHeZR.jpg" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have checked the status of your ride."],
+      "completion_questions": [
+        "...tell you the status of your ride?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "You are Angela and your ride ID is 833. Check the status of your ride."
+    },
+    "Wizard": {
+      "task_description": "Be helpful...",
+      "completion_requirements": [
+        "Informed the user about the status of their ride,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}
