@@ -1,0 +1,61 @@
+[
+  {
+    "Name": "Name",
+    "Type": "Categorical",
+    "Categories": [
+      "Shadyside Inn",
+      "Hilton Hotel",
+      "Hyatt Hotel",
+      "Old Town Inn"
+    ]
+  },
+  {
+    "Name": "CustomerName",
+    "Type": "Categorical",
+    "Categories": ["Mark", "John", "Ben", "Angela", "Alexis"]
+  },
+  {
+    "Name": "Cost",
+    "Type": "Categorical",
+    "Categories": ["Cheap", "Moderate", "Expensive"]
+  },
+  {
+    "Name": "Request",
+    "Type": "Categorical",
+    "Categories": ["extra towels", "two beds", "a balcony"]
+  },
+  { "Name": "TakesReservations", "Type": "Boolean" },
+  { "Name": "Service", "Type": "Boolean" },
+  { "Name": "AverageRating", "Type": "Integer", "Min": 1, "Max": 5 },
+  {
+    "Name": "StartDate",
+    "Type": "Integer",
+    "Min": 1,
+    "Max": 15
+  },
+  {
+    "Name": "EndDate",
+    "Type": "Integer",
+    "Min": 15,
+    "Max": 31
+  },
+  {
+    "Name": "ServiceStartHour",
+    "Type": "Integer",
+    "Min": 6,
+    "Max": 10,
+    "Enabled": "!lambda p: p[\"Service\"]"
+  },
+  {
+    "Name": "ServiceStopHour",
+    "Type": "Integer",
+    "Min": 15,
+    "Max": 23,
+    "Enabled": "!lambda p: p[\"Service\"]"
+  },
+  {
+    "Name": "Location",
+    "Type": "Categorical",
+    "Categories": ["South", "West", "East", "North", "Center"]
+  }
+]

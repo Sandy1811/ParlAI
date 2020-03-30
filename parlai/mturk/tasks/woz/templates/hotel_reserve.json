@@ -1,0 +1,34 @@
+{
+  "title": "Hotel Reserve",
+  "name": "Hotel Reserve",
+  "db": "hotel.json",
+  "version": 1,
+  "api_names": ["hotel_reserve"],
+  "schema_urls": {
+    "hotel_reserve": "https://i.imgur.com/emY7oVA.png"
+  },
+  "instructions": {
+    "User": {
+      "task_descriptions": [
+        "Reserve a room at the @Name-1 from @StartDate-1 to @EndDate-1. Your name is @CustomerName-1.",
+        "Make a reservation at @Name-1 from @StartDate-1 to @EndDate-1. Your name is @CustomerName-1. Please request @Request-1."
+      ],
+      "completion_requirements": ["You have reserved a hotel."],
+      "completion_questions": [
+        "...reserve your hotel?",
+        "...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "Be helpful...",
+      "completion_requirements": [
+        "You have found an apartment that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

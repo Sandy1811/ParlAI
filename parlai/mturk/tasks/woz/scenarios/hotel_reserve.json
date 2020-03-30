@@ -1,29 +1,15 @@
 {
-  "title": "All",
-  "name": "All",
+  "title": "Hotel Reserve",
+  "name": "Hotel Reserve",
   "version": 1,
-  "api_names": [
-    "book_ride",
-    "hotel_reserve",
-    "hotel_search",
-    "ride_change",
-    "ride_status"
-  ],
+  "api_names": ["hotel_reserve"],
   "schema_urls": {
-    "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png",
-    "ride_status": "https://i.imgur.com/96PHeZR.jpg",
-    "ride_change": "https://i.imgur.com/NH4MQuu.jpg",
-    "book_ride": "https://i.imgur.com/XvoZOMC.png",
-    "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg",
     "hotel_reserve": "https://i.imgur.com/emY7oVA.png"
   },
   "instructions": {
     "User": {
-      "task_description": "All tasks available.",
-      "completion_requirements": [
-        "You have completed your task.",
-        "You don't feel like talking anymore."
-      ],
+      "task_description": "Reserve a hotel.",
+      "completion_requirements": ["You have reserved a hotel."],
       "completion_questions": [
         "AA ...find you a suitable apartment?",
         "AA ...stay calm and helpful throughout the dialogue?"

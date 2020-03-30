@@ -1,0 +1,29 @@
+{
+  "title": "Hotel Reserve",
+  "name": "Hotel Reserve",
+  "db": "hotel.json",
+  "version": 1,
+  "api_names": ["hotel_reserve"],
+  "schema_urls": { "hotel_reserve": "https://i.imgur.com/emY7oVA.png" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have reserved a hotel."],
+      "completion_questions": [
+        "...reserve your hotel?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "Make a reservation at Shadyside Inn from 15 to 19. Your name is Alexis. Please request extra towels."
+    },
+    "Wizard": {
+      "task_description": "Be helpful...",
+      "completion_requirements": [
+        "You have found an apartment that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

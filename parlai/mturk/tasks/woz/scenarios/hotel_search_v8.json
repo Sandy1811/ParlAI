@@ -1,0 +1,29 @@
+{
+  "title": "Hotel Search",
+  "name": "Hotel Search",
+  "db": "hotel.json",
+  "version": 1,
+  "api_names": ["hotel_search"],
+  "schema_urls": { "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have found a hotel."],
+      "completion_questions": [
+        "...find you a suitable hotel?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "Find a Moderate hotel with a rating higher than 1"
+    },
+    "Wizard": {
+      "task_description": "Be helpful...",
+      "completion_requirements": [
+        "You have found a hotel that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}
