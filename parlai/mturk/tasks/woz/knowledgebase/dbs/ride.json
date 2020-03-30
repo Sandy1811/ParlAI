@@ -1,7 +1,7 @@
 [
     {"Name": "Price", "Type": "Integer", "Min": 5, "Max": 50},
     {"Name": "AllowsChanges", "Type": "Boolean"},
-    {"Name": "DurationMinutes", "Type": "Integer", "Min": 5, "Max": 30},
+    {"Name": "MinutesTillPickup", "Type": "Integer", "Min": 5, "Max": 30},
     {
         "Name": "ServiceProvider",
         "Type": "Categorical",
@@ -10,7 +10,7 @@
     {
         "Name": "DriverName",
         "Type": "Categorical",
-        "Categories": ["Mark", "John", "Dave", "Connor", "Alex"]
+        "Categories": ["Mark", "Ella", "Dave", "Zoe", "Alex", "Sirius"]
     },
     {
         "Name": "CarModel",

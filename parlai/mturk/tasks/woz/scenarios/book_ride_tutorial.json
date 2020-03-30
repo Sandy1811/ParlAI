@@ -1,0 +1,30 @@
+{
+  "title": "All",
+  "name": "All",
+  "version": 1,
+  "api_names": [
+    "book_ride"
+  ],
+  "schema_urls": {
+    "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png",
+    "ride_status": "https://i.imgur.com/96PHeZR.jpg",
+    "ride_change": "https://i.imgur.com/NH4MQuu.jpg",
+    "book_ride": "https://i.imgur.com/XvoZOMC.png",
+    "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg",
+    "hotel_reserve": "https://i.imgur.com/emY7oVA.png"
+  },
+  "instructions": {
+    "User": {
+      "task_description": "You are at the South entrance to the Central Station and want to book a Lyft ride to Wayne Tower.",
+      "completion_requirements": [],
+      "completion_questions": []
+    },
+    "Wizard": {
+      "task_description": "This is a tutorial. Follow the system's instructions and help the user book a car ride.",
+      "completion_requirements": [
+        "The system says you have succeeded."
+      ],
+      "completion_questions": []
+    }
+  }
+}
