@@ -22,7 +22,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "AA ...",
+      "task_description": "Help the user.",
       "completion_requirements": [
         "You have found a ride that the user likes,",
         "or the user says goodbye."

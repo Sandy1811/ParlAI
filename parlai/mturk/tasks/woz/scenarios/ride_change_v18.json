@@ -12,7 +12,7 @@
         "...successfully change your ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You are Ben and your ride ID is 224. Change your ride to leave from Airport and go to University"
+      "task_description": "You are Angela and your ride ID is 253. Change your ride to leave from 5th and Main and go to University"
     },
     "Wizard": {
       "task_description": "Be helpful...",

@@ -12,7 +12,7 @@
         "...reserve your hotel?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Reserve a room at the Shadyside Inn from 2 to 19. Your name is Angela."
+      "task_description": "Reserve a room at the Hilton Hotel from 11 to 22. Your name is John."
     },
     "Wizard": {
       "task_description": "Be helpful...",

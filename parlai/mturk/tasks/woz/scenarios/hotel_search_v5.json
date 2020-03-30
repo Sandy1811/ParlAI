@@ -12,7 +12,7 @@
         "...find you a suitable hotel?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Find a Expensive hotel with a rating higher than 3"
+      "task_description": "Find a Expensive hotel with a rating higher than 1"
     },
     "Wizard": {
       "task_description": "Be helpful...",

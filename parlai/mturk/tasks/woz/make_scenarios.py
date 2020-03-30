@@ -51,6 +51,7 @@ def populate(desc, db_path):
 
   return desc
 
+open(scenario_file, 'w+').write("")
 for fn in os.listdir(template_dir):
   if not fn.endswith('json'):
     continue

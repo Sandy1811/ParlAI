@@ -12,10 +12,10 @@
         "...find you a suitable ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You are Alexis and would like to go from Forbes and Murray to Airport. Your driver should be Alex"
+      "task_description": "You are Mark and would like to go from Forbes and Murray to University. Your driver should be Alex"
     },
     "Wizard": {
-      "task_description": "AA ...",
+      "task_description": "Help the user.",
       "completion_requirements": [
         "You have found a ride that the user likes,",
         "or the user says goodbye."
