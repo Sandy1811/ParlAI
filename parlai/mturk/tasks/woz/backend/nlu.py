@@ -29,7 +29,7 @@ class NLUServerConnection:
         ]  # ToDo: Make sure this is sorted by confidence
         # TODO: Need to take the user's query into account as well, ideally the suggestion is the model response,
         #  most similar to the user's input
-        return suggestions[:max_num_suggestions], response['entities']
+        return suggestions[:max_num_suggestions]  #, response['entities']
 
 
 if __name__ == '__main__':

@@ -42,6 +42,8 @@ from parlai.mturk.tasks.woz.backend.commands import (
     GuideCommand,
     SilentCommand,
 )
+from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
+from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
 
 
 def is_disconnected(act):
@@ -227,6 +229,8 @@ class WOZWorld(MTurkTaskWorld):
         self._received_evaluations = 0
         self.events = []
 
+        self._nlu_connection = NLUServerConnection()
+
         self.num_turns = 1
 
         self._primary_kb_item = None
@@ -334,7 +338,10 @@ class WOZWorld(MTurkTaskWorld):
             self._secondary_kb_item = wizard_command.item
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
-            suggestions = ["message 1", "message 2"]
+            print(wizard_command)
+            suggestions = self._nlu_connection.get_suggestions(wizard_command.query)
+            print(suggestions)
+            # suggestions = ["message 1", "message 2"]
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )
