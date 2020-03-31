@@ -1,0 +1,11 @@
+{
+    "hello": "Hello, where would you like to go?",
+    "ask_name": "OK, can I have your name, please?",
+    "ask_destination": "Alright, where do you want to go?",
+    "ask_departure": "Sure, and where are you departing from?",
+    "ask_confirm_booking": "Can I book this ride for you now?",
+    "bye": "Thank you and enjoy your ride!",
+    "confirm_booking": "The ride is booked for you now.",
+    "provide_driver_details": "Your {} driver {} will arrive in approximately {} minutes in a {} with license plate {}. Your booking id is {} and your ride will cost {} EUR.",
+    "provide_ride_details": "Your {} driver {} will arrive in approximately {} minutes in a {} with license plate {}. Your booking id is {} and your ride will cost {} EUR."
+}
