@@ -51,7 +51,9 @@ function getSelectionInfo(originalMessages) {
       ? select_kb_entry_prefix
       : select_reference_kb_entry_prefix;
 
-    return message.slice(prefix.length).trim();
+    const message_id_content_separator_position = message.indexOf("|")
+
+    return message.slice(prefix.length, message_id_content_separator_position).trim();
   };
 
   // Iterate through all messages to find
@@ -146,7 +148,9 @@ function KnowledgeBaseMessage(props) {
         ? selectionConstants.select_kb_entry_prefix
         : selectionConstants.select_reference_kb_entry_prefix;
 
-      props.onMessageSend(`${prefix} ${props.message_id}`, {}, () =>
+      const example_string = message.slice(needlePosition + needle.length, -1);
+
+      props.onMessageSend(`${prefix} ${props.message_id}|${example_string}`, {}, () =>
         console.log("sent selection")
       );
     };
@@ -297,6 +301,13 @@ class ChatMessage extends React.Component {
     }
     const onlyVisibleMsg = (isKB || isSYS) ? " (Only visible to you)" : null;
 
+    let msg_color = undefined;
+    if (isKB) {
+        msg_color = "#f4cdcc";  // light red
+    } else if (isSYS) {
+        msg_color = "#FDEFB6";  // light yellow
+    }
+
     return (
       <div
         className={"row"}
@@ -312,7 +323,7 @@ class ChatMessage extends React.Component {
           style={{
             float: float_loc,
             display: "table",
-            backgroundColor: onlyVisibleMsg ? "#FDEFB6" : undefined,
+            backgroundColor: msg_color,
             color: onlyVisibleMsg ? "rgb(88, 90, 94)" : undefined
           }}
         >

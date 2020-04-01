@@ -121,7 +121,10 @@ export class QueryForm extends React.Component {
         formField = this.deriveFormDatumFromDOM(form, formFieldWithId.id);
       }
 
-      const operator = formField.operatorValue;
+      let operator = formField.operatorValue;
+      if (formField.fieldName === "RequestType") {  // Johannes: Dirty bug fix
+        operator = null;
+      }
       const operatorWrapper =
         operator == null ? val => val : val => `api.${operator}(${val})`;
 
@@ -192,7 +195,7 @@ export class QueryForm extends React.Component {
               }}
               style={{ marginLeft: 20 }}
             >
-              Add Field
+              Add Constraint
             </Button>
           </div>
         </FormGroup>
@@ -259,11 +262,12 @@ export function jsonToForm(
     const isRequired = json.required.indexOf(input.Name) >= 0;
     const controlLabelWithRemove = (
       <ControlLabelWithRemove
-        formFieldName={formFieldName}
+        formFieldName={input['ReadableName']}
         formFieldId={formFieldId}
         onRemove={removeFormField}
       />
     );
+    console.log(controlLabelWithRemove);
 
     const formFieldDatum = formFieldData[formFieldId] || {
       id: formFieldId,
@@ -319,9 +323,13 @@ export function jsonToForm(
           </FormGroup>
         );
       }
+      case 'RequestType':
       case 'Categorical':
       case 'CategoricalMultiple': {
         const uiLogicInfo = {
+          RequestType: {
+            is_equal_to: 'SingleSelect',
+          },
           Categorical: {
             is_equal_to: 'SingleSelect',
             is_one_of: 'MultiSelect',
@@ -329,7 +337,6 @@ export function jsonToForm(
             // is_not: "SingleSelect"
           },
           CategoricalMultiple: {
-            is_equal_to: 'MultiSelect',
             contains: 'SingleSelect',
             contain_all_of: 'MultiSelect',
             contain_at_least_one_of: 'MultiSelect',

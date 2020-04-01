@@ -113,7 +113,7 @@ class WizardResponse extends React.Component {
     //     return shouldAskForSuggestion;
 
     //     return (this.props.agent_id === "Wizard");
-    return false;
+    return (this.props.agent_id === "Wizard");
   }
 
   render() {
@@ -207,7 +207,7 @@ function ReviewForm(props) {
     return 'Waiting for initialization...';
   }
   const completionQuestions = setupMessage.completion_questions;
-  const other_agent = props.agent_id === 'User' ? 'user ' : 'assistant ';
+  const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
 
   return (
     <form
@@ -377,7 +377,7 @@ class LeftPane extends React.Component {
           <TaskDescription {...this.props} isInReview={isInReview} />
           {this.props.children}
           <br />
-          If you are ready, please type "ready" and click [Send].
+          If you are ready, please follow the instructions of the 'MTurk System' bot in the dialogue.
           <br />
         </div>
       );

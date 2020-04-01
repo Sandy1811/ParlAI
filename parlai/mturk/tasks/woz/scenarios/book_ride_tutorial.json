@@ -9,22 +9,40 @@
     "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png",
     "ride_status": "https://i.imgur.com/96PHeZR.jpg",
     "ride_change": "https://i.imgur.com/NH4MQuu.jpg",
-    "book_ride": "https://i.imgur.com/XvoZOMC.png",
+    "book_ride": "https://drive.google.com/uc?export=view&id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
     "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg",
     "hotel_reserve": "https://i.imgur.com/emY7oVA.png"
   },
   "instructions": {
     "User": {
-      "task_description": "You are at the South entrance to the Central Station and want to book a Lyft ride to Wayne Tower.",
-      "completion_requirements": [],
-      "completion_questions": []
+      "task_description": "You are just arriving at the Central Station and want to get to your Hotel. Chat with the assistant to book a ride to your destination (you will have to COME UP WITH a hotel name and other details). You will see additional messages from 'MTruk System' telling you what's happening in your environment. As circumstances change, you should also CHANGE YOUR REQUESTS. If you do not follow these additional instructions, you will not be payed!",
+      "completion_requirements": [
+        "The assistant has booked you a ride that satisfies the criteria above.",
+        "You have followed all the additional instructions that we send to you during the chat (labeled as 'MTurk System').",
+        "You know the driver's name, as well as the license plate and booking id of the car that'll pick you up.",
+        "You know when the car will pick you up.",
+        "You have changed your mind about at least two criteria (s.a. service provider or pickup time) during the dialogue and have told the assistant so.",
+        "You have said 'goodbye' to the assistant.",
+        "You have answered the questionnaire at the end of the dialogue."
+      ],
+      "completion_questions": [
+        "find you a ride that suits you?",
+        "stay polite and helpful throughout the conversation?"
+      ]
     },
     "Wizard": {
-      "task_description": "This is a tutorial. Follow the system's instructions and help the user book a car ride.",
+      "task_description": "Help the user book a car ride, follow the flow chart whenever possible, as explained in the tutorial. DO NOT USE COMMON KNOWLEDGE / IMAGINATION - everything the assistant that you play knows comes from the knowledge base, so you have to use that! However, don't use it more often than necessary to look for the information that the user seeks.",
       "completion_requirements": [
-        "The system says you have succeeded."
+        "You have followed the flow chart on the left pane whenever possible (as explained in the tutorial).",
+        "You have used the knowledge base interface to check for and possibly book rides (as explained in the tutorial).",
+        "The user is satisfied and has said goodbye.",
+        "You have answered the questionnaire at the end of the dialogue."
       ],
-      "completion_questions": []
+      "completion_questions": [
+        "behave in a friendly manner throughout the dialogue?",
+        "change his/her mind at least once?",
+        "use a negation (s.a. 'I don't want to take a taxi') at any point?"
+      ]
     }
   }
 }

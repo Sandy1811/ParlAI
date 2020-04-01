@@ -19,10 +19,10 @@
   },
   "instructions": {
     "User": {
-      "task_description": "YAA ou recently started a new job in Sydney and need to <b>find an apartment</b> to live in. For now, you stay in a hotel, but that is expensive, so you'll want to find something soon. A friend of yours recommended the virtual assistant that you are about to talk to now. Maybe it can help you find something you like?",
+      "task_description": "All tasks available.",
       "completion_requirements": [
-        "AA You have found an apartment you like",
-        "AA You have changed your mind about what you are looking for, at least once during the dialogue"
+        "You have completed your task.",
+        "You don't feel like talking anymore."
       ],
       "completion_questions": [
         "AA ...find you a suitable apartment?",

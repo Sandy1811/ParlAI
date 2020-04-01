@@ -85,6 +85,18 @@ class KnowledgeBaseAPI:
         for n in range(num_items):
             self._dataset.append(self._create_random_item(n))
 
+    def add_item(self, item: Dict[Text, Any]) -> None:
+        settings = {}
+        for parameter in self.parameters:
+            print(parameter)
+            name = parameter.get("Name")
+            if name in item:
+                settings.update({name: item[name]})
+            else:
+                settings.update(self._random_value(parameter, settings))
+
+        self._dataset.append(KnowledgeBaseItem(settings))
+
     def _create_random_item(self, identification_number: int) -> KnowledgeBaseItem:
         # Build the settings by randomly choosing from the options
         # or from the constraints
@@ -517,7 +529,9 @@ def load_databases() -> None:
     for filename in os.listdir(db_dir):
         if filename[0] == ".":
             continue
-        dbs[os.path.splitext(filename)[0]] = load_db(
+        db_name = os.path.splitext(filename)[0]
+        # print(f"loading {db_name}")
+        dbs[db_name] = load_db(
             os.path.join(os.path.dirname(os.path.abspath(__file__)), "dbs", filename)
         )
 

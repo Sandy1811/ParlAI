@@ -94,6 +94,7 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
             reply = {
                 "id": "KnowledgeBase",
                 "text": f"Found {count} items in {api_name}. Example: {json.dumps(items)}.",
+                "example_item": items,
             }
         except Exception as e:
             reply = {
@@ -126,7 +127,7 @@ class WOZDummyAgent(NonMTurkAgent):
     def __init__(self, opt: Union[Opt, dict], role: Text) -> None:
         """Initialize this agent."""
         super().__init__(opt)
-        self.id = "DummyAgent"
+        self.id = "User"
         self.role = role
         self.demo_role = role
         self._num_messages_sent = 0
@@ -190,14 +191,14 @@ class WOZInstructorAgent(NonMTurkAgent):
         self._event_history = history
 
     def act(self) -> Tuple[Dict[Text, Any], Dict[Text, Any]]:
-        print(f"acting on: {self._event_history}")
+        # print(f"acting on: {self._event_history}")
         if not self._event_history:
             return {}, {}
         for rule in self._rules:
             if rule.get("triggers_left", 1) > 0 and rule.get(
                 "condition", self.constant_condition(False)
             )(self._event_history):
-                print(rule["message"])
+                # print(rule["message"])
                 if rule.get("probability", 1.0) < 1.0 and random.uniform(
                     0.0, 1.0
                 ) > rule.get("probability", 1.0):
@@ -400,19 +401,44 @@ def step_condition_satisfied(
             if "Constraints" not in observation:
                 return False
             observed_constraints = observation["Constraints"]
-            print(observed_constraints)
-            print(step["Constraints"])
             for expected_constraint in step["Constraints"]:
                 try:
-                    observed_constraint = select_first(observed_constraints, lambda c: constraint_name(c) == constraint_name(expected_constraint))
+                    observed_constraint = select_first(
+                        observed_constraints,
+                        lambda c: constraint_name(c)
+                        == constraint_name(expected_constraint),
+                    )
                 except (StopIteration, ValueError):
-                    print(f"missing key for {expected_constraint}")
                     return False
 
-                if not similar(constraint_value(expected_constraint), constraint_value(observed_constraint)):
-                    print(f"wrong value for {expected_constraint} vs {observed_constraint}")
+                if not similar(
+                    constraint_value(expected_constraint),
+                    constraint_value(observed_constraint),
+                ):
                     return False
             del step["Constraints"]
+
+        if "PrimaryItem" in step:
+            if not observation.get("PrimaryItem"):
+                return False
+            observed_item = observation.get("PrimaryItem")
+            for key, value in step.get("PrimaryItem", {}).items():
+                if key not in observed_item:
+                    return False
+                if not similar(value, observed_item.get(key, "")):
+                    return False
+            del step["PrimaryItem"]
+
+        if "SecondaryItem" in step:
+            if not observation.get("SecondaryItem"):
+                return False
+            observed_item = observation.get("SecondaryItem")
+            for key, value in step.get("SecondaryItem", {}).items():
+                if key not in observed_item:
+                    return False
+                if not similar(key, observed_item.get(key, "")):
+                    return False
+            del step["SecondaryItem"]
 
         return all([similar(step[k], observation[k]) for k in step if k in observation])
 
@@ -424,7 +450,7 @@ def similar(a: Any, b: Any):
         return a == b
 
 
-def select_first(iterable, condition = lambda x: True):
+def select_first(iterable, condition=lambda x: True):
     """
     Returns the first item in the `iterable` that
     satisfies the `condition`.
