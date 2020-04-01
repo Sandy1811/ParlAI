@@ -6,6 +6,6 @@
     "ask_confirm_booking": "Can I book this ride for you now?",
     "bye": "Thank you and enjoy your ride!",
     "confirm_booking": "The ride is booked for you now.",
-    "provide_driver_details": "Your {} driver {} will arrive in approximately {} minutes in a {} with license plate {}. Your booking id is {} and your ride will cost {} EUR.",
-    "provide_ride_details": "Your {} driver {} will arrive in approximately {} minutes in a {} with license plate {}. Your booking id is {} and your ride will cost {} EUR."
+    "provide_driver_details": "Your {service_provider:s} driver {driver_name:s} will arrive in approximately {minutes_till_pickup:d} minutes in a {car_model:s} with license plate {license_plate:s}. Your booking id is {booking_id:d} and your ride will cost {price:d} EUR.",
+    "provide_ride_details": "Your {service_provider:s} driver {driver_name:s} will arrive in approximately {minutes_till_pickup:d} minutes in a {car_model:s} with license plate {license_plate:s}. Your booking id is {booking_id:d} and your ride will cost {price:d} EUR."
 }

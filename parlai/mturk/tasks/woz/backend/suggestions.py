@@ -20,9 +20,11 @@ class WizardSuggestion:
         for intent in intents:
             if intent in ['provide_ride_details', 'provide_driver_details']:
                 suggestions.append(
-                    self.intent2reply[intent].format(kb_item['ServiceProvider'], kb_item['DriverName'],
-                                                     kb_item['MinutesTillPickup'], kb_item['CarModel'],
-                                                     kb_item['LicensePlate'], kb_item['id'], kb_item['Price'])
+                    self.intent2reply[intent].format(service_provider=kb_item['ServiceProvider'],
+                                                     driver_name=kb_item['DriverName'],
+                                                     minutes_till_pickup=kb_item['MinutesTillPickup'],
+                                                     car_model=kb_item['CarModel'], booking_id=kb_item['id'],
+                                                     license_plate=kb_item['LicensePlate'], price=kb_item['Price'])
                 )
             else:
                 suggestions.append(self.intent2reply.get(intent, 'None'))
