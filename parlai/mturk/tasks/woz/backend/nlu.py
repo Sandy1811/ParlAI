@@ -9,6 +9,7 @@ class NLUServerConnection:
     def __init__(self, server_address: Optional[Text] = None) -> None:
         self.server_address = server_address or DEFAULT_RASA_NLU_SERVER_ADDRESS
         # ToDo: Implement something to startup the nlu server (or decide to not do this programmatically)
+        # TODO: Also make sure the _right_ model is chosen, i.e. via a "domain" parameter
 
     def query(self, text: Text) -> Dict[Text, Any]:
         response = requests.post(self.server_address, data=f'{{"text": "{text}"}}')
