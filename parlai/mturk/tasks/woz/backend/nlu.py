@@ -1,4 +1,4 @@
-from typing import Text, List, Any, Dict, Optional
+from typing import Text, List, Any, Dict, Optional, Tuple
 
 import requests
 
@@ -22,14 +22,14 @@ class NLUServerConnection:
         domain: Optional[Text] = None,
         comparing: bool = False,
         max_num_suggestions: int = 3,
-    ) -> List[Text]:
+    ) -> Tuple[List[Text], List[Text]]:
         response = self.query(f"{'true' if comparing else 'false'}:{domain or 'general'}:{text}")
         suggestions = [
             intent["name"] for intent in response["intent_ranking"]
         ]  # ToDo: Make sure this is sorted by confidence
         # TODO: Need to take the user's query into account as well, ideally the suggestion is the model response,
         #  most similar to the user's input
-        return suggestions[:max_num_suggestions]  #, response['entities']
+        return suggestions[:max_num_suggestions], response['entities']
 
 
 if __name__ == '__main__':

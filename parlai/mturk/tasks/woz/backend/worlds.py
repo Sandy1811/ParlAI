@@ -8,6 +8,7 @@ import random
 import time
 from typing import Text, List, Dict, Any, Optional
 
+from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.mturk.core import shared_utils, mturk_utils
@@ -136,7 +137,9 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
             if "mention to" in message.get("text", "").strip().lower():
                 break
             else:
-                send_mturk_message("That does not seem correct. Try again.", self.mturk_agent)
+                send_mturk_message(
+                    "That does not seem correct. Try again.", self.mturk_agent
+                )
 
         self.mturk_agent.passed_onboarding = True
         # if message.get("text", "") != "ready":
@@ -221,10 +224,10 @@ class WOZWorld(MTurkTaskWorld):
                 self.knowledgebase = agent
 
         scenarios_list_fn = os.path.join(
-          os.path.dirname(os.path.abspath(__file__)),
-          "..",
-          "scenarios",
-          opt.get("scenario_list") + ".txt",
+            os.path.dirname(os.path.abspath(__file__)),
+            "..",
+            "scenarios",
+            opt.get("scenario_list") + ".txt",
         )
         scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
         self._scenario = random.choice(scenarios_list)
@@ -238,7 +241,11 @@ class WOZWorld(MTurkTaskWorld):
         self._received_evaluations = 0
         self.events = []
 
+        base_dir = os.path.join(PROJECT_PATH, "resources")
         self._nlu_connection = NLUServerConnection()
+        self._suggestion_module = WizardSuggestion(
+            intent2reply_file=os.path.join(base_dir, "intent2reply.json")
+        )
 
         self.num_turns = 1
 
@@ -348,7 +355,13 @@ class WOZWorld(MTurkTaskWorld):
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             print(wizard_command)
-            suggestions = self._nlu_connection.get_suggestions(wizard_command.query)
+            nlu_context = self._nlu_connection.get_suggestions(wizard_command.query, max_num_suggestions=4)
+            suggestions = self._suggestion_module.get_suggestions(
+                wizard_utterance=wizard_command.query,
+                kb_item=self._primary_kb_item,
+                nlu_context=nlu_context
+            )
+            # suggestions = self._suggestion_module.get_suggestions(wizard_command.query)
             print(suggestions)
             # suggestions = ["message 1", "message 2"]
             self.wizard.observe(
@@ -466,7 +479,9 @@ class WOZWorld(MTurkTaskWorld):
         return {
             "Events": self.events,
             "WizardWorkerID": self.wizard.worker_id,
-            "UserWorkerID": self.user.worker_id if hasattr(self.user, "worker_id") else None,
+            "UserWorkerID": self.user.worker_id
+            if hasattr(self.user, "worker_id")
+            else None,
         }
 
     def get_model_agent(self):
@@ -491,6 +506,7 @@ class WOZWorld(MTurkTaskWorld):
         parser.add_argument(
             "--scenario_list", type=str, default="all_scenarios", help="Scenario list",
         )
+
 
 class WOZWizardTutorialWorld(MTurkTaskWorld):
     def __init__(
