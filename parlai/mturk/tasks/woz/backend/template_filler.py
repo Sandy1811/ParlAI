@@ -1,3 +1,5 @@
+from typing import Dict, Text, Any, List, Optional
+
 from parlai.mturk.tasks.woz.backend import constants
 
 
@@ -18,8 +20,12 @@ def fill_ride_ask_departure(intent2reply, *_):
 
 
 def fill_ride_ask_confirm_booking(intent2reply, kb_item):
-    return intent2reply[constants.INTENT_RIDE_ASK_CONFIRM_BOOKING].format(departure_location=kb_item['DepartureLocation'],
-                                                                          arrival_location=kb_item['ArrivalLocation'])
+    if not check_kb_item(kb_item, ["DepartureLocation", "ArrivalLocation"]):
+        return None
+    return intent2reply[constants.INTENT_RIDE_ASK_CONFIRM_BOOKING].format(
+        departure_location=kb_item["DepartureLocation"],
+        arrival_location=kb_item["ArrivalLocation"],
+    )
 
 
 def fill_ride_bye(intent2reply, *_):
@@ -27,14 +33,42 @@ def fill_ride_bye(intent2reply, *_):
 
 
 def fill_ride_confirm_booking(intent2reply, kb_item):
-    return intent2reply[constants.INTENT_RIDE_CONFIRM_BOOKING].format(service_provider=kb_item['ServiceProvider'])
+    if not check_kb_item(kb_item, ["ServiceProvider"]):
+        return None
+    return intent2reply[constants.INTENT_RIDE_CONFIRM_BOOKING].format(
+        service_provider=kb_item["ServiceProvider"]
+    )
 
 
 def fill_ride_provide_driver_details(intent2reply, kb_item):
-    return intent2reply[constants.INTENT_RIDE_PROVIDE_DRIVER_DETAILS].format(service_provider=kb_item["ServiceProvider"],
-                                                                            driver_name=kb_item['DriverName'],
-                                                                            price=kb_item['Price'],
-                                                                            minutes_till_pickup=kb_item["MinutesTillPickup"],
-                                                                            car_model=kb_item['CarModel'],
-                                                                            booking_id=kb_item['id'],
-                                                                            license_plate=kb_item["LicensePlate"])
+    if not check_kb_item(
+        kb_item,
+        [
+            "ServiceProvider",
+            "DriverName",
+            "Price",
+            "MinutesTillPickup",
+            "CarModel",
+            "id",
+            "LicensePlate",
+        ],
+    ):
+        return None
+    return intent2reply[constants.INTENT_RIDE_PROVIDE_DRIVER_DETAILS].format(
+        service_provider=kb_item["ServiceProvider"],
+        driver_name=kb_item["DriverName"],
+        price=kb_item["Price"],
+        minutes_till_pickup=kb_item["MinutesTillPickup"],
+        car_model=kb_item["CarModel"],
+        booking_id=kb_item["id"],
+        license_plate=kb_item["LicensePlate"],
+    )
+
+
+def check_kb_item(
+    kb_item: Dict[Text, Any], required_fields: Optional[List[Text]] = None
+) -> bool:
+    if not required_fields:
+        return kb_item is not None
+    else:
+        return kb_item and all(key in kb_item for key in required_fields)

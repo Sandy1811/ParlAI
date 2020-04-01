@@ -25,7 +25,9 @@ class WizardSuggestion:
             if intent in self.intent2reply:
                 fn_fill = getattr(template_filler, f'fill_{intent}')
 
-                suggestions.append(fn_fill(self.intent2reply, kb_item))
+                suggestion = fn_fill(self.intent2reply, kb_item)
+                if suggestion:
+                    suggestions.append(suggestion)
 
             if len(suggestions) >= self.num_suggestions:
                 break

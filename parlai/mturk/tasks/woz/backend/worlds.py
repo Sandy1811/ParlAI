@@ -241,7 +241,7 @@ class WOZWorld(MTurkTaskWorld):
         self._received_evaluations = 0
         self.events = []
 
-        base_dir = os.path.join(PROJECT_PATH, "resources")
+        base_dir = os.path.join(PROJECT_PATH, "resources", "book_ride")
         self._nlu_connection = NLUServerConnection()
         self._suggestion_module = WizardSuggestion(
             intent2reply_file=os.path.join(base_dir, "intent2reply.json")
