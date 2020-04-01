@@ -30,6 +30,10 @@ def fill_ride_confirm_booking(intent2reply, kb_item):
     return intent2reply[constants.INTENT_RIDE_CONFIRM_BOOKING].format(service_provider=kb_item['ServiceProvider'])
 
 
+def fill_ride_inform_search_criteria(intent2reply, *_):
+    return intent2reply[constants.INTENT_RIDE_INFORM_SEARCH_CRITERIA]
+
+
 def fill_ride_provide_driver_details(intent2reply, kb_item):
     return intent2reply[constants.INTENT_RIDE_PROVIDE_DRIVER_DETAILS].format(service_provider=kb_item["ServiceProvider"],
                                                                             driver_name=kb_item['DriverName'],
