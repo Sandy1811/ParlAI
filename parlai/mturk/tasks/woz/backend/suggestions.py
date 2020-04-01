@@ -3,12 +3,14 @@ import os
 
 from parlai import PROJECT_PATH
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
+from parlai.mturk.tasks.woz.backend import template_filler
 
 
 class WizardSuggestion:
-    def __init__(self, intent2reply_file):
+    def __init__(self, intent2reply_file, num_suggestions=3):
         with open(intent2reply_file) as in_file:
             self.intent2reply = json.load(in_file)
+        self.num_suggestions = num_suggestions
 
     def get_suggestions(self, wizard_utterance, kb_item, nlu_context, return_intents=False):
         intents, entities = nlu_context
@@ -17,21 +19,10 @@ class WizardSuggestion:
             return intents
 
         suggestions = []
-        for intent in intents:
-            if intent in ["provide_ride_details", "provide_driver_details"]:
-                if kb_item:
-                    suggestions.append(
-                        self.intent2reply[intent].format(kb_item["ServiceProvider"], kb_item['DriverName'],
-                                                         kb_item["MinutesTillPickup"], kb_item['CarModel'],
-                                                         kb_item["LicensePlate"], kb_item['id'], kb_item['Price'])
-                    )
-            else:
-                reply = self.intent2reply.get(intent)
-                if reply:
-                    suggestions.append(reply)
+        for intent in intents[:self.num_suggestions]:
+            fn_fill = getattr(template_filler, f'fill_{intent}')
 
-            if len(suggestions) >= 3:
-                break
+            suggestions.append(fn_fill(self.intent2reply, kb_item))
 
         return suggestions
 
@@ -62,7 +53,7 @@ if __name__ == '__main__':
     utterance_15 = 'Your car will arrive in 34 minutes and your driver will be Carl in some old car. He is from Uber btw.'
 
     nlu = NLUServerConnection()
-    base_dir = os.path.join(PROJECT_PATH, 'resources')
+    base_dir = os.path.join(PROJECT_PATH, 'resources', 'book_ride')
     ws = WizardSuggestion(intent2reply_file=os.path.join(base_dir, 'intent2reply.json'))
 
     for utterance in [utterance_3, utterance_6, utterance_7, utterance_8, utterance_9, utterance_15]:
