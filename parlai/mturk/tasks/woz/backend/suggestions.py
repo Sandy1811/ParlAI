@@ -33,6 +33,9 @@ class WizardSuggestion:
             if len(suggestions) >= 3:
                 break
 
+        if len(suggestions) == 0:
+            suggestions.append(wizard_utterance)
+
         return suggestions
 
 

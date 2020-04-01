@@ -361,9 +361,7 @@ class WOZWorld(MTurkTaskWorld):
                 kb_item=self._primary_kb_item,
                 nlu_context=nlu_context
             )
-            # suggestions = self._suggestion_module.get_suggestions(wizard_command.query)
             print(suggestions)
-            # suggestions = ["message 1", "message 2"]
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )

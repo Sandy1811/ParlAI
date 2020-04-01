@@ -46,7 +46,7 @@ def contains_substring(value):
 class KnowledgeBaseItem:
     def __init__(self, settings):
         self._id = hash(str(settings))
-        self._settings = settings
+        self._settings: Dict[Text, Any] = settings
 
     def __str__(self):
         return str(self._settings)
@@ -281,6 +281,12 @@ def book_ride(ride_api, constraints: Dict[Text, Any]):
     if constraints["RequestType"] == "Book":
       return dict(Message="Ride booked."), -1
 
+    query_properties = {
+        "DepartureLocation": constraints["DepartureLocation"],
+        "ArrivalLocation": constraints["ArrivalLocation"],
+        "CustomerName": constraints["CustomerName"]
+    }
+
     del constraints["RequestType"]
     del constraints["DepartureLocation"]
     del constraints["ArrivalLocation"]
@@ -288,7 +294,9 @@ def book_ride(ride_api, constraints: Dict[Text, Any]):
     row, count = ride_api.sample(constraints)
     if not row:  # ToDo: Do this for all apis
         raise ValueError("Could not find any matching items.")
-    return row._settings, -1
+    settings = row._settings
+    settings.update(query_properties)
+    return settings, -1
 
 
 def ride_status(ride_api, constraints: Dict[Text, Any]):
