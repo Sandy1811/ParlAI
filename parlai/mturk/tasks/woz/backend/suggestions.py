@@ -12,17 +12,21 @@ class WizardSuggestion:
             self.intent2reply = json.load(in_file)
         self.num_suggestions = num_suggestions
 
-    def get_suggestions(self, wizard_utterance, kb_item, nlu_context, return_intents=False):
+    def get_suggestions(self, kb_item, nlu_context, return_intents=False):
         intents, entities = nlu_context
 
         if return_intents:
             return intents
 
         suggestions = []
-        for intent in intents[:self.num_suggestions]:
-            fn_fill = getattr(template_filler, f'fill_{intent}')
+        for intent in intents:
+            if intent in self.intent2reply:
+                fn_fill = getattr(template_filler, f'fill_{intent}')
 
-            suggestions.append(fn_fill(self.intent2reply, kb_item))
+                suggestions.append(fn_fill(self.intent2reply, kb_item))
+
+            if len(suggestions) >= self.num_suggestions:
+                break
 
         return suggestions
 
@@ -35,7 +39,9 @@ if __name__ == '__main__':
                "ServiceProvider": "Uber",
                "DriverName": "Ella",
                "CarModel": "Ford",
-               "LicensePlate": "432 LSA"}
+               "LicensePlate": "432 LSA",
+               "DepartureLocation": "Tegel Airport, International Arrivals",
+               "ArrivalLocation": "Hyatt Alexanderplatz"}
     #utterance_1 = 'Okay thanks a lot and goodbye'
     #utterance_2 = 'I want a cab to Alexanderplatz'
     utterance_3 = 'Right, Could you provide your name?'
@@ -58,9 +64,8 @@ if __name__ == '__main__':
 
     for utterance in [utterance_3, utterance_6, utterance_7, utterance_8, utterance_9, utterance_15]:
         # Use rasa to get an intent label
-        nlu_context = nlu.get_suggestions(utterance)
-        suggestions = ws.get_suggestions(wizard_utterance=utterance, kb_item=kb_item,
-                                               nlu_context=nlu_context)
+        nlu_context = nlu.get_suggestions(utterance, max_num_suggestions=10)
+        suggestions = ws.get_suggestions(kb_item=kb_item, nlu_context=nlu_context)
 
         print(f'Intents for "{utterance}": {nlu_context[0]}')
         print(f'Suggestions for "{utterance}": {suggestions}')
