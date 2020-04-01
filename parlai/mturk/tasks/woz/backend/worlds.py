@@ -241,7 +241,7 @@ class WOZWorld(MTurkTaskWorld):
         self._received_evaluations = 0
         self.events = []
 
-        base_dir = os.path.join(PROJECT_PATH, "resources")
+        base_dir = os.path.join(PROJECT_PATH, "resources", "book_ride")
         self._nlu_connection = NLUServerConnection()
         self._suggestion_module = WizardSuggestion(
             intent2reply_file=os.path.join(base_dir, "intent2reply.json")
@@ -355,15 +355,11 @@ class WOZWorld(MTurkTaskWorld):
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             print(wizard_command)
-            nlu_context = self._nlu_connection.get_suggestions(wizard_command.query, max_num_suggestions=4)
             suggestions = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 kb_item=self._primary_kb_item,
-                nlu_context=nlu_context
             )
-            # suggestions = self._suggestion_module.get_suggestions(wizard_command.query)
             print(suggestions)
-            # suggestions = ["message 1", "message 2"]
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )
