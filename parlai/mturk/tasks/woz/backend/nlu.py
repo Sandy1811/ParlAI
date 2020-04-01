@@ -7,7 +7,9 @@ from parlai.mturk.tasks.woz.backend import constants
 
 class NLUServerConnection:
     def __init__(self, server_address: Optional[Text] = None) -> None:
-        self.server_address = server_address or constants.DEFAULT_RASA_NLU_SERVER_ADDRESS
+        self.server_address = (
+            server_address or constants.DEFAULT_RASA_NLU_SERVER_ADDRESS
+        )
         # ToDo: Implement something to startup the nlu server (or decide to not do this programmatically)
         # TODO: Also make sure the _right_ model is chosen, i.e. via a "domain" parameter
 
@@ -24,7 +26,9 @@ class NLUServerConnection:
         comparing: bool = False,
         max_num_suggestions: int = 3,
     ) -> Tuple[List[Text], List[Text]]:
-        response = self.query(f"{'true' if comparing else 'false'}:{domain or 'general'}:{text}")
+        response = self.query(
+            f"{'true' if comparing else 'false'}:{domain or 'general'}:{text}"
+        )
         suggestions = [
             intent["name"] for intent in response["intent_ranking"]
         ]  # ToDo: Make sure this is sorted by confidence
