@@ -6,5 +6,6 @@
     "ride_ask_confirm_booking": "OK, picking up from {departure_location:s} and going to {arrival_location:s}, can I book this ride for you?",
     "ride_bye": "Thank you and enjoy your ride!",
     "ride_confirm_booking": "Right, your {service_provider:s} ride is all booked for you now!",
-    "ride_provide_driver_details": "OK, your {service_provider:s} driver {driver_name:s} will arrive in approximately {minutes_till_pickup:d} minutes in a {car_model:s} with license plate {license_plate:s}. Your booking id is {booking_id:d} and your ride will cost {price:d} EUR."
+    "ride_provide_driver_details": "OK, your {service_provider:s} driver {driver_name:s} will arrive in approximately {minutes_till_pickup:d} minutes in a {car_model:s} with license plate {license_plate:s}. Your booking id is {booking_id:d} and your ride will cost {price:d} credits.",
+    "ride_inform_search_criteria": "I can also filter for service provider, driver name, and the car’s model."
 }
