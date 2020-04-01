@@ -1,5 +1,6 @@
 import json
 import os
+from typing import Text, Dict, Any, List
 
 from parlai import PROJECT_PATH
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
@@ -21,7 +22,12 @@ class WizardSuggestion:
         self.max_num_suggestions = max_num_suggestions
         self.nlu = NLUServerConnection(server_address=nlu_server_address)
 
-    def get_suggestions(self, wizard_utterance, kb_item, return_intents=False):
+    def get_suggestions(
+        self,
+        wizard_utterance: Text,
+        kb_item: Dict[Text, Any],
+        return_intents: bool = False,
+    ) -> List[Text]:
         intents, entities = self.nlu.get_suggestions(
             text=wizard_utterance, max_num_suggestions=self.max_num_suggestions
         )

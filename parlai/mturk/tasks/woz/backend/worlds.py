@@ -355,13 +355,9 @@ class WOZWorld(MTurkTaskWorld):
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             print(wizard_command)
-            nlu_context = self._nlu_connection.get_suggestions(
-                wizard_command.query, max_num_suggestions=4
-            )
             suggestions = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 kb_item=self._primary_kb_item,
-                nlu_context=nlu_context,
             )
             print(suggestions)
             self.wizard.observe(
