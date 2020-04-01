@@ -1,0 +1,41 @@
+[
+  {
+    "Name": "DepartureCity",
+    "Type": "Categorical",
+    "Categories": [
+      "Los Angeles",
+      "San Francisco",
+      "Chicago",
+      "Detroit",
+      "New York City",
+      "Pittsburgh"
+    ]
+  },
+  {
+    "Name": "ArrivalCity",
+    "Type": "Categorical",
+    "Categories": [
+      "Los Angeles",
+      "San Francisco",
+      "Chicago",
+      "Detroit",
+      "New York City",
+      "Pittsburgh"
+    ]
+  },
+  { "Name": "Price", "Type": "Integer", "Min": 150, "Max": 500 },
+  { "Name": "Date", "Type": "Integer", "Min": 1, "Max": 31 },
+  { "Name": "SeatsAvailable", "Type": "Boolean" },
+  {
+    "Name": "Class",
+    "Type": "Categorical",
+    "Categories": ["First", "Business", "Economy"]
+  },
+  { "Name": "DurationHours", "Type": "Integer", "Min": 1, "Max": 8 },
+  {
+    "Name": "Airline",
+    "Type": "Categorical",
+    "Categories": ["American", "United", "Delta", "Virgin"]
+  },
+  { "Name": "id", "Type": "Integer", "Min": 1, "Max": 1000 }
+]

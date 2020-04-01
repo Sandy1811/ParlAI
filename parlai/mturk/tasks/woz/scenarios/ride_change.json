@@ -1,0 +1,30 @@
+{
+  "title": "Ride Change",
+  "name": "Ride Change",
+  "version": 1,
+  "api_names": ["ride_change"],
+  "schema_urls": {
+    "ride_change": "https://i.imgur.com/NH4MQuu.jpg"
+  },
+  "instructions": {
+    "User": {
+      "task_description": "Change your ride.",
+      "completion_requirements": ["You have changed your ride."],
+      "completion_questions": [
+        "AA ...find you a suitable apartment?",
+        "AA ...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "AA Be helpful...",
+      "completion_requirements": [
+        "AA You have found an apartment that the user likes,",
+        "AA or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}
