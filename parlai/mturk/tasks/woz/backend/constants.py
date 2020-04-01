@@ -1,3 +1,4 @@
+DEFAULT_RASA_NLU_SERVER_ADDRESS = "http://localhost:5005/model/parse"
 
 # Common Intent Names
 INTENT_HELLO = 'hello'

@@ -2,12 +2,12 @@ from typing import Text, List, Any, Dict, Optional, Tuple
 
 import requests
 
-DEFAULT_RASA_NLU_SERVER_ADDRESS = "http://localhost:5005/model/parse"
+from parlai.mturk.tasks.woz.backend import constants
 
 
 class NLUServerConnection:
     def __init__(self, server_address: Optional[Text] = None) -> None:
-        self.server_address = server_address or DEFAULT_RASA_NLU_SERVER_ADDRESS
+        self.server_address = server_address or constants.DEFAULT_RASA_NLU_SERVER_ADDRESS
         # ToDo: Implement something to startup the nlu server (or decide to not do this programmatically)
         # TODO: Also make sure the _right_ model is chosen, i.e. via a "domain" parameter
 

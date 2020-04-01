@@ -3,19 +3,24 @@ import os
 
 from parlai import PROJECT_PATH
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
+from parlai.mturk.tasks.woz.backend import constants
 from parlai.mturk.tasks.woz.backend import template_filler
 
 
 class WizardSuggestion:
-    def __init__(self, intent2reply_file, num_suggestions=3):
+    def __init__(self, intent2reply_file, num_suggestions=3, max_num_suggestions=10,
+                 nlu_server_address=constants.DEFAULT_RASA_NLU_SERVER_ADDRESS):
         with open(intent2reply_file) as in_file:
             self.intent2reply = json.load(in_file)
         self.num_suggestions = num_suggestions
+        self.max_num_suggestions = max_num_suggestions
+        self.nlu = NLUServerConnection(server_address=nlu_server_address)
 
     def get_suggestions(
-        self, wizard_utterance, kb_item, nlu_context, return_intents=False
+        self, wizard_utterance, kb_item, return_intents=False
     ):
-        intents, entities = nlu_context
+        intents, entities = self.nlu.get_suggestions(text=wizard_utterance,
+                                                     max_num_suggestions=self.max_num_suggestions)
 
         if return_intents:
             return intents
@@ -65,22 +70,12 @@ if __name__ == '__main__':
     #utterance_14 = 'Pick me up from Main Street 42'
     utterance_15 = 'Your car will arrive in 34 minutes and your driver will be Carl in some old car. He is from Uber btw.'
 
-    nlu = NLUServerConnection()
     base_dir = os.path.join(PROJECT_PATH, 'resources', 'book_ride')
     ws = WizardSuggestion(intent2reply_file=os.path.join(base_dir, 'intent2reply.json'))
 
-    for utterance in [
-        utterance_3,
-        utterance_6,
-        utterance_7,
-        utterance_8,
-        utterance_9,
-        utterance_15,
-    ]:
+    for utterance in [utterance_3, utterance_6, utterance_7, utterance_8, utterance_9, utterance_15]:
         # Use rasa to get an intent label
-        nlu_context = nlu.get_suggestions(utterance, max_num_suggestions=10)
-        suggestions = ws.get_suggestions(kb_item=kb_item, nlu_context=nlu_context)
+        suggestions = ws.get_suggestions(wizard_utterance=utterance, kb_item=kb_item)
 
-        print(f'Intents for "{utterance}": {nlu_context[0]}')
         print(f'Suggestions for "{utterance}": {suggestions}')
         print('----------------------------------------------')
