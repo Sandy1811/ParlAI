@@ -209,7 +209,7 @@ class WOZWorld(MTurkTaskWorld):
     Wizard-of-Oz world.
     """
 
-    def __init__(self, opt, agents, observers: Optional[List[Agent]] = None):
+    def __init__(self, opt, agents, observers: Optional[List[Agent]] = None) -> None:
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
         self.observers = observers or []
         self.knowledgebase = None
@@ -230,7 +230,10 @@ class WOZWorld(MTurkTaskWorld):
             opt.get("scenario_list") + ".txt",
         )
         scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
-        self._scenario = random.choice(scenarios_list)
+        self._scenario: Text = random.choice(scenarios_list)
+
+        self._current_domain = "ride" if self._scenario.startswith("book_ride") else None
+        print(f"Start domain/scenario: {self._current_domain} / {self._scenario}")
 
         assert self.user
         assert self.wizard
@@ -345,6 +348,7 @@ class WOZWorld(MTurkTaskWorld):
             suggestions = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 kb_item=self._primary_kb_item,
+                domain=self._current_domain,
             )
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message

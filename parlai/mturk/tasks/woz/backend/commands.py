@@ -476,9 +476,9 @@ class RequestSuggestionsCommand(WizardCommand):
 
     @staticmethod
     def from_message(
-        sender: Agent, text: Optional[Text] = None, **kwargs
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
     ) -> Optional["Command"]:
-        return RequestSuggestionsCommand(sender=sender, query_text=(text or ""))
+        return RequestSuggestionsCommand(sender=sender, query_text=(extracted_from_text or ""))
 
     @property
     def query(self) -> Text:

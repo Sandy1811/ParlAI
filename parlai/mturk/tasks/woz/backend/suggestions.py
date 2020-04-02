@@ -30,9 +30,11 @@ class WizardSuggestion:
         comparing: bool = False,
         return_intents: bool = False,
     ) -> List[Text]:
-        intents, entities = self.nlu.get_suggestions(
-            text=wizard_utterance, max_num_suggestions=self.max_num_suggestions,
-             domain=domain, comparing=comparing
+        intents, entities = self.nlu.get_intents_and_entities(
+            text=wizard_utterance,
+            max_num_suggestions=self.max_num_suggestions,
+            domain=domain,
+            comparing=comparing,
         )
         if return_intents:
             return intents
@@ -49,7 +51,7 @@ class WizardSuggestion:
             if len(suggestions) >= self.num_suggestions:
                 break
 
-        if len(suggestions) == 0:
+        if len(suggestions) == 0 or not domain:
             suggestions.append(wizard_utterance)
 
         return suggestions
@@ -87,8 +89,9 @@ if __name__ == '__main__':
 
     domain = 'book_ride'
     base_dir = os.path.join(PROJECT_PATH, 'resources', 'book_ride')
-    ws = WizardSuggestion(intent2reply_file=os.path.join(base_dir, 'intent2reply.json'),
-                          domain=domain)
+    ws = WizardSuggestion(
+        intent2reply_file=os.path.join(base_dir, 'intent2reply.json'), domain=domain
+    )
 
     for utterance in [
         utterance_3,
@@ -97,7 +100,7 @@ if __name__ == '__main__':
         utterance_8,
         utterance_9,
         utterance_15,
-        utterance_16
+        utterance_16,
     ]:
         # Use rasa to get an intent label
         suggestions = ws.get_suggestions(wizard_utterance=utterance, kb_item=kb_item)

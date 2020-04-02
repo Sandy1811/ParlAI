@@ -19,7 +19,7 @@ class NLUServerConnection:
             raise ConnectionError("Could not access NLU server.")
         return response.json()
 
-    def get_suggestions(
+    def get_intents_and_entities(
         self,
         text: Text,
         domain: Optional[Text] = None,
@@ -29,14 +29,13 @@ class NLUServerConnection:
         response = self.query(
             f"{'true' if comparing else 'false'}:{domain or 'general'}:{text}"
         )
+        response["intent_ranking"].sort(key=(lambda v: -v["confidence"]))
         suggestions = [
             intent["name"] for intent in response["intent_ranking"]
-        ]  # ToDo: Make sure this is sorted by confidence
-        # TODO: Need to take the user's query into account as well, ideally the suggestion is the model response,
-        #  most similar to the user's input
+        ]
         return suggestions[:max_num_suggestions], response['entities']
 
 
 if __name__ == '__main__':
     nlu = NLUServerConnection()
-    print(nlu.get_suggestions("hello"))
+    print(nlu.get_intents_and_entities("hello"))
