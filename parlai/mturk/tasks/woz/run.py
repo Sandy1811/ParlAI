@@ -3,6 +3,8 @@
 # Copyright (c) Facebook, Inc. and its affiliates.
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
+import random
+
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core import mturk_utils
@@ -87,12 +89,7 @@ def main():
     if opt["wizard_intro"]:
         opt["dummy_user"] = True
         api.dbs["ride"].add_item(
-            {
-                "id": 1000,
-                "Price": 20,
-                "ServiceProvider": "Uber",
-                "DriverName": "Zoe",
-            }
+            {"id": 1000, "Price": 20, "ServiceProvider": "Uber", "DriverName": "Zoe",}
         )
         api.dbs["ride"].add_item(
             {
@@ -155,9 +152,7 @@ def main():
 
     qualification_manager = MTurkQualificationManager()
     # if opt["wizard_intro"]:
-    qualification_manager.require_locales(
-        ["US", "CA", "GB", "AU", "NZ", "DE"]
-    )
+    qualification_manager.require_locales(["US", "CA", "GB", "AU", "NZ", "DE"])
     qualification_manager.require_min_approved_hits(10000)
     qualification_manager.require_min_approval_rate(98)
     #     qualification_manager.require_existence(
@@ -219,6 +214,14 @@ def main():
         # Initialize run information
         mturk_manager.start_new_run()
 
+        # Load scenarios
+        scenarios_list_fn = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "scenarios",
+            opt.get("scenario_list") + ".txt",
+        )
+        scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
+
         # Set up the sockets and threads to receive workers
         mturk_manager.ready_to_accept_workers()
 
@@ -270,15 +273,22 @@ def main():
                     dummy_user = WOZDummyAgent(opt, "User")
                 workers += [dummy_user]
 
+            scenario = random.choice(scenarios_list)
+
             # Create the task world
             # if opt["wizard_intro"]:
-                # world = WOZWizardTutorialWorld(
-                #     opt=opt,
-                #     agents=workers,
-                #     qualification_on_success=has_passed_wizard_tutorial_20200324_qualification,
-                # )
+            # world = WOZWizardTutorialWorld(
+            #     opt=opt,
+            #     agents=workers,
+            #     qualification_on_success=has_passed_wizard_tutorial_20200324_qualification,
+            # )
             # else:
-            world = WOZWorld(opt=opt, agents=workers, observers=[user_tutor_agent])
+            world = WOZWorld(
+                opt=opt,
+                scenario=scenario,
+                agents=workers,
+                observers=[],  # [user_tutor_agent]
+            )
 
             # run the world to completion
             while not world.episode_done():

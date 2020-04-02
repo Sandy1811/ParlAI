@@ -96,7 +96,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         assert self._scenario
 
     def parley(self):
-        setup = SetupCommand(scenario=self._scenario, role="Wizard")
+        setup = SetupCommand(scenario="intro", role="Wizard")
         self.mturk_agent.observe(setup.message)
         send_mturk_message(
             "Take your time to read your task description on the left. "
@@ -173,7 +173,7 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         assert self._scenario
 
     def parley(self):
-        setup = SetupCommand(scenario=self._scenario, role="User")
+        setup = SetupCommand(scenario="intro", role="User")
         self.mturk_agent.observe(setup.message)
         self.mturk_agent.observe(
             GuideCommand(
@@ -209,13 +209,17 @@ class WOZWorld(MTurkTaskWorld):
     Wizard-of-Oz world.
     """
 
-    def __init__(self, opt, agents, observers: Optional[List[Agent]] = None) -> None:
+    def __init__(
+        self, opt: Opt, scenario: Text, agents: List[MTurkAgent], observers: Optional[List[Agent]] = None
+    ) -> None:
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
         self.observers = observers or []
         self.knowledgebase = None
         self.user = None
         self.wizard = None
+
         for agent in agents:
+            assert hasattr(agent, "demo_role")
             if agent.demo_role == "User":
                 self.user = agent
             elif agent.demo_role == "Wizard":
@@ -223,16 +227,11 @@ class WOZWorld(MTurkTaskWorld):
             elif agent.demo_role == "KnowledgeBase":
                 self.knowledgebase = agent
 
-        scenarios_list_fn = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "..",
-            "scenarios",
-            opt.get("scenario_list") + ".txt",
+        # ToDo: Adjust as NLU module gets better
+        self._scenario = scenario
+        self._current_domain = (
+            "ride" if self._scenario.startswith("book_ride") else None
         )
-        scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
-        self._scenario: Text = random.choice(scenarios_list)
-
-        self._current_domain = "ride" if self._scenario.startswith("book_ride") else None
         print(f"Start domain/scenario: {self._current_domain} / {self._scenario}")
 
         assert self.user

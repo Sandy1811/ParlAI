@@ -200,7 +200,8 @@ function ReviewForm(props) {
       msg => msg.id === props.agent_id && msg.text.startsWith('<done>')
     ) != null;
 
-  const setupMessage = props.messages.find(
+  const setupMessage = findLast(
+    props.messages,
     msg => msg.command === 'setup' && msg.form_description != null
   );
   if (setupMessage == null) {
@@ -284,8 +285,26 @@ function CompleteButton(props) {
   );
 }
 
+function findLast(array, predicate) {
+	for (let i = array.length - 1; i >= 0; --i) {
+		const x = array[i];
+		if (predicate(x)) {
+			return x;
+		}
+	}
+	return null;
+}
+
 function OnboardingView(props) {
-  const setupMessage = props.messages.find(
+  if (props.world_state === 'onboarding') {
+    return (
+      <div>Please follow the instructions of the 'MTurk System' bot in the dialogue.</div>
+    );
+  }
+
+  // Find the last setup message
+  const setupMessage = findLast(
+    props.messages,
     msg => msg.command === 'setup' && msg.form_description != null
   );
   if (setupMessage == null) {
@@ -378,9 +397,6 @@ class LeftPane extends React.Component {
         <div id="left-pane" className={pane_size} style={frame_style}>
           <TaskDescription {...this.props} isInReview={isInReview} />
           {this.props.children}
-          <br />
-          If you are ready, please follow the instructions of the 'MTurk System' bot in the dialogue.
-          <br />
         </div>
       );
     } else if (isInReview) {
@@ -401,7 +417,8 @@ class LeftPane extends React.Component {
       );
     }
 
-    const setupMessage = this.props.messages.find(
+    const setupMessage = findLast(
+      this.props.messages,
       msg => msg.command === 'setup' && msg.form_description != null
     );
     if (setupMessage == null) {
