@@ -20,11 +20,23 @@ def fill_ride_ask_departure(intent2reply, *_):
 
 
 def fill_ride_ask_confirm_booking(intent2reply, kb_item):
-    if not check_kb_item(kb_item, ["DepartureLocation", "ArrivalLocation"]):
+    if not check_kb_item(
+        kb_item,
+        [
+            "ServiceProvider",
+            "Price",
+            "MinutesTillPickup",
+            "DepartureLocation",
+            "ArrivalLocation",
+        ],
+    ):
         return None
     return intent2reply[constants.INTENT_RIDE_ASK_CONFIRM_BOOKING].format(
+        service_provider=kb_item["ServiceProvider"],
         departure_location=kb_item["DepartureLocation"],
         arrival_location=kb_item["ArrivalLocation"],
+        price=kb_item["Price"],
+        minutes_till_pickup=kb_item["MinutesTillPickup"],
     )
 
 
@@ -48,10 +60,6 @@ def fill_ride_provide_driver_details(intent2reply, kb_item):
     if not check_kb_item(
         kb_item,
         [
-            "ServiceProvider",
-            "DriverName",
-            "Price",
-            "MinutesTillPickup",
             "CarModel",
             "id",
             "LicensePlate",
@@ -59,10 +67,6 @@ def fill_ride_provide_driver_details(intent2reply, kb_item):
     ):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_DRIVER_DETAILS].format(
-        service_provider=kb_item["ServiceProvider"],
-        driver_name=kb_item["DriverName"],
-        price=kb_item["Price"],
-        minutes_till_pickup=kb_item["MinutesTillPickup"],
         car_model=kb_item["CarModel"],
         booking_id=kb_item["id"],
         license_plate=kb_item["LicensePlate"],

@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Text, Dict, Any, List
+from typing import Text, Dict, Any, List, Optional
 
 from parlai import PROJECT_PATH
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
@@ -12,22 +12,21 @@ class WizardSuggestion:
     def __init__(
         self,
         intent2reply_file,
-        domain,
         num_suggestions=3,
         max_num_suggestions=10,
         nlu_server_address=constants.DEFAULT_RASA_NLU_SERVER_ADDRESS,
     ):
-        with open(intent2reply_file) as in_file:
+        with open(intent2reply_file, "r", encoding="utf-8") as in_file:
             self.intent2reply = json.load(in_file)
         self.num_suggestions = num_suggestions
         self.max_num_suggestions = max_num_suggestions
         self.nlu = NLUServerConnection(server_address=nlu_server_address)
-        self.domain = domain
 
     def get_suggestions(
         self,
         wizard_utterance: Text,
         kb_item: Dict[Text, Any],
+        domain: Optional[Text] = None,
         comparing: bool = False,
         return_intents: bool = False,
     ) -> List[Text]:
