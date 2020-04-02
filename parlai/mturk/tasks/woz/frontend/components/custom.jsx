@@ -113,7 +113,7 @@ class WizardResponse extends React.Component {
     //     return shouldAskForSuggestion;
 
     //     return (this.props.agent_id === "Wizard");
-    return (this.props.agent_id === "Wizard");
+    return (this.props.agent_id === "Wizard" && this.props.world_state !== "onboarding");
   }
 
   render() {
