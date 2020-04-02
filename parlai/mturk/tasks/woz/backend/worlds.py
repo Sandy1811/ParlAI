@@ -349,11 +349,16 @@ class WOZWorld(MTurkTaskWorld):
             self._secondary_kb_item = wizard_command.item
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
-            suggestions = self._suggestion_module.get_suggestions(
+            suggestions, possibly_wrong_item_selected = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 kb_item=self._primary_kb_item,
                 domain=self._current_domain,
             )
+            if possibly_wrong_item_selected:
+                send_mturk_message(
+                    "Some suggestions won't show. Did you select the knowledge base item(s) that you are describing?",
+                    self.wizard
+                )
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )

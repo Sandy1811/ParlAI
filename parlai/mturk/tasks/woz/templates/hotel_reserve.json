@@ -10,7 +10,7 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "Reserve a room at the @Name-1 from @StartDate-1 to @EndDate-1. Your name is @CustomerName-1.",
+        "Reserve a room at the @Name-1 from @StartDate-1 to @EndDate-1. Your name is @CustomerName-1. Please do not make a custom request.",
         "Make a reservation at @Name-1 from @StartDate-1 to @EndDate-1. Your name is @CustomerName-1. Please request @Request-1."
       ],
       "completion_requirements": ["You have reserved a hotel."],

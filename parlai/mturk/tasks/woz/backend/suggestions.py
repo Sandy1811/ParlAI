@@ -1,6 +1,6 @@
 import json
 import os
-from typing import Text, Dict, Any, List, Optional
+from typing import Text, Dict, Any, List, Optional, Tuple
 
 from parlai import PROJECT_PATH
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
@@ -29,7 +29,11 @@ class WizardSuggestion:
         domain: Optional[Text] = None,
         comparing: bool = False,
         return_intents: bool = False,
-    ) -> List[Text]:
+    ) -> Tuple[List[Text], bool]:
+        possibly_wrong_item_selected = (
+            None  # Will be set `True` if `fn_fill` never finds the right slots
+        )
+
         intents, entities = self.nlu.get_intents_and_entities(
             text=wizard_utterance,
             max_num_suggestions=self.max_num_suggestions,
@@ -37,16 +41,21 @@ class WizardSuggestion:
             comparing=comparing,
         )
         if return_intents:
-            return intents
+            return intents, False
 
         suggestions = []
         for intent in intents:
             if intent in self.intent2reply:
                 fn_fill = getattr(template_filler, f'fill_{intent}')
 
-                suggestion = fn_fill(self.intent2reply, kb_item)
+                suggestion, had_to_use_kb_item = fn_fill(self.intent2reply, kb_item)
                 if suggestion:
                     suggestions.append(suggestion)
+                    if had_to_use_kb_item:
+                        # If some item used slots and was filled correctly, the correct item was probably selected
+                        possibly_wrong_item_selected = False
+                elif possibly_wrong_item_selected is None:
+                    possibly_wrong_item_selected = True
 
             if len(suggestions) >= self.num_suggestions:
                 break
@@ -54,7 +63,10 @@ class WizardSuggestion:
         if len(suggestions) == 0 or not domain:
             suggestions.append(wizard_utterance)
 
-        return suggestions
+        if possibly_wrong_item_selected is None:  #  or not domain
+            possibly_wrong_item_selected = False
+
+        return suggestions, possibly_wrong_item_selected
 
 
 if __name__ == '__main__':
