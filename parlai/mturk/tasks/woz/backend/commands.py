@@ -484,6 +484,10 @@ class RequestSuggestionsCommand(WizardCommand):
     def query(self) -> Text:
         return self._query
 
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {"Agent": self._sender.id, "Action": self._command_name, "Text": self._query, "UnixTime": int(time.time())}
+
 
 class SupplySuggestionsCommand(BackendCommand):
     def __init__(self, recipient: Agent, suggestions: List[Text]) -> None:
