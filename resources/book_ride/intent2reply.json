@@ -4,7 +4,7 @@
     "ride_ask_destination": "Alright, where do you want to go?",
     "ride_ask_departure": "OK, and where are you departing from?",
     "ride_ask_confirm_booking": "I found a {service_provider:s} ride for you from {departure_location:s} to {arrival_location:s} for {price:d} credits that could pick you up in {minutes_till_pickup:d} minutes. Should I book that for you?",
-    "ride_bye": "Thank you and enjoy your ride!",
+    "ride_bye": "Goodbye. Enjoy your ride!",
     "ride_confirm_booking": "Right, your {service_provider:s} ride is all booked for you now!",
     "ride_provide_driver_details": "OK, you will soon be picked up in a {car_model:s} with license plate '{license_plate:s}'. Your booking id is '{booking_id:d}'.",
     "ride_inform_search_criteria": "I can also filter for service provider, driver name, and the car’s model."

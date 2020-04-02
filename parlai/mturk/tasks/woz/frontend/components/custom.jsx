@@ -267,6 +267,8 @@ function CompleteButton(props) {
       msg.id !== 'MTurk System'
   ).length;
 
+  const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
+
   return (
     <Button
       className="btn btn-primary"
@@ -277,7 +279,7 @@ function CompleteButton(props) {
         );
       }}
     >
-      The dialogue is complete
+      The {other_agent} has said goodbye
     </Button>
   );
 }

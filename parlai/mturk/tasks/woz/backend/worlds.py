@@ -332,19 +332,7 @@ class WOZWorld(MTurkTaskWorld):
             self.wizard.observe(kb_message)
             return 0
         elif isinstance(wizard_command, DialogueCompletedCommand):
-            self.wizard.observe(ReviewCommand(self.wizard).message)
-            self.user.observe(ReviewCommand(self.user).message)
-            self.wizard.observe(
-                GuideCommand(
-                    "Thank you for chatting. Now please review your conversation."
-                ).message
-            )
-            self.user.observe(
-                GuideCommand(
-                    "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant."
-                ).message
-            )
-            self._stage = EVALUATION_STAGE
+            self._end_dialogue_by_wizard()
             return 1
         elif isinstance(wizard_command, SelectPrimaryCommand):
             self._primary_kb_item = wizard_command.item
@@ -354,12 +342,10 @@ class WOZWorld(MTurkTaskWorld):
             self._secondary_kb_item = wizard_command.item
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
-            print(wizard_command)
             suggestions = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 kb_item=self._primary_kb_item,
             )
-            print(suggestions)
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )
@@ -367,6 +353,8 @@ class WOZWorld(MTurkTaskWorld):
         elif isinstance(wizard_command, PickSuggestionCommand):
             self.wizard.observe(wizard_command.message)
             self.user.observe(wizard_command.message)
+            if "Goodbye" in wizard_command.message.get("text", ""):
+                self._end_dialogue_by_wizard()
             return 1
         else:
             print_and_log(
@@ -408,6 +396,21 @@ class WOZWorld(MTurkTaskWorld):
                 raise RuntimeError(
                     f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}"
                 )
+
+    def _end_dialogue_by_wizard(self):
+        self.wizard.observe(ReviewCommand(self.wizard).message)
+        self.user.observe(ReviewCommand(self.user).message)
+        self.wizard.observe(
+            GuideCommand(
+                "Thank you for chatting. Now please review your conversation."
+            ).message
+        )
+        self.user.observe(
+            GuideCommand(
+                "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant."
+            ).message
+        )
+        self._stage = EVALUATION_STAGE
 
     def store_wizard_event(self, event):
         _event = event
