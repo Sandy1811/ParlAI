@@ -288,7 +288,10 @@ class ChatMessage extends React.Component {
             className="btn btn-primary"
             id="id_send_msg_button"
             disabled={this.state.textval == ""}
-            onClick={() => this.tryMessageSend()}
+            onClick={() => this.props.onMessageSend(
+                this.state.textval, {}, () => this.setState({ textval: "", sending: false })
+              )
+            }
           >
             Send
           </Button>

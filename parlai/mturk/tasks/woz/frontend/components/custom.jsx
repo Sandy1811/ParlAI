@@ -299,7 +299,7 @@ function OnboardingView(props) {
   const agent = props.agent_id === 'User' ? 'user' : 'assistant';
   if (props.world_state === 'onboarding') {
     return (
-      <div>You are playing the <b>{agent}</b> in this dialogue. Please follow the instructions of the 'MTurk System' bot throughout the dialogue.</div>
+      <div>You are playing the <b>{agent}</b> in this dialogue. Please follow the instructions of the 'MTurk System' bot during onboarding and throughout the dialogue.</div>
     );
   }
 
