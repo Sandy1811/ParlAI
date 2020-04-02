@@ -279,7 +279,7 @@ class ChatMessage extends React.Component {
               fontSize: "16px"
             }}
             value={this.state.textval}
-            placeholder="Please enter here..."
+            placeholder="Optional: Enter free-form reply here..."
             onKeyPress={e => this.handleKeyPress(e)}
             onChange={e => this.updateValue(e.target.value)}
           />
