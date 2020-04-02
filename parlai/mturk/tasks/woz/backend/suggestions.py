@@ -12,6 +12,7 @@ class WizardSuggestion:
     def __init__(
         self,
         intent2reply_file,
+        domain,
         num_suggestions=3,
         max_num_suggestions=10,
         nlu_server_address=constants.DEFAULT_RASA_NLU_SERVER_ADDRESS,
@@ -21,17 +22,19 @@ class WizardSuggestion:
         self.num_suggestions = num_suggestions
         self.max_num_suggestions = max_num_suggestions
         self.nlu = NLUServerConnection(server_address=nlu_server_address)
+        self.domain = domain
 
     def get_suggestions(
         self,
         wizard_utterance: Text,
         kb_item: Dict[Text, Any],
+        comparing: bool = False,
         return_intents: bool = False,
     ) -> List[Text]:
         intents, entities = self.nlu.get_suggestions(
-            text=wizard_utterance, max_num_suggestions=self.max_num_suggestions
+            text=wizard_utterance, max_num_suggestions=self.max_num_suggestions,
+             domain=domain, comparing=comparing
         )
-
         if return_intents:
             return intents
 
@@ -81,9 +84,12 @@ if __name__ == '__main__':
     # utterance_13 = 'I want to go to the East Entrance of the Central Station'
     # utterance_14 = 'Pick me up from Main Street 42'
     utterance_15 = 'Your car will arrive in 34 minutes and your driver will be Carl in some old car. He is from Uber btw.'
+    utterance_16 = 'i can filter for another service provider if you want'
 
+    domain = 'book_ride'
     base_dir = os.path.join(PROJECT_PATH, 'resources', 'book_ride')
-    ws = WizardSuggestion(intent2reply_file=os.path.join(base_dir, 'intent2reply.json'))
+    ws = WizardSuggestion(intent2reply_file=os.path.join(base_dir, 'intent2reply.json'),
+                          domain=domain)
 
     for utterance in [
         utterance_3,
@@ -92,6 +98,7 @@ if __name__ == '__main__':
         utterance_8,
         utterance_9,
         utterance_15,
+        utterance_16
     ]:
         # Use rasa to get an intent label
         suggestions = ws.get_suggestions(wizard_utterance=utterance, kb_item=kb_item)

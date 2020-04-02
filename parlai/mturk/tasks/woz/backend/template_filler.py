@@ -40,6 +40,10 @@ def fill_ride_confirm_booking(intent2reply, kb_item):
     )
 
 
+def fill_ride_inform_search_criteria(intent2reply, *_):
+    return intent2reply[constants.INTENT_RIDE_INFORM_SEARCH_CRITERIA]
+
+
 def fill_ride_provide_driver_details(intent2reply, kb_item):
     if not check_kb_item(
         kb_item,
