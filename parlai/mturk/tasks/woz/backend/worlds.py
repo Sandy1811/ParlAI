@@ -256,8 +256,13 @@ class WOZWorld(MTurkTaskWorld):
 
     def parley(self):
         if self._stage == SETUP_STAGE:
+            setup_command = SetupCommand(scenario=self._scenario, role="Wizard").message
             self.wizard.observe(
-                SetupCommand(scenario=self._scenario, role="Wizard").message
+                setup_command
+            )
+            send_mturk_message(
+                f"Your task: {setup_command.get('task_description')}",
+                self.wizard
             )
             self.user.observe(
                 SetupCommand(scenario=self._scenario, role="User").message
