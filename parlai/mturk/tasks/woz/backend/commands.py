@@ -531,6 +531,11 @@ class PickSuggestionCommand(WizardCommand):
             raise ValueError(f"Chosen message is empty")
         return PickSuggestionCommand(sender=sender, chosen_text=extracted_from_text)
 
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {"Agent": self._sender.id, "Action": self._command_name, "Text": self._text,
+                "UnixTime": int(time.time())}
+
 
 def command_from_message(
     message: Optional[Dict[Text, Any]], sender: Optional[Agent]

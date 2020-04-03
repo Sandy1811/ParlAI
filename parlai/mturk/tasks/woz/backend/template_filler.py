@@ -45,10 +45,12 @@ def fill_ride_bye(intent2reply, *_):
 
 
 def fill_ride_confirm_booking(intent2reply, kb_item):
-    if not check_kb_item(kb_item, ["ServiceProvider"]):
+    if not check_kb_item(kb_item, ["CarModel", "id", "LicensePlate"]):
         return None
     return intent2reply[constants.INTENT_RIDE_CONFIRM_BOOKING].format(
-        service_provider=kb_item["ServiceProvider"]
+        car_model=kb_item["CarModel"],
+        booking_id=kb_item["id"],
+        license_plate=kb_item["LicensePlate"],
     )
 
 
@@ -57,12 +59,10 @@ def fill_ride_inform_search_criteria(intent2reply, *_):
 
 
 def fill_ride_provide_driver_details(intent2reply, kb_item):
-    if not check_kb_item(kb_item, ["CarModel", "id", "LicensePlate",],):
+    if not check_kb_item(kb_item, ["DriverName"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_DRIVER_DETAILS].format(
-        car_model=kb_item["CarModel"],
-        booking_id=kb_item["id"],
-        license_plate=kb_item["LicensePlate"],
+        driver_name=kb_item["DriverName"],
     )
 
 
