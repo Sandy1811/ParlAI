@@ -49,6 +49,9 @@ from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
 
 
+WIZARD_TUTORIAL_URL = "https://wolfr.am/LxzdOazi"
+
+
 def is_disconnected(act):
     return 'text' in act and act['text'] in [
         MTURK_DISCONNECT_MESSAGE,
@@ -99,10 +102,10 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         setup = SetupCommand(scenario="intro", role="Wizard")
         self.mturk_agent.observe(setup.message)
         send_mturk_message(
-            "Take your time to read your task description on the left. "
-            "If you haven't watched the tutorial video yet, please do so now. Here is the link: "
-            "https://bit.ly/2UgkAQ6 . "
-            "Once you are ready, type the name of the example user that appears in the tutorial and hit [Enter].",
+            f"Take your time to read your task description on the left. "
+            f"If you haven't watched the tutorial video yet, please do so now. Here is the link: "
+            f"{WIZARD_TUTORIAL_URL} . "
+            f"Once you are ready, type the name of the example user that appears in the tutorial and hit [Enter].",
             self.mturk_agent,
         )
         while True:
@@ -111,9 +114,9 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
             if is_disconnected(message):
                 self.episodeDone = True
                 return
-            if "gaus" in message.get("text", "").strip().lower():
+            if "marie" in message.get("text", "").strip().lower():
                 break
-            if "carl" in message.get("text", "").strip().lower():
+            if "curie" in message.get("text", "").strip().lower():
                 break
             else:
                 send_mturk_message("That is not correct.", self.mturk_agent)
