@@ -86,6 +86,24 @@ def main():
     # opt["dummy_user"] = True
     # opt["dummy_responses"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/test_user_replies.txt"
     # opt["wizard_intro"] = "/Users/johannes/ParlAI/parlai/mturk/tasks/woz/tutorial_wizard_book-ride.json"
+    if opt["dummy_user"]:
+        api.dbs["ride"].clear()
+        item_we_probably_find = {
+                "Price": 21,
+                "ServiceProvider": "Uber",
+                "LicensePlate": "D1AL 0G",
+            }
+        for i in range(300):
+            api.dbs["ride"].add_item(item_we_probably_find)
+        api.dbs["ride"].add_item(
+            {
+                "id": 1009,
+                "Price": 12,
+                "MinutesTillPickup": 7,
+                "ServiceProvider": "Taxi",
+                "LicensePlate": "MAG 1C",
+            }
+        )
     if opt["wizard_intro"]:
         opt["dummy_user"] = True
         api.dbs["ride"].add_item(
