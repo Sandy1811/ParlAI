@@ -7,7 +7,7 @@ import re
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.mturk.core.shared_utils import AssignState
+from parlai.mturk.core.shared_utils import AssignState, print_and_log
 from parlai.mturk.tasks.woz.knowledgebase import api
 from parlai.mturk.tasks.woz.backend.commands import (
     QueryCommand,
@@ -30,10 +30,10 @@ class NonMTurkAgent(Agent):
         pass  # ToDo: Implement
 
     def is_final(self):
-        return AssignState.STATUS_DONE
+        return AssignState.STATUS_NONE
 
     def get_status(self):
-        return AssignState.STATUS_DONE
+        return AssignState.STATUS_NONE
 
     def set_status(self, *args, **kwargs) -> None:
         pass
@@ -86,20 +86,25 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
         if self.observation is None:
             return {"text": "Knowledge base invoked without observation."}
 
+        constraints = self.observation.constraints
+        api_name = self.observation.api_name
         try:
-            constraints = self.observation.constraints
-            api_name = self.observation.api_name
-
             items, count = api.call_api(api_name, constraints=constraints)
             reply = {
                 "id": "KnowledgeBase",
                 "text": f"Found {count} items in {api_name}. Example: {json.dumps(items)}.",
                 "example_item": items,
+                "api_name": api_name,
+                "num_items": count,
             }
         except Exception as e:
+            print_and_log(45, f"Could not interpret your query: {e}", False)
             reply = {
                 "id": "KnowledgeBase",
-                "text": f"Could not interpret your query: {e}",
+                "text": "Nothing found.",
+                "example_item": None,
+                "api_name": api_name,
+                "num_items": 0,
             }
 
         self._messages.append(reply)

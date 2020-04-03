@@ -100,7 +100,7 @@ if __name__ == '__main__':
     domain = 'book_ride'
     base_dir = os.path.join(PROJECT_PATH, 'resources', 'book_ride')
     ws = WizardSuggestion(
-        intent2reply_file=os.path.join(base_dir, 'intent2reply.json'), domain=domain
+        intent2reply_file=os.path.join(base_dir, 'intent2reply.json')
     )
 
     for utterance in [
