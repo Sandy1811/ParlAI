@@ -31,7 +31,7 @@ class WizardSuggestion:
         return_intents: bool = False,
     ) -> Tuple[List[Text], bool]:
         possibly_wrong_item_selected = (
-            None  # Will be set `True` if `fn_fill` never finds the right slots
+            None  # Will be set `True` if top intent cannot be filled
         )
 
         intents, entities = self.nlu.get_intents_and_entities(
@@ -48,14 +48,12 @@ class WizardSuggestion:
             if intent in self.intent2reply:
                 fn_fill = getattr(template_filler, f'fill_{intent}')
 
-                suggestion, had_to_use_kb_item = fn_fill(self.intent2reply, kb_item)
+                suggestion = fn_fill(self.intent2reply, kb_item)
                 if suggestion:
                     suggestions.append(suggestion)
-                    if had_to_use_kb_item:
-                        # If some item used slots and was filled correctly, the correct item was probably selected
-                        possibly_wrong_item_selected = False
-                elif possibly_wrong_item_selected is None:
-                    possibly_wrong_item_selected = True
+
+                if possibly_wrong_item_selected is None:
+                    possibly_wrong_item_selected = suggestion is None
 
             if len(suggestions) >= self.num_suggestions:
                 break
@@ -63,7 +61,7 @@ class WizardSuggestion:
         if len(suggestions) == 0 or not domain:
             suggestions.append(wizard_utterance)
 
-        if possibly_wrong_item_selected is None:  #  or not domain
+        if possibly_wrong_item_selected is None or not domain:
             possibly_wrong_item_selected = False
 
         return suggestions, possibly_wrong_item_selected
