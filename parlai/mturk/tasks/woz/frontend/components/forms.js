@@ -476,6 +476,8 @@ export function jsonToForm(
               >
                 <option value="is_equal_to">is equal to</option>
                 <option value="is_greater_than">is greater than</option>
+                <option value="is_at_least">is at least</option>
+                <option value="is_at_most">is at most</option>
                 <option value="is_less_than">is less than</option>
                 <option value="is_not">is not</option>
               </FormControl>

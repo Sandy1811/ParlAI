@@ -20,10 +20,17 @@ def is_one_of(value):
 
 
 def is_greater_than(value):
+    return lambda x: x > value
+
+
+def is_at_least(value):
     return lambda x: x >= value
 
 
 def is_less_than(value):
+    return lambda x: x < value
+
+def is_at_most(value):
     return lambda x: x <= value
 
 
@@ -96,6 +103,9 @@ class KnowledgeBaseAPI:
                 settings.update(self._random_value(parameter, settings))
 
         self._dataset.append(KnowledgeBaseItem(settings))
+
+    def clear(self):
+        self._dataset = []
 
     def _create_random_item(self, identification_number: int) -> KnowledgeBaseItem:
         # Build the settings by randomly choosing from the options
