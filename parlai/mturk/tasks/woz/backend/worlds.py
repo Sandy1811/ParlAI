@@ -338,7 +338,12 @@ class WOZWorld(MTurkTaskWorld):
             kb_message = self.knowledgebase.act()
             self._primary_kb_item = kb_message.get("example_item")
             self._secondary_kb_item = None
-            # self.events.append(kb_message.event)
+            self.events.append({
+                "Agent": "KnowledgeBase",
+                "Item": kb_message.get("example_item"),
+                "TotalItems": kb_message.get("num_items", 0),
+                "Topic": kb_message.get("api_name")
+            })
             self.wizard.observe(kb_message)
             return 0
         elif isinstance(wizard_command, DialogueCompletedCommand):
