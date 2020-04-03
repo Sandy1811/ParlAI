@@ -16,7 +16,7 @@ class NLUServerConnection:
     def query(self, text: Text) -> Dict[Text, Any]:
         response = requests.post(self.server_address, data=f'{{"text": "{text}"}}')
         if response.status_code != 200:
-            raise ConnectionError("Could not access NLU server.")
+            raise ConnectionError(f"Could not access NLU server: {response.reason}")
         return response.json()
 
     def get_intents_and_entities(
