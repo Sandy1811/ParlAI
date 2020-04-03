@@ -488,12 +488,12 @@ class WOZWorld(MTurkTaskWorld):
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
         if len(self.events) > 4 and (self._primary_kb_item or self._secondary_kb_item):
-            self.user.approve_work()
-            self.wizard.approve_work()
+            if isinstance(self.user, MTurkAgent): self.user.approve_work()
+            if isinstance(self.wizard, MTurkAgent): self.wizard.approve_work()
             if len(self.events) > 30:
                 # Pay bonus of 50 cents
-                self.user.pay_bonus(0.50)
-                self.wizard.pay_bonus(0.50)
+                if isinstance(self.user, MTurkAgent): self.user.pay_bonus(0.50)
+                if isinstance(self.wizard, MTurkAgent): self.wizard.pay_bonus(0.50)
         else:
             self.wizard.reject_work()
 
