@@ -320,7 +320,7 @@ class WOZWorld(MTurkTaskWorld):
         else:
             print_and_log(
                 45,
-                f"Command {type(user_command)} not allowed for User in evaluation stage: {user_command.message}",
+                f"Command {type(user_command)} not allowed for User in dialogue stage: {user_command.message}",
                 True,
             )
 
@@ -378,7 +378,7 @@ class WOZWorld(MTurkTaskWorld):
         else:
             print_and_log(
                 45,
-                f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}",
+                f"Command {type(wizard_command)} not allowed for Wizard in dialogue stage: {wizard_command.message}",
                 True,
             )
 
@@ -487,13 +487,22 @@ class WOZWorld(MTurkTaskWorld):
         # self.mturk_agent.reject_work()
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
-        pass
+        if len(self.events) > 4 and (self._primary_kb_item or self._secondary_kb_item):
+            self.user.approve_work()
+            self.wizard.approve_work()
+            if len(self.events) > 30:
+                # Pay bonus of 50 cents
+                self.user.pay_bonus(0.50)
+                self.wizard.pay_bonus(0.50)
+        else:
+            self.wizard.reject_work()
 
     def get_custom_task_data(self):
         # brings important data together for the task, to later be used for
-        # creating the dataset. If data requires pickling, put it in a field
+        # creating the data set. If data requires pickling, put it in a field
         # called 'needs-pickle'.
         return {
+            "Scenario": self._scenario,
             "Events": self.events,
             "WizardWorkerID": self.wizard.worker_id,
             "UserWorkerID": self.user.worker_id
