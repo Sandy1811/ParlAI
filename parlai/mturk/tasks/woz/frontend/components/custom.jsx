@@ -325,12 +325,6 @@ function OnboardingView(props) {
       <div>{taskDescription}</div>
       <br />
       <div>
-        Your task is complete, when
-        <ul>
-          {completionRequirements.map(req => {
-            return <li> {req} </li>;
-          })}
-        </ul>
         At the end of this dialogue, you will have to judge if the {other_agent}
         fulfilled his/her task.
         <br />

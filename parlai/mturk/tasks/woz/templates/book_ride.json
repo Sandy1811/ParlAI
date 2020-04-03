@@ -14,10 +14,10 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "You want a ride from @Location-1 to @Location-2. Your name is @CustomerName-1.",
-        "You are @CustomerName-1 and would like a @ServiceProvider-1 from @Location-1 to @Location-2.",
-        "You are @CustomerName-1 and would like to go from @Location-1 to @Location-2. Your driver should be @DriverName-1",
-        "You are @CustomerName-1 and would like to travel to @Location-1 from @Location-2 in a @CarModel-1 car"
+        "You want a ride from '@Location-1' to '@Location-2'. Your name is @CustomerName-1.",
+        "You are @CustomerName-1 and urgently need to find a @ServiceProvider-1 from '@Location-1' to '@Location-2'.",
+        "You are @CustomerName-1. A friend of yours, @DriverName-1, is a @ServiceProvider-1 driver and you would like him/her to drive you to @Location-2. Right now you are at @Location-1.",
+        "You are @CustomerName-1 and would like to travel to @Location-1 from @Location-2 in a @CarModel-1 car. Please provide one piece of information at a time."
       ],
       "completion_requirements": ["You have booked a ride."],
       "completion_questions": [
@@ -26,7 +26,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Help the user.",
+      "task_description": "Help the user book a ride. (You can find the video tutorial under https://wolfr.am/LxzdOazi, in case you want to watch it again.)",
       "completion_requirements": [
         "You have found a ride that the user likes,",
         "or the user says goodbye."
