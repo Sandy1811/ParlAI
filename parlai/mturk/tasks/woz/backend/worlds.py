@@ -210,7 +210,11 @@ class WOZWorld(MTurkTaskWorld):
     """
 
     def __init__(
-        self, opt: Opt, scenario: Text, agents: List[MTurkAgent], observers: Optional[List[Agent]] = None
+        self,
+        opt: Opt,
+        scenario: Text,
+        agents: List[MTurkAgent],
+        observers: Optional[List[Agent]] = None,
     ) -> None:
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
         self.observers = observers or []
@@ -257,12 +261,9 @@ class WOZWorld(MTurkTaskWorld):
     def parley(self):
         if self._stage == SETUP_STAGE:
             setup_command = SetupCommand(scenario=self._scenario, role="Wizard").message
-            self.wizard.observe(
-                setup_command
-            )
+            self.wizard.observe(setup_command)
             send_mturk_message(
-                f"Your task: {setup_command.get('task_description')}",
-                self.wizard
+                f"Your task: {setup_command.get('task_description')}", self.wizard
             )
             self.user.observe(
                 SetupCommand(scenario=self._scenario, role="User").message
@@ -317,8 +318,10 @@ class WOZWorld(MTurkTaskWorld):
             self._stage = EVALUATION_STAGE
             return 1
         else:
-            raise RuntimeError(
-                f"User command not allowed in dialogue stage: {user_command.message}"
+            print_and_log(
+                45,
+                f"Command {type(user_command)} not allowed for User in evaluation stage: {user_command.message}",
+                True,
             )
 
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
@@ -349,7 +352,10 @@ class WOZWorld(MTurkTaskWorld):
             self._secondary_kb_item = wizard_command.item
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
-            suggestions, possibly_wrong_item_selected = self._suggestion_module.get_suggestions(
+            (
+                suggestions,
+                possibly_wrong_item_selected,
+            ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 kb_item=self._primary_kb_item,
                 domain=self._current_domain,
@@ -357,7 +363,7 @@ class WOZWorld(MTurkTaskWorld):
             if possibly_wrong_item_selected:
                 send_mturk_message(
                     "Some suggestions won't show. Did you select the knowledge base item(s) that you are describing?",
-                    self.wizard
+                    self.wizard,
                 )
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
@@ -372,11 +378,8 @@ class WOZWorld(MTurkTaskWorld):
         else:
             print_and_log(
                 45,
-                f"Wizard command not allowed in dialogue stage: {wizard_command.message}",
+                f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}",
                 True,
-            )
-            raise RuntimeError(
-                f"Wizard command not allowed in dialogue stage: {wizard_command.message}"
             )
 
     def _parley_evaluation(self, agent) -> None:
@@ -406,8 +409,10 @@ class WOZWorld(MTurkTaskWorld):
                 # Happens when `agent.act()` returns `None` (can happen since `blocking=False`)
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
             else:
-                raise RuntimeError(
-                    f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}"
+                print_and_log(
+                    45,
+                    f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}",
+                    True,
                 )
 
     def _end_dialogue_by_wizard(self):
@@ -630,11 +635,8 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
         else:
             print_and_log(
                 45,
-                f"Wizard command not allowed in dialogue stage: {wizard_command.message}",
+                f"Command {type(wizard_command)} not allowed for Wizard in evaluation stage: {wizard_command.message}",
                 True,
-            )
-            raise RuntimeError(
-                f"Wizard command not allowed in dialogue stage: {wizard_command.message}"
             )
 
     def block_loop(self) -> None:
