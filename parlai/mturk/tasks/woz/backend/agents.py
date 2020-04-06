@@ -7,7 +7,7 @@ import re
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
-from parlai.mturk.core.shared_utils import AssignState
+from parlai.mturk.core.shared_utils import AssignState, print_and_log
 from parlai.mturk.tasks.woz.knowledgebase import api
 from parlai.mturk.tasks.woz.backend.commands import (
     QueryCommand,
@@ -30,10 +30,10 @@ class NonMTurkAgent(Agent):
         pass  # ToDo: Implement
 
     def is_final(self):
-        return AssignState.STATUS_DONE
+        return AssignState.STATUS_NONE
 
     def get_status(self):
-        return AssignState.STATUS_DONE
+        return AssignState.STATUS_NONE
 
     def set_status(self, *args, **kwargs) -> None:
         pass
@@ -86,20 +86,25 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
         if self.observation is None:
             return {"text": "Knowledge base invoked without observation."}
 
+        constraints = self.observation.constraints
+        api_name = self.observation.api_name
         try:
-            constraints = self.observation.constraints
-            api_name = self.observation.api_name
-
             items, count = api.call_api(api_name, constraints=constraints)
             reply = {
                 "id": "KnowledgeBase",
                 "text": f"Found {count} items in {api_name}. Example: {json.dumps(items)}.",
                 "example_item": items,
+                "api_name": api_name,
+                "num_items": count,
             }
         except Exception as e:
+            print_and_log(45, f"Could not interpret your query: {e}", False)
             reply = {
                 "id": "KnowledgeBase",
-                "text": f"Could not interpret your query: {e}",
+                "text": "Nothing found.",
+                "example_item": None,
+                "api_name": api_name,
+                "num_items": 0,
             }
 
         self._messages.append(reply)
@@ -127,7 +132,7 @@ class WOZDummyAgent(NonMTurkAgent):
     def __init__(self, opt: Union[Opt, dict], role: Text) -> None:
         """Initialize this agent."""
         super().__init__(opt)
-        self.id = "DummyAgent"
+        self.id = "User"
         self.role = role
         self.demo_role = role
         self._num_messages_sent = 0
@@ -191,14 +196,14 @@ class WOZInstructorAgent(NonMTurkAgent):
         self._event_history = history
 
     def act(self) -> Tuple[Dict[Text, Any], Dict[Text, Any]]:
-        print(f"acting on: {self._event_history}")
+        # print(f"acting on: {self._event_history}")
         if not self._event_history:
             return {}, {}
         for rule in self._rules:
             if rule.get("triggers_left", 1) > 0 and rule.get(
                 "condition", self.constant_condition(False)
             )(self._event_history):
-                print(rule["message"])
+                # print(rule["message"])
                 if rule.get("probability", 1.0) < 1.0 and random.uniform(
                     0.0, 1.0
                 ) > rule.get("probability", 1.0):

@@ -1,3 +1,4 @@
+import re
 from collections import defaultdict
 
 import copy
@@ -28,7 +29,7 @@ def populate(desc, db_path):
 
   # Detect all slots
   slots = [s[:-1] if s[-1] in string.punctuation else s 
-           for s in desc.split() if s.startswith('@')]
+           for s in re.split(r"[ ']", desc) if s.startswith('@')]
   slots = list(set(slots))
 
   # Sample slots
@@ -51,18 +52,19 @@ def populate(desc, db_path):
 
   return desc
 
-open(scenario_file, 'w+').write("")
-for fn in os.listdir(template_dir):
-  if not fn.endswith('json'):
-    continue
+if __name__ == '__main__':
+  open(scenario_file, 'w+').write("")
+  for fn in os.listdir(template_dir):
+    if not fn.endswith('json'):
+      continue
 
-  template = json.load(open(template_dir + fn))  
-  for i,desc in enumerate(template['instructions']['User']['task_descriptions']):
-    for j in range(scenarios_per):
-      new_scenario = copy.deepcopy(template)
-      del new_scenario['instructions']['User']['task_descriptions']
-      new_scenario['instructions']['User']['task_description'] = populate(desc, db_dir + template['db'])
-      new_fn = "{0}/{1}_v{2}.json".format(scenario_dir, fn.split('.')[0], i*scenarios_per + j)
-      new_name = "{0}_v{1}\n".format(fn.split('.')[0], i*scenarios_per + j)
-      json.dump(new_scenario, open(new_fn, 'w+'))
-      open(scenario_file, 'a+').write(new_name)
+    template = json.load(open(template_dir + fn))
+    for i,desc in enumerate(template['instructions']['User']['task_descriptions']):
+      for j in range(scenarios_per):
+        new_scenario = copy.deepcopy(template)
+        del new_scenario['instructions']['User']['task_descriptions']
+        new_scenario['instructions']['User']['task_description'] = populate(desc, db_dir + template['db'])
+        new_fn = "{0}/{1}_v{2}.json".format(scenario_dir, fn.split('.')[0], i*scenarios_per + j)
+        new_name = "{0}_v{1}\n".format(fn.split('.')[0], i*scenarios_per + j)
+        json.dump(new_scenario, open(new_fn, 'w+'))
+        open(scenario_file, 'a+').write(new_name)

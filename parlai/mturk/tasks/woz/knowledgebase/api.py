@@ -20,10 +20,17 @@ def is_one_of(value):
 
 
 def is_greater_than(value):
+    return lambda x: x > value
+
+
+def is_at_least(value):
     return lambda x: x >= value
 
 
 def is_less_than(value):
+    return lambda x: x < value
+
+def is_at_most(value):
     return lambda x: x <= value
 
 
@@ -46,7 +53,7 @@ def contains_substring(value):
 class KnowledgeBaseItem:
     def __init__(self, settings):
         self._id = hash(str(settings))
-        self._settings = settings
+        self._settings: Dict[Text, Any] = settings
 
     def __str__(self):
         return str(self._settings)
@@ -84,6 +91,21 @@ class KnowledgeBaseAPI:
     def _generate(self, num_items: int) -> None:
         for n in range(num_items):
             self._dataset.append(self._create_random_item(n))
+
+    def add_item(self, item: Dict[Text, Any]) -> None:
+        settings = {}
+        for parameter in self.parameters:
+            print(parameter)
+            name = parameter.get("Name")
+            if name in item:
+                settings.update({name: item[name]})
+            else:
+                settings.update(self._random_value(parameter, settings))
+
+        self._dataset.append(KnowledgeBaseItem(settings))
+
+    def clear(self):
+        self._dataset = []
 
     def _create_random_item(self, identification_number: int) -> KnowledgeBaseItem:
         # Build the settings by randomly choosing from the options
@@ -269,6 +291,12 @@ def book_ride(ride_api, constraints: Dict[Text, Any]):
     if constraints["RequestType"] == "Book":
       return dict(Message="Ride booked."), -1
 
+    query_properties = {
+        "DepartureLocation": constraints["DepartureLocation"],
+        "ArrivalLocation": constraints["ArrivalLocation"],
+        "CustomerName": constraints["CustomerName"]
+    }
+
     del constraints["RequestType"]
     del constraints["DepartureLocation"]
     del constraints["ArrivalLocation"]
@@ -276,7 +304,9 @@ def book_ride(ride_api, constraints: Dict[Text, Any]):
     row, count = ride_api.sample(constraints)
     if not row:  # ToDo: Do this for all apis
         raise ValueError("Could not find any matching items.")
-    return row._settings, -1
+    settings = row._settings
+    settings.update(query_properties)
+    return settings, -1
 
 
 def ride_status(ride_api, constraints: Dict[Text, Any]):
@@ -517,7 +547,9 @@ def load_databases() -> None:
     for filename in os.listdir(db_dir):
         if filename[0] == ".":
             continue
-        dbs[os.path.splitext(filename)[0]] = load_db(
+        db_name = os.path.splitext(filename)[0]
+        # print(f"loading {db_name}")
+        dbs[db_name] = load_db(
             os.path.join(os.path.dirname(os.path.abspath(__file__)), "dbs", filename)
         )
 

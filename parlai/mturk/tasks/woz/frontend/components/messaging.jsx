@@ -279,7 +279,7 @@ class ChatMessage extends React.Component {
               fontSize: "16px"
             }}
             value={this.state.textval}
-            placeholder="Please enter here..."
+            placeholder="Optional: Enter free-form reply here..."
             onKeyPress={e => this.handleKeyPress(e)}
             onChange={e => this.updateValue(e.target.value)}
           />
@@ -288,7 +288,10 @@ class ChatMessage extends React.Component {
             className="btn btn-primary"
             id="id_send_msg_button"
             disabled={this.state.textval == ""}
-            onClick={() => this.tryMessageSend()}
+            onClick={() => this.props.onMessageSend(
+                this.state.textval, {}, () => this.setState({ textval: "", sending: false })
+              )
+            }
           >
             Send
           </Button>
@@ -300,6 +303,13 @@ class ChatMessage extends React.Component {
       message = this.props.message;
     }
     const onlyVisibleMsg = (isKB || isSYS) ? " (Only visible to you)" : null;
+
+    let msg_color = undefined;
+    if (isKB) {
+        msg_color = "#f4cdcc";  // light red
+    } else if (isSYS) {
+        msg_color = "#FDEFB6";  // light yellow
+    }
 
     return (
       <div
@@ -316,7 +326,7 @@ class ChatMessage extends React.Component {
           style={{
             float: float_loc,
             display: "table",
-            backgroundColor: onlyVisibleMsg ? "#FDEFB6" : undefined,
+            backgroundColor: msg_color,
             color: onlyVisibleMsg ? "rgb(88, 90, 94)" : undefined
           }}
         >
