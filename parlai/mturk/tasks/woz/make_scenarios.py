@@ -28,7 +28,7 @@ def populate(desc, db_path):
 
   # Detect all slots
   slots = [s[:-1] if s[-1] in string.punctuation else s 
-           for s in desc.split() if s.startswith('@')]
+           for s in desc.split(" '") if s.startswith('@')]
   slots = list(set(slots))
 
   # Sample slots

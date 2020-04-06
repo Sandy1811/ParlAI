@@ -8,6 +8,7 @@ import random
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core import mturk_utils
+from parlai.mturk.core.agents import MTurkAgent
 from parlai.mturk.core.mturk_manager import MTurkManager
 
 import os
@@ -89,10 +90,10 @@ def main():
     if opt["dummy_user"]:
         api.dbs["ride"].clear()
         item_we_probably_find = {
-                "Price": 21,
-                "ServiceProvider": "Uber",
-                "LicensePlate": "D1AL 0G",
-            }
+            "Price": 21,
+            "ServiceProvider": "Uber",
+            "LicensePlate": "D1AL 0G",
+        }
         for i in range(300):
             api.dbs["ride"].add_item(item_we_probably_find)
         api.dbs["ride"].add_item(
@@ -165,6 +166,11 @@ def main():
     #     "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-24.",
     #     opt["is_sandbox"],
     # )
+    has_passed_wizard_tutorial_20200406_qualification = mturk_utils.find_or_create_qualification(
+        "WOZ-HasPassedWizardTutorial-20200406",
+        "Workers with this qualification have passed the second wizard video tutorial (state from 2020-04-06).",
+        opt["is_sandbox"],
+    )
 
     # opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200324"
 
@@ -203,9 +209,21 @@ def main():
         role_index += 1
         worker.demo_role = role
         worker.passed_onboarding = False
+        worker.bonus = 0
         if role == "Wizard":
+            original_id = worker.worker_id
             worker.update_agent_id("Wizard")
-            world = WizardOnboardingWorld(opt=opt, mturk_agent=worker)
+            world = WizardOnboardingWorld(
+                opt=opt,
+                mturk_agent=worker,
+            )
+            if worker.passed_onboarding and isinstance(worker, MTurkAgent):
+                mturk_utils.give_worker_qualification(
+                    original_id,
+                    has_passed_wizard_tutorial_20200406_qualification,
+                    is_sandbox=opt["is_sandbox"],
+                )
+                worker.bonus += 2
         elif role == "User":
             worker.update_agent_id("User")
             world = UserOnboardingWorld(opt=opt, mturk_agent=worker)

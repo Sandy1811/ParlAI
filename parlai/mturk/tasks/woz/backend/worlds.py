@@ -96,11 +96,13 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     def __init__(self, opt: Opt, mturk_agent: Agent):
         super(WizardOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
         self._scenario = opt.get("scenario")
+        self.opt = opt
         assert self._scenario
 
     def parley(self):
         setup = SetupCommand(scenario="intro", role="Wizard")
         self.mturk_agent.observe(setup.message)
+
         send_mturk_message(
             f"Take your time to read your task description on the left. "
             f"If you haven't watched the tutorial video yet, please do so now. Here is the link: "
@@ -120,29 +122,6 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
                 break
             else:
                 send_mturk_message("That is not correct.", self.mturk_agent)
-
-        send_mturk_message(
-            "What does the 'request optional' box tell you to do (as explained in the tutorial video)?"
-            "Once you are ready, type your answer and hit [Enter].",
-            self.mturk_agent,
-        )
-
-        while True:
-            message = self.mturk_agent.act()
-            echo.log_write(f"onboarding wizard: {message}")
-            if is_disconnected(message):
-                self.episodeDone = True
-                return
-            if "tell" in message.get("text", "").strip().lower():
-                break
-            if "inform" in message.get("text", "").strip().lower():
-                break
-            if "mention to" in message.get("text", "").strip().lower():
-                break
-            else:
-                send_mturk_message(
-                    "That does not seem correct. Try again.", self.mturk_agent
-                )
 
         self.mturk_agent.passed_onboarding = True
         # if message.get("text", "") != "ready":
@@ -180,8 +159,13 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.observe(setup.message)
         self.mturk_agent.observe(
             GuideCommand(
-                "Take your time to read your task description on the left. "
-                "Write 'ready' when you are ready and press [Enter]."
+                f"Hello. Every time you do this task you will be randomly assigned one of two roles: "
+                f"an AI assistant, or a user. This time, you'll play the user. When you type 'ready' and "
+                f"send a message, we will pair you up with another worker who plays the AI assistant. "
+                f"Note, that playing the AI assistant is a very complex task, so your partner has to "
+                f"watch a 15 minute video tutorial before he/she can start the task. Thus, it might take a "
+                f"while before you get paired. Once you are paired, your situation and things to do will be "
+                f"displayed on the left panel."
             ).message
         )
         message = self.mturk_agent.act()
@@ -341,12 +325,14 @@ class WOZWorld(MTurkTaskWorld):
             kb_message = self.knowledgebase.act()
             self._primary_kb_item = kb_message.get("example_item")
             self._secondary_kb_item = None
-            self.events.append({
-                "Agent": "KnowledgeBase",
-                "Item": kb_message.get("example_item"),
-                "TotalItems": kb_message.get("num_items", 0),
-                "Topic": kb_message.get("api_name")
-            })
+            self.events.append(
+                {
+                    "Agent": "KnowledgeBase",
+                    "Item": kb_message.get("example_item"),
+                    "TotalItems": kb_message.get("num_items", 0),
+                    "Topic": kb_message.get("api_name"),
+                }
+            )
             self.wizard.observe(kb_message)
             return 0
         elif isinstance(wizard_command, DialogueCompletedCommand):
@@ -496,12 +482,16 @@ class WOZWorld(MTurkTaskWorld):
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
         if len(self.events) > 4 and (self._primary_kb_item or self._secondary_kb_item):
-            if isinstance(self.user, MTurkAgent): self.user.approve_work()
-            if isinstance(self.wizard, MTurkAgent): self.wizard.approve_work()
+            if isinstance(self.user, MTurkAgent):
+                self.user.approve_work()
+            if isinstance(self.wizard, MTurkAgent):
+                self.wizard.approve_work()
             if len(self.events) > 30:
                 # Pay bonus of 50 cents
-                if isinstance(self.user, MTurkAgent): self.user.pay_bonus(0.50)
-                if isinstance(self.wizard, MTurkAgent): self.wizard.pay_bonus(0.50)
+                if isinstance(self.user, MTurkAgent):
+                    self.user.pay_bonus(0.50)
+                if isinstance(self.wizard, MTurkAgent):
+                    self.wizard.pay_bonus(0.50)
         else:
             self.wizard.reject_work()
 
@@ -626,12 +616,14 @@ class WOZWizardTutorialWorld(MTurkTaskWorld):
             kb_message = self.knowledgebase.act()
             self._primary_kb_item = kb_message.get("example_item")
             self._secondary_kb_item = None
-            self.events.append({
-                "Agent": "KnowledgeBase",
-                "Item": kb_message.get("example_item"),
-                "TotalItems": kb_message.get("num_items", 0),
-                "Topic": kb_message.get("api_name")
-            })
+            self.events.append(
+                {
+                    "Agent": "KnowledgeBase",
+                    "Item": kb_message.get("example_item"),
+                    "TotalItems": kb_message.get("num_items", 0),
+                    "Topic": kb_message.get("api_name"),
+                }
+            )
             self.wizard.observe(kb_message)
             return 1
         elif isinstance(wizard_command, DialogueCompletedCommand):
