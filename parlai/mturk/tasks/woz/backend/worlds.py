@@ -348,7 +348,7 @@ class WOZWorld(MTurkTaskWorld):
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             # Prevent wizards from copy/pasting entire KB item
-            if re.match(r"\t", wizard_command.query):
+            if "\t" in wizard_command.query:
                 send_mturk_message(
                     "Your input cannot contain tabs. Please do not just copy/paste the knowledge base item.",
                     self.wizard,
