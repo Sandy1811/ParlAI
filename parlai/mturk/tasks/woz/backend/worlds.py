@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import os
 import random
+import re
 import time
 from typing import Text, List, Dict, Any, Optional
 
@@ -346,6 +347,14 @@ class WOZWorld(MTurkTaskWorld):
             self._secondary_kb_item = wizard_command.item
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
+            # Prevent wizards from copy/pasting entire KB item
+            if re.match(r"\t", wizard_command.query):
+                send_mturk_message(
+                    "Your input cannot contain tabs. Please do not just copy/paste the knowledge base item.",
+                    self.wizard,
+                )
+                return 0
+            # Get suggestions from Rasa NLU server
             (
                 suggestions,
                 possibly_wrong_item_selected,
@@ -354,11 +363,13 @@ class WOZWorld(MTurkTaskWorld):
                 kb_item=self._primary_kb_item,
                 domain=self._current_domain,
             )
+            # Warn if response template of top-ranked intent could not be filled by selected KB item
             if possibly_wrong_item_selected:
                 send_mturk_message(
                     "Some suggestions won't show. Did you select the knowledge base item(s) that you are describing?",
                     self.wizard,
                 )
+            # Return suggested responses to front end
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )
