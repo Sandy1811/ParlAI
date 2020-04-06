@@ -3,6 +3,7 @@ import os
 from typing import Text, Dict, Any, List, Optional, Union, Tuple
 import time
 
+from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
 import parlai.mturk.tasks.woz.knowledgebase.api as api
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
@@ -193,8 +194,11 @@ class SetupCommand(BackendCommand):
         self._command_name = all_constants()["back_to_front"]["command_setup"]
 
         scenario_file_name = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "..",
+            PROJECT_PATH,
+            "parlai",
+            "mturk",
+            "tasks",
+            "woz",
             "scenarios",
             scenario + ".json",
         )
@@ -210,8 +214,11 @@ class SetupCommand(BackendCommand):
             form_description = {}
             for api_name in scenario["api_names"]:
                 api_file_name = os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "..",
+                    PROJECT_PATH,
+                    "parlai",
+                    "mturk",
+                    "tasks",
+                    "woz",
                     "knowledgebase",
                     "apis",
                     api_name + ".json",
@@ -427,7 +434,11 @@ class SelectPrimaryCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name, "UnixTime": int(time.time())}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "UnixTime": int(time.time()),
+        }
 
 
 class SelectSecondaryCommand(WizardCommand):
@@ -461,7 +472,11 @@ class SelectSecondaryCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name, "UnixTime": int(time.time())}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "UnixTime": int(time.time()),
+        }
 
 
 class RequestSuggestionsCommand(WizardCommand):
@@ -478,7 +493,9 @@ class RequestSuggestionsCommand(WizardCommand):
     def from_message(
         sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
     ) -> Optional["Command"]:
-        return RequestSuggestionsCommand(sender=sender, query_text=(extracted_from_text or ""))
+        return RequestSuggestionsCommand(
+            sender=sender, query_text=(extracted_from_text or "")
+        )
 
     @property
     def query(self) -> Text:
@@ -486,7 +503,12 @@ class RequestSuggestionsCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name, "Text": self._query, "UnixTime": int(time.time())}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "Text": self._query,
+            "UnixTime": int(time.time()),
+        }
 
 
 class SupplySuggestionsCommand(BackendCommand):
@@ -533,8 +555,12 @@ class PickSuggestionCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name, "Text": self._text,
-                "UnixTime": int(time.time())}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "Text": self._text,
+            "UnixTime": int(time.time()),
+        }
 
 
 def command_from_message(
