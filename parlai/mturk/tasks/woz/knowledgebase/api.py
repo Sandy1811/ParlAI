@@ -281,6 +281,8 @@ def book_ride(ride_api, constraints: Dict[Text, Any]):
     del constraints["ArrivalLocation"]
     del constraints["CustomerName"]
     row, count = ride_api.sample(constraints)
+    if not row:  # ToDo: Do this for all apis
+        raise ValueError("Could not find any matching items.")
     return row._settings, -1
 
 

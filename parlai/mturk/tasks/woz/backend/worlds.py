@@ -6,7 +6,7 @@
 import os
 import random
 import time
-from typing import Text, List, Dict, Any
+from typing import Text, List, Dict, Any, Optional
 
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
@@ -22,7 +22,11 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.woz.echo as echo
-from parlai.mturk.tasks.woz.backend.agents import WOZKnowledgeBaseAgent, WOZTutorAgent, WOZWizardIntroAgent
+from parlai.mturk.tasks.woz.backend.agents import (
+    WOZKnowledgeBaseAgent,
+    WOZInstructorAgent,
+    WOZWizardIntroAgent,
+)
 from parlai.mturk.tasks.woz.backend.commands import (
     command_from_message,
     all_constants,
@@ -38,6 +42,7 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SupplySuggestionsCommand,
     SetupCommand,
     GuideCommand,
+    SilentCommand,
 )
 
 
@@ -86,22 +91,6 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         super(WizardOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
         self._scenario = opt.get("scenario")
         assert self._scenario
-
-    def block_loop(self):
-        print(f'Worker {self.mturk_agent.worker_id} failed onboarding.')
-        send_mturk_message(
-            "Sorry, you've exceeded the maximum amount of tries to get the "
-            "correct actions given your persona and the setting, and thus we "
-            "don't believe you can complete the task correctly. Please return "
-            "the HIT.",
-            self.mturk_agent,
-        )
-        self.mturk_agent.mturk_manager.soft_block_worker(self.mturk_agent.worker_id)
-        message = self.mturk_agent.act()
-        while not is_disconnected(message):
-            send_mturk_message("Please return the HIT.", self.mturk_agent)
-            message = self.mturk_agent.act()
-        return True
 
     def parley(self):
         setup = SetupCommand(scenario=self._scenario, role="Wizard")
@@ -180,7 +169,6 @@ SETUP_STAGE = 0
 DIALOGUE_STAGE = 1
 EVALUATION_STAGE = 2
 END_STAGE = 3
-WIZARD_INTRO_STAGE = 4
 
 
 class WOZWorld(MTurkTaskWorld):
@@ -188,10 +176,10 @@ class WOZWorld(MTurkTaskWorld):
     Wizard-of-Oz world.
     """
 
-    def __init__(self, opt, agents):
+    def __init__(self, opt, agents, observers: Optional[List[Agent]] = None):
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
+        self.observers = observers or []
         self.knowledgebase = None
-        self.user_tutor = None
         self.user = None
         self.wizard = None
         for agent in agents:
@@ -201,8 +189,6 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard = agent
             elif agent.demo_role == "KnowledgeBase":
                 self.knowledgebase = agent
-            elif agent.demo_role == "UserTutor":
-                self.user_tutor = agent
 
         scenarios_list_fn = os.path.join(
           os.path.dirname(os.path.abspath(__file__)),
@@ -224,6 +210,9 @@ class WOZWorld(MTurkTaskWorld):
 
         self.num_turns = 1
 
+        self._primary_kb_item = None
+        self._secondary_kb_item = None
+
     def parley(self):
         if self._stage == SETUP_STAGE:
             self.wizard.observe(
@@ -234,16 +223,11 @@ class WOZWorld(MTurkTaskWorld):
             )
             self.tell_workers_to_start()
             self.num_turns = 0
-            self._stage = WIZARD_INTRO_STAGE if isinstance(self.user, WOZWizardIntroAgent) else DIALOGUE_STAGE
-        elif self._stage == WIZARD_INTRO_STAGE:
-            if self.num_turns % 2 == 0:
-                self.num_turns += self._parley_dialogue_user()
-            else:
-                self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
+            self._stage = DIALOGUE_STAGE
         elif self._stage == DIALOGUE_STAGE:
+            self._parley_observers()
             if self.num_turns % 2 == 0:
                 self.num_turns += self._parley_dialogue_user()
-                self._parley_dialogue_user_tutor()
             else:
                 self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
         elif self._stage == EVALUATION_STAGE:
@@ -254,11 +238,22 @@ class WOZWorld(MTurkTaskWorld):
             if self._received_evaluations >= 2:
                 self._episode_done = True
 
+    def _parley_observers(self) -> None:
+        for observer in self.observers:
+            observer.observe(self.events)
+            message_to_user, message_to_wizard = observer.act()
+            if message_to_user:
+                self.user.observe(message_to_user)
+            if message_to_wizard:
+                self.wizard.observe(message_to_wizard)
+
     def _parley_dialogue_user(self) -> int:
         user_command = command_from_message(self.user.act(), self.user)
         self.events.append(user_command.event)
         if isinstance(user_command, UtterCommand):
             self.wizard.observe(user_command.message)
+            return 1
+        elif isinstance(user_command, SilentCommand):
             return 1
         elif isinstance(user_command, DialogueCompletedCommand):
             self.wizard.observe(ReviewCommand(self.wizard).message)
@@ -268,7 +263,7 @@ class WOZWorld(MTurkTaskWorld):
                     "Thank you for chatting. Now please review your conversation."
                 ).message
             )
-            self.user.observe(
+            self.wizard.observe(
                 GuideCommand(
                     "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user."
                 ).message
@@ -280,27 +275,20 @@ class WOZWorld(MTurkTaskWorld):
                 f"User command not allowed in dialogue stage: {user_command.message}"
             )
 
-    def _parley_dialogue_user_tutor(self) -> None:
-        if self.user_tutor:
-            self.user_tutor.observe(self.events)
-            tutor_message = self.user_tutor.act()
-            tutor_command = command_from_message(tutor_message, self.user_tutor)
-            if isinstance(tutor_message, GuideCommand):
-                self.user.observe(tutor_message.message)
-
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
-        self.events.append(wizard_command.event)
-        if isinstance(self.user, WOZWizardIntroAgent):
-            self.user.observe(wizard_command.message)
-            return 1
+        self.store_wizard_event(wizard_command.event)
 
         if isinstance(wizard_command, UtterCommand):
             self.user.observe(wizard_command.message)
             return 1
+        elif isinstance(wizard_command, SilentCommand):
+            return 1
         elif isinstance(wizard_command, QueryCommand):
             self.knowledgebase.observe(wizard_command)
             kb_message = self.knowledgebase.act()
+            self._primary_kb_item = kb_message.get("example_item")
+            self._secondary_kb_item = None
             # self.events.append(kb_message.event)
             self.wizard.observe(kb_message)
             return 0
@@ -320,8 +308,11 @@ class WOZWorld(MTurkTaskWorld):
             self._stage = EVALUATION_STAGE
             return 1
         elif isinstance(wizard_command, SelectPrimaryCommand):
+            self._primary_kb_item = wizard_command.item
+            self._secondary_kb_item = None
             return 0
         elif isinstance(wizard_command, SelectSecondaryCommand):
+            self._secondary_kb_item = wizard_command.item
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
             suggestions = ["message 1", "message 2"]
@@ -371,6 +362,12 @@ class WOZWorld(MTurkTaskWorld):
                 raise RuntimeError(
                     f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}"
                 )
+
+    def store_wizard_event(self, event):
+        _event = event
+        _event["PrimaryItem"] = self._primary_kb_item
+        _event["SecondaryItem"] = self._secondary_kb_item
+        self.events.append(_event)
 
     @echo.echo_in(
         output=echo.log_write, prolog={"command": None, "recipient": (lambda a: a.id)}
@@ -448,8 +445,180 @@ class WOZWorld(MTurkTaskWorld):
     def add_cmdline_args(parser):
         parser = parser.add_argument_group('WOZWorld arguments')
         parser.add_argument(
-            "--scenario", type=str, default="all", help="Scenario name",
+            "--scenario", type=str, default="book_ride_tutorial", help="Scenario name",
         )
         parser.add_argument(
             "--scenario_list", type=str, default="all_scenarios", help="Scenario list",
         )
+
+class WOZWizardTutorialWorld(MTurkTaskWorld):
+    def __init__(self, opt, agents, observers: Optional[List[Agent]] = None):
+        super(WOZWizardTutorialWorld, self).__init__(opt, mturk_agent=None)
+        self.observers = observers or []
+        self.knowledgebase = None
+        self.tutor = None
+        self.wizard = None
+        for agent in agents:
+            if agent.demo_role == "User":
+                self.tutor = agent
+            elif agent.demo_role == "Wizard":
+                self.wizard = agent
+            elif agent.demo_role == "KnowledgeBase":
+                self.knowledgebase = agent
+
+        self._scenario = opt.get("scenario")
+
+        assert self.tutor
+        assert self.wizard
+        assert self._scenario
+
+        self._episode_done = False
+        self._stage = SETUP_STAGE
+        self._received_evaluations = 0
+        self.events = []
+
+        self.num_turns = 1
+
+        self._primary_kb_item = None
+        self._secondary_kb_item = None
+
+    def parley(self):
+        if self._stage == SETUP_STAGE:
+            self.wizard.observe(
+                SetupCommand(scenario=self._scenario, role="Wizard").message
+            )
+            self.num_turns = 0
+            self._stage = DIALOGUE_STAGE
+        elif self._stage == DIALOGUE_STAGE:
+            if self.num_turns % 2 == 0:
+                self.num_turns += self._parley_tutor()
+            else:
+                self.num_turns += self._parley_wizard()
+        elif self._stage == EVALUATION_STAGE:
+            if not self.tutor.worker_succeeded:
+                self.block_loop()
+            self._stage = END_STAGE
+        elif self._stage == END_STAGE:
+            self._episode_done = True
+
+    def _parley_tutor(self) -> int:
+        tutor_command = command_from_message(self.tutor.act(), self.tutor)
+        if isinstance(tutor_command, DialogueCompletedCommand):
+            self._stage = EVALUATION_STAGE
+            return 1
+        elif isinstance(tutor_command, SilentCommand):
+            return 1
+        else:
+            self.wizard.observe(tutor_command.message)
+            return 0
+
+    def _parley_wizard(self) -> int:
+        wizard_command = command_from_message(self.wizard.act(), self.wizard)
+        self.store_wizard_event(wizard_command.event)
+
+        if isinstance(wizard_command, UtterCommand):
+            return 1
+        elif isinstance(wizard_command, SilentCommand):
+            return 1
+        elif isinstance(wizard_command, QueryCommand):
+            self.knowledgebase.observe(wizard_command)
+            kb_message = self.knowledgebase.act()
+            self._primary_kb_item = kb_message.get("example_item")
+            self._secondary_kb_item = None
+            # self.events.append(kb_message.event)
+            self.wizard.observe(kb_message)
+            return 1
+        elif isinstance(wizard_command, DialogueCompletedCommand):
+            self._stage = EVALUATION_STAGE
+            return 1
+        elif isinstance(wizard_command, SelectPrimaryCommand):
+            self._primary_kb_item = wizard_command.item
+            self._secondary_kb_item = None
+            return 0
+        elif isinstance(wizard_command, SelectSecondaryCommand):
+            self._secondary_kb_item = wizard_command.item
+            return 0
+        elif isinstance(wizard_command, RequestSuggestionsCommand):
+            suggestions = ["message 1", "message 2"]
+            self.wizard.observe(
+                SupplySuggestionsCommand(self.wizard, suggestions).message
+            )
+            return 0
+        elif isinstance(wizard_command, PickSuggestionCommand):
+            return 1
+        else:
+            print_and_log(
+                45,
+                f"Wizard command not allowed in dialogue stage: {wizard_command.message}",
+                True,
+            )
+            raise RuntimeError(
+                f"Wizard command not allowed in dialogue stage: {wizard_command.message}"
+            )
+
+    def block_loop(self) -> None:
+        print(f"Worker {self.wizard.worker_id} failed wizard's tutorial.")
+        send_mturk_message(
+            "Sorry, you've exceeded the maximum amount of tries to take the "
+            "correct actions, and thus we "
+            "don't believe you can complete the task correctly. Please return "
+            "the HIT.",
+            self.wizard,
+        )
+        self.wizard.mturk_manager.soft_block_worker(self.wizard.worker_id)
+        message = self.wizard.act()
+        while not is_disconnected(message):
+            send_mturk_message("Please return the HIT.", self.wizard)
+            message = self.wizard.act()
+
+    def store_wizard_event(self, event):
+        _event = event
+        _event["PrimaryItem"] = self._primary_kb_item
+        _event["SecondaryItem"] = self._secondary_kb_item
+        self.tutor.observe(_event)
+        self.events.append(_event)
+
+    def episode_done(self):
+        return self._episode_done
+
+    def shutdown(self):
+        # Parallel shutdown of agents
+        def shutdown_agent(agent):
+            try:
+                agent.shutdown(timeout=None)
+            except Exception:
+                agent.shutdown()  # not MTurkAgent
+
+        threads = []
+        agents = [self.tutor, self.wizard, self.knowledgebase]
+        mturk_agents = [agent for agent in agents if isinstance(agent, MTurkAgent)]
+        for agent in mturk_agents:
+            t = threading.Thread(target=shutdown_agent, args=(agent,))
+            t.start()
+            threads.append(t)
+        for t in threads:
+            t.join()
+
+    def review_work(self):
+        # Can review the work here to accept or reject it
+        # self.mturk_agent.approve_work()
+        # self.mturk_agent.reject_work()
+        # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
+        # self.mturk_agent.block_worker() # Block this worker from future HITs
+        pass
+
+    def get_custom_task_data(self):
+        # brings important data together for the task, to later be used for
+        # creating the dataset. If data requires pickling, put it in a field
+        # called 'needs-pickle'.
+        return {"events": self.events}
+
+    def get_model_agent(self):
+        return self.wizard
+
+    def get_task_agent(self):
+        return self.tutor
+
+    @staticmethod
+    def add_cmdline_args(parser):
+        pass

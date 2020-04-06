@@ -2,14 +2,20 @@ import random
 from typing import List, Dict, Text, Any, Union, Tuple, Callable, Optional
 import os
 import json
+import re
 
 from parlai.core.agents import Agent
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core.shared_utils import AssignState
 from parlai.mturk.tasks.woz.knowledgebase import api
-from parlai.mturk.tasks.woz.backend.commands import Command, QueryCommand, GuideCommand, DialogueCompletedCommand, \
-    UtterCommand
+from parlai.mturk.tasks.woz.backend.commands import (
+    QueryCommand,
+    GuideCommand,
+    DialogueCompletedCommand,
+    UtterCommand,
+    SilentCommand,
+)
 
 
 class NonMTurkAgent(Agent):
@@ -88,6 +94,7 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
             reply = {
                 "id": "KnowledgeBase",
                 "text": f"Found {count} items in {api_name}. Example: {json.dumps(items)}.",
+                "example_item": items,
             }
         except Exception as e:
             reply = {
@@ -117,7 +124,7 @@ class WOZDummyAgent(NonMTurkAgent):
             "--dummy-user", action="store_true", help="Use a dummy user",
         )
 
-    def __init__(self, opt: Opt, role: Text) -> None:
+    def __init__(self, opt: Union[Opt, dict], role: Text) -> None:
         """Initialize this agent."""
         super().__init__(opt)
         self.id = "DummyAgent"
@@ -163,7 +170,7 @@ class WOZDummyAgent(NonMTurkAgent):
         return reply
 
 
-class WOZTutorAgent(NonMTurkAgent):
+class WOZInstructorAgent(NonMTurkAgent):
     @staticmethod
     def add_cmdline_args(parser) -> None:
         """Adds command line arguments for this agent."""
@@ -180,44 +187,51 @@ class WOZTutorAgent(NonMTurkAgent):
         self._rules = rules  # Conditions on dialogue history + responses that should be uttered if those conditions are satisfied
         self._event_history = None  # Entire dialogue history (to be observed)
 
-    def observe(self, observation):
-        self._event_history = observation
+    def observe(self, history: List[Dict[Text, Any]]) -> None:
+        self._event_history = history
 
-    def act(self) -> Dict[Text, Any]:
+    def act(self) -> Tuple[Dict[Text, Any], Dict[Text, Any]]:
+        print(f"acting on: {self._event_history}")
+        if not self._event_history:
+            return {}, {}
         for rule in self._rules:
             if rule.get("triggers_left", 1) > 0 and rule.get(
                 "condition", self.constant_condition(False)
             )(self._event_history):
+                print(rule["message"])
                 if rule.get("probability", 1.0) < 1.0 and random.uniform(
                     0.0, 1.0
                 ) > rule.get("probability", 1.0):
                     continue
-                if "triggers_left" in rule:
-                    rule["triggers_left"] -= 1
-                return rule["message"]
+                last_agent = self._event_history[-1].get("Agent")
+                if rule["target"] == last_agent:
+                    continue
+                rule["triggers_left"] -= 1
+                if rule["target"] == "User":
+                    return rule["message"], {}
+                else:
+                    return {}, rule["message"]
 
-        return {}
+        return {}, {}
 
     def add_rule(
         self,
         condition: Callable,
         text: Text,
-        max_times_triggered: Optional[int] = None,
+        target: Text,
+        max_times_triggered: int = 10000,
         probability: float = 1.0,
     ) -> None:
-        if max_times_triggered:
-            self._rules.append(
-                {
-                    "condition": condition,
-                    "message": {"text": text},
-                    "triggers_left": max_times_triggered,
-                    "probability": probability,
-                }
-            )
-        else:
-            self._rules.append(
-                {"condition": condition, "message": {"text": "<guide>" + text},}
-            )
+        assert target == "User" or target == "Wizard"
+        self._rules.append(
+            {
+                "condition": condition,
+                "message": {"text": text, "id": "MTurk System"},
+                "triggers_left": max_times_triggered,
+                "probability": probability,
+                "target": target,
+            }
+        )
 
     @staticmethod
     def num_turns_condition(
@@ -225,15 +239,20 @@ class WOZTutorAgent(NonMTurkAgent):
     ) -> Callable:
         _min_num_turns = min_num_turns or 0
         if max_num_turns is not None:
-            return lambda history: (_min_num_turns <= num_turns(history) <= max_num_turns)
+            return lambda history: (
+                _min_num_turns <= num_turns(history) <= max_num_turns
+            )
         else:
             return lambda history: (_min_num_turns <= num_turns(history))
 
     @staticmethod
-    def random_turn_condition(min_num_turns: Optional[int], max_num_turns: int) -> Callable:
+    def random_turn_condition(
+        min_num_turns: Optional[int], max_num_turns: int, count: int = 1
+    ) -> Callable:
         assert max_num_turns > (min_num_turns or 0)
-        n = random.randint(min_num_turns or 0, max_num_turns)
-        return lambda history: num_turns(history) == n
+        n = random.sample(range(min_num_turns or 0, max_num_turns), count)
+        print(f"Will trigger on turns {n}")
+        return lambda history: num_turns(history) in n
 
     @staticmethod
     def kb_changed_condition(
@@ -288,7 +307,7 @@ class WOZWizardIntroAgent(NonMTurkAgent):
     def __init__(self, opt: Opt, role: Text) -> None:
         """Initialize this agent."""
         super().__init__(opt)
-        self.id = "WizardIntroAgent"
+        self.id = "User"  # or "MTurk System" - changes on act()
         self.role = role
         self.demo_role = role
         self._num_messages_sent = 0
@@ -304,8 +323,10 @@ class WOZWizardIntroAgent(NonMTurkAgent):
             self.guidelines = None
             self.steps = []
 
-    def observe(self, observation: Dict[Text, Any]) -> None:
-        self.observation = observation
+        self.user = WOZDummyAgent(opt={}, role="User")
+
+    def observe(self, event: Dict[Text, Any]) -> None:
+        self.observation = event
 
     def act(self) -> Optional[Dict[Text, Any]]:
         """Generates a response to the last observation.
@@ -320,33 +341,148 @@ class WOZWizardIntroAgent(NonMTurkAgent):
 
         reply = None
         while reply is None:
-            if self._step_index > len(self.steps):
+            if self._step_index >= len(self.steps):
                 self.worker_succeeded = True
-                return DialogueCompletedCommand(sender=self).message
+                return DialogueCompletedCommand(sender=self.user).message
             current_step = self.steps[self._step_index]
             if "Guide" in current_step:
+                self.id = "MTurk System"
                 self._step_index += 1
                 self._correction_index = 0
+                self.observation = None
                 reply = GuideCommand(text=current_step["Guide"]).message
             elif "Wizard" in current_step:
-                if isinstance(current_step["Wizard"], str) and self.observation.get("text", "").lower().strip() == current_step["Wizard"]:
+                if not self.observation:
+                    reply = SilentCommand(sender=self.user).message
+                elif step_condition_satisfied(
+                    current_step["Wizard"], self.observation or {}
+                ):
                     self._step_index += 1
-                    self._correction_index = 0
-                elif isinstance(current_step["Wizard"], dict) and self.observation == current_step["Wizard"]:
-                    self._step_index += 1
-                    self._correction_index = 0
+                    self.observation = None
                 else:
                     corrections = current_step.get("Corrections", [])
                     if self._correction_index >= len(corrections):
-                        reply = DialogueCompletedCommand(sender=self).message
+                        reply = DialogueCompletedCommand(sender=self.user).message
                     else:
-                        reply = GuideCommand(text=corrections[self._correction_index]+f" (You sent {self.observation})").message
+                        reply = GuideCommand(
+                            text=corrections[self._correction_index]
+                        ).message
                         self._correction_index += 1
+                    self.observation = None
             elif "User" in current_step:
+                self.id = "User"
                 self._step_index += 1
                 self._correction_index = 0
-                reply = UtterCommand(text=current_step["User"], sender=self).message
+                self.observation = None
+                reply = UtterCommand(
+                    text=current_step["User"], sender=self.user
+                ).message
         return reply
+
+
+def step_condition_satisfied(
+    step: Union[str, Dict[Text, Any]], observation: Dict[Text, Any]
+) -> bool:
+    if isinstance(step, str):
+        return similar(observation.get("Text", ""), step)
+    elif isinstance(step, dict):
+
+        if "TextRegex" in step:
+            if (
+                re.fullmatch(
+                    step["TextRegex"], observation.get("Text", ""), flags=re.IGNORECASE
+                )
+                is None
+            ):
+                return False
+            del step["TextRegex"]
+
+        if "Constraints" in step:
+            if "Constraints" not in observation:
+                return False
+            observed_constraints = observation["Constraints"]
+            for expected_constraint in step["Constraints"]:
+                try:
+                    observed_constraint = select_first(
+                        observed_constraints,
+                        lambda c: constraint_name(c)
+                        == constraint_name(expected_constraint),
+                    )
+                except (StopIteration, ValueError):
+                    return False
+
+                if not similar(
+                    constraint_value(expected_constraint),
+                    constraint_value(observed_constraint),
+                ):
+                    return False
+            del step["Constraints"]
+
+        if "PrimaryItem" in step:
+            if not observation.get("PrimaryItem"):
+                return False
+            observed_item = observation.get("PrimaryItem")
+            for key, value in step.get("PrimaryItem", {}).items():
+                if key not in observed_item:
+                    return False
+                if not similar(value, observed_item.get(key, "")):
+                    return False
+            del step["PrimaryItem"]
+
+        if "SecondaryItem" in step:
+            if not observation.get("SecondaryItem"):
+                return False
+            observed_item = observation.get("SecondaryItem")
+            for key, value in step.get("SecondaryItem", {}).items():
+                if key not in observed_item:
+                    return False
+                if not similar(key, observed_item.get(key, "")):
+                    return False
+            del step["SecondaryItem"]
+
+        return all([similar(step[k], observation[k]) for k in step if k in observation])
+
+
+def similar(a: Any, b: Any):
+    if isinstance(a, str) and isinstance(b, str):
+        return a.lower().strip() == b.lower().strip()
+    else:
+        return a == b
+
+
+def select_first(iterable, condition=lambda x: True):
+    """
+    Returns the first item in the `iterable` that
+    satisfies the `condition`.
+
+    If the condition is not given, returns the first item of
+    the iterable.
+
+    Raises `StopIteration` if no item satysfing the condition is found.
+
+    >>> select_first( (1,2,3), condition=lambda x: x % 2 == 0)
+    2
+    >>> select_first(range(3, 100))
+    3
+    >>> select_first( () )
+    Traceback (most recent call last):
+    ...
+    StopIteration
+    """
+
+    return next(x for x in iterable if condition(x))
+
+
+def constraint_name(constraint: Dict[Text, Any]):
+    if len(constraint) != 1:
+        raise ValueError(f"Constraint {constraint} does not have single item.")
+    return list(constraint.keys())[0]
+
+
+def constraint_value(constraint: Dict[Text, Any]):
+    if len(constraint) != 1:
+        raise ValueError(f"Constraint {constraint} does not have single item.")
+    return list(constraint.values())[0]
 
 
 def num_turns(history: List[Dict[Text, Any]]) -> int:

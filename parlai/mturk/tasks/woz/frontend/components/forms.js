@@ -192,7 +192,7 @@ export class QueryForm extends React.Component {
               }}
               style={{ marginLeft: 20 }}
             >
-              Add Field
+              Add Constraint
             </Button>
           </div>
         </FormGroup>
@@ -210,7 +210,7 @@ export class QueryForm extends React.Component {
           disabled={this.props.chat_state !== 'text_input'}
           type="submit"
         >
-          Find example
+          Query
         </Button>
       </form>
     );
