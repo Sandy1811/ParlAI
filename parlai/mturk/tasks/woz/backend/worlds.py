@@ -4,8 +4,6 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 import os
-import random
-import re
 import time
 from typing import Text, List, Dict, Any, Optional
 
@@ -24,11 +22,6 @@ from parlai.mturk.core.worlds import MTurkOnboardWorld, MTurkTaskWorld
 import threading
 
 import parlai.mturk.tasks.woz.echo as echo
-from parlai.mturk.tasks.woz.backend.agents import (
-    WOZKnowledgeBaseAgent,
-    WOZInstructorAgent,
-    WOZWizardIntroAgent,
-)
 from parlai.mturk.tasks.woz.backend.commands import (
     command_from_message,
     all_constants,
@@ -48,9 +41,7 @@ from parlai.mturk.tasks.woz.backend.commands import (
 )
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
-
-
-WIZARD_TUTORIAL_URL = "https://wolfr.am/LxzdOazi"
+from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
 
 
 def is_disconnected(act):
