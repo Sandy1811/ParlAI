@@ -15,7 +15,7 @@
     "User": {
       "task_descriptions": [
         "You want a ride from '@Location-1' to '@Location-2'. Your name is @CustomerName-1.",
-        "You are @CustomerName-1 and urgently need to find a @ServiceProvider-1 from '@Location-1' to '@Location-2'.",
+        "You are @CustomerName-1 and urgently need to find a ride from '@Location-1' to '@Location-2'. You want to avoid taking a @ServiceProvider-1 though.",
         "You are @CustomerName-1. A friend of yours, @DriverName-1, is a @ServiceProvider-1 driver and you would like him/her to drive you to @Location-2. Right now you are at @Location-1.",
         "You are @CustomerName-1 and would like to travel to @Location-1 from @Location-2 in a @CarModel-1 car. Please provide one piece of information at a time."
       ],
