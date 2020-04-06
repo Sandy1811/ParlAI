@@ -5,6 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import random
 
+from parlai import PROJECT_PATH
 from parlai.core.opt import Opt
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core import mturk_utils
@@ -213,10 +214,7 @@ def main():
         if role == "Wizard":
             original_id = worker.worker_id
             worker.update_agent_id("Wizard")
-            world = WizardOnboardingWorld(
-                opt=opt,
-                mturk_agent=worker,
-            )
+            world = WizardOnboardingWorld(opt=opt, mturk_agent=worker,)
             if worker.passed_onboarding and isinstance(worker, MTurkAgent):
                 mturk_utils.give_worker_qualification(
                     original_id,
@@ -252,7 +250,11 @@ def main():
 
         # Load scenarios
         scenarios_list_fn = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
+            PROJECT_PATH,
+            "parlai",
+            "mturk",
+            "tasks",
+            "woz",
             "scenarios",
             opt.get("scenario_list") + ".txt",
         )
