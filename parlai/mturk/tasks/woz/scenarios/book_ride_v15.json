@@ -12,7 +12,7 @@
         "...find you a suitable ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You are Mark and would like to travel to University from Airport in a Tesla car"
+      "task_description": "You are Mark and would like to travel to Forbes and Murray from Airport in a Ford car"
     },
     "Wizard": {
       "task_description": "Help the user.",

@@ -12,7 +12,7 @@
         "...find you a suitable ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You are Angela and would like a Taxi from Forbes and Murray to University."
+      "task_description": "You are Mark and would like a Lyft from Forbes and Murray to Craig and Center."
     },
     "Wizard": {
       "task_description": "Help the user.",

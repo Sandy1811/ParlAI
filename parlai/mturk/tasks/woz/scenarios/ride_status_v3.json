@@ -12,7 +12,7 @@
         "...tell you the status of your ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You are Angela and your ride ID is 418. Check the status of your ride."
+      "task_description": "You are John and your ride ID is 418. Check the status of your ride."
     },
     "Wizard": {
       "task_description": "Be helpful...",

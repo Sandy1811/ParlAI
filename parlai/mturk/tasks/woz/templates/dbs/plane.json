@@ -1,5 +1,22 @@
 [
   {
+    "Name": "CustomerName",
+    "Type": "Categorical",
+    "Categories": ["Mark", "John", "Ben", "Angela", "Alexis"]
+  },
+  {
+    "Name": "City",
+    "Type": "Categorical",
+    "Categories": [
+      "Los Angeles",
+      "San Francisco",
+      "Chicago",
+      "Detroit",
+      "New York City",
+      "Pittsburgh"
+    ]
+  },
+  {
     "Name": "DepartureCity",
     "Type": "Categorical",
     "Categories": [

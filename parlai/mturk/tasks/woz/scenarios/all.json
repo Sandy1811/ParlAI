@@ -10,12 +10,11 @@
     "ride_status"
   ],
   "schema_urls": {
-    "restaurant_reserve": "https://i.imgur.com/Y81lL2R.png",
-    "ride_status": "https://i.imgur.com/96PHeZR.jpg",
-    "ride_change": "https://i.imgur.com/NH4MQuu.jpg",
-    "book_ride": "https://i.imgur.com/XvoZOMC.png",
-    "hotel_search": "https://i.imgur.com/Q6ZVHnV.jpg",
-    "hotel_reserve": "https://i.imgur.com/emY7oVA.png"
+    "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
+    "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
+    "book_ride": "https://i.imgur.com/5IOja3x.jpg",
+    "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
+    "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg"
   },
   "instructions": {
     "User": {

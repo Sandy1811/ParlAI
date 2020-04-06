@@ -1,0 +1,29 @@
+{
+  "title": "Party Plan",
+  "name": "Party Plan",
+  "db": "schedule.json",
+  "version": 1,
+  "api_names": ["party_plan"],
+  "schema_urls": { "party_plan": "https://i.imgur.com/kyFnBsZ.jpg" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have planned your party.."],
+      "completion_questions": [
+        "...reserve your venue for the party?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "Your are Ben and would like to plan a party. For the venue, you'd like to reserve North Heights Venue for Tuesday from 18 and ending two hours later. You are anticipating 81 guests."
+    },
+    "Wizard": {
+      "task_description": "Be helpful...",
+      "completion_requirements": [
+        "You have made a reservation for the user,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

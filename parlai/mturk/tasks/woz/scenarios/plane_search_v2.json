@@ -1,0 +1,29 @@
+{
+  "title": "Plane Search",
+  "name": "Plane Search",
+  "db": "plane.json",
+  "version": 1,
+  "api_names": ["plane_search"],
+  "schema_urls": { "plane_search": "https://i.imgur.com/F9p6MBi.jpg" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have found a flight."],
+      "completion_questions": [
+        "...find you a suitable flight?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "Search for a flight from Pittsburgh to New York City for 20."
+    },
+    "Wizard": {
+      "task_description": "Help the user find a suitable flight.",
+      "completion_requirements": [
+        "You have found a flight that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

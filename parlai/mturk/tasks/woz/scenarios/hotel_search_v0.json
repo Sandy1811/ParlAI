@@ -12,7 +12,7 @@
         "...find you a suitable hotel?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for a Expensive hotel in the North part of town."
+      "task_description": "Search for a Moderate hotel in the South part of town."
     },
     "Wizard": {
       "task_description": "Be helpful...",

@@ -12,7 +12,7 @@
         "...find you a suitable ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You are Ben and would like to go from Hospital to Airport. Your driver should be Mark"
+      "task_description": "You are Angela and would like to go from Craig and Center to University. Your driver should be Dave"
     },
     "Wizard": {
       "task_description": "Help the user.",

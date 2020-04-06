@@ -12,7 +12,7 @@
         "...find you a suitable ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You want a ride from Broadway and Main to 5th and Main. Your name is Ben."
+      "task_description": "You want a ride from Airport to Broadway and Main. Your name is Ben."
     },
     "Wizard": {
       "task_description": "Help the user.",
