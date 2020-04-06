@@ -35,7 +35,7 @@ and on the left side of the chat page. Supports HTML formatting.
 #     task_config['task_description'] = file.read()
 task_config['frontend_version'] = 1
 
-intro_test = """In this task you will take one of two roles: You could be a 'user' who wants to achieve some goal, or, alternatively, you could take the role of a 'virtual assistant' that helps the user achieve his/her goal. The first time you do this task as the assistant, you have to watch and understand a tutorial video: https://wolfr.am/LxzdOazi . \n\nNote: In this task it is important that you follow instructions precisely. In particular, in the assistant's role you will not be paid if you don't follow the flow chart whenever possible. """
+intro_test = """In this task you will take one of two roles: You could be a 'user' who wants to achieve some goal, or, alternatively, you could take the role of a 'virtual assistant' that helps the user achieve his/her goal. The first time you do this task as the assistant, you have to watch and understand a tutorial video: https://wolfr.am/LxzdOazi . If you do this for the first time, and you follow the tutorial instructions, we'll pay you a bonus to compensate you for the time you take to watch the tutorial. \n\nNote: In this task it is important that you follow instructions precisely. In particular, in the assistant's role you will not be paid if you don't follow the flow chart whenever possible. """
 
 task_config['task_description'] = intro_test
 task_config['chat_title'] = "Chat"
