@@ -22,7 +22,6 @@ from parlai.mturk.tasks.woz.backend.worlds import (
     WizardOnboardingWorld,
     UserOnboardingWorld,
     WOZWorld,
-    WOZWizardTutorialWorld,
 )
 from parlai.mturk.tasks.woz.backend.agents import (
     WOZKnowledgeBaseAgent,

@@ -243,6 +243,14 @@ class SetupCommand(BackendCommand):
             raise ImportError(f"Invalid scenario file '{scenario_file_name}': {error}.")
 
     @property
+    def completion_questions(self):
+        return self._completion_questions
+
+    @property
+    def task_description(self):
+        return self._task_description
+
+    @property
     def message(self) -> Dict[Text, Any]:
         return {
             "id": self._role,
@@ -390,17 +398,19 @@ class DialogueCompletedCommand(WorkerCommand):
 
 
 class TaskDoneCommand(WorkerCommand):
-    def __init__(self, sender: Agent) -> None:
+    def __init__(self, sender: Agent, answers: List[bool]) -> None:
         super(TaskDoneCommand, self).__init__(sender)
         self._command_name = "done"
+        self.answers = answers
 
     @property
     def message(self) -> Dict[Text, Any]:
         return {"id": self._sender.id, "text": ""}
 
     @staticmethod
-    def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
-        return TaskDoneCommand(sender=sender)
+    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+        answers = [value for _, value in sorted(json.loads(extracted_from_text).items(), key=(lambda item: item[0]))]
+        return TaskDoneCommand(sender=sender, answers=answers)
 
 
 class SelectPrimaryCommand(WizardCommand):
