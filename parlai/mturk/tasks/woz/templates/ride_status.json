@@ -25,7 +25,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Help the user stay informed about the status of his/her ride. (You can find the video tutorial under https://wolfr.am/LxzdOazi, in case you want to watch it again.)",
+      "task_description": "Help the user stay informed about the status of his/her ride. (You can find the video tutorial under @wizard-tutorial-url, in case you want to watch it again.)",
       "completion_requirements": [
         "Informed the user about the status of their ride,",
         "or the user says goodbye."

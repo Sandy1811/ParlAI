@@ -7,6 +7,8 @@ import os
 import random
 import string
 
+from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
+
 template_dir = 'templates/'
 scenario_dir = 'scenarios/'
 scenario_file = 'scenarios/all_scenarios.txt'
@@ -64,6 +66,7 @@ if __name__ == '__main__':
         new_scenario = copy.deepcopy(template)
         del new_scenario['instructions']['User']['task_descriptions']
         new_scenario['instructions']['User']['task_description'] = populate(desc, db_dir + template['db'])
+        new_scenario['instructions']['Wizard']['task_description'] = new_scenario['instructions']['Wizard']['task_description'].replace("@wizard-tutorial-url", WIZARD_TUTORIAL_URL)
         new_fn = "{0}/{1}_v{2}.json".format(scenario_dir, fn.split('.')[0], i*scenarios_per + j)
         new_name = "{0}_v{1}\n".format(fn.split('.')[0], i*scenarios_per + j)
         json.dump(new_scenario, open(new_fn, 'w+'))

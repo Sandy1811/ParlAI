@@ -44,3 +44,6 @@ possible. """
 task_config['task_description'] = intro_test
 task_config['hit_description'] = intro_test
 task_config['chat_title'] = "Chat"
+
+# Allow one hour, because onboarding can take forever
+task_config["assignment_duration_in_seconds"] = 120 * 60
