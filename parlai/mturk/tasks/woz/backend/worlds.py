@@ -96,10 +96,13 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         self.mturk_agent.observe(setup.message)
 
         send_mturk_message(
-            f"Take your time to read your task description on the left. "
-            f"If you haven't watched the tutorial video yet, please do so now. Here is the link: "
-            f"{WIZARD_TUTORIAL_URL} . "
-            f"Once you are ready, type the name of the example user that appears in the tutorial and hit [Enter].",
+            f"Hello. Every time you do this task you will be randomly assigned one of two roles: "
+            f"an AI assistant, or a user. This time, you'll play the AI assistant. "
+            f"This role is complicated, and thus you must first watch the following video tutorial: "
+            f"{WIZARD_TUTORIAL_URL} . \n\n"
+            f"If you have done this task before, you don't need to watch it again, of course. But you "
+            f"must follow the instructions (especially the flow chart) precisely, or you will not be payed. \n\n"
+            f"Once you are ready, type the name of the example user that appears in the tutorial and hit [Enter]. ",
             self.mturk_agent,
         )
         while True:
