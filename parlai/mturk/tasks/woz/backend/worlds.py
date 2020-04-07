@@ -260,6 +260,12 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard,
             )
 
+            if not self._current_domain:
+                send_mturk_message(
+                    f"NOTE: The suggested replies may not work well for this task and you may have to use many custom replies.",
+                    self.wizard,
+                )
+
             setup_command = SetupCommand(scenario=self._scenario, role="User")
             self._questions_to_user = setup_command.completion_questions
             self._user_task_description = setup_command.task_description
