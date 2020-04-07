@@ -504,10 +504,20 @@ class WOZWorld(MTurkTaskWorld):
         return {
             "Scenario": self._scenario,
             "Events": self.events,
-            "WizardWorkerID": self.wizard.worker_id,
-            "UserWorkerID": self.user.worker_id
-            if hasattr(self.user, "worker_id")
-            else None,
+            "WizardWorkerID": (
+                self.wizard.worker_id if hasattr(self.wizard, "worker_id") else None
+            ),
+            "WizardHITID": (
+                self.wizard.hit_id
+                if hasattr(self.wizard, "hit_id")
+                else None
+            ),
+            "UserWorkerID": (
+                self.user.worker_id if hasattr(self.user, "worker_id") else None
+            ),
+            "UserHITID": (
+                self.user.hit_id if hasattr(self.user, "hit_id") else None
+            ),
         }
 
     def get_model_agent(self):
