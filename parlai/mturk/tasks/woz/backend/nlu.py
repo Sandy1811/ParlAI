@@ -1,6 +1,8 @@
+import asyncio
 from typing import Text, List, Any, Dict, Optional, Tuple
 
 import requests
+import rasa.run
 
 from parlai.mturk.tasks.woz.backend import constants
 
@@ -10,8 +12,6 @@ class NLUServerConnection:
         self.server_address = (
             server_address or constants.DEFAULT_RASA_NLU_SERVER_ADDRESS
         )
-        # ToDo: Implement something to startup the nlu server (or decide to not do this programmatically)
-        # TODO: Also make sure the _right_ model is chosen, i.e. via a "domain" parameter
 
     def query(self, text: Text) -> Dict[Text, Any]:
         response = requests.post(self.server_address, data=f'{{"text": "{text}"}}')
