@@ -22,7 +22,6 @@ from parlai.mturk.tasks.woz.backend.worlds import (
     WizardOnboardingWorld,
     UserOnboardingWorld,
     WOZWorld,
-    WOZWizardTutorialWorld,
 )
 from parlai.mturk.tasks.woz.backend.agents import (
     WOZKnowledgeBaseAgent,
@@ -177,7 +176,7 @@ def main():
 
     qualification_manager = MTurkQualificationManager()
     # if opt["wizard_intro"]:
-    qualification_manager.require_locales(["US", "CA", "GB", "AU", "NZ", "DE"])
+    qualification_manager.require_locales(["US"])
     qualification_manager.require_min_approved_hits(10000)
     qualification_manager.require_min_approval_rate(98)
     #     qualification_manager.require_existence(

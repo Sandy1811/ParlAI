@@ -58,7 +58,7 @@ class WizardSuggestion:
             if len(suggestions) >= self.num_suggestions:
                 break
 
-        if len(suggestions) == 0 or not domain:
+        if len(suggestions) == 0:
             suggestions.append(wizard_utterance)
 
         if possibly_wrong_item_selected is None or not domain:
