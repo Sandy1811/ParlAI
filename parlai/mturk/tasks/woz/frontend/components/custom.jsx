@@ -329,6 +329,12 @@ function OnboardingView(props) {
         fulfilled his/her task.
         <br />
       </div>
+      <br />
+      <div id="note-box">
+        <textarea rows="6" cols="50">
+          You can take notes here, if you like.
+        </textarea>
+      </div>
     </div>
   );
 }

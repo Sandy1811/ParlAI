@@ -245,6 +245,7 @@ class WOZWorld(MTurkTaskWorld):
         self._questions_to_wizard = None
         self._answers_by_user = None
         self._answers_by_wizard = None
+        self._user_linear_guide = None
 
         self._wizard_has_used_kb = False
         self._num_wizard_utterances = 0
@@ -269,6 +270,7 @@ class WOZWorld(MTurkTaskWorld):
             setup_command = SetupCommand(scenario=self._scenario, role="User")
             self._questions_to_user = setup_command.completion_questions
             self._user_task_description = setup_command.task_description
+            self._user_linear_guide = setup_command.user_linear_guide
             self.user.observe(setup_command.message)
 
             self.tell_workers_to_start()
@@ -303,6 +305,7 @@ class WOZWorld(MTurkTaskWorld):
         if isinstance(user_command, UtterCommand):
             self.wizard.observe(user_command.message)
             self._num_user_utterances += 1
+            self.send_linear_user_guide_instruction()
             return 1
         elif isinstance(user_command, SilentCommand):
             return 1
@@ -458,6 +461,13 @@ class WOZWorld(MTurkTaskWorld):
         )
         self._stage = EVALUATION_STAGE
 
+    def send_linear_user_guide_instruction(self) -> None:
+        if not self._user_linear_guide or self._num_user_utterances >= len(self._user_linear_guide):
+            return
+
+        if self._user_linear_guide[self._num_user_utterances]:
+            self.user.observe(GuideCommand(self._user_linear_guide[self._num_user_utterances]).message)
+
     def store_wizard_event(self, event):
         _event = event
         _event["PrimaryItem"] = self._primary_kb_item
@@ -479,9 +489,12 @@ class WOZWorld(MTurkTaskWorld):
         recipient.observe(message)
 
     def tell_workers_to_start(self):
-        self.user.observe(
-            GuideCommand("The assistant is ready. Go ahead, say hello!").message
-        )
+        if self._user_linear_guide:
+            self.send_linear_user_guide_instruction()
+        else:
+            self.user.observe(
+                GuideCommand("The assistant is ready. Go ahead, say hello!").message
+            )
         self.wizard.observe(
             GuideCommand(
                 "A user has joined the chat. Please wait for him/her to start the conversation."
