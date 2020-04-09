@@ -1,0 +1,8 @@
+{
+    "hello": "Hello, how can I help?",
+    "ride_ask_booking_number": "Could you provide your booking ID, please?",
+    "ask_name": "May I have your name, please?",
+    "ride_provide_booking_status": "Your {service_provider:s} driver {driver_name:s} will be with you in about {minutes_till_pickup:d} minutes.",
+    "ride_provide_booking_status_update": "It will be {minutes_till_pickup:d} minutes.",
+    "ride_bye": "Goodbye. Enjoy your ride!"
+}
