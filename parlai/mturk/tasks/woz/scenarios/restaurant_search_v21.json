@@ -12,7 +12,7 @@
         "...find you a suitable restaurant?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Find a Expensive Italian restaurant that takes reservations."
+      "task_description": "Find a Moderate Thai restaurant that takes reservations."
     },
     "Wizard": {
       "task_description": "Be helpful...",

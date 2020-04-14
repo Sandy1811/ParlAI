@@ -113,7 +113,10 @@ class WizardResponse extends React.Component {
     //     return shouldAskForSuggestion;
 
     //     return (this.props.agent_id === "Wizard");
-    return false;
+    return (
+      this.props.agent_id === 'Wizard' &&
+      this.props.world_state !== 'onboarding'
+    );
   }
 
   render() {
@@ -200,14 +203,15 @@ function ReviewForm(props) {
       msg => msg.id === props.agent_id && msg.text.startsWith('<done>')
     ) != null;
 
-  const setupMessage = props.messages.find(
+  const setupMessage = findLast(
+    props.messages,
     msg => msg.command === 'setup' && msg.form_description != null
   );
   if (setupMessage == null) {
     return 'Waiting for initialization...';
   }
   const completionQuestions = setupMessage.completion_questions;
-  const other_agent = props.agent_id === 'User' ? 'user ' : 'assistant ';
+  const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
 
   return (
     <form
@@ -267,6 +271,8 @@ function CompleteButton(props) {
       msg.id !== 'MTurk System'
   ).length;
 
+  const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
+
   return (
     <Button
       className="btn btn-primary"
@@ -277,13 +283,36 @@ function CompleteButton(props) {
         );
       }}
     >
-      The dialogue is complete
+      The {other_agent} has said goodbye
     </Button>
   );
 }
 
+function findLast(array, predicate) {
+  for (let i = array.length - 1; i >= 0; --i) {
+    const x = array[i];
+    if (predicate(x)) {
+      return x;
+    }
+  }
+  return null;
+}
+
 function OnboardingView(props) {
-  const setupMessage = props.messages.find(
+  const agent = props.agent_id === 'User' ? 'user' : 'assistant';
+  if (props.world_state === 'onboarding') {
+    return (
+      <div>
+        You are playing the <b>{agent}</b> in this dialogue. Please follow the
+        instructions of the 'MTurk System' bot during onboarding and throughout
+        the dialogue.
+      </div>
+    );
+  }
+
+  // Find the last setup message
+  const setupMessage = findLast(
+    props.messages,
     msg => msg.command === 'setup' && msg.form_description != null
   );
   if (setupMessage == null) {
@@ -303,12 +332,6 @@ function OnboardingView(props) {
       <div>{taskDescription}</div>
       <br />
       <div>
-        Your task is complete, when
-        <ul>
-          {completionRequirements.map(req => {
-            return <li> {req} </li>;
-          })}
-        </ul>
         At the end of this dialogue, you will have to judge if the {other_agent}
         fulfilled his/her task.
         <br />
@@ -376,9 +399,6 @@ class LeftPane extends React.Component {
         <div id="left-pane" className={pane_size} style={frame_style}>
           <TaskDescription {...this.props} isInReview={isInReview} />
           {this.props.children}
-          <br />
-          If you are ready, please type "ready" and click [Send].
-          <br />
         </div>
       );
     } else if (isInReview) {
@@ -399,7 +419,8 @@ class LeftPane extends React.Component {
       );
     }
 
-    const setupMessage = this.props.messages.find(
+    const setupMessage = findLast(
+      this.props.messages,
       msg => msg.command === 'setup' && msg.form_description != null
     );
     if (setupMessage == null) {

@@ -12,7 +12,7 @@
         "...reserve your venue for the party?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Your are Mark and would like to plan a party. For the venue, you'd like to reserve Southside Venue for Monday from 18 and ending two hours later. You are anticipating 28 guests. For the drinks please request open bar with beer and cocktails."
+      "task_description": "Your are John and would like to plan a party. For the venue, you'd like to reserve West Bay Venue for Wednesday from 3 and ending two hours later. You are anticipating 66 guests. For the drinks please request beer, but no corona."
     },
     "Wizard": {
       "task_description": "Be helpful...",

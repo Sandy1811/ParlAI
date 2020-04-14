@@ -23,6 +23,11 @@ ride_status_v6
 ride_status_v7
 ride_status_v8
 ride_status_v9
+ride_status_v10
+ride_status_v11
+ride_status_v12
+ride_status_v13
+ride_status_v14
 restaurant_reserve_v0
 restaurant_reserve_v1
 restaurant_reserve_v2

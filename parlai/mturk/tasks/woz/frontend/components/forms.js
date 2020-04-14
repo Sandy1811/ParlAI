@@ -121,7 +121,11 @@ export class QueryForm extends React.Component {
         formField = this.deriveFormDatumFromDOM(form, formFieldWithId.id);
       }
 
-      const operator = formField.operatorValue;
+      let operator = formField.operatorValue;
+      if (formField.fieldName === 'RequestType') {
+        // Johannes: Dirty bug fix
+        operator = null;
+      }
       const operatorWrapper =
         operator == null ? val => val : val => `api.${operator}(${val})`;
 
@@ -473,6 +477,8 @@ export function jsonToForm(
               >
                 <option value="is_equal_to">is equal to</option>
                 <option value="is_greater_than">is greater than</option>
+                <option value="is_at_least">is at least</option>
+                <option value="is_at_most">is at most</option>
                 <option value="is_less_than">is less than</option>
                 <option value="is_not">is not</option>
               </FormControl>

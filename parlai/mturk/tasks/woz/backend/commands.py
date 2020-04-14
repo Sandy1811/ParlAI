@@ -1,7 +1,9 @@
 import json
 import os
 from typing import Text, Dict, Any, List, Optional, Union, Tuple
+import time
 
+from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
 import parlai.mturk.tasks.woz.knowledgebase.api as api
 from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
@@ -104,7 +106,11 @@ class WizardCommand(WorkerCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "UnixTime": int(time.time()),
+        }
 
 
 class BackendCommand(Command):
@@ -152,6 +158,7 @@ class UtterCommand(WorkerCommand):
             "Agent": self._sender.id,
             "Action": self._command_name,
             "Text": self._text,
+            "UnixTime": int(time.time()),
         }
 
 
@@ -177,6 +184,7 @@ class SilentCommand(WorkerCommand):
         return {
             "Agent": self._sender.id,
             "Action": self._command_name,
+            "UnixTime": int(time.time()),
         }
 
 
@@ -186,8 +194,11 @@ class SetupCommand(BackendCommand):
         self._command_name = all_constants()["back_to_front"]["command_setup"]
 
         scenario_file_name = os.path.join(
-            os.path.dirname(os.path.abspath(__file__)),
-            "..",
+            PROJECT_PATH,
+            "parlai",
+            "mturk",
+            "tasks",
+            "woz",
             "scenarios",
             scenario + ".json",
         )
@@ -203,8 +214,11 @@ class SetupCommand(BackendCommand):
             form_description = {}
             for api_name in scenario["api_names"]:
                 api_file_name = os.path.join(
-                    os.path.dirname(os.path.abspath(__file__)),
-                    "..",
+                    PROJECT_PATH,
+                    "parlai",
+                    "mturk",
+                    "tasks",
+                    "woz",
                     "knowledgebase",
                     "apis",
                     api_name + ".json",
@@ -227,6 +241,14 @@ class SetupCommand(BackendCommand):
             self._role = role
         except KeyError as error:
             raise ImportError(f"Invalid scenario file '{scenario_file_name}': {error}.")
+
+    @property
+    def completion_questions(self):
+        return self._completion_questions
+
+    @property
+    def task_description(self):
+        return self._task_description
 
     @property
     def message(self) -> Dict[Text, Any]:
@@ -346,6 +368,7 @@ class QueryCommand(WizardCommand):
             "Action": self._command_name,
             "Constraints": self._constraints_raw,
             "API": self._api_name,
+            "UnixTime": int(time.time()),
         }
 
 
@@ -370,21 +393,24 @@ class DialogueCompletedCommand(WorkerCommand):
         return {
             "Agent": self._sender.id,
             "Action": self._command_name,
+            "UnixTime": int(time.time()),
         }
 
 
 class TaskDoneCommand(WorkerCommand):
-    def __init__(self, sender: Agent) -> None:
+    def __init__(self, sender: Agent, answers: List[bool]) -> None:
         super(TaskDoneCommand, self).__init__(sender)
         self._command_name = "done"
+        self.answers = answers
 
     @property
     def message(self) -> Dict[Text, Any]:
         return {"id": self._sender.id, "text": ""}
 
     @staticmethod
-    def from_message(sender: Agent, **kwargs) -> Optional["Command"]:
-        return TaskDoneCommand(sender=sender)
+    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
+        answers = [value for _, value in sorted(json.loads(extracted_from_text).items(), key=(lambda item: item[0]))]
+        return TaskDoneCommand(sender=sender, answers=answers)
 
 
 class SelectPrimaryCommand(WizardCommand):
@@ -418,7 +444,11 @@ class SelectPrimaryCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "UnixTime": int(time.time()),
+        }
 
 
 class SelectSecondaryCommand(WizardCommand):
@@ -452,7 +482,11 @@ class SelectSecondaryCommand(WizardCommand):
 
     @property
     def event(self) -> Optional[Dict[Text, Any]]:
-        return {"Agent": self._sender.id, "Action": self._command_name}
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "UnixTime": int(time.time()),
+        }
 
 
 class RequestSuggestionsCommand(WizardCommand):
@@ -467,13 +501,24 @@ class RequestSuggestionsCommand(WizardCommand):
 
     @staticmethod
     def from_message(
-        sender: Agent, text: Optional[Text] = None, **kwargs
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
     ) -> Optional["Command"]:
-        return RequestSuggestionsCommand(sender=sender, query_text=(text or ""))
+        return RequestSuggestionsCommand(
+            sender=sender, query_text=(extracted_from_text or "")
+        )
 
     @property
     def query(self) -> Text:
         return self._query
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "Text": self._query,
+            "UnixTime": int(time.time()),
+        }
 
 
 class SupplySuggestionsCommand(BackendCommand):
@@ -517,6 +562,15 @@ class PickSuggestionCommand(WizardCommand):
         if not extracted_from_text:
             raise ValueError(f"Chosen message is empty")
         return PickSuggestionCommand(sender=sender, chosen_text=extracted_from_text)
+
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "Text": self._text,
+            "UnixTime": int(time.time()),
+        }
 
 
 def command_from_message(

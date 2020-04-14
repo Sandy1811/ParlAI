@@ -12,7 +12,7 @@
         "...reserve your restaurant?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Make a reservation at The Porch for 41 people at 14 o'clock. Your name is Ben."
+      "task_description": "Make a reservation at The Porch for 7 people at 15 o'clock. Your name is Angela."
     },
     "Wizard": {
       "task_description": "Be helpful...",
