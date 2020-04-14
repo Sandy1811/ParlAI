@@ -1,4 +1,5 @@
 DEFAULT_RASA_NLU_SERVER_ADDRESS = "http://localhost:5005/model/parse"
+RASA_NLU_SERVER_ADDRESS_TEMPLATE = "http://localhost:{port:s}/model/parse"
 
 # Common Intent Names
 INTENT_HELLO = 'hello'
@@ -33,3 +34,11 @@ INTENT_HOTEL_INFORM_RATING = 'hotel_inform_rating'
 INTENT_HOTEL_PROVIDE_SEARCH_RESULT = 'hotel_provide_search_result'
 INTENT_HOTEL_ASK_SEARCH_MORE = 'hotel_ask_search_more'
 INTENT_HOTEL_BYE = 'hotel_bye'
+
+SCENARIO_PORT_MAP = {
+    'book_ride': '5005',
+    'change_ride': '5006',
+    'ride_status': '5007',
+    'search_hotel': '5008',
+    'book_hotel': '5009',
+}
