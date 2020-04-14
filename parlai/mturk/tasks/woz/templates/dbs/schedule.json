@@ -21,6 +21,11 @@
     ]
   },
   {
+    "Name": "PartyName",
+    "Type": "Categorical",
+    "Categories": ["Southside Venue", "North Heights Venue", "West Bay Venue"]
+  },
+  {
     "Name": "Day",
     "Type": "Categorical",
     "Categories": [
@@ -33,6 +38,29 @@
       "Saturday"
     ]
   },
+  {
+    "Name": "HostName",
+    "Type": "Categorical",
+    "Categories": ["Mark", "John", "Ben", "Angela", "Alexis"]
+  },
+  {
+    "Name": "FoodRequest",
+    "Type": "Categorical",
+    "Categories": [
+      "vegetarian meal",
+      "three course meal, with steak and a vegan option",
+      "finger foods"
+    ]
+  },
+  {
+    "Name": "DrinkRequest",
+    "Type": "Categorical",
+    "Categories": [
+      "wine and champagne",
+      "open bar with beer and cocktails",
+      "beer, but no corona"
+    ]
+  },
   { "Name": "StartTimeHour", "Type": "Integer", "Min": 0, "Max": 20 },
   {
     "Name": "EndTimeHour",
@@ -41,10 +69,27 @@
     "Max": "!lambda p: p[\"StartTimeHour\"] + 2"
   },
   {
+    "Name": "NeedParking",
+    "Type": "Categorical",
+    "Categories": ["need", "don't need"]
+  },
+  {
+    "Name": "DietaryRestriction",
+    "Type": "Categorical",
+    "Categories": ["vegan", "vegetarian", "kosher/halal"]
+  },
+  {
     "Name": "SizeLimit",
     "Type": "Integer",
     "Min": 3,
     "Max": 100,
+    "Enabled": "!lambda p: \"Conference\" in p[\"Name\"] or \"Venue\" in p[\"Name\"]"
+  },
+  {
+    "Name": "CoGuests",
+    "Type": "Integer",
+    "Min": 3,
+    "Max": 10,
     "Enabled": "!lambda p: \"Conference\" in p[\"Name\"] or \"Venue\" in p[\"Name\"]"
   }
 ]

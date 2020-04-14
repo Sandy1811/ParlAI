@@ -1,0 +1,43 @@
+{
+  "title": "All",
+  "name": "All",
+  "version": 1,
+  "api_names": [
+    "book_ride",
+    "hotel_reserve",
+    "hotel_search",
+    "ride_change",
+    "ride_status"
+  ],
+  "schema_urls": {
+    "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
+    "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
+    "book_ride": "https://i.imgur.com/5IOja3x.jpg",
+    "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
+    "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg"
+  },
+  "instructions": {
+    "User": {
+      "task_description": "All tasks available.",
+      "completion_requirements": [
+        "You have completed your task.",
+        "You don't feel like talking anymore."
+      ],
+      "completion_questions": [
+        "AA ...find you a suitable apartment?",
+        "AA ...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "AA Be helpful...",
+      "completion_requirements": [
+        "AA You have found an apartment that the user likes,",
+        "AA or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

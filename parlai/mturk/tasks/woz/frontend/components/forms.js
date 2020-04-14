@@ -122,7 +122,8 @@ export class QueryForm extends React.Component {
       }
 
       let operator = formField.operatorValue;
-      if (formField.fieldName === "RequestType") {  // Johannes: Dirty bug fix
+      if (formField.fieldName === 'RequestType') {
+        // Johannes: Dirty bug fix
         operator = null;
       }
       const operatorWrapper =

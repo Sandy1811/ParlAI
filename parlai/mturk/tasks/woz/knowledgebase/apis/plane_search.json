@@ -43,11 +43,7 @@
     {
       "Name": "Class",
       "Type": "Categorical",
-      "Categories": [
-        "First",
-        "Business",
-        "Economy"
-      ],
+      "Categories": ["First", "Business", "Economy"],
       "ReadableName": "Class"
     },
     {
@@ -60,12 +56,7 @@
     {
       "Name": "Airline",
       "Type": "Categorical",
-      "Categories": [
-        "American",
-        "United",
-        "Delta",
-        "Virgin"
-      ],
+      "Categories": ["American", "United", "Delta", "Virgin"],
       "ReadableName": "Airline"
     },
     {
@@ -125,11 +116,7 @@
     {
       "Name": "Class",
       "Type": "Categorical",
-      "Categories": [
-        "First",
-        "Business",
-        "Economy"
-      ],
+      "Categories": ["First", "Business", "Economy"],
       "ReadableName": "Class"
     },
     {
@@ -142,12 +129,7 @@
     {
       "Name": "Airline",
       "Type": "Categorical",
-      "Categories": [
-        "American",
-        "United",
-        "Delta",
-        "Virgin"
-      ],
+      "Categories": ["American", "United", "Delta", "Virgin"],
       "ReadableName": "Airline"
     },
     {
@@ -158,11 +140,7 @@
       "ReadableName": "id"
     }
   ],
-  "required": [
-    "DepartureCity",
-    "ArrivalCity",
-    "Date"
-  ],
+  "required": ["DepartureCity", "ArrivalCity", "Date"],
   "db": "plane",
   "function": "plane_search",
   "returns_count": true

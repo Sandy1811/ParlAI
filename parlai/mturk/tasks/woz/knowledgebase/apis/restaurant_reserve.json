@@ -3,13 +3,7 @@
     {
       "Name": "Name",
       "Type": "Categorical",
-      "Categories": [
-        "Cactus Club",
-        "Tamarind",
-        "Legume",
-        "Lucca",
-        "The Porch"
-      ],
+      "Categories": ["Cactus Club", "Tamarind", "Legume", "Lucca", "The Porch"],
       "ReadableName": "Name"
     },
     {
@@ -30,25 +24,23 @@
       "Name": "CustomerName",
       "Type": "ShortString",
       "ReadableName": "Customer Name"
+    },
+    {
+      "Name": "RequestType",
+      "Type": "RequestType",
+      "Categories": ["Check", "Book"],
+      "ReadableName": "Request Type"
     }
   ],
   "output": [
     {
       "Name": "ReservationStatus",
       "Type": "Categorical",
-      "Categories": [
-        "Reservation Confirmed",
-        "Reservation Failed"
-      ],
+      "Categories": ["Reservation Confirmed", "Reservation Failed"],
       "ReadableName": "Reservation Status"
     }
   ],
-  "required": [
-    "Name",
-    "Time",
-    "PartySize",
-    "CustomerName"
-  ],
+  "required": ["Name", "Time", "PartySize", "CustomerName", "RequestType"],
   "db": "restaurant",
   "function": "restaurant_reserve",
   "returns_count": false

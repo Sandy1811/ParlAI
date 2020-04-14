@@ -183,7 +183,7 @@ def load_db(fn):
             if type(v) is str and v[0] == "!":
                 param[k] = eval(v[1:])
 
-    return KnowledgeBaseAPI(num_items=100, all_parameters=parameters)
+    return KnowledgeBaseAPI(num_items=1000, all_parameters=parameters)
 
 
 def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
@@ -192,6 +192,9 @@ def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
 
 
 def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
+    if constraints["RequestType"] != "Book":
+        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     new_constraints = {
         "Name": constraints["Name"],
@@ -247,12 +250,16 @@ def plane_search(plane_api, constraints: Dict[Text, Any]):
 
 
 def plane_reserve(plane_api, constraints: Dict[Text, Any]):
+    if constraints["RequestType"] != "Book":
+        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+
     outputs = ["Reservation Confirmed", "Reservation Failed"]
-    row, _ = plane_api.sample(dict(constraints, SeatsAvailable=True))
-    if row is None:
-        return {"ReservationStatus": outputs[1]}, -1
-    else:
-        return {"ReservationStatus": outputs[0]}, -1
+
+    del constraints['CustomerName']
+    del constraints['RequestType']
+
+    outputs = ["Reservation Confirmed", "Reservation Failed"]
+    return {"ReservationStatus": random.choice(outputs)}, -1
 
 
 def trip_directions(trip_api, constraints: Dict[Text, Any]):
@@ -481,7 +488,7 @@ def followup_doctor_appointment(
 
 def party_plan(schedule_api, constraints: Dict[Text, Any]):
     schedule_outputs = [
-        "Your event has been successfuly scheduled.",
+        "ERROR",
         "{0} is booked at that time. Try another meeting time or another venue.".format(
             constraints["Name"]
         ),
@@ -509,6 +516,8 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
     }
     row, _ = schedule_api.sample(new_constraints)
     if row is not None:
+        if constraints["RequestType"] != "Book":
+          return {"Message": "The venue is available."}, -1
         return dict(Message=size_outputs[0]), -1
     else:
         return dict(Message=size_outputs[1]), -1
