@@ -1,11 +1,11 @@
 {
-  "title": "Plane Search",
-  "name": "Plane Search",
+  "title": "Plane Reserve",
+  "name": "Plane Reserve",
   "db": "plane.json",
   "version": 1,
   "api_names": ["plane_reserve"],
   "schema_urls": {
-    "plane_search": "https://i.imgur.com/QlpRuAX.jpg"
+    "plane_reserve": "https://i.imgur.com/QlpRuAX.jpg"
   },
   "instructions": {
     "User": {
