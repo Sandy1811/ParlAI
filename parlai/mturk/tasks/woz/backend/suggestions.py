@@ -27,7 +27,7 @@ class WizardSuggestion:
         self,
         wizard_utterance: Text,
         kb_item: Dict[Text, Any],
-        domain: Optional[Text] = None,
+        scenario: Optional[Text] = None,
         comparing: bool = False,
         return_intents: bool = False,
     ) -> Tuple[List[Text], bool]:
@@ -38,7 +38,7 @@ class WizardSuggestion:
         intents, entities = self.nlu.get_intents_and_entities(
             text=wizard_utterance,
             max_num_suggestions=self.max_num_suggestions,
-            domain=domain,
+            scenario=scenario,
             comparing=comparing,
         )
         if return_intents:
@@ -59,10 +59,10 @@ class WizardSuggestion:
             if len(suggestions) >= self.num_suggestions:
                 break
 
-        if len(suggestions) == 0 or not domain:
+        if len(suggestions) == 0 or not scenario:
             suggestions.append(wizard_utterance)
 
-        if possibly_wrong_item_selected is None or not domain:
+        if possibly_wrong_item_selected is None or not scenario:
             possibly_wrong_item_selected = False
 
         return suggestions, possibly_wrong_item_selected
@@ -73,17 +73,20 @@ if __name__ == '__main__':
     scenarios = ['get_book_ride_item', 'get_change_ride_item', 'get_search_hotel_item',
                  'get_ride_status_item']
 
-    for scenario in ['get_ride_status_item']:
-        kb_item, utterances, domain = getattr(static_test_assets, scenario)()
-        base_dir = os.path.join(PROJECT_PATH, 'resources', domain)
+    for sc in ['get_search_hotel_item']:
+        kb_item, utterances, scenario = getattr(static_test_assets, sc)()
+        base_dir = os.path.join(PROJECT_PATH, 'resources', scenario)
         ws = WizardSuggestion(
-            intent2reply_file=os.path.join(base_dir, 'intent2reply.json')
+            intent2reply_file=os.path.join(base_dir, 'intent2reply.json'),
+            nlu_server_address=constants.RASA_NLU_SERVER_ADDRESS_TEMPLATE.format(
+                port=constants.SCENARIO_PORT_MAP[scenario]
+            )
         )
 
         for utterance in utterances:
             # Use rasa to get an intent label
             suggestions = ws.get_suggestions(wizard_utterance=utterance, kb_item=kb_item,
-                                             domain=domain)
+                                             scenario=scenario)
 
             print(f'Suggestions for "{utterance}": {suggestions}')
             print('----------------------------------------------')

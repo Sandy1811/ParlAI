@@ -352,7 +352,7 @@ class WOZWorld(MTurkTaskWorld):
             ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 kb_item=self._primary_kb_item,
-                domain=self._current_domain,
+                scenario=self._current_domain,
             )
             if possibly_wrong_item_selected:
                 send_mturk_message(

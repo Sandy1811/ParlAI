@@ -1,8 +1,6 @@
-import asyncio
 from typing import Text, List, Any, Dict, Optional, Tuple
 
 import requests
-import rasa.run
 
 from parlai.mturk.tasks.woz.backend import constants
 
@@ -22,12 +20,12 @@ class NLUServerConnection:
     def get_intents_and_entities(
         self,
         text: Text,
-        domain: Optional[Text] = None,
+        scenario: Optional[Text] = None,
         comparing: bool = False,
         max_num_suggestions: int = 3,
     ) -> Tuple[List[Text], List[Text]]:
         response = self.query(
-            f"{'true' if comparing else 'false'}:{domain or 'general'}:{text}"
+            f"{'true' if comparing else 'false'}:{scenario or 'general'}:{text}"
         )
         response["intent_ranking"].sort(key=(lambda v: -v["confidence"]))
         suggestions = [
