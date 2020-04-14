@@ -59,6 +59,12 @@
       "Name": "DrinksRequest",
       "Type": "LongString",
       "ReadableName": "Drinks Request"
+    },
+    {
+      "Name": "RequestType",
+      "Type": "RequestType",
+      "Categories": ["Check", "Book"],
+      "ReadableName": "Request Type"
     }
   ],
   "output": [
@@ -74,7 +80,8 @@
     "Day",
     "StartTimeHour",
     "EndTimeHour",
-    "NumberGuests"
+    "NumberGuests",
+    "RequestType"
   ],
   "db": "schedule",
   "function": "party_plan",

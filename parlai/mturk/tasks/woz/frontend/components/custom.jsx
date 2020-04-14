@@ -113,7 +113,10 @@ class WizardResponse extends React.Component {
     //     return shouldAskForSuggestion;
 
     //     return (this.props.agent_id === "Wizard");
-    return (this.props.agent_id === "Wizard" && this.props.world_state !== "onboarding");
+    return (
+      this.props.agent_id === 'Wizard' &&
+      this.props.world_state !== 'onboarding'
+    );
   }
 
   render() {
@@ -286,20 +289,24 @@ function CompleteButton(props) {
 }
 
 function findLast(array, predicate) {
-	for (let i = array.length - 1; i >= 0; --i) {
-		const x = array[i];
-		if (predicate(x)) {
-			return x;
-		}
-	}
-	return null;
+  for (let i = array.length - 1; i >= 0; --i) {
+    const x = array[i];
+    if (predicate(x)) {
+      return x;
+    }
+  }
+  return null;
 }
 
 function OnboardingView(props) {
   const agent = props.agent_id === 'User' ? 'user' : 'assistant';
   if (props.world_state === 'onboarding') {
     return (
-      <div>You are playing the <b>{agent}</b> in this dialogue. Please follow the instructions of the 'MTurk System' bot during onboarding and throughout the dialogue.</div>
+      <div>
+        You are playing the <b>{agent}</b> in this dialogue. Please follow the
+        instructions of the 'MTurk System' bot during onboarding and throughout
+        the dialogue.
+      </div>
     );
   }
 
