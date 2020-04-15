@@ -396,9 +396,7 @@ def shopping_order_status(null_api, constraints: Dict[Text, Any]):
 def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):
     outputs = [
         "Your meeting has been successfuly scheduled.",
-        "{0} has a conflicting meeting at that time. Try another meeting time.".format(
-            constraints["Name"]
-        ),
+        "That person has a conflicting meeting at that time. Try another meeting time."
     ]
 
     new_constraints = {
@@ -420,9 +418,7 @@ def book_doctor_appointment(
 ):
     outputs = [
         "Your appointment has been successfuly scheduled.",
-        "{0} has a conflicting meeting at that time. Try another time or another doctor.".format(
-            constraints["Name"]
-        ),
+        "The doctor has a conflicting meeting at that time. Try another time or another doctor."
     ]
     new_constraints = {
         "Name": constraints["Name"],
@@ -442,9 +438,7 @@ def book_apartment_viewing(
 ):
     outputs = [
         "Your apartment viewing has been successfuly scheduled.",
-        "That time is unavailable for {0}. Please try another time.".format(
-            constraints["Name"]
-        ),
+        "That time is unavailable. Please try another time."
     ]
     new_constraints = {
         "Name": constraints["Name"],
@@ -487,15 +481,11 @@ def followup_doctor_appointment(
 def party_plan(schedule_api, constraints: Dict[Text, Any]):
     schedule_outputs = [
         "ERROR",
-        "{0} is booked at that time. Try another meeting time or another venue.".format(
-            constraints["Name"]
-        ),
+        "The venue is booked at that time. Try another meeting time or another venue."
     ]
     size_outputs = [
         "Your event has been successfuly scheduled.",
-        "{0} is too small for your party. Try another venue.".format(
-            constraints["Name"]
-        ),
+        "The venue is too small for your party. Try another venue."
     ]
 
     new_constraints = {
