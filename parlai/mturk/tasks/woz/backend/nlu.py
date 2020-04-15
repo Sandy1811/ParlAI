@@ -10,8 +10,6 @@ class NLUServerConnection:
         self.server_address = (
             server_address or constants.DEFAULT_RASA_NLU_SERVER_ADDRESS
         )
-        # ToDo: Implement something to startup the nlu server (or decide to not do this programmatically)
-        # TODO: Also make sure the _right_ model is chosen, i.e. via a "domain" parameter
 
     def query(self, text: Text) -> Dict[Text, Any]:
         response = requests.post(self.server_address, data=f'{{"text": "{text}"}}')
@@ -22,12 +20,12 @@ class NLUServerConnection:
     def get_intents_and_entities(
         self,
         text: Text,
-        domain: Optional[Text] = None,
+        scenario: Optional[Text] = None,
         comparing: bool = False,
         max_num_suggestions: int = 3,
     ) -> Tuple[List[Text], List[Text]]:
         response = self.query(
-            f"{'true' if comparing else 'false'}:{domain or 'general'}:{text}"
+            f"{'true' if comparing else 'false'}:{scenario or 'general'}:{text}"
         )
         response["intent_ranking"].sort(key=(lambda v: -v["confidence"]))
         suggestions = [

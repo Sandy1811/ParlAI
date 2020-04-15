@@ -10,6 +10,8 @@ from typing import Dict, Text, Any, List, Optional, Tuple, Union
 def is_equal_to(value):
     return lambda x: x == value
 
+def is_unequal_to(value):
+    return lambda x: x != value
 
 def contains(value):
     return lambda x: value in x
