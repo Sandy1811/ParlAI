@@ -462,11 +462,22 @@ class WOZWorld(MTurkTaskWorld):
         self._stage = EVALUATION_STAGE
 
     def send_linear_user_guide_instruction(self) -> None:
-        if not self._user_linear_guide or self._num_user_utterances >= len(self._user_linear_guide):
+        if not self._user_linear_guide or self._num_user_utterances >= len(
+            self._user_linear_guide
+        ):
             return
 
-        if self._user_linear_guide[self._num_user_utterances]:
-            self.user.observe(GuideCommand(self._user_linear_guide[self._num_user_utterances]).message)
+        instruction = self._user_linear_guide[self._num_user_utterances]
+        if instruction:
+            self.events.append(
+                {
+                    "Agent": "UserGuide",
+                    "Action": "instruct",
+                    "Text": instruction,
+                    "UnixTime": int(time.time()),
+                }
+            )
+            self.user.observe(GuideCommand(instruction).message)
 
     def store_wizard_event(self, event):
         _event = event
