@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import os
 import time
-from typing import Text, List, Dict, Any, Optional
+from typing import Text, List, Dict, Any, Optional, Tuple
 
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
@@ -250,6 +250,8 @@ class WOZWorld(MTurkTaskWorld):
         self._wizard_has_used_kb = False
         self._num_wizard_utterances = 0
         self._num_user_utterances = 0
+        self._user_has_ended_dialogue = False
+        self._wizard_has_ended_dialogue = False
 
     def parley(self):
         if self._stage == SETUP_STAGE:
@@ -322,6 +324,7 @@ class WOZWorld(MTurkTaskWorld):
                     "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user."
                 ).message
             )
+            self._user_has_ended_dialogue = True
             self._stage = EVALUATION_STAGE
             return 1
         else:
@@ -459,6 +462,7 @@ class WOZWorld(MTurkTaskWorld):
                 "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant."
             ).message
         )
+        self._wizard_has_ended_dialogue = True
         self._stage = EVALUATION_STAGE
 
     def send_linear_user_guide_instruction(self) -> None:
@@ -539,26 +543,40 @@ class WOZWorld(MTurkTaskWorld):
         # self.mturk_agent.reject_work()
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
-        if self._num_user_utterances > 2:
-            if self._num_user_utterances > 4 and not self._wizard_has_used_kb:
-                self.user.approve_work()
-                self.wizard.reject_work(reason="You have not used the knowledge base")
-                return
 
-            self.user.approve_work()
-            self.wizard.approve_work()
-
-            if self._num_user_utterances > 15:
-                # Pay bonus of 50 cents
-                self.user.pay_bonus(
-                    0.50, reason="You have written more than 15 messages"
-                )
-                self.wizard.pay_bonus(
-                    0.50, reason="You have written more than 15 messages"
-                )
+        if self.review_user():
+            print(f"User {self.user.worker_id}'s work was approved (HIT {self.user.hit_id})")
         else:
-            self.user.reject_work(reason="You have sent less than three messages")
-            self.wizard.reject_work(reason="You have sent less than three messages")
+            print(f"User {self.user.worker_id}'s work was rejected (HIT {self.user.hit_id})")
+
+        if self.review_wizard():
+            print(f"Wizard {self.wizard.worker_id}'s work was approved (HIT {self.wizard.hit_id})")
+        else:
+            print(f"Wizard {self.wizard.worker_id}'s work was rejected (HIT {self.wizard.hit_id})")
+
+    def review_user(self) -> bool:
+        if self._num_user_utterances < 3:
+            self.user.reject_work("You wrote fewer than 3 messages")
+            return False
+
+        if self._user_linear_guide and self._num_user_utterances < len(self._user_linear_guide) and self._user_has_ended_dialogue:
+            self.user.reject_work("You ended the dialogue before being instructed to do so")
+            return False
+
+        self.user.approve_work()
+        return True
+
+    def review_wizard(self) -> bool:
+        if self._num_wizard_utterances < 3:
+            self.wizard.reject_work("You wrote fewer than 3 messages")
+            return False
+
+        if not self._wizard_has_used_kb:
+            self.wizard.reject_work("You did not use the knowledge base interface")
+            return False
+
+        self.wizard.approve_work()
+        return True
 
     def get_custom_task_data(self):
         # brings important data together for the task, to later be used for
