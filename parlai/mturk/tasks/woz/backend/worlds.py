@@ -39,7 +39,6 @@ from parlai.mturk.tasks.woz.backend.commands import (
     GuideCommand,
     SilentCommand,
 )
-from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
 from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
 
@@ -230,10 +229,8 @@ class WOZWorld(MTurkTaskWorld):
         self.events = []
 
         base_dir = os.path.join(PROJECT_PATH, "resources", "book_ride")
-        self._nlu_connection = NLUServerConnection()
-        self._suggestion_module = WizardSuggestion(
-            intent2reply_file=os.path.join(base_dir, "intent2reply.json")
-        )
+        self._suggestion_module = WizardSuggestion(scenario_list=['book_ride'],
+                                                   resources_dir=base_dir)
 
         self.num_turns = 1
 
