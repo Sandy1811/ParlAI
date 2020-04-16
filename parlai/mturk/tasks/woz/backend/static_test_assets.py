@@ -52,7 +52,7 @@ def get_ride_status_item():
     return kb_item, utterances, 'ride_status'
 
 
-def get_change_ride_item():
+def get_ride_change_item():
     kb_item = {
 
     }
@@ -67,10 +67,10 @@ def get_change_ride_item():
         "cya"
     ]
 
-    return kb_item, utterances, 'change_ride'
+    return kb_item, utterances, 'ride_change'
 
 
-def get_search_hotel_item():
+def get_hotel_search_item():
     kb_item_1 = {
         "Name": "Old Town Inn",
         "Cost": "Cheap",
@@ -109,4 +109,4 @@ def get_search_hotel_item():
         "bybo"
     ]
 
-    return kb_item_2, utterances, 'search_hotel'
+    return kb_item_2, utterances, 'hotel_search'
