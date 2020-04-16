@@ -49,9 +49,13 @@ class WizardSuggestion:
 
         return response.status_code == 200
 
-    def poll_nlu_server(self, scenario, poll_interval=1.):
-        while not self.nlu_server_ready(scenario):
+    def poll_nlu_server(self, scenario, poll_interval=1., max_tries=200):
+        i = 0
+        while not self.nlu_server_ready(scenario) and i < max_tries:
             time.sleep(poll_interval)
+            i += 1
+            
+        return i < max_tries
 
     def start_nlu_server(self, scenario):
         if not self.nlu_server_ready(scenario): # Check whether there already is a running server
@@ -151,24 +155,3 @@ if __name__ == '__main__':
         ws.stop_nlu_server(scenario)
         print('====================================================================================')
         print('====================================================================================')
-'''
-    for sc in ['get_search_hotel_item']:
-        kb_item, utterances, scenario = getattr(static_test_assets, sc)()
-        base_dir = os.path.join(PROJECT_PATH, 'resources', scenario)
-        ws = WizardSuggestion(
-            intent2reply_file=os.path.join(base_dir, 'intent2reply.json'),
-            nlu_server_address=constants.RASA_NLU_SERVER_ADDRESS_TEMPLATE.format(
-                port=constants.SCENARIO_PORT_MAP[scenario]
-            )
-        )
-
-        for utterance in utterances:
-            # Use rasa to get an intent label
-            suggestions = ws.get_suggestions(wizard_utterance=utterance, kb_item=kb_item,
-                                             scenario=scenario)
-
-            print(f'Suggestions for "{utterance}": {suggestions}')
-            print('----------------------------------------------')
-    print('====================================================================================')
-    print('====================================================================================')
-'''
