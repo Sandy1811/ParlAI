@@ -18,7 +18,7 @@ class WizardSuggestion:
         self,
         scenario_list: List,
         resources_dir: Text,
-        start_nlu_servers: bool = True,
+        start_nlu_servers: bool = False,
         num_suggestions: int = 3,
         max_num_suggestions: int = 10
     ):
@@ -73,7 +73,7 @@ class WizardSuggestion:
         wizard_utterance: Text,
         primary_kb_item: Dict[Text, Any],
         secondary_kb_item: Dict[Text, Any] = None,
-        scenario: Optional[Text] = None,
+        api_name: Optional[Text] = None,
         comparing: bool = False,
         return_intents: bool = False,
     ) -> Tuple[List[Text], bool]:
@@ -83,7 +83,7 @@ class WizardSuggestion:
 
         intents, entities = self.get_intents_and_entities(
             text=wizard_utterance,
-            scenario=scenario,
+            scenario=api_name,
             comparing=comparing,
         )
         if return_intents:
@@ -91,10 +91,10 @@ class WizardSuggestion:
 
         suggestions = []
         for intent in intents:
-            if intent in self.scenario_resources[scenario][constants.INTENT_TO_REPLY_KEY]:
+            if intent in self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY]:
                 fn_fill = getattr(template_filler, f'fill_{intent}')
 
-                suggestion = fn_fill(self.scenario_resources[scenario][constants.INTENT_TO_REPLY_KEY],
+                suggestion = fn_fill(self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY],
                                      primary_kb_item)
                 if suggestion:
                     suggestions.append(suggestion)
@@ -108,12 +108,13 @@ class WizardSuggestion:
         if len(suggestions) == 0:
             suggestions.append(wizard_utterance)
 
-        if possibly_wrong_item_selected is None or not scenario:
+        if possibly_wrong_item_selected is None or not api_name:
             possibly_wrong_item_selected = False
 
         return suggestions, possibly_wrong_item_selected
 
     def query(self, text: Text, scenario: Text) -> Dict[Text, Any]:
+        print(f"query for '{text}' in '{scenario}'")
         payload = {'text': text}
         response = requests.post(self.scenario_resources[scenario][constants.RASA_NLU_SERVER_ADDRESS_KEY],
                                  data=json.dumps(payload))
@@ -148,7 +149,7 @@ if __name__ == '__main__':
         for utterance in utterances:
             # Use rasa to get an intent label
             suggestions = ws.get_suggestions(wizard_utterance=utterance, primary_kb_item=kb_item,
-                                             scenario=scenario)
+                                             api_name=scenario)
 
             print(f'Suggestions for "{utterance}": {suggestions}')
             print('----------------------------------------------')

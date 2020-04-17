@@ -38,7 +38,7 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SetupCommand,
     GuideCommand,
     SilentCommand,
-    SelectTopicCommand
+    SelectTopicCommand,
 )
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
 from parlai.mturk.tasks.woz.backend.workers import (
@@ -114,9 +114,7 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         evaluation = wdb.get_worker_evaluation(self._worker_id)
         if evaluation:
             self.mturk_agent.observe(
-                GuideCommand(
-                    f"Welcome back {self._worker_id}! {evaluation}"
-                ).message
+                GuideCommand(f"Welcome back {self._worker_id}! {evaluation}").message
             )
         while True:
             message = self.mturk_agent.act()
@@ -181,9 +179,7 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         evaluation = wdb.get_worker_evaluation(self._worker_id)
         if evaluation:
             self.mturk_agent.observe(
-                GuideCommand(
-                    f"Welcome back {self._worker_id}! {evaluation}"
-                ).message
+                GuideCommand(f"Welcome back {self._worker_id}! {evaluation}").message
             )
         message = self.mturk_agent.act()
         echo.log_write(f"onboarding user: {message}")
@@ -251,10 +247,7 @@ class WOZWorld(MTurkTaskWorld):
         self._stage = SETUP_STAGE
         self._received_evaluations = 0
         self.events = []
-
-        base_dir = os.path.join(PROJECT_PATH, "resources", "book_ride")
-        self._suggestion_module = WizardSuggestion(scenario_list=['book_ride'],
-                                                   resources_dir=base_dir)
+        self._suggestion_module = None
 
         self.num_turns = 1
 
@@ -282,6 +275,12 @@ class WOZWorld(MTurkTaskWorld):
             self._questions_to_wizard = setup_command.completion_questions
             self._api_names = setup_command.api_names
             self._selected_api = self._api_names[0]
+
+            base_dir = os.path.join(PROJECT_PATH, "resources")
+            self._suggestion_module = WizardSuggestion(
+                scenario_list=self._api_names, resources_dir=base_dir
+            )
+
             self.wizard.observe(setup_command.message)
             send_mturk_message(
                 f"Your task: {setup_command.message.get('task_description')}",
@@ -414,7 +413,7 @@ class WOZWorld(MTurkTaskWorld):
             ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 primary_kb_item=self._primary_kb_item,
-                scenario=self._current_domain,
+                api_name=self._selected_api,
             )
             # Warn if response template of top-ranked intent could not be filled by selected KB item
             if possibly_wrong_item_selected:
