@@ -41,6 +41,10 @@ from parlai.mturk.tasks.woz.backend.commands import (
 )
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
+from parlai.mturk.tasks.woz.backend.workers import (
+    WorkerDatabase,
+    TASK_LEVEL_SINGLE_HAPPY,
+)
 from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
 
 
@@ -85,18 +89,19 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     worker uses the interface
     """
 
-    def __init__(self, opt: Opt, mturk_agent: Agent):
+    def __init__(self, opt: Opt, mturk_agent: Agent, worker_id: Text) -> None:
         super(WizardOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
         self._scenario = opt.get("scenario")
         self.opt = opt
         assert self._scenario
+        self._worker_id = worker_id
 
     def parley(self):
         setup = SetupCommand(scenario="intro", role="Wizard")
         self.mturk_agent.observe(setup.message)
 
         send_mturk_message(
-            f"Hello. Every time you do this task you will be randomly assigned one of two roles: "
+            f"Hello {self._worker_id}. Every time you do this task you will be randomly assigned one of two roles: "
             f"an AI assistant, or a user. This time, you'll play the AI assistant. "
             f"This role is complicated, and thus you must first watch the following video tutorial: "
             f"{WIZARD_TUTORIAL_URL} . \n\n"
@@ -105,6 +110,14 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
             f"Once you are ready, type the name of the example user that appears in the tutorial and hit [Enter]. ",
             self.mturk_agent,
         )
+        wdb = WorkerDatabase()
+        evaluation = wdb.get_worker_evaluation(self._worker_id)
+        if evaluation:
+            self.mturk_agent.observe(
+                GuideCommand(
+                    f"Welcome back {self._worker_id}! {evaluation}"
+                ).message
+            )
         while True:
             message = self.mturk_agent.act()
             echo.log_write(f"onboarding wizard: {message}")
@@ -144,17 +157,18 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     worker uses the interface
     """
 
-    def __init__(self, opt: Opt, mturk_agent: Agent):
+    def __init__(self, opt: Opt, mturk_agent: Agent, worker_id: Text) -> None:
         super(UserOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
         self._scenario = opt.get("scenario")
+        self._worker_id = worker_id
         assert self._scenario
 
-    def parley(self):
+    def parley(self) -> None:
         setup = SetupCommand(scenario="intro", role="User")
         self.mturk_agent.observe(setup.message)
         self.mturk_agent.observe(
             GuideCommand(
-                f"Hello. Every time you do this task you will be randomly assigned one of two roles: "
+                f"Hello {self._worker_id}. Every time you do this task you will be randomly assigned one of two roles: "
                 f"an AI assistant, or a user. This time, you'll play the user. When you type 'ready' and "
                 f"send a message, we will pair you up with another worker who plays the AI assistant. "
                 f"Note, that playing the AI assistant is a very complex task, so your partner has to "
@@ -163,6 +177,14 @@ class UserOnboardingWorld(MTurkOnboardWorld):
                 f"displayed on the left panel."
             ).message
         )
+        wdb = WorkerDatabase()
+        evaluation = wdb.get_worker_evaluation(self._worker_id)
+        if evaluation:
+            self.mturk_agent.observe(
+                GuideCommand(
+                    f"Welcome back {self._worker_id}! {evaluation}"
+                ).message
+            )
         message = self.mturk_agent.act()
         echo.log_write(f"onboarding user: {message}")
         self.mturk_agent.passed_onboarding = True
@@ -199,6 +221,7 @@ class WOZWorld(MTurkTaskWorld):
         observers: Optional[List[Agent]] = None,
     ) -> None:
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
+        self._is_sandbox = opt["is_sandbox"] or False
         self.observers = observers or []
         self.knowledgebase = None
         self.user = None
@@ -544,23 +567,57 @@ class WOZWorld(MTurkTaskWorld):
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
 
+        wdb = WorkerDatabase()
+
         if self.review_user():
-            print(f"User {self.user.worker_id}'s work was approved (HIT {self.user.hit_id})")
+            wdb.store_work(
+                self.user.worker_id,
+                self.user.hit_id,
+                self._is_sandbox,
+                "User",
+                "",
+                TASK_LEVEL_SINGLE_HAPPY,
+                self._num_user_utterances,
+            )
+            print(
+                f"User {self.user.worker_id}'s work was approved (HIT {self.user.hit_id})"
+            )
         else:
-            print(f"User {self.user.worker_id}'s work was rejected (HIT {self.user.hit_id})")
+            print(
+                f"User {self.user.worker_id}'s work was rejected (HIT {self.user.hit_id})"
+            )
 
         if self.review_wizard():
-            print(f"Wizard {self.wizard.worker_id}'s work was approved (HIT {self.wizard.hit_id})")
+            wdb.store_work(
+                self.wizard.worker_id,
+                self.wizard.hit_id,
+                self._is_sandbox,
+                "Wizard",
+                "",
+                TASK_LEVEL_SINGLE_HAPPY,
+                self._num_wizard_utterances,
+            )
+            print(
+                f"Wizard {self.wizard.worker_id}'s work was approved (HIT {self.wizard.hit_id})"
+            )
         else:
-            print(f"Wizard {self.wizard.worker_id}'s work was rejected (HIT {self.wizard.hit_id})")
+            print(
+                f"Wizard {self.wizard.worker_id}'s work was rejected (HIT {self.wizard.hit_id})"
+            )
 
     def review_user(self) -> bool:
         if self._num_user_utterances < 3:
             self.user.reject_work("You wrote fewer than 3 messages")
             return False
 
-        if self._user_linear_guide and self._num_user_utterances < len(self._user_linear_guide) and self._user_has_ended_dialogue:
-            self.user.reject_work("You ended the dialogue before being instructed to do so")
+        if (
+            self._user_linear_guide
+            and self._num_user_utterances < len(self._user_linear_guide)
+            and self._user_has_ended_dialogue
+        ):
+            self.user.reject_work(
+                "You ended the dialogue before being instructed to do so"
+            )
             return False
 
         self.user.approve_work()

@@ -209,21 +209,19 @@ def main():
         role_index += 1
         worker.demo_role = role
         worker.passed_onboarding = False
-        worker.bonus = 0
+        original_id = worker.worker_id
         if role == "Wizard":
-            original_id = worker.worker_id
             worker.update_agent_id("Wizard")
-            world = WizardOnboardingWorld(opt=opt, mturk_agent=worker,)
+            world = WizardOnboardingWorld(opt=opt, mturk_agent=worker, worker_id=original_id)
             if worker.passed_onboarding and isinstance(worker, MTurkAgent):
                 mturk_utils.give_worker_qualification(
                     original_id,
                     has_passed_wizard_tutorial_20200406_qualification,
                     is_sandbox=opt["is_sandbox"],
                 )
-                worker.bonus += 2
         elif role == "User":
             worker.update_agent_id("User")
-            world = UserOnboardingWorld(opt=opt, mturk_agent=worker)
+            world = UserOnboardingWorld(opt=opt, mturk_agent=worker, worker_id=original_id)
         else:
             raise ValueError(f"Unknown role '{role}'")
 
