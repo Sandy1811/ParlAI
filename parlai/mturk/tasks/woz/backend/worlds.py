@@ -38,7 +38,7 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SetupCommand,
     GuideCommand,
     SilentCommand,
-)
+    SelectTopicCommand)
 from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
 from parlai.mturk.tasks.woz.backend.workers import (
@@ -262,6 +262,8 @@ class WOZWorld(MTurkTaskWorld):
 
         self._primary_kb_item = None
         self._secondary_kb_item = None
+        self._selected_api: Optional[Text] = None
+        self._api_names: Optional[List[Text]] = None
 
         self._user_task_description = None
         self._questions_to_user = None
@@ -280,6 +282,8 @@ class WOZWorld(MTurkTaskWorld):
         if self._stage == SETUP_STAGE:
             setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
             self._questions_to_wizard = setup_command.completion_questions
+            self._api_names = setup_command.api_names
+            self._selected_api = self._api_names[0]
             self.wizard.observe(setup_command.message)
             send_mturk_message(
                 f"Your task: {setup_command.message.get('task_description')}",
@@ -393,7 +397,11 @@ class WOZWorld(MTurkTaskWorld):
         elif isinstance(wizard_command, SelectSecondaryCommand):
             self._secondary_kb_item = wizard_command.item
             return 0
+        elif isinstance(wizard_command, SelectTopicCommand):
+            self._selected_api = self._api_names[int(wizard_command.topic)]
+            return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
+            print(self._selected_api)
             # Prevent wizards from copy/pasting entire KB item
             if "\t" in wizard_command.query:
                 send_mturk_message(

@@ -256,6 +256,10 @@ class SetupCommand(BackendCommand):
         return self._user_linear_guide
 
     @property
+    def api_names(self) -> List[Text]:
+        return list(self._form_description.keys())
+
+    @property
     def message(self) -> Dict[Text, Any]:
         return {
             "id": self._role,
@@ -494,6 +498,33 @@ class SelectSecondaryCommand(WizardCommand):
         }
 
 
+class SelectTopicCommand(WizardCommand):
+    def __init__(self, sender: Agent, topic: Text) -> None:
+        super(SelectTopicCommand, self).__init__(sender)
+        self._command_name = "select_topic"
+        self._topic = topic
+        print(f"selecting: {topic}")
+
+    @property
+    def topic(self):
+        return self._topic
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {
+            "id": self._sender.id,
+            "text": all_constants()["front_to_back"]["select_topic_prefix"]
+            + str(self._topic),
+        }
+
+    @staticmethod
+    def from_message(
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
+        topic = extracted_from_text.strip()
+        return SelectTopicCommand(sender=sender, topic=topic)
+
+
 class RequestSuggestionsCommand(WizardCommand):
     def __init__(self, sender: Agent, query_text: Text) -> None:
         super(RequestSuggestionsCommand, self).__init__(sender)
@@ -602,6 +633,7 @@ def command_from_message(
         constants["front_to_back"]["query_prefix"]: QueryCommand,
         "<guide>": GuideCommand,
         "<silent>": SilentCommand,
+        constants["front_to_back"]["select_topic_prefix"]: SelectTopicCommand
     }
 
     # Add information extracted from the `text` property (magic strings)
