@@ -211,6 +211,28 @@ def fill_hotel_reservation_failed(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_RESERVATION_FAILED]
 
 
+def fill_plane_ask_flight_id(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_ASK_FLIGHT_ID]
+
+
+def fill_plane_flight_available(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_FLIGHT_AVAILABLE]
+
+
+def fill_plane_flight_unavailable(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['id']):
+        return None
+    return intent2reply[constants.INTENT_PLANE_FLIGHT_UNAVAILABLE].format(flight_id=kb_item['id'])
+
+
+def fill_plane_reservation_succeeded(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_RESERVATION_SUCCEEDED]
+
+
+def fill_plane_reservation_failed(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_RESERVATION_FAILED]
+
+
 def check_kb_item(
     kb_item: Dict[Text, Any], required_fields: Optional[List[Text]] = None
 ) -> bool:

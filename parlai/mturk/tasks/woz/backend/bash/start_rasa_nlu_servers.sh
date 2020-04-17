@@ -8,5 +8,7 @@ $RESOURCES_DIR/book_ride/start_nlu_server.sh $RESOURCES_DIR/book_ride
 $RESOURCES_DIR/ride_change/start_nlu_server.sh $RESOURCES_DIR/ride_change
 $RESOURCES_DIR/ride_status/start_nlu_server.sh $RESOURCES_DIR/ride_status
 $RESOURCES_DIR/hotel_search/start_nlu_server.sh $RESOURCES_DIR/hotel_search
+$RESOURCES_DIR/hotel_reserve/start_nlu_server.sh $RESOURCES_DIR/hotel_reserve
+$RESOURCES_DIR/plane_reserve/start_nlu_server.sh $RESOURCES_DIR/plane_reserve
 
 echo "Rasa NLU servers started!"

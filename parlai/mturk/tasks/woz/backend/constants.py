@@ -27,7 +27,7 @@ INTENT_RIDE_INFORM_CHANGES_FAILED = 'ride_inform_changes_failed'
 INTENT_RIDE_PROVIDE_BOOKING_STATUS = 'ride_provide_booking_status'
 INTENT_RIDE_PROVIDE_BOOKING_STATUS_UPDATE = 'ride_provide_booking_status_update'
 
-# Intent names for book_hotel, hotel_search
+# Intent names for hotel_reserve, hotel_search
 INTENT_HOTEL_INFORM_SEARCH_CRITERIA = 'hotel_inform_search_criteria'
 INTENT_HOTEL_ASK_NAME = 'hotel_ask_name'
 INTENT_HOTEL_INFORM_NAME = 'hotel_inform_name'
@@ -48,6 +48,15 @@ INTENT_HOTEL_UNAVAILABLE = 'hotel_unavailable'
 INTENT_HOTEL_ASK_CONFIRM_BOOKING = 'hotel_ask_confirm_booking'
 INTENT_HOTEL_RESERVATION_SUCCEEDED = 'hotel_reservation_succeeded'
 INTENT_HOTEL_RESERVATION_FAILED = 'hotel_reservation_failed'
+
+# Intent names for plane_search, plane_reserve
+INTENT_PLANE_ASK_FLIGHT_ID = 'plane_ask_flight_id'
+INTENT_PLANE_FLIGHT_AVAILABLE = 'plane_flight_available'
+INTENT_PLANE_FLIGHT_UNAVAILABLE = 'plane_flight_unavailable'
+INTENT_PLANE_RESERVATION_SUCCEEDED = 'plane_reservation_succeeded'
+INTENT_PLANE_RESERVATION_FAILED = 'plane_reservation_failed'
+INTENT_PLANE_BYE = 'plane_bye'
+
 
 SCENARIO_PORT_MAP = {
     'book_ride': '5005',

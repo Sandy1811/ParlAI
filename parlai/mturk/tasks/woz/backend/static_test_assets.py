@@ -137,3 +137,23 @@ def get_hotel_reserve_item():
     ]
 
     return kb_item, utterances, 'hotel_reserve'
+
+
+def get_plane_reserve_item():
+    kb_item = {
+        "id": 666,
+        "CustomerName": "Sally"
+    }
+
+    utterances = [
+        "Heyho partner",
+        "Whats your name?",
+        "Find your flight ID for me please",
+        "That flight, however, is not available any more",
+        "Got that, can i reserve that for you?",
+        "Alright, your reservation is done!",
+        "Sorry, but your reservation failed for some reason",
+        "cheers and bye"
+    ]
+
+    return kb_item, utterances, 'plane_reserve'
