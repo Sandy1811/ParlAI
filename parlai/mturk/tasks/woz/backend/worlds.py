@@ -38,8 +38,8 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SetupCommand,
     GuideCommand,
     SilentCommand,
-    SelectTopicCommand)
-from parlai.mturk.tasks.woz.backend.nlu import NLUServerConnection
+    SelectTopicCommand
+)
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
 from parlai.mturk.tasks.woz.backend.workers import (
     WorkerDatabase,
@@ -253,10 +253,8 @@ class WOZWorld(MTurkTaskWorld):
         self.events = []
 
         base_dir = os.path.join(PROJECT_PATH, "resources", "book_ride")
-        self._nlu_connection = NLUServerConnection()
-        self._suggestion_module = WizardSuggestion(
-            intent2reply_file=os.path.join(base_dir, "intent2reply.json")
-        )
+        self._suggestion_module = WizardSuggestion(scenario_list=['book_ride'],
+                                                   resources_dir=base_dir)
 
         self.num_turns = 1
 
@@ -415,7 +413,7 @@ class WOZWorld(MTurkTaskWorld):
                 possibly_wrong_item_selected,
             ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
-                kb_item=self._primary_kb_item,
+                primary_kb_item=self._primary_kb_item,
                 scenario=self._current_domain,
             )
             # Warn if response template of top-ranked intent could not be filled by selected KB item
