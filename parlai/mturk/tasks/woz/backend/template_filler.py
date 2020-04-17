@@ -173,6 +173,44 @@ def fill_hotel_bye(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_BYE]
 
 
+def fill_hotel_ask_hotel(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_HOTEL]
+
+
+def fill_hotel_ask_date_from(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_DATE_FROM]
+
+
+def fill_hotel_ask_date_to(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_DATE_TO]
+
+
+def fill_hotel_ask_customer_request(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Name"]):
+        return None
+    return intent2reply[constants.INTENT_HOTEL_ASK_CUSTOMER_REQUEST].format(hotel_name=kb_item['Name'])
+
+
+def fill_hotel_unavailable(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Name"]):
+        return None
+    return intent2reply[constants.INTENT_HOTEL_UNAVAILABLE].format(hotel_name=kb_item['Name'])
+
+
+def fill_hotel_ask_confirm_booking(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Name"]):
+        return None
+    return intent2reply[constants.INTENT_HOTEL_ASK_CONFIRM_BOOKING].format(hotel_name=kb_item['Name'])
+
+
+def fill_hotel_reservation_succeeded(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_RESERVATION_SUCCEEDED]
+
+
+def fill_hotel_reservation_failed(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_RESERVATION_FAILED]
+
+
 def check_kb_item(
     kb_item: Dict[Text, Any], required_fields: Optional[List[Text]] = None
 ) -> bool:

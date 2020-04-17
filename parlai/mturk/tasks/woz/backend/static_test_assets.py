@@ -110,3 +110,30 @@ def get_hotel_search_item():
     ]
 
     return kb_item_2, utterances, 'hotel_search'
+
+
+def get_hotel_reserve_item():
+    kb_item = {
+        "Name": "Old Town Inn",
+        "StartDate": 12,
+        "EndDate": 27,
+        "CustomerName": "Ben",
+        "CustomerRequest": "vegan breakfast"
+    }
+
+    utterances = [
+        "hohoho",
+        "howdy partner",
+        "Hello, what can I do for you today?",
+        "Whats your name, please?",
+        "When are you going to checkin?",
+        "And checkout is when?",
+        "Anything special the hotel should provide you with?",
+        "Oh no, I'm sorry, but there doesn't seem to be a room available.",
+        "Great, I found a hotel that matches your criteria, can I book this for you now?",
+        "Yay, booking completed successfully!",
+        "Sorry, but the booking request failed.",
+        "Bye"
+    ]
+
+    return kb_item, utterances, 'hotel_reserve'

@@ -40,6 +40,14 @@ INTENT_HOTEL_INFORM_RATING = 'hotel_inform_rating'
 INTENT_HOTEL_PROVIDE_SEARCH_RESULT = 'hotel_provide_search_result'
 INTENT_HOTEL_ASK_SEARCH_MORE = 'hotel_ask_search_more'
 INTENT_HOTEL_BYE = 'hotel_bye'
+INTENT_HOTEL_ASK_HOTEL = 'hotel_ask_hotel'
+INTENT_HOTEL_ASK_DATE_FROM = 'hotel_ask_date_from'
+INTENT_HOTEL_ASK_DATE_TO = 'hotel_ask_date_to'
+INTENT_HOTEL_ASK_CUSTOMER_REQUEST = 'hotel_ask_customer_request'
+INTENT_HOTEL_UNAVAILABLE = 'hotel_unavailable'
+INTENT_HOTEL_ASK_CONFIRM_BOOKING = 'hotel_ask_confirm_booking'
+INTENT_HOTEL_RESERVATION_SUCCEEDED = 'hotel_reservation_succeeded'
+INTENT_HOTEL_RESERVATION_FAILED = 'hotel_reservation_failed'
 
 SCENARIO_PORT_MAP = {
     'book_ride': '5005',

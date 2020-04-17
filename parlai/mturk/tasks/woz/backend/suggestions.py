@@ -54,7 +54,7 @@ class WizardSuggestion:
         while not self.nlu_server_ready(scenario) and i < max_tries:
             time.sleep(poll_interval)
             i += 1
-            
+
         return i < max_tries
 
     def start_nlu_server(self, scenario):
@@ -137,11 +137,13 @@ class WizardSuggestion:
 
 if __name__ == '__main__':
 
-    scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status']
+    #scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status']
+    scenarios = ['hotel_reserve']
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'))
 
-    scens = ['get_book_ride_item', 'get_ride_change_item', 'get_hotel_search_item',
-                 'get_ride_status_item']
+    #scens = ['get_book_ride_item', 'get_ride_change_item', 'get_hotel_search_item',
+    #             'get_ride_status_item']
+    scens = ['get_hotel_reserve_item']
     for sc in scens:
         kb_item, utterances, scenario = getattr(static_test_assets, sc)()
         ws.poll_nlu_server(scenario=scenario)
