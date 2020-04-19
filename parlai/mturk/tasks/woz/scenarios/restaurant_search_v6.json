@@ -12,7 +12,7 @@
         "...find you a suitable restaurant?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Find a Moderate restaurant with a rating higher than 4"
+      "task_description": "Find a Moderate priced restaurant with a rating higher than 5"
     },
     "Wizard": {
       "task_description": "Be helpful...",

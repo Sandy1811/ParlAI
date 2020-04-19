@@ -12,7 +12,7 @@
         "...find you a suitable flight?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for a flight from New York City to San Francisco for 11."
+      "task_description": "Search for a flight from New York City to San Francisco for May 7."
     },
     "Wizard": {
       "task_description": "Help the user find a suitable flight.",

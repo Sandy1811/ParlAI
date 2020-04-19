@@ -21,7 +21,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Be helpful...",
+      "task_description": "Help the user plan a party!",
       "completion_requirements": [
         "You have made a reservation for the user,",
         "or the user says goodbye."

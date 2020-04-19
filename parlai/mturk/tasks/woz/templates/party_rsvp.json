@@ -20,7 +20,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Be helpful...",
+      "task_description": "Help the user RSVP for a party.",
       "completion_requirements": [
         "You have submitted the RSVP for the user,",
         "or the user says goodbye."

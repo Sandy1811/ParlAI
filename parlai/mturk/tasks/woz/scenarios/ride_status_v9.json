@@ -18,7 +18,7 @@
         "...tell you the status of your ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You (Mark) have been waiting ages for your ride! Perhaps the car company forgot about your booking (id 81? Ask the assistant what is going on."
+      "task_description": "You (Ben) have been waiting ages for your ride! Perhaps the car company forgot about your booking (id 477? Ask the assistant what is going on."
     },
     "Wizard": {
       "task_description": "Help the user stay informed about the status of his/her ride. (You can find the video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",

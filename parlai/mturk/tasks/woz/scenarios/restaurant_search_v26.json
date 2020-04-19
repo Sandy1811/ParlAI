@@ -12,7 +12,7 @@
         "...find you a suitable restaurant?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for Cactus Club near the West part of town."
+      "task_description": "Search for Legume near the East part of town."
     },
     "Wizard": {
       "task_description": "Be helpful...",

@@ -181,7 +181,7 @@ def load_db(fn):
             if type(v) is str and v[0] == "!":
                 param[k] = eval(v[1:])
 
-    return KnowledgeBaseAPI(num_items=1000, all_parameters=parameters)
+    return KnowledgeBaseAPI(num_items=100 if 'plane' not in fn else 1000, all_parameters=parameters)
 
 
 def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
@@ -244,7 +244,8 @@ def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
 
 
 def plane_search(plane_api, constraints: Dict[Text, Any]):
-    return plane_api.sample(dict(constraints, SeatsAvailable=True))
+    row, count = plane_api.sample(dict(constraints))
+    return row._settings, count
 
 
 def plane_reserve(plane_api, constraints: Dict[Text, Any]):

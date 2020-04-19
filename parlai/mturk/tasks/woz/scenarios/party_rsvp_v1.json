@@ -12,10 +12,10 @@
         "...submitted your RSVP for the party?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Your are Angela and would like to RSVP to a party. The host is John and the venue is North Heights Venue. You will be arriving at 14 and will bring 3 guests with you. You need parking. You have no dietary restrictions."
+      "task_description": "Your are John and would like to RSVP to a party. The host is Alexis and the venue is Southside Venue. You will be arriving at 5 and will bring 3 guests with you. You need parking. You have no dietary restrictions."
     },
     "Wizard": {
-      "task_description": "Be helpful...",
+      "task_description": "Help the user RSVP for a party.",
       "completion_requirements": [
         "You have submitted the RSVP for the user,",
         "or the user says goodbye."

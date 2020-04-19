@@ -12,7 +12,7 @@
         "...find you a suitable restaurant?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Find a Cheap Steak restaurant in the East part of town."
+      "task_description": "Find a Cheap priced Pizza restaurant in the South part of town."
     },
     "Wizard": {
       "task_description": "Be helpful...",

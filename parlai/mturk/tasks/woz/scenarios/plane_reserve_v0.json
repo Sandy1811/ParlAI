@@ -4,7 +4,7 @@
   "db": "plane.json",
   "version": 1,
   "api_names": ["plane_reserve"],
-  "schema_urls": { "plane_search": "https://i.imgur.com/QlpRuAX.jpg" },
+  "schema_urls": { "plane_reserve": "https://i.imgur.com/QlpRuAX.jpg" },
   "instructions": {
     "User": {
       "completion_requirements": ["You have booked a flight."],
@@ -12,7 +12,7 @@
         "...book your flight?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Reserve flight with id 41. Your name is John"
+      "task_description": "Reserve flight with id 259. Your name is Angela"
     },
     "Wizard": {
       "task_description": "Help the user book their flight.",

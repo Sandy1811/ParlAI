@@ -24,11 +24,11 @@ import api
 #print(msg)
 
 msg = api.call_api(
-    "ride_change",
+    "plane_search",
     constraints=[{
-        "CustomerName": "John Smith",
-        "id": 3,
-        "ChangeDescription": "xxx",
+        "DepartureCity": "New York City",
+        "ArrivalCity": "San Francisco",
+        "Date": 13,
     }],
 )
 print(msg)
