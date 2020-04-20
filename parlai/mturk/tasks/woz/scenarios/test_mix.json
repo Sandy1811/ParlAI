@@ -25,12 +25,12 @@
               null,
               "You get a text from the hotel. The waterline broke and unfortunately they cannot accommodate you tonight. Be creative! Perhaps your assistant can find another hotel in the center for you? You'll also have to change your ride...",
               null,
-              null,
-              "When you look for accommodation, make sure that they offer room service. You you don't have to book it.",
-              null,
+              "When you look for accommodation, make sure that they offer room service. You don't have to book it. Just make sure you also change your ride to arrive at the new hotel.",
               null,
               null,
-              "You just arrived at the Central Station. Find out how far out your ride is (unless you cancelled it).",
+              null,
+              null,
+              "You just arrived at the Central Station. Find out how far out your ride is (unless you've cancelled it).",
               "Good! Bring the conversation to a natural end in the next few turns."
             ]
         },

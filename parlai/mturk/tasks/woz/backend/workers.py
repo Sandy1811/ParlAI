@@ -3,7 +3,7 @@ import json
 import os
 import time
 import mmap
-from typing import Text, Optional, Tuple, Any
+from typing import Text, Optional, Tuple, Any, List
 
 from parlai import PROJECT_PATH
 
@@ -169,6 +169,13 @@ class WorkerDatabase:
                 f"{worker_id}\t{hit_id}\t{sandbox}\t{role}\t{task}\t{task_level}\t{num_utterances}\t{unix_time}\n"
             )
 
+    @staticmethod
+    def score(task_difficulty: float, work_quality: float) -> int:
+        assert 0. <= task_difficulty <= 1.
+        assert 0. <= work_quality <= 1.
+
+        return round(2. * (task_difficulty - 0.5) + 4 * (work_quality - 0.5))
+
     def eval_work(
         self,
         worker_id: Text,
@@ -187,7 +194,7 @@ class WorkerDatabase:
             )
 
         unix_time = unix_time or int(time.time())
-        score = round(20 * task_difficulty * (work_quality - 0.5))
+        score = self.score(task_difficulty, work_quality)
 
         with open(self.eval_filename, "a", encoding="utf-8") as file:
             file.write(f"{worker_id}\t{hit_id}\t{role}\t{task_difficulty}\t{work_quality}\t{score}\t{unix_time}\n")
@@ -309,12 +316,23 @@ class WorkerDatabase:
 
         return result
 
+    def get_worker_HITs(self, worker_id: Text) -> List[Text]:
+        # ToDo: Complete this
+        base_dir = os.path.join(PROJECT_PATH, "parlai", "mturk", "run_data")
+        task_dirs = []
+        def look_for_worker_id(filename: Text) -> None:
+            nonlocal task_dirs
+            if file_contains_q(filename, worker_id) and not "/o_" in filename:
+                task_dirs.append(filename)
+        file_system_scan(look_for_worker_id, base_dir, ".json")
 
-if __name__ == '__main__':
+        # task_dirs =
+
+        return task_dirs
+
+
+def evaluate_new_dialogues() -> None:
     wdb = WorkerDatabase()
-
-    print(wdb.get_worker_evaluation("A1I1OIUHZLZRDO"))
-
     for id, hit, role in wdb.unevaluated_work(True):
         wdb.print_dialogue(hit, True)
         print()
@@ -324,3 +342,13 @@ if __name__ == '__main__':
             print("Ok, skipping this.")
         else:
             wdb.eval_work(id, hit, role, task_difficulty, work_quality)
+
+
+if __name__ == '__main__':
+    evaluate_new_dialogues()
+
+    # wdb = WorkerDatabase()
+    # wdb.print_dialogue("3M0556244VEDZDPCXO9YUEGBSRKFNM")
+    # wdb.print_dialogue("3MXX6RQ9FYZ34I40TMQ77ZOF3GE4PL")
+    # for line in wdb.get_worker_HITs("A9HQ3E0F2AGVO"):
+    #     print(line)
