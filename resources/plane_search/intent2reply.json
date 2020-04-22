@@ -1,4 +1,5 @@
 {
     "hello": "Hello, how can I help?",
     "ask_name": "May I have your name, please?",
+    "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you search for flights."
 }

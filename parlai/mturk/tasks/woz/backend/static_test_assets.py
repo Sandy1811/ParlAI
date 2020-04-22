@@ -28,16 +28,8 @@ def get_book_ride_item():
 
 def get_ride_status_item():
     kb_item = {
-        "Price": 22,
-        "AllowsChanges": False,
-        "DurationMinutes": 12,
-        "ServiceProvider": "Uber",
-        "DriverName": "Ella",
-        "CarModel": "Ford",
-        "LicensePlate": "432 LSA",
-        "DepartureLocation": "Tegel Airport, International Arrivals",
-        "ArrivalLocation": "Hyatt Alexanderplatz",
-        "id": 678
+        "RideStatus": "Your Driver is arriving",
+        "RideWait": 12,
     }
 
     utterances = [
@@ -157,3 +149,63 @@ def get_plane_reserve_item():
     ]
 
     return kb_item, utterances, 'plane_reserve'
+
+
+def get_party_plan_item():
+    kb_item = {
+
+    }
+
+    utterances = [
+
+    ]
+
+    return kb_item, utterances, 'party_plan'
+
+
+def get_party_rsvp_item():
+    kb_item = {
+
+    }
+
+    utterances = [
+
+    ]
+
+    return kb_item, utterances, 'party_rsvp'
+
+
+def get_plane_search_item():
+    kb_item = {
+
+    }
+
+    utterances = [
+
+    ]
+
+    return kb_item, utterances, 'plane_search'
+
+
+def get_restaurant_reserve_item():
+    kb_item = {
+
+    }
+
+    utterances = [
+
+    ]
+
+    return kb_item, utterances, 'restaurant_reserve'
+
+
+def get_restaurant_search_item():
+    kb_item = {
+
+    }
+
+    utterances = [
+
+    ]
+
+    return kb_item, utterances, 'restaurant_search'

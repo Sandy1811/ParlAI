@@ -7,5 +7,6 @@
     "ride_bye": "Goodbye. Enjoy your ride!",
     "ride_confirm_booking": "Ok, I have booked you a ride with licence plate '{license_plate:s}'. Your booking ID is '{booking_id:d}'.",
     "ride_provide_driver_details": "Your driver will be {driver_name:s}.",
-    "ride_inform_search_criteria": "I can also filter for service provider, driver name, and the car’s model."
+    "ride_inform_search_criteria": "I can also filter for service provider, driver name, and the car’s model.",
+    "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you book a ride."
 }

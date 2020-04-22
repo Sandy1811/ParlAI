@@ -11,6 +11,10 @@ def fill_ask_name(intent2reply, *_):
     return intent2reply[constants.INTENT_ASK_NAME]
 
 
+def fill_out_of_scope(intent2reply, *_):
+    return intent2reply[constants.INTENT_OUT_OF_SCOPE]
+
+
 def fill_ride_ask_destination(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_ASK_DESTINATION]
 
@@ -83,19 +87,18 @@ def fill_ride_ask_booking_number(intent2reply, *_):
 
 
 def fill_ride_provide_booking_status(intent2reply, kb_item):
-    if not check_kb_item(kb_item, ["DriverName", "DurationMinutes", "ServiceProvider"]):
+    if not check_kb_item(kb_item, ["RideWait"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS].format(
-        driver_name=kb_item["DriverName"], minutes_till_pickup=kb_item["DurationMinutes"],
-        service_provider=kb_item["ServiceProvider"]
+        minutes_till_pickup=kb_item["RideWait"]
     )
 
 
 def fill_ride_provide_booking_status_update(intent2reply, kb_item):
-    if not check_kb_item(kb_item, ["DurationMinutes"]):
+    if not check_kb_item(kb_item, ["RideWait"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS_UPDATE].format(
-        minutes_till_pickup=kb_item["DurationMinutes"]
+        minutes_till_pickup=kb_item["RideWait"]
     )
 
 
@@ -152,16 +155,12 @@ def fill_hotel_inform_rating(intent2reply, kb_item):
 
 
 def fill_hotel_provide_search_result(intent2reply, kb_item):
-    if not check_kb_item(kb_item, ["Name", "Location", "Cost", "AverageRating", "Service", "TakesReservations",
-                                   "ServiceStartHour", "ServiceStopHour"]):
+    if not check_kb_item(kb_item, ["Name", "Location", "Cost", "AverageRating"]):
         return None
-    has_service = f"offer service (from {kb_item['ServiceStartHour']}am to {kb_item['ServiceStopHour']}pm)" \
-        if kb_item["Service"] else "not offer service"
-    takes_reservations = "accept reservations" if kb_item["TakesReservations"] else "not accept reservations"
 
     return intent2reply[constants.INTENT_HOTEL_PROVIDE_SEARCH_RESULT].format(
         hotel_name=kb_item["Name"], hotel_location=kb_item["Location"], price_range=kb_item["Cost"],
-        average_rating=kb_item["AverageRating"], has_service=has_service, takes_reservations=takes_reservations
+        average_rating=kb_item["AverageRating"]
     )
 
 
