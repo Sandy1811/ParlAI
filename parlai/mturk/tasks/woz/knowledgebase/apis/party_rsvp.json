@@ -36,8 +36,9 @@
     },
     {
       "Name": "NeedParking",
-      "Type": "Boolean",
-      "ReadableName": "Need Parking"
+      "Type": "Categorical",
+      "ReadableName": "Need Parking",
+      "Categories": ["Yes", "No"]
     },
     {
       "Name": "DietaryRestrictions",
