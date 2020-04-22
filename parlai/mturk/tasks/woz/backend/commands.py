@@ -239,6 +239,7 @@ class SetupCommand(BackendCommand):
                 "completion_questions"
             ]
             self._role = role
+            self._user_linear_guide = scenario["instructions"]["User"].get("linear_guide")
         except KeyError as error:
             raise ImportError(f"Invalid scenario file '{scenario_file_name}': {error}.")
 
@@ -249,6 +250,10 @@ class SetupCommand(BackendCommand):
     @property
     def task_description(self):
         return self._task_description
+
+    @property
+    def user_linear_guide(self) -> Optional[List[Optional[Text]]]:
+        return self._user_linear_guide
 
     @property
     def message(self) -> Dict[Text, Any]:

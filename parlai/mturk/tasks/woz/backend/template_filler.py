@@ -66,6 +66,113 @@ def fill_ride_provide_driver_details(intent2reply, kb_item):
     )
 
 
+def fill_ride_inform_changes_failed(intent2reply, *_):
+    return intent2reply[constants.INTENT_RIDE_INFORM_CHANGES_FAILED]
+
+
+def fill_ride_inform_changes_successful(intent2reply, *_):
+    return intent2reply[constants.INTENT_RIDE_INFORM_CHANGES_SUCCESSFUL]
+
+
+def fill_ride_ask_change(intent2reply, *_):
+    return intent2reply[constants.INTENT_RIDE_ASK_CHANGE]
+
+
+def fill_ride_ask_booking_number(intent2reply, *_):
+    return intent2reply[constants.INTENT_RIDE_ASK_BOOKING_NUMBER]
+
+
+def fill_ride_provide_booking_status(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["DriverName", "DurationMinutes", "ServiceProvider"]):
+        return None
+    return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS].format(
+        driver_name=kb_item["DriverName"], minutes_till_pickup=kb_item["DurationMinutes"],
+        service_provider=kb_item["ServiceProvider"]
+    )
+
+
+def fill_ride_provide_booking_status_update(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["DurationMinutes"]):
+        return None
+    return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS_UPDATE].format(
+        minutes_till_pickup=kb_item["DurationMinutes"]
+    )
+
+
+def fill_hotel_inform_search_criteria(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_INFORM_SEARCH_CRITERIA]
+
+
+def fill_hotel_ask_name(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_NAME]
+
+
+def fill_hotel_inform_name(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Name"]):
+        return None
+    return intent2reply[constants.INTENT_HOTEL_INFORM_NAME].format(
+        hotel_name=kb_item["Name"]
+    )
+
+
+def fill_hotel_ask_location(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_LOCATION]
+
+
+def fill_hotel_inform_location(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Location"]):
+        return None
+    return intent2reply[constants.INTENT_HOTEL_INFORM_LOCATION].format(
+        hotel_location=kb_item["Location"]
+    )
+
+
+def fill_hotel_ask_price(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_PRICE]
+
+
+def fill_hotel_inform_price(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Name", "Cost"]):
+        return None
+    return intent2reply[constants.INTENT_HOTEL_INFORM_PRICE].format(
+        price_range=kb_item["Cost"], hotel_name=kb_item["Name"]
+    )
+
+
+def fill_hotel_ask_rating(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_RATING]
+
+
+def fill_hotel_inform_rating(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Name", "AverageRating"]):
+        return None
+    return intent2reply[constants.INTENT_HOTEL_INFORM_RATING].format(
+        hotel_name=kb_item["Name"], average_rating=kb_item["AverageRating"]
+    )
+
+
+def fill_hotel_provide_search_result(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ["Name", "Location", "Cost", "AverageRating", "Service", "TakesReservations",
+                                   "ServiceStartHour", "ServiceStopHour"]):
+        return None
+    has_service = f"offer service (from {kb_item['ServiceStartHour']}am to {kb_item['ServiceStopHour']}pm)" \
+        if kb_item["Service"] else "not offer service"
+    takes_reservations = "accept reservations" if kb_item["TakesReservations"] else "not accept reservations"
+
+    return intent2reply[constants.INTENT_HOTEL_PROVIDE_SEARCH_RESULT].format(
+        hotel_name=kb_item["Name"], hotel_location=kb_item["Location"], price_range=kb_item["Cost"],
+        average_rating=kb_item["AverageRating"], has_service=has_service, takes_reservations=takes_reservations
+    )
+
+
+def fill_hotel_ask_search_more(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_SEARCH_MORE]
+
+
+def fill_hotel_bye(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_BYE]
+
+
 def check_kb_item(
     kb_item: Dict[Text, Any], required_fields: Optional[List[Text]] = None
 ) -> bool:

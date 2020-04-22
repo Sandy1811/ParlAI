@@ -12,7 +12,7 @@
         "...reserve your venue for the party?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Your are Mark and would like to plan a party. For the venue, you'd like to reserve North Heights Venue for Monday from 9 and ending two hours later. You are anticipating 91 guests."
+      "task_description": "Your are John and would like to plan a party. For the venue, you'd like to reserve North Heights Venue for Saturday from 3 and ending two hours later. You are anticipating 72 guests."
     },
     "Wizard": {
       "task_description": "Help the user plan a party!",

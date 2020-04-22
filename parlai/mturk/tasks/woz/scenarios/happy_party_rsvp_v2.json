@@ -12,7 +12,7 @@
         "...submitted your RSVP for the party?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Your are Alexis and would like to RSVP to a party. The host is John and the venue is West Bay Venue. You will be arriving at 2 and will bring 5 guests with you. You don't need parking. You have no dietary restrictions."
+      "task_description": "Your are Mark and would like to RSVP to a party. The host is John and the venue is North Heights Venue. You will be arriving at 5 and will bring 8 guests with you. You need parking. You have no dietary restrictions."
     },
     "Wizard": {
       "task_description": "Help the user RSVP for a party.",

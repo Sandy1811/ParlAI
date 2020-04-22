@@ -1,6 +1,6 @@
 {
-  "title": "Plane Search",
-  "name": "Plane Search",
+  "title": "Plane Reserve",
+  "name": "Plane Reserve",
   "db": "plane.json",
   "version": 1,
   "api_names": ["plane_reserve"],
@@ -12,7 +12,7 @@
         "...book your flight?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Reserve flight with id 192. Your name is Angela"
+      "task_description": "Reserve flight with id 43. Your name is John"
     },
     "Wizard": {
       "task_description": "Help the user book their flight.",
