@@ -324,7 +324,7 @@ def ride_status(ride_api, constraints: Dict[Text, Any]):
         "Your driver is arriving.",
     ]
     ride_wait_outputs = [
-        "{0} minutes away".format(random.randint(0, 5)) for _ in range(30)
+        "{0} minutes away".format(random.randint(1, 10)) for _ in range(30)
     ]
 
     return (

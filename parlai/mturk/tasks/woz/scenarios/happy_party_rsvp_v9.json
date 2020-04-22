@@ -1,0 +1,29 @@
+{
+  "title": "Party RSVP",
+  "name": "Party RSVP",
+  "db": "schedule.json",
+  "version": 1,
+  "api_names": ["party_rsvp"],
+  "schema_urls": { "party_rsvp": "https://i.imgur.com/4Pz33hK.jpg" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have RSVPed to the party."],
+      "completion_questions": [
+        "...submitted your RSVP for the party?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "Your are Angela and would like to RSVP to a party. The host is Alexis and the venue is West Bay Venue. You will be arriving at 10 and will bring 7 guests with you. You don't need parking. You can only eat vegetarian food."
+    },
+    "Wizard": {
+      "task_description": "Help the user RSVP for a party.",
+      "completion_requirements": [
+        "You have submitted the RSVP for the user,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

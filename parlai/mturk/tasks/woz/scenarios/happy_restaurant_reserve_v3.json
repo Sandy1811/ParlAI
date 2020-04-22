@@ -4,23 +4,18 @@
   "db": "restaurant.json",
   "version": 1,
   "api_names": ["restaurant_reserve"],
-  "schema_urls": {
-    "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png"
-  },
+  "schema_urls": { "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png" },
   "instructions": {
     "User": {
-      "task_descriptions": [
-        "Reserve a table at @Name-1 at @Time-1 o'clock for @MaxPartySize-1 people. Your name is @CustomerName-1.",
-        "Make a reservation at @Name-1 for @MaxPartySize-1 people at @Time-1 o'clock. Your name is @CustomerName-1."
-      ],
       "completion_requirements": ["You have reserved a table."],
       "completion_questions": [
         "...reserve your restaurant?",
         "...stay calm and helpful throughout the dialogue?"
-      ]
+      ],
+      "task_description": "Reserve a table at The Porch at 11 o'clock for 36 people. Your name is Alexis."
     },
     "Wizard": {
-      "task_description": "Be helpful...",
+      "task_description": "Help the user make a reservation at a restaurant.",
       "completion_requirements": [
         "You have made a reservation for the user,",
         "or the user says goodbye."
