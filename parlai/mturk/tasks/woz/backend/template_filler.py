@@ -232,6 +232,184 @@ def fill_plane_reservation_failed(intent2reply, *_):
     return intent2reply[constants.INTENT_PLANE_RESERVATION_FAILED]
 
 
+def fill_plane_bye(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_BYE]
+
+
+def fill_plane_ask_departure_city(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_ASK_DEPARTURE_CITY]
+
+
+def fill_plane_ask_arrival_city(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_ASK_ARRIVAL_CITY]
+
+
+def fill_plane_ask_date(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_ASK_DATE]
+
+
+def fill_plane_request_optional(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_REQUEST_OPTIONAL]
+
+
+def fill_plane_inform_flight_details(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Price', 'Class', 'Airline', 'Duration', 'ArrivalCity']):
+        return None
+
+    if kb_item['Class'].lower() == 'economy':
+        classy = f'an {kb_item["Class"]}'
+    else:
+        classy = f'a {kb_item["Class"]}'
+
+    return intent2reply[constants.INTENT_PLANE_INFORM_FLIGHT_DETAILS].format(clazz=classy,
+                                                                             airline=kb_item['Airline'],
+                                                                             price=kb_item['Price'],
+                                                                             duration=kb_item['Duration'],
+                                                                             arrival_city=kb_item['ArrivalCity'])
+
+
+def fill_plane_ask_more_questions(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_ASK_MORE_QUESTIONS]
+
+
+def fill_party_ask_venue(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_VENUE]
+
+
+def fill_party_ask_number_of_guests(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_NUMBER_OF_GUESTS]
+
+
+def fill_party_ask_starting_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_STARTING_TIME]
+
+
+def fill_party_ask_end_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_END_TIME]
+
+
+def fill_party_ask_day(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_DAY]
+
+
+def fill_party_ask_food(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_FOOD]
+
+
+def fill_party_ask_drinks(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_DRINKS]
+
+
+def fill_party_venue_not_available(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Name']):
+        return None
+    return intent2reply[constants.INTENT_PARTY_VENUE_NOT_AVAILABLE].format(venue_name=kb_item['Name'])
+
+
+def fill_party_ask_confirm_booking(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Name', 'Day']):
+        return None
+    return intent2reply[constants.INTENT_PARTY_ASK_CONFIRM_BOOKING].format(venue_name=kb_item['Name'],
+                                                                           day=kb_item['Day'])
+
+
+def fill_party_booking_successful(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_BOOKING_SUCCESSFUL]
+
+
+def fill_party_booking_failed(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_BOOKING_FAILED]
+
+
+def fill_party_ask_host(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_HOST]
+
+
+def fill_party_ask_arrival_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_ARRIVAL_TIME]
+
+
+def fill_party_confirm_rsvp(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_CONFIRM_RSVP]
+
+
+def fill_party_ask_dietary_restrictions(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_DIETARY_RESTRICTIONS]
+
+
+def fill_restaurant_ask_restaurant(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_RESTAURANT]
+
+
+def fill_restaurant_ask_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_TIME]
+
+
+def fill_restaurant_ask_size(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_SIZE]
+
+
+def fill_restaurant_inform_unavailable(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_INFORM_UNAVAILABLE]
+
+
+def fill_restaurant_ask_confirm_booking(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Name']):
+        return None
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_CONFIRM_BOOKING].format(
+        restaurant_name=kb_item['Name']
+    )
+
+
+def fill_restaurant_inform_booking_successful(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Name']):
+        return None
+    return intent2reply[constants.INTENT_RESTAURANT_INFORM_BOOKING_SUCCESSFUL].format(
+        restaurant_name=kb_item['Name']
+    )
+
+
+def fill_restaurant_inform_booking_failed(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_INFORM_BOOKING_FAILED]
+
+
+def fill_restaurant_bye(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_BYE]
+
+
+def fill_restaurant_ask_location(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_LOCATION]
+
+
+def fill_restaurant_ask_food_type(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_FOOD_TYPE]
+
+
+def fill_restaurant_ask_rating(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_RATING]
+
+
+def fill_restaurant_ask_delivery(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_DELIVERY]
+
+
+def fill_restaurant_ask_takes_reservations(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_TAKES_RESERVATIONS]
+
+
+def fill_restaurant_ask_continue_searching(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_ASK_CONTINUE_SEARCHING]
+
+
+def fill_restaurant_inform_search_result(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Name', 'Cost', 'Food', 'AverageRating', 'Location']):
+        return None
+    return intent2reply[constants.INTENT_RESTAURANT_INFORM_SEARCH_RESULTS].format(
+        restaurant_name=kb_item['Name'], location=kb_item['Location'], cost=kb_item['Cost'],
+        food_type=kb_item['Food'], rating=kb_item['AverageRating']
+    )
+
+
 def check_kb_item(
     kb_item: Dict[Text, Any], required_fields: Optional[List[Text]] = None
 ) -> bool:
