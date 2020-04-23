@@ -1,12 +1,15 @@
 import datetime
 import json
 import os
+import re
 import time
 import mmap
-from typing import Text, Optional, Tuple, Any, List
+from collections import defaultdict
+from math import exp
+from typing import Text, Optional, Tuple, Any, List, Dict
 
 from parlai import PROJECT_PATH
-
+from parlai.mturk.core import mturk_utils
 
 TASK_LEVEL_SINGLE_HAPPY = "single_happy"
 TASK_LEVEL_SINGLE_UNHAPPY = "single_unhappy"
@@ -35,6 +38,7 @@ class WorkerDatabase:
         work_filename: Optional[Text] = None,
         eval_filename: Optional[Text] = None,
         bonus_filename: Optional[Text] = None,
+        setup_aws_credentials: bool = False,
     ) -> None:
         self.work_filename = work_filename or os.path.join(
             PROJECT_PATH, "resources", "mturk_work.tsv"
@@ -45,6 +49,8 @@ class WorkerDatabase:
         self.bonus_filename = bonus_filename or os.path.join(
             PROJECT_PATH, "resources", "mturk_bonus.tsv"
         )
+        if setup_aws_credentials:
+            mturk_utils.setup_aws_credentials()
 
     def get_worker_scores(self, worker_id: Text) -> Tuple[int, int]:
         user_score = 0
@@ -221,8 +227,8 @@ class WorkerDatabase:
                 ) and not self._work_has_been_evaluated(worker_id, hit_id):
                     yield worker_id, hit_id, role
 
-    def print_dialogue(self, hit_id: Text, show_metadata: bool = False) -> None:
-        filename = self._custom_log_file(hit_id)
+    def print_dialogue(self, assignment_id: Text, show_metadata: bool = False) -> None:
+        filename = self._custom_log_file(assignment_id)
         if not filename:
             return
 
@@ -233,59 +239,125 @@ class WorkerDatabase:
 
         print()
         if show_metadata:
-            total_duration = datetime.timedelta(
-                seconds=(
-                    data["Events"][-1].get("UnixTime")
-                    - data["Events"][0].get("UnixTime")
-                )
-            )
-            num_user_turns = len(
-                [0 for turn in data["Events"] if turn.get("Agent") == "User"]
-            )
-            num_kb_queries = len(
-                [0 for turn in data["Events"] if turn.get("Agent") == "KnowledgeBase"]
-            )
-            duration_per_turn = datetime.timedelta(
-                seconds=round(
-                    (
-                        data["Events"][-1].get("UnixTime")
-                        - data["Events"][0].get("UnixTime")
-                    )
-                    / (num_user_turns * 2)
-                )
-            )
             print(f"Log file path: {filename}")
-            print(
-                f"Total duration:     {total_duration}  |  Number of user turns:  {num_user_turns}"
-            )
-            print(
-                f"Mean turn duration: {duration_per_turn}  |  Number of KB queries:  {num_kb_queries}"
-            )
-            print(
-                f"User:     https://requester.mturk.com/workers/{data.get('UserWorkerID')}  |  HIT {data.get('UserHITID')}"
-            )
-            print(
-                f"Wizard:   https://requester.mturk.com/workers/{data.get('WizardWorkerID')}  |  HIT {data.get('WizardHITID')}"
-            )
-            print()
-            print(f"User Task:   {data.get('UserTask')}")
-            print(f"Schema URLs: {data.get('WizardSchemaURLs')}")
+            self._print_dialogue_metadata(data)
             print()
 
         for event in data["Events"]:
-            agent = event.get("Agent")
-            if agent == "User":
-                print(f"USR {event.get('Action'):<15} {event.get('Text')}")
-            elif agent == "Wizard":
-                action = event.get('Action')
-                if action in ["utter", "pick_suggestion", "request_suggestions"]:
-                    print(f"WIZ {action[:15]:<15} {event.get('Text')}")
-                elif action == "query":
-                    print(f"WIZ {event.get('API'):<15} {event.get('Constraints')}")
-                else:
-                    print(f"WIZ {action[:15]:<15}")
-            elif agent == "KnowledgeBase":
-                print(f"KB  {event.get('TotalItems'):<15} {event.get('Item')}")
+            self._print_event(event)
+
+    def evaluate_dialogue(self, assignment_id: Text, show_metadata: bool = False) -> None:
+        filename = self._custom_log_file(assignment_id)
+        if not filename:
+            return
+
+        with open(filename, "r", encoding="utf-8") as file:
+            data = json.load(file)
+        if not "Events" in data:
+            raise ImportError(f"File {filename} contains no 'Events' key.")
+
+        print()
+        if show_metadata:
+            print(f"Log file path: {filename}")
+            self._print_dialogue_metadata(data)
+            print()
+
+        print("After each turn, type")
+        print(" '+' or '=' for every correct thing")
+        print(" '-' for every mistake")
+        print(" '0' for no judgement")
+        print(" 'e' if something seems to be broken here")
+        print(" 'q' to abort the evaluation")
+        print()
+
+        start_time = time.time()
+        turn_ratings = defaultdict(list)
+        something_is_broken: bool = False
+        for event in data["Events"]:
+            agent_of_current_turn = event.get("Agent")
+            self._print_event(event, end=" ")
+            rating = input("")
+            cleaned_rating = re.sub(r"[^+-0eEq]", "0", rating.replace("=", "+"))
+            if "q" in cleaned_rating:
+                return
+            if "e" in cleaned_rating:
+                something_is_broken = True
+            plus = cleaned_rating.count("+")
+            minus = cleaned_rating.count("-")
+            turn_ratings[agent_of_current_turn].append(plus - minus)
+
+        duration = int(time.time() - start_time)
+        print()
+        print(f"Your evaluation took {duration}s")
+        print()
+        log_scores = {agent: sum(points) for agent, points in turn_ratings.items()}
+        for agent, points in turn_ratings.items():
+            if agent == "KnowledgeBase":
+                continue
+            print(f"{agent:<10}: +{sum(p for p in points if p > 0):<3} -{abs(sum(p for p in points if p < 0)):<3} = {sum(points)}")
+        print()
+        print(f"something_is_broken: {something_is_broken}")
+
+        # score = 1.0 / (1.0 + exp(-log_score))
+
+        # print()
+        # print(f"Your ratings: {turn_ratings}")
+        # print(f"Log Score:    {log_score}")
+
+    @staticmethod
+    def _print_event(event: Dict[Text, Any], **kwargs) -> None:
+        agent = event.get("Agent")
+        if agent == "User":
+            print(f"USR {event.get('Action'):<15} {event.get('Text')}", **kwargs)
+        elif agent == "Wizard":
+            action = event.get('Action')
+            if action in ["utter", "pick_suggestion", "request_suggestions"]:
+                print(f"WIZ {action[:15]:<15} {event.get('Text')}", **kwargs)
+            elif action == "query":
+                print(f"WIZ {event.get('API'):<15} {event.get('Constraints')}", **kwargs)
+            else:
+                print(f"WIZ {action[:15]:<15}", **kwargs)
+        elif agent == "KnowledgeBase":
+            print(f"KB  {event.get('TotalItems'):<15} {event.get('Item')}", **kwargs)
+
+    @staticmethod
+    def _print_dialogue_metadata(data: Dict[Text, Any]) -> None:
+        total_duration = datetime.timedelta(
+            seconds=(
+                    data["Events"][-1].get("UnixTime")
+                    - data["Events"][0].get("UnixTime")
+            )
+        )
+        num_user_turns = len(
+            [0 for turn in data["Events"] if turn.get("Agent") == "User"]
+        )
+        num_kb_queries = len(
+            [0 for turn in data["Events"] if turn.get("Agent") == "KnowledgeBase"]
+        )
+        duration_per_turn = datetime.timedelta(
+            seconds=round(
+                (
+                        data["Events"][-1].get("UnixTime")
+                        - data["Events"][0].get("UnixTime")
+                )
+                / (num_user_turns * 2)
+            )
+        )
+        print(
+            f"Total duration:     {total_duration}  |  Number of user turns:  {num_user_turns}"
+        )
+        print(
+            f"Mean turn duration: {duration_per_turn}  |  Number of KB queries:  {num_kb_queries}"
+        )
+        print(
+            f"User:     https://requester.mturk.com/workers/{data.get('UserWorkerID')}  |  HIT {data.get('UserHITID')}"
+        )
+        print(
+            f"Wizard:   https://requester.mturk.com/workers/{data.get('WizardWorkerID')}  |  HIT {data.get('WizardHITID')}"
+        )
+        print()
+        print(f"User Task:   {data.get('UserTask')}")
+        print(f"Schema URLs: {data.get('WizardSchemaURLs')}")
 
     def _custom_log_file(self, hit_id: Text) -> Optional[Text]:
         path = self._task_directory(hit_id)
@@ -316,19 +388,19 @@ class WorkerDatabase:
 
         return result
 
-    def get_worker_HITs(self, worker_id: Text) -> List[Text]:
-        # ToDo: Complete this
-        base_dir = os.path.join(PROJECT_PATH, "parlai", "mturk", "run_data")
-        task_dirs = []
-        def look_for_worker_id(filename: Text) -> None:
-            nonlocal task_dirs
-            if file_contains_q(filename, worker_id) and not "/o_" in filename:
-                task_dirs.append(filename)
-        file_system_scan(look_for_worker_id, base_dir, ".json")
-
-        # task_dirs =
-
-        return task_dirs
+    # def get_worker_HITs(self, worker_id: Text) -> List[Text]:
+    #     # ToDo: Complete this
+    #     base_dir = os.path.join(PROJECT_PATH, "parlai", "mturk", "run_data")
+    #     task_dirs = []
+    #     def look_for_worker_id(filename: Text) -> None:
+    #         nonlocal task_dirs
+    #         if file_contains_q(filename, worker_id) and not "/o_" in filename:
+    #             task_dirs.append(filename)
+    #     file_system_scan(look_for_worker_id, base_dir, ".json")
+    #
+    #     # task_dirs =
+    #
+    #     return task_dirs
 
 
 def evaluate_new_dialogues() -> None:
@@ -345,10 +417,50 @@ def evaluate_new_dialogues() -> None:
 
 
 if __name__ == '__main__':
-    evaluate_new_dialogues()
+    # evaluate_new_dialogues()
 
-    # wdb = WorkerDatabase()
-    # wdb.print_dialogue("3M0556244VEDZDPCXO9YUEGBSRKFNM")
-    # wdb.print_dialogue("3MXX6RQ9FYZ34I40TMQ77ZOF3GE4PL")
+    # hit_id = "3TZ0XG8CCXEJVWBVO0KN2L450Y0899"
+
+    wdb = WorkerDatabase(setup_aws_credentials=False)
+    # print(wdb.get_worker_evaluation("A252DFRIV3FXC6"))
+    # wdb.print_dialogue(hit_id)
+    # wdb.print_dialogue("3MXX6RQ9FYZ34I40TMQ77ZOF3GE4PL", show_metadata=True)
+    input()
+    wdb.evaluate_dialogue("3MXX6RQ9FYZ34I40TMQ77ZOF3GE4PL", show_metadata=True)
     # for line in wdb.get_worker_HITs("A9HQ3E0F2AGVO"):
     #     print(line)
+
+    # print()
+
+    # sandbox = False
+
+    # mturk_utils.setup_aws_credentials()
+    # mturk_utils.setup_aws_credentials()
+    # client = mturk_utils.get_mturk_client(sandbox)
+    # listed = client.list_assignments_for_hit(HITId=hit_id)
+    # for key, value in listed.items():
+    #     print(f"{key}: \t{value}")
+    # print()
+    # for assignment in listed["Assignments"]:
+    #     for key, value in assignment.items():
+    #         print(f"{key}: \t{value}")
+
+    # try:
+    #     print(client.get_qualification_score(QualificationTypeId="376OKSJ89VRYI1BH8NGEGYFSAWG7X8", WorkerId="A135KBDD2NH8GU"))
+    # except:
+    #     pass
+    # try:
+    #     print(client.get_qualification_score(QualificationTypeId="37RMV253MIJ7ILZB495WJ4G0E7BL8M", WorkerId="A135KBDD2NH8GU"))
+    # except:
+    #     pass
+    #
+    # print()
+    #
+    # print(client.list_workers_with_qualification_type(QualificationTypeId="376OKSJ89VRYI1BH8NGEGYFSAWG7X8"))
+
+    # reviewable_HITs = client.list_reviewable_hits()
+    # print(reviewable_HITs.keys())
+    # for hit in reviewable_HITs["HITs"]:
+    #     print()
+    #     for key, value in hit.items():
+    #         print(f"{key}: \t{value}")
