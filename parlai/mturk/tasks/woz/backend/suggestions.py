@@ -28,16 +28,19 @@ class WizardSuggestion:
         self.resources_dir = resources_dir
 
         for scenario in scenario_list:
-            with open(os.path.join(resources_dir, scenario, constants.INTENT_TO_REPLY_FILE_NAME),
-                      'r', encoding='utf-8') as in_file:
-                self.scenario_resources[scenario][constants.INTENT_TO_REPLY_KEY] = json.load(in_file)
-            self.scenario_resources[scenario][constants.START_NLU_SERVER_SCRIPT_PATH_KEY] = os.path.join(
-                resources_dir, scenario, constants.START_NLU_SERVER_SCRIPT_FILE_NAME
-            )
-            self.scenario_resources[scenario][constants.RASA_NLU_SERVER_ADDRESS_KEY] = \
-                constants.RASA_NLU_SERVER_ADDRESS_TEMPLATE.format(port=constants.SCENARIO_PORT_MAP[scenario])
-            if start_nlu_servers:
-                self.start_nlu_server(scenario)
+            try:
+                with open(os.path.join(resources_dir, scenario, constants.INTENT_TO_REPLY_FILE_NAME),
+                          'r', encoding='utf-8') as in_file:
+                    self.scenario_resources[scenario][constants.INTENT_TO_REPLY_KEY] = json.load(in_file)
+                self.scenario_resources[scenario][constants.START_NLU_SERVER_SCRIPT_PATH_KEY] = os.path.join(
+                    resources_dir, scenario, constants.START_NLU_SERVER_SCRIPT_FILE_NAME
+                )
+                self.scenario_resources[scenario][constants.RASA_NLU_SERVER_ADDRESS_KEY] = \
+                    constants.RASA_NLU_SERVER_ADDRESS_TEMPLATE.format(port=constants.SCENARIO_PORT_MAP[scenario])
+                if start_nlu_servers:
+                    self.start_nlu_server(scenario)
+            except FileNotFoundError as e:
+                print_and_log(100, f"ERROR: Could not find scenario file: {e}", should_print=True)
 
         self.num_suggestions = num_suggestions
         self.max_num_suggestions = max_num_suggestions
@@ -138,7 +141,7 @@ class WizardSuggestion:
         try:
             response = self.query(text=text, scenario=scenario)
         except ConnectionError as e:
-            print_and_log(100, f"NLU Connection ERROR: {e}")
+            print_and_log(100, f"ERROR: Failed NLU connection: {e}")
             return [], []
         response["intent_ranking"].sort(key=(lambda v: -v["confidence"]))
         suggestions = [
