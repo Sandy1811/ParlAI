@@ -1,0 +1,29 @@
+{
+  "title": "Restaurant Reserve",
+  "name": "Restaurant Reserve",
+  "db": "restaurant.json",
+  "version": 1,
+  "api_names": ["restaurant_reserve"],
+  "schema_urls": { "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png" },
+  "instructions": {
+    "User": {
+      "completion_requirements": ["You have reserved a table."],
+      "completion_questions": [
+        "...reserve your restaurant?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "Reserve a table at Lucca at 14 o'clock for 16 people. Your name is Angela."
+    },
+    "Wizard": {
+      "task_description": "Help the user make a reservation at a restaurant.",
+      "completion_requirements": [
+        "You have made a reservation for the user,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}
