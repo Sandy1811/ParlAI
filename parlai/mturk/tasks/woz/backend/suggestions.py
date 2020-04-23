@@ -1,5 +1,6 @@
 import collections
 import json
+import logging
 import os
 import subprocess
 import time
@@ -55,7 +56,7 @@ class WizardSuggestion:
         while not self.nlu_server_ready(scenario) and i < max_tries:
             time.sleep(poll_interval)
             i += 1
-            
+
         return i < max_tries
 
     def start_nlu_server(self, scenario):
@@ -67,7 +68,10 @@ class WizardSuggestion:
             self.scenario_resources[scenario][constants.RASA_NLU_SERVER_PROCESS_KEY] = p
 
     def stop_nlu_server(self, scenario):
-        self.scenario_resources[scenario][constants.RASA_NLU_SERVER_PROCESS_KEY].kill()
+        if constants.RASA_NLU_SERVER_PROCESS_KEY in self.scenario_resources[scenario]:
+            self.scenario_resources[scenario][constants.RASA_NLU_SERVER_PROCESS_KEY].kill()
+        else:
+            logging.warning(f'Cannot kill server for scenario={scenario}, because the process was started externally!')
 
     def get_suggestions(
         self,
@@ -145,12 +149,17 @@ class WizardSuggestion:
 
 if __name__ == '__main__':
 
-    scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status']
-    ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'))
+    #scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status']
+    scenarios = ['party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search']
+    ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
+                          start_nlu_servers=True)
 
-    scens = ['get_book_ride_item', 'get_ride_change_item', 'get_hotel_search_item',
-                 'get_ride_status_item']
+    #scens = ['get_book_ride_item', 'get_ride_change_item', 'get_hotel_search_item',
+    #             'get_ride_status_item']
+    scens = ['get_party_plan_item', 'get_party_rsvp_item', 'get_plane_search_item',
+             'get_restaurant_reserve_item', 'get_restaurant_search_item']
     for sc in scens:
+        print(f'---- {sc} ----')
         kb_item, utterances, scenario = getattr(static_test_assets, sc)()
         ws.poll_nlu_server(scenario=scenario)
         for utterance in utterances:
