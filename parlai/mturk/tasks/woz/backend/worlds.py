@@ -668,10 +668,12 @@ class WOZWorld(MTurkTaskWorld):
         return {
             "FORMAT-VERSION": 2,
             "Scenario": {
-                "Domains": None,
+                "Domains": sorted(
+                    list({c.get("Domain") for c in self._wizard_capabilities})
+                ),
                 "UserTask": self._user_task_description,
                 "WizardTask": self._wizard_task_description,
-                "WizardCapabilities": self._wizard_capabilities
+                "WizardCapabilities": self._wizard_capabilities,
             },
             "Events": self.events,
             "WizardWorkerID": (
