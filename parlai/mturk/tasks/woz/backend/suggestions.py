@@ -114,7 +114,6 @@ class WizardSuggestion:
         return suggestions, possibly_wrong_item_selected
 
     def query(self, text: Text, scenario: Text) -> Dict[Text, Any]:
-        print(f"query for '{text}' in '{scenario}'")
         payload = {'text': text}
         response = requests.post(self.scenario_resources[scenario][constants.RASA_NLU_SERVER_ADDRESS_KEY],
                                  data=json.dumps(payload))
