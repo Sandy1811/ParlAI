@@ -8,6 +8,7 @@ from typing import Text, Dict, Any, List, Optional, Tuple
 import requests
 
 from parlai import PROJECT_PATH
+from parlai.chat_service.core.shared_utils import print_and_log
 from parlai.mturk.tasks.woz.backend import constants
 from parlai.mturk.tasks.woz.backend import static_test_assets
 from parlai.mturk.tasks.woz.backend import template_filler
@@ -115,8 +116,11 @@ class WizardSuggestion:
 
     def query(self, text: Text, scenario: Text) -> Dict[Text, Any]:
         payload = {'text': text}
-        response = requests.post(self.scenario_resources[scenario][constants.RASA_NLU_SERVER_ADDRESS_KEY],
-                                 data=json.dumps(payload))
+        try:
+            response = requests.post(self.scenario_resources[scenario][constants.RASA_NLU_SERVER_ADDRESS_KEY],
+                                     data=json.dumps(payload))
+        except:
+            raise ConnectionError(f"Could not access NLU server")
         if response.status_code != 200:
             raise ConnectionError(f"Could not access NLU server: {response.reason}")
         return response.json()
@@ -127,7 +131,11 @@ class WizardSuggestion:
         scenario: Text,
         comparing: bool = False
     ) -> Tuple[List[Text], List[Text]]:
-        response = self.query(text=text, scenario=scenario)
+        try:
+            response = self.query(text=text, scenario=scenario)
+        except ConnectionError as e:
+            print_and_log(100, f"NLU Connection ERROR: {e}")
+            return [], []
         response["intent_ranking"].sort(key=(lambda v: -v["confidence"]))
         suggestions = [
             intent["name"] for intent in response["intent_ranking"]

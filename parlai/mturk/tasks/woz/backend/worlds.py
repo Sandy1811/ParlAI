@@ -263,6 +263,9 @@ class WOZWorld(MTurkTaskWorld):
         self._answers_by_wizard = None
         self._user_linear_guide = None
 
+        self._wizard_task_description = None
+        self._wizard_capabilities = None
+
         self._wizard_has_used_kb = False
         self._num_wizard_utterances = 0
         self._num_user_utterances = 0
@@ -272,6 +275,9 @@ class WOZWorld(MTurkTaskWorld):
     def parley(self):
         if self._stage == SETUP_STAGE:
             setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
+            self._wizard_task_description = setup_command.task_description
+            self._wizard_capabilities = setup_command.capabilities
+            assert self._wizard_capabilities
             self._questions_to_wizard = setup_command.completion_questions
             self._api_names = setup_command.api_names
             self._selected_api = self._api_names[0]
@@ -660,7 +666,13 @@ class WOZWorld(MTurkTaskWorld):
             )
         ]
         return {
-            "Scenario": self._scenario,
+            "FORMAT-VERSION": 2,
+            "Scenario": {
+                "Domains": None,
+                "UserTask": self._user_task_description,
+                "WizardTask": self._wizard_task_description,
+                "WizardCapabilities": self._wizard_capabilities
+            },
             "Events": self.events,
             "WizardWorkerID": (
                 self.wizard.worker_id if hasattr(self.wizard, "worker_id") else None
@@ -668,11 +680,18 @@ class WOZWorld(MTurkTaskWorld):
             "WizardHITID": (
                 self.wizard.hit_id if hasattr(self.wizard, "hit_id") else None
             ),
+            "WizardAssignmentID": (
+                self.wizard.assignment_id
+                if hasattr(self.wizard, "assignment_id")
+                else None
+            ),
             "UserWorkerID": (
                 self.user.worker_id if hasattr(self.user, "worker_id") else None
             ),
             "UserHITID": (self.user.hit_id if hasattr(self.user, "hit_id") else None),
-            "UserTask": self._user_task_description,
+            "UserAssignmentID": (
+                self.user.assignment_id if hasattr(self.user, "assignment_id") else None
+            ),
             "UserQuestionaire": user_questionaire_data,
             "WizardQuestionaire": wizard_questionaire_data,
         }
