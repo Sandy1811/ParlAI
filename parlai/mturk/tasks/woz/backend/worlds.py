@@ -285,9 +285,11 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard,
             )
 
-            if not self._current_domain:
+            if len(self._api_names) > 1:
                 send_mturk_message(
-                    f"NOTE: The suggested replies may not work well for this task and you may have to use many custom replies.",
+                    f"This is a special task, where you (the AI assistant) have more capabilities. "
+                    f"You can select different task-interfaces with the tabs on the left. "
+                    f"Still try to stick to at least one of the flow charts whenever possible. ",
                     self.wizard,
                 )
 

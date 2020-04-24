@@ -102,8 +102,13 @@ class WizardSuggestion:
             if intent in self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY]:
                 fn_fill = getattr(template_filler, f'fill_{intent}')
 
-                suggestion = fn_fill(self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY],
-                                     primary_kb_item)
+                try:
+                    suggestion = fn_fill(self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY],
+                                         primary_kb_item)
+                except:
+                    print_and_log(100, f"The suggestion filler for {api_name} is broken.", should_print=True)
+                    suggestion = None
+
                 if suggestion:
                     suggestions.append(suggestion)
 
