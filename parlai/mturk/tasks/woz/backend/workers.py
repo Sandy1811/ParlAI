@@ -246,7 +246,22 @@ class WorkerDatabase:
         for event in data["Events"]:
             self._print_event(event)
 
-    def evaluate_dialogue(self, assignment_id: Text, show_metadata: bool = False) -> None:
+    def evaluate_dialogue(self, assignment_id: Text) -> None:
+        self.print_dialogue(assignment_id, show_metadata=True)
+        usable = (input("Usable [Yn]: ") in ["y", "Y", ""])
+        if usable:
+            rating = int(input("Rating [1-5]: "))
+        else:
+            rating = 1
+        if rating < 1 or rating > 5:
+            print("skipping this...")
+            return
+        self.store_dialogue_rating(assignment_id, usable, rating)
+
+    def store_dialogue_rating(self, assignment_id: Text, usable: bool, rating: int) -> None:
+        pass  # ToDo: Implement
+
+    def evaluate_dialogue_steps(self, assignment_id: Text, show_metadata: bool = False) -> None:
         filename = self._custom_log_file(assignment_id)
         if not filename:
             return
@@ -426,7 +441,7 @@ if __name__ == '__main__':
     # wdb.print_dialogue(hit_id)
     # wdb.print_dialogue("3MXX6RQ9FYZ34I40TMQ77ZOF3GE4PL", show_metadata=True)
     input()
-    wdb.evaluate_dialogue("3MXX6RQ9FYZ34I40TMQ77ZOF3GE4PL", show_metadata=True)
+    wdb.evaluate_dialogue("3MXX6RQ9FYZ34I40TMQ77ZOF3GE4PL")
     # for line in wdb.get_worker_HITs("A9HQ3E0F2AGVO"):
     #     print(line)
 
