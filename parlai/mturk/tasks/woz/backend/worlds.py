@@ -97,23 +97,38 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
         self._worker_id = worker_id
 
     def parley(self):
-        setup = SetupCommand(scenario="intro", role="Wizard")
-        self.mturk_agent.observe(setup.message)
-
         send_mturk_message(
             f"Hello {self._worker_id}. Every time you do this task you will be randomly assigned one of two roles: "
             f"an AI assistant, or a user. This time, you'll play the AI assistant. "
-            f"If you are unfamiliar with this task, here is a tutorial: {WIZARD_TUTORIAL_URL}. "
-            f"Send any message once you are ready. "
-            f"Your most important objective is to follow the flow chart that you see on the left once the task starts. ",
+            f"This role is complicated, and thus you must first watch the following video tutorial: "
+            f"{WIZARD_TUTORIAL_URL} . \n\n"
+            f"If you have done this task before, you don't need to watch it again, of course. But you "
+            f"must follow the instructions (especially the flow chart) precisely, or you will not be payed. \n\n"
+            f"Once you are ready, type the name of the example user that appears in the tutorial and hit [Enter]. ",
             self.mturk_agent,
         )
-        message = self.mturk_agent.act()
-        if not is_disconnected(message):
-            self.mturk_agent.passed_onboarding = True
+        while True:
+            message = self.mturk_agent.act()
+            echo.log_write(f"onboarding wizard: {message}")
+            if is_disconnected(message):
+                self.episodeDone = True
+                return
+            if "marie" in message.get("text", "").strip().lower():
+                break
+            if "curie" in message.get("text", "").strip().lower():
+                break
+            else:
+                send_mturk_message("That is not correct.", self.mturk_agent)
+
+        self.mturk_agent.passed_onboarding = True
+        # if message.get("text", "") != "ready":
+        #     self.block_loop()
+        #     self.episodeDone = True
+        #     return
         send_mturk_message(
-            "Please wait for the user to join the conversation...", self.mturk_agent,
+            "Please wait for the user and join the conversation...", self.mturk_agent,
         )
+        # self.mturk_agent.onboarding_turns = 1
         self.episodeDone = True
 
     def get_model_agent(self):
@@ -138,13 +153,34 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         assert self._scenario
 
     def parley(self) -> None:
-        # setup = SetupCommand(scenario="intro", role="User")
+        setup = SetupCommand(scenario="intro", role="User")
+        self.mturk_agent.observe(setup.message)
+        self.mturk_agent.observe(
+            GuideCommand(
+                f"Hello {self._worker_id}. Every time you do this task you will be randomly assigned one of two roles: "
+                f"an AI assistant, or a user. This time, you'll play the user. When you type 'ready' and "
+                f"send a message, we will pair you up with another worker who plays the AI assistant. "
+                f"Note, that playing the AI assistant is a very complex task, so your partner has to "
+                f"watch a 15 minute video tutorial before he/she can start the task. Thus, it might take a "
+                f"while before you get paired. Once you are paired, your situation and things to do will be "
+                f"displayed on the left panel. If you like, you can use the time to watch the assistant's tutorial "
+                f"under {WIZARD_TUTORIAL_URL}, so you are prepared for the next time you do this task. "
+            ).message
+        )
+        wdb = WorkerDatabase()
+        evaluation = wdb.get_worker_evaluation(self._worker_id)
+        if evaluation:
+            self.mturk_agent.observe(
+                GuideCommand(f"Welcome back {self._worker_id}! {evaluation}").message
+            )
+        message = self.mturk_agent.act()
+        echo.log_write(f"onboarding user: {message}")
+        self.mturk_agent.passed_onboarding = True
         self.mturk_agent.observe(
             GuideCommand(
                 "Please wait for the virtual assistant to join the conversation..."
             ).message
-        )
-        self.mturk_agent.passed_onboarding = True
+        ),
         self.episodeDone = True
 
     def get_model_agent(self):
