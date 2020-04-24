@@ -611,26 +611,26 @@ class WOZWorld(MTurkTaskWorld):
             )
 
     def review_user(self) -> bool:
-        if self._num_user_utterances < 3:
-            self.user.reject_work("You wrote fewer than 3 messages")
+        if self._num_user_utterances < 2:
+            self.user.reject_work("You wrote fewer than 2 messages")
             return False
 
-        if (
-            self._user_linear_guide
-            and self._num_user_utterances < len(self._user_linear_guide)
-            and self._user_has_ended_dialogue
-        ):
-            self.user.reject_work(
-                "You ended the dialogue before being instructed to do so"
-            )
-            return False
+        # if (
+        #     self._user_linear_guide
+        #     and self._num_user_utterances < len(self._user_linear_guide)
+        #     and self._user_has_ended_dialogue
+        # ):
+        #     self.user.reject_work(
+        #         "You ended the dialogue before being instructed to do so"
+        #     )
+        #     return False
 
         self.user.approve_work()
         return True
 
     def review_wizard(self) -> bool:
-        if self._num_wizard_utterances < 3:
-            self.wizard.reject_work("You wrote fewer than 3 messages")
+        if self._num_wizard_utterances < 2:
+            self.wizard.reject_work("You wrote fewer than 2 messages")
             return False
 
         if not self._wizard_has_used_kb:
