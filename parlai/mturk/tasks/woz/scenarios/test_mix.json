@@ -18,8 +18,8 @@
             "task_description": "Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot has told you to do so. ",
             "linear_guide": [
               "Imagine: Your name is Tony. You are on a train to some big city, and it occurs to you that you don't know how to get to your hotel. So you take out your phone and open your new AI assistant app. \n\nSay hello to your AI assistant!",
-              "Book a ride from the Central Station (where you are currently heading) to your hotel. ",
-              "You might need your hotel name: its Hilton in the center of town. Also, you prefer Lyft rides.",
+              "Book a ride from the Central Station (this is where you are currently heading) to your hotel (Hilton in the center of town). ",
+              "Btw., you prefer Lyft rides.",
               null,
               "You just remember that last time you took a Lyft, the driver was a bit annoying. So when you book the ride, make sure your driver is not Mark. If you have already booked, request a change. If you are booking right now, ask if Mark is the driver and, if so, request another.",
               null,
