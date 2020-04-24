@@ -268,7 +268,7 @@ class SetupCommand(BackendCommand):
                         "Task": api_name,
                         "Domain": DOMAINS_OF_TASKS.get(api_name),
                         "SchemaURL": schema_url,
-                        "FormDescription": api_description,
+                        # "FormDescription": api_description,
                     }
                 )
 
