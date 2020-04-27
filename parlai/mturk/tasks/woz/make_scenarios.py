@@ -19,8 +19,8 @@ scenarios_per = 5
 
 def sample(parameter):
     if parameter.get("Type") == "Integer":
-        _min = parameter.get("Min", 0)
-        _max = parameter.get("Max", 100)
+        _min = int(parameter.get("Min", 0))
+        _max = int(parameter.get("Max", 100))
         return random.randint(_min, _max)
     elif parameter.get("Type") == "Categorical":
         return random.choice(parameter.get("Categories"))

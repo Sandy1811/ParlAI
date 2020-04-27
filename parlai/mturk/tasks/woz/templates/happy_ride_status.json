@@ -1,6 +1,6 @@
 {
   "title": "Ride Status",
-  "name": "All",
+  "name": "Ride Status",
   "db": "ride.json",
   "version": 1,
   "api_names": ["ride_status"],

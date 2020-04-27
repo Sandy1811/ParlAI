@@ -1,0 +1,41 @@
+{
+  "title": "Apartment Search",
+  "name": "Apartment Search",
+  "db": "apartment.json",
+  "version": 1,
+  "api_names": ["apartment_search"],
+  "schema_urls": {
+    "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
+    "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
+    "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
+    "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
+    "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg",
+    "apartment_search": "https://i.imgur.com/yICteJ1.jpg"
+  },
+  "instructions": {
+    "User": {
+      "task_descriptions": [
+        "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1.",
+        "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1 credits. You would like to have a balcony facing @BalconySide-1.",
+        "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1 credits. You would like the building to have an elevator.",
+        "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1 credits. You would like the building to have a balcony and be near a @POIs-1."
+      ],
+      "completion_requirements": ["You have found an apartment."],
+      "completion_questions": [
+        "...find you a suitable apartment?",
+        "...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "Help the user find a specific apartment. (You can find the video tutorial under @wizard-tutorial-url, in case you want to watch it again.)",
+      "completion_requirements": [
+        "You have found an apartment that the user likes,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

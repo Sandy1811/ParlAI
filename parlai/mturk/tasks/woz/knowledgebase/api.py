@@ -430,7 +430,10 @@ def book_doctor_appointment(
         "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
     }
     row, _ = schedule_api.sample(new_constraints)
-    if row is None:
+    if row is not None:
+        if constraints["RequestType"] != "Book":
+          return {"Message": "The time slot is available."}, -1
+
         return dict(Message=outputs[0]), -1
     else:
         return dict(Message=outputs[1]), -1
@@ -450,7 +453,10 @@ def book_apartment_viewing(
         "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
     }
     row, _ = schedule_api.sample(new_constraints)
-    if row is None:
+    if row is not None:
+        if constraints["RequestType"] != "Book":
+          return {"Message": "The time slot is available."}, -1
+
         required_items = [
             "Passport",
             "Proof of Income",
@@ -520,12 +526,12 @@ def party_rsvp(schedule_api, constraints: Dict[Text, Any]):
 
 def spaceship_access_codes(null_api, constraints: Dict[Text, Any]):
     outputs = [
-        "The code is 431931",
-        "Sorry, you are not authorized to receive the code. Please obtain a clearance code from the Captain.",
+        "The door is now unlocked.",
+        "Sorry, you are not authorized to unlock the door. Please obtain a clearance code from the Captain.",
     ]
 
     if (
-        constraints["UserRank"] not in ["Captain", "First Officer"]
+        constraints["UserRank"] in ["Chief Engineer", "Bartender"]
         and constraints["CodeType"] != "Clearance"
     ):
         return dict(Message=outputs[1]), -1
