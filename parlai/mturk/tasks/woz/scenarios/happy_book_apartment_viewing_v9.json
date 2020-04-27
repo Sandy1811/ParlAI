@@ -1,0 +1,38 @@
+{
+  "title": "Book Apartment Viewing",
+  "name": "Book Apartment Viewing",
+  "db": "schedule.json",
+  "version": 1,
+  "api_names": ["book_apartment_viewing"],
+  "schema_urls": {
+    "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
+    "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
+    "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
+    "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
+    "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg",
+    "book_apartment_viewing": "https://i.imgur.com/W5hziZY.jpg"
+  },
+  "instructions": {
+    "User": {
+      "completion_requirements": [
+        "You have tried to book the apartment viewing. Either the booking was succesful or the time slot was unavailable."
+      ],
+      "completion_questions": [
+        "...reserve your apartment viewing?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "You are interested in viewing an apartment. Please schedule a viewing at North Hill Apartments for Sunday at 11 for 2 hours. Your name is Ben. You have not paid the application fee."
+    },
+    "Wizard": {
+      "task_description": "Help the user schedule a apartment viewing. (You can find the video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",
+      "completion_requirements": [
+        "You have scheduled the apartment viewing,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

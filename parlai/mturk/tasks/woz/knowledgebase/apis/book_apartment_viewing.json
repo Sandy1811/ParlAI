@@ -45,13 +45,20 @@
     },
     {
       "Name": "ApplicationFeePaid",
-      "Type": "Boolean",
-      "ReadableName": "Application Fee Paid"
+      "Type": "Categorical",
+      "ReadableName": "Application Fee Paid",
+      "Categories": ["Yes", "No"]
     },
     {
       "Name": "Message",
       "Type": "LongString",
       "ReadableName": "Message"
+    },
+    {
+      "Name": "RequestType",
+      "Type": "RequestType",
+      "Categories": ["Check", "Book"],
+      "ReadableName": "Request Type"
     }
   ],
   "output": [
@@ -67,7 +74,8 @@
     "Day",
     "StartTimeHour",
     "EndTimeHour",
-    "ApplicationFeePaid"
+    "ApplicationFeePaid",
+    "RequestType"
   ],
   "db": "schedule",
   "function": "book_apartment_viewing",

@@ -1,0 +1,40 @@
+{
+  "title": "Spaceship Access Codes",
+  "name": "Spaceship Access Codes",
+  "db": "spaceship.json",
+  "version": 1,
+  "api_names": ["spaceship_access_codes"],
+  "schema_urls": {
+    "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
+    "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
+    "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
+    "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
+    "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg",
+    "followup_doctor_appointment": "https://i.imgur.com/OdjFGll.jpg",
+    "spaceship_life_support": "https://i.imgur.com/41KMo2W.jpg",
+    "spaceship_access_codes": "https://i.imgur.com/FmuNL4M.jpg"
+  },
+  "instructions": {
+    "User": {
+      "completion_requirements": [
+        "You have unlocked the door to the spaceship's combat deck or been informed you do not have access."
+      ],
+      "completion_questions": [
+        "...help unlock the door to the combat deck?",
+        "...stay calm and helpful throughout the dialogue?"
+      ],
+      "task_description": "Your spaceship is under attack. You must enter the combat deck to mount a counterattack. Unfortunately, you are locked out. Please work with the spaceship's onboard computer to unlock the door. You (Kylo) are the ship's Captain. You have been a given a code (Clearance Code: 93103."
+    },
+    "Wizard": {
+      "task_description": "Act as the spaceship's onboard computer and help the user unlock the combat deck.",
+      "completion_requirements": [
+        "Unlock the combat deck entrance,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

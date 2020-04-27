@@ -1,6 +1,6 @@
 {
   "title": "Ride Status",
-  "name": "All",
+  "name": "Ride Status",
   "db": "ride.json",
   "version": 1,
   "api_names": ["ride_status"],
@@ -18,7 +18,7 @@
         "...tell you the status of your ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You (John) have been waiting ages for your ride! Perhaps the car company forgot about your booking (id 699? Ask the assistant what is going on."
+      "task_description": "You (Alexis) have been waiting ages for your ride! Perhaps the car company forgot about your booking (id 756? Ask the assistant what is going on."
     },
     "Wizard": {
       "task_description": "Help the user stay informed about the status of his/her ride. (You can find the video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",

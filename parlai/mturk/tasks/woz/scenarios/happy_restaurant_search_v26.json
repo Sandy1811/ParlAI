@@ -12,7 +12,7 @@
         "...find you a suitable restaurant?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for Tamarind near the South part of town."
+      "task_description": "Search for Legume near the South part of town."
     },
     "Wizard": {
       "task_description": "Help the user find a restaurant.",

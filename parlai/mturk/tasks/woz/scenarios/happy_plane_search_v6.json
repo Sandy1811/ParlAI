@@ -12,7 +12,7 @@
         "...find you a suitable flight?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for a flight between Los Angeles to Chicago for May 25. Your flight should be with American airline."
+      "task_description": "Search for a flight between Detroit to Chicago for May 7. Your flight should be with Delta airline."
     },
     "Wizard": {
       "task_description": "Help the user find a suitable flight.",
