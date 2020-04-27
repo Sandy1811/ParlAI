@@ -90,7 +90,7 @@ def fill_ride_provide_booking_status(intent2reply, kb_item):
     if not check_kb_item(kb_item, ["RideWait"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS].format(
-        minutes_till_pickup=kb_item["RideWait"]
+        minutes_till_pickup=int(kb_item["RideWait"])
     )
 
 
@@ -98,7 +98,7 @@ def fill_ride_provide_booking_status_update(intent2reply, kb_item):
     if not check_kb_item(kb_item, ["RideWait"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS_UPDATE].format(
-        minutes_till_pickup=kb_item["RideWait"]
+        minutes_till_pickup=int(kb_item["RideWait"])
     )
 
 

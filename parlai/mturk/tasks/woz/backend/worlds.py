@@ -5,7 +5,7 @@
 # LICENSE file in the root directory of this source tree.
 import os
 import time
-from typing import Text, List, Dict, Any, Optional
+from typing import Text, List, Dict, Any, Optional, Tuple
 
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
@@ -38,8 +38,13 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SetupCommand,
     GuideCommand,
     SilentCommand,
+    SelectTopicCommand,
 )
 from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
+from parlai.mturk.tasks.woz.backend.workers import (
+    WorkerDatabase,
+    TASK_LEVEL_SINGLE_HAPPY,
+)
 from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
 
 
@@ -84,18 +89,16 @@ class WizardOnboardingWorld(MTurkOnboardWorld):
     worker uses the interface
     """
 
-    def __init__(self, opt: Opt, mturk_agent: Agent):
+    def __init__(self, opt: Opt, mturk_agent: Agent, worker_id: Text) -> None:
         super(WizardOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
         self._scenario = opt.get("scenario")
         self.opt = opt
         assert self._scenario
+        self._worker_id = worker_id
 
     def parley(self):
-        setup = SetupCommand(scenario="intro", role="Wizard")
-        self.mturk_agent.observe(setup.message)
-
         send_mturk_message(
-            f"Hello. Every time you do this task you will be randomly assigned one of two roles: "
+            f"Hello {self._worker_id}. Every time you do this task you will be randomly assigned one of two roles: "
             f"an AI assistant, or a user. This time, you'll play the AI assistant. "
             f"This role is complicated, and thus you must first watch the following video tutorial: "
             f"{WIZARD_TUTORIAL_URL} . \n\n"
@@ -143,25 +146,33 @@ class UserOnboardingWorld(MTurkOnboardWorld):
     worker uses the interface
     """
 
-    def __init__(self, opt: Opt, mturk_agent: Agent):
+    def __init__(self, opt: Opt, mturk_agent: Agent, worker_id: Text) -> None:
         super(UserOnboardingWorld, self).__init__(opt, mturk_agent=mturk_agent)
         self._scenario = opt.get("scenario")
+        self._worker_id = worker_id
         assert self._scenario
 
-    def parley(self):
+    def parley(self) -> None:
         setup = SetupCommand(scenario="intro", role="User")
         self.mturk_agent.observe(setup.message)
         self.mturk_agent.observe(
             GuideCommand(
-                f"Hello. Every time you do this task you will be randomly assigned one of two roles: "
+                f"Hello {self._worker_id}. Every time you do this task you will be randomly assigned one of two roles: "
                 f"an AI assistant, or a user. This time, you'll play the user. When you type 'ready' and "
                 f"send a message, we will pair you up with another worker who plays the AI assistant. "
                 f"Note, that playing the AI assistant is a very complex task, so your partner has to "
                 f"watch a 15 minute video tutorial before he/she can start the task. Thus, it might take a "
                 f"while before you get paired. Once you are paired, your situation and things to do will be "
-                f"displayed on the left panel."
+                f"displayed on the left panel. If you like, you can use the time to watch the assistant's tutorial "
+                f"under {WIZARD_TUTORIAL_URL}, so you are prepared for the next time you do this task. "
             ).message
         )
+        wdb = WorkerDatabase()
+        evaluation = wdb.get_worker_evaluation(self._worker_id)
+        if evaluation:
+            self.mturk_agent.observe(
+                GuideCommand(f"Welcome back {self._worker_id}! {evaluation}").message
+            )
         message = self.mturk_agent.act()
         echo.log_write(f"onboarding user: {message}")
         self.mturk_agent.passed_onboarding = True
@@ -198,6 +209,7 @@ class WOZWorld(MTurkTaskWorld):
         observers: Optional[List[Agent]] = None,
     ) -> None:
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
+        self._is_sandbox = opt["is_sandbox"] or False
         self.observers = observers or []
         self.knowledgebase = None
         self.user = None
@@ -227,15 +239,14 @@ class WOZWorld(MTurkTaskWorld):
         self._stage = SETUP_STAGE
         self._received_evaluations = 0
         self.events = []
-
-        base_dir = os.path.join(PROJECT_PATH, "resources", "book_ride")
-        self._suggestion_module = WizardSuggestion(scenario_list=['book_ride'],
-                                                   resources_dir=base_dir)
+        self._suggestion_module = None
 
         self.num_turns = 1
 
         self._primary_kb_item = None
         self._secondary_kb_item = None
+        self._selected_api: Optional[Text] = None
+        self._api_names: Optional[List[Text]] = None
 
         self._user_task_description = None
         self._questions_to_user = None
@@ -244,23 +255,41 @@ class WOZWorld(MTurkTaskWorld):
         self._answers_by_wizard = None
         self._user_linear_guide = None
 
+        self._wizard_task_description = None
+        self._wizard_capabilities = None
+
         self._wizard_has_used_kb = False
         self._num_wizard_utterances = 0
         self._num_user_utterances = 0
+        self._user_has_ended_dialogue = False
+        self._wizard_has_ended_dialogue = False
 
     def parley(self):
         if self._stage == SETUP_STAGE:
             setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
+            self._wizard_task_description = setup_command.task_description
+            self._wizard_capabilities = setup_command.capabilities
+            assert self._wizard_capabilities
             self._questions_to_wizard = setup_command.completion_questions
+            self._api_names = setup_command.api_names
+            self._selected_api = self._api_names[0]
+
+            base_dir = os.path.join(PROJECT_PATH, "resources")
+            self._suggestion_module = WizardSuggestion(
+                scenario_list=self._api_names, resources_dir=base_dir
+            )
+
             self.wizard.observe(setup_command.message)
             send_mturk_message(
                 f"Your task: {setup_command.message.get('task_description')}",
                 self.wizard,
             )
 
-            if not self._current_domain:
+            if len(self._api_names) > 1:
                 send_mturk_message(
-                    f"NOTE: The suggested replies may not work well for this task and you may have to use many custom replies.",
+                    f"This is a special task, where you (the AI assistant) have more capabilities. "
+                    f"You can select different task-interfaces with the tabs on the left. "
+                    f"Still try to stick to at least one of the flow charts whenever possible. ",
                     self.wizard,
                 )
 
@@ -319,6 +348,7 @@ class WOZWorld(MTurkTaskWorld):
                     "The user thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the user."
                 ).message
             )
+            self._user_has_ended_dialogue = True
             self._stage = EVALUATION_STAGE
             return 1
         else:
@@ -364,7 +394,11 @@ class WOZWorld(MTurkTaskWorld):
         elif isinstance(wizard_command, SelectSecondaryCommand):
             self._secondary_kb_item = wizard_command.item
             return 0
+        elif isinstance(wizard_command, SelectTopicCommand):
+            self._selected_api = self._api_names[int(wizard_command.topic)]
+            return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
+            print(self._selected_api)
             # Prevent wizards from copy/pasting entire KB item
             if "\t" in wizard_command.query:
                 send_mturk_message(
@@ -378,8 +412,8 @@ class WOZWorld(MTurkTaskWorld):
                 possibly_wrong_item_selected,
             ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
-                kb_item=self._primary_kb_item,
-                scenario=self._current_domain,
+                primary_kb_item=self._primary_kb_item,
+                api_name=self._selected_api,
             )
             # Warn if response template of top-ranked intent could not be filled by selected KB item
             if possibly_wrong_item_selected:
@@ -456,14 +490,26 @@ class WOZWorld(MTurkTaskWorld):
                 "The assistant thinks that the task is complete. Please review your conversation, click on 'confirm', and wait for the assistant."
             ).message
         )
+        self._wizard_has_ended_dialogue = True
         self._stage = EVALUATION_STAGE
 
     def send_linear_user_guide_instruction(self) -> None:
-        if not self._user_linear_guide or self._num_user_utterances >= len(self._user_linear_guide):
+        if not self._user_linear_guide or self._num_user_utterances >= len(
+            self._user_linear_guide
+        ):
             return
 
-        if self._user_linear_guide[self._num_user_utterances]:
-            self.user.observe(GuideCommand(self._user_linear_guide[self._num_user_utterances]).message)
+        instruction = self._user_linear_guide[self._num_user_utterances]
+        if instruction:
+            self.events.append(
+                {
+                    "Agent": "UserGuide",
+                    "Action": "instruct",
+                    "Text": instruction,
+                    "UnixTime": int(time.time()),
+                }
+            )
+            self.user.observe(GuideCommand(instruction).message)
 
     def store_wizard_event(self, event):
         _event = event
@@ -525,26 +571,74 @@ class WOZWorld(MTurkTaskWorld):
         # self.mturk_agent.reject_work()
         # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
         # self.mturk_agent.block_worker() # Block this worker from future HITs
-        if self._num_user_utterances > 2:
-            if self._num_user_utterances > 4 and not self._wizard_has_used_kb:
-                self.user.approve_work()
-                self.wizard.reject_work(reason="You have not used the knowledge base")
-                return
 
-            self.user.approve_work()
-            self.wizard.approve_work()
+        wdb = WorkerDatabase()
 
-            if self._num_user_utterances > 15:
-                # Pay bonus of 50 cents
-                self.user.pay_bonus(
-                    0.50, reason="You have written more than 15 messages"
-                )
-                self.wizard.pay_bonus(
-                    0.50, reason="You have written more than 15 messages"
-                )
+        if self.review_user():
+            wdb.store_work(
+                self.user.worker_id,
+                self.user.hit_id,
+                self._is_sandbox,
+                "User",
+                "",
+                TASK_LEVEL_SINGLE_HAPPY,
+                self._num_user_utterances,
+            )
+            print(
+                f"User {self.user.worker_id}'s work was approved (HIT {self.user.hit_id})"
+            )
         else:
-            self.user.reject_work(reason="You have sent less than three messages")
-            self.wizard.reject_work(reason="You have sent less than three messages")
+            print(
+                f"User {self.user.worker_id}'s work was rejected (HIT {self.user.hit_id})"
+            )
+
+        if self.review_wizard():
+            wdb.store_work(
+                self.wizard.worker_id,
+                self.wizard.hit_id,
+                self._is_sandbox,
+                "Wizard",
+                "",
+                TASK_LEVEL_SINGLE_HAPPY,
+                self._num_wizard_utterances,
+            )
+            print(
+                f"Wizard {self.wizard.worker_id}'s work was approved (HIT {self.wizard.hit_id})"
+            )
+        else:
+            print(
+                f"Wizard {self.wizard.worker_id}'s work was rejected (HIT {self.wizard.hit_id})"
+            )
+
+    def review_user(self) -> bool:
+        if self._num_user_utterances < 2:
+            self.user.reject_work("You wrote fewer than 2 messages")
+            return False
+
+        # if (
+        #     self._user_linear_guide
+        #     and self._num_user_utterances < len(self._user_linear_guide)
+        #     and self._user_has_ended_dialogue
+        # ):
+        #     self.user.reject_work(
+        #         "You ended the dialogue before being instructed to do so"
+        #     )
+        #     return False
+
+        self.user.approve_work()
+        return True
+
+    def review_wizard(self) -> bool:
+        if self._num_wizard_utterances < 2:
+            self.wizard.reject_work("You wrote fewer than 2 messages")
+            return False
+
+        if not self._wizard_has_used_kb:
+            self.wizard.reject_work("You did not use the knowledge base interface")
+            return False
+
+        self.wizard.approve_work()
+        return True
 
     def get_custom_task_data(self):
         # brings important data together for the task, to later be used for
@@ -566,7 +660,15 @@ class WOZWorld(MTurkTaskWorld):
             )
         ]
         return {
-            "Scenario": self._scenario,
+            "FORMAT-VERSION": 2,
+            "Scenario": {
+                "Domains": sorted(
+                    list({c.get("Domain") for c in self._wizard_capabilities})
+                ),
+                "UserTask": self._user_task_description,
+                "WizardTask": self._wizard_task_description,
+                "WizardCapabilities": self._wizard_capabilities,
+            },
             "Events": self.events,
             "WizardWorkerID": (
                 self.wizard.worker_id if hasattr(self.wizard, "worker_id") else None
@@ -574,11 +676,18 @@ class WOZWorld(MTurkTaskWorld):
             "WizardHITID": (
                 self.wizard.hit_id if hasattr(self.wizard, "hit_id") else None
             ),
+            "WizardAssignmentID": (
+                self.wizard.assignment_id
+                if hasattr(self.wizard, "assignment_id")
+                else None
+            ),
             "UserWorkerID": (
                 self.user.worker_id if hasattr(self.user, "worker_id") else None
             ),
             "UserHITID": (self.user.hit_id if hasattr(self.user, "hit_id") else None),
-            "UserTask": self._user_task_description,
+            "UserAssignmentID": (
+                self.user.assignment_id if hasattr(self.user, "assignment_id") else None
+            ),
             "UserQuestionaire": user_questionaire_data,
             "WizardQuestionaire": wizard_questionaire_data,
         }

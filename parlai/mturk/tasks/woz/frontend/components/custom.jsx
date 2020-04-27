@@ -236,7 +236,7 @@ function ReviewForm(props) {
       <div>Thank you for the conversation.</div>
       <br />
       <div>
-        Did the {other_agent}...
+        Please answer the following questions (it might depend on your answers if your partner's work gets accepted).
         <br />
         <div style={{ marginLeft: 20 }}>
           {completionQuestions.map((q, i) => {
@@ -385,6 +385,12 @@ class LeftPane extends React.Component {
     });
   };
 
+  handleSelectTopicTab = key => {
+    this.props.onMessageSend(`<select_topic> ${key}`, {}, () =>
+      console.log('selected topic ', key)
+    );
+  };
+
   render() {
     let v_id = this.props.v_id;
     let frame_height = this.props.frame_height;
@@ -453,7 +459,7 @@ class LeftPane extends React.Component {
             >
               <Nav bsStyle="pills" stacked>
                 {apiNames.map((tabName, idx) => (
-                  <NavItem eventKey={idx}>
+                  <NavItem eventKey={idx} onSelect={this.handleSelectTopicTab}>
                     {_.capitalize(tabName.replace(/_/g, '\n'))}
                   </NavItem>
                 ))}
