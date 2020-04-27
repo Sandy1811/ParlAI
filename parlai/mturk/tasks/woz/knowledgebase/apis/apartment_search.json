@@ -22,12 +22,7 @@
     {
       "Name": "BalconySide",
       "Type": "Categorical",
-      "Categories": [
-        "east",
-        "north",
-        "south",
-        "west"
-      ],
+      "Categories": ["east", "north", "south", "west"],
       "ReadableName": "Balcony Side"
     },
     {
@@ -52,11 +47,7 @@
     {
       "Name": "NearbyPOIs",
       "Type": "CategoricalMultiple",
-      "Categories": [
-        "School",
-        "TrainStation",
-        "Park"
-      ],
+      "Categories": ["School", "TrainStation", "Park"],
       "ReadableName": "Nearby POIs"
     },
     {
@@ -93,12 +84,7 @@
     {
       "Name": "BalconySide",
       "Type": "Categorical",
-      "Categories": [
-        "east",
-        "north",
-        "south",
-        "west"
-      ],
+      "Categories": ["east", "north", "south", "west"],
       "ReadableName": "Balcony Side"
     },
     {
@@ -124,17 +110,13 @@
       "Name": "Price",
       "Type": "Integer",
       "Min": 400,
-      "Max": 5000,
-      "ReadableName": "Price per month (cold) in EUR"
+      "Max": 6000,
+      "ReadableName": "Monthly Price"
     },
     {
       "Name": "NearbyPOIs",
       "Type": "CategoricalMultiple",
-      "Categories": [
-        "School",
-        "TrainStation",
-        "Park"
-      ],
+      "Categories": ["School", "TrainStation", "Park"],
       "ReadableName": "Nearby POIs"
     },
     {

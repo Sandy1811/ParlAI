@@ -236,7 +236,8 @@ function ReviewForm(props) {
       <div>Thank you for the conversation.</div>
       <br />
       <div>
-        Please answer the following questions (it might depend on your answers if your partner's work gets accepted).
+        Please answer the following questions (it might depend on your answers
+        if your partner's work gets accepted).
         <br />
         <div style={{ marginLeft: 20 }}>
           {completionQuestions.map((q, i) => {

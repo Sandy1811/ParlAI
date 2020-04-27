@@ -3,11 +3,7 @@
     {
       "Name": "Name",
       "Type": "Categorical",
-      "Categories": [
-        "Dr. Johnson",
-        "Dr. Morgan",
-        "Dr. Alexis"
-      ],
+      "Categories": ["Dr. Johnson", "Dr. Morgan", "Dr. Alexis"],
       "ReadableName": "Name"
     },
     {
@@ -47,6 +43,12 @@
       "Name": "Symptoms",
       "Type": "LongString",
       "ReadableName": "Symptoms"
+    },
+    {
+      "Name": "RequestType",
+      "Type": "RequestType",
+      "Categories": ["Check", "Book"],
+      "ReadableName": "Request Type"
     }
   ],
   "output": [
@@ -62,7 +64,8 @@
     "Day",
     "StartTimeHour",
     "EndTimeHour",
-    "Symptoms"
+    "Symptoms",
+    "RequestType"
   ],
   "db": "schedule",
   "function": "book_doctor_appointment",
