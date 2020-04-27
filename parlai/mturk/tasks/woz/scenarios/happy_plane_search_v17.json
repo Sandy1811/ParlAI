@@ -12,7 +12,7 @@
         "...find you a suitable flight?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for a flight between New York City to Los Angeles for May 6. You want an First seat."
+      "task_description": "Search for a flight between New York City to Pittsburgh for May 18. You want an Economy seat."
     },
     "Wizard": {
       "task_description": "Help the user find a suitable flight.",

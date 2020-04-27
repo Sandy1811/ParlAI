@@ -16,7 +16,7 @@
         "...book your appointment?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Your are Ben and would like to make an appointment with Dr. Johnson for Friday at 17 and ending two hours later. Your symptoms are runny nose, sneezing, and a general lack of energy."
+      "task_description": "Your are John and would like to make an appointment with Dr. Alexis for Sunday at 14 and ending two hours later. Your symptoms are runny nose, sneezing, and a general lack of energy."
     },
     "Wizard": {
       "task_description": "Help the user book a doctor appointment!",

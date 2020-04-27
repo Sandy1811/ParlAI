@@ -19,7 +19,7 @@
         "...tell you the doctor's instructions?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You (Alexis) just finished your appointment with Dr. Morgan. Unfortunately, you forgot to write down the instructions the doctor gave you. Please followup and find out how often to take your medicine."
+      "task_description": "You (Mark) just finished your appointment with Dr. Johnson. Unfortunately, you forgot to write down the instructions the doctor gave you. Please followup and find out how often to take your medicine."
     },
     "Wizard": {
       "task_description": "Inform the user of his/her doctor's orders.",

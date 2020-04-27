@@ -18,7 +18,7 @@
         "...successfully change your ride?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You are Angela and your ride ID is 432. You must change your arrival location to Forbes and Murray. If that's not possible, try to cancel your ride."
+      "task_description": "You are Alexis and your ride ID is 192. You must change your arrival location to Hospital. If that's not possible, try to cancel your ride."
     },
     "Wizard": {
       "task_description": "The user had booked a ride. Help him/her make changes to his/her booking. (You can find the video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",

@@ -22,7 +22,7 @@
         "...help succesfully recover the life support?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "The life support on your spaceship is failing. To save the lives of the crew, you need to help recover it by working with the spaceship's onboard robot. The life support is behind a locked door. The lock is manufactured by Diebold. The robot must break the lock and swap the positions of the top cable (color: Blue) and the second cable (color: Yellow."
+      "task_description": "The life support on your spaceship is failing. To save the lives of the crew, you need to help recover it by working with the spaceship's onboard robot. The life support is behind a locked door. The lock is manufactured by ISS Alpha. The robot must break the lock and swap the positions of the top cable (color: Yellow) and the second cable (color: Red)"
     },
     "Wizard": {
       "task_description": "Act as the spaceship's onboard robot and help the user recover the life support.",

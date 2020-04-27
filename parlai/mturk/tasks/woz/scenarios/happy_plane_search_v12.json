@@ -12,7 +12,7 @@
         "...find you a suitable flight?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for a flight between Pittsburgh to Los Angeles for May 22. Your flight should cost no more than 356."
+      "task_description": "Search for a flight between New York City to Pittsburgh for May 19. Your flight should cost no more than 350."
     },
     "Wizard": {
       "task_description": "Help the user find a suitable flight.",

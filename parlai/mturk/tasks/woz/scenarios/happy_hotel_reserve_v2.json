@@ -20,7 +20,7 @@
         "...reserve your hotel?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "You want to reserve a room at the Shadyside Inn from day 10 to day 15. Your name is Mark. Please do not make a custom request, and it is ok if no room is available - just say goodbye in this case."
+      "task_description": "You want to reserve a room at the Old Town Inn from day 6 to day 18. Your name is Angela. Please do not make a custom request, and it is ok if no room is available - just say goodbye in this case."
     },
     "Wizard": {
       "task_description": "Help the user reserve a hotel room. (You can find the video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",

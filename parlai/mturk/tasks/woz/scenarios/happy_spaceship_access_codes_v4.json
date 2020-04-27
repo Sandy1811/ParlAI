@@ -23,7 +23,7 @@
         "...help unlock the door to the combat deck?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Your spaceship is under attack. You must enter the combat deck to mount a counterattack. Unfortunately, you are locked out. Please work with the spaceship's onboard computer to unlock the door. You (Leia) are the ship's Chief Engineer. You have been a given a code (Access Code: 639431."
+      "task_description": "Your spaceship is under attack. You must enter the combat deck to mount a counterattack. Unfortunately, you are locked out. Please work with the spaceship's onboard computer to unlock the door. You (Leia) are the ship's Bartender. You have been a given a Clearance Code: 425931."
     },
     "Wizard": {
       "task_description": "Act as the spaceship's onboard computer and help the user unlock the combat deck.",

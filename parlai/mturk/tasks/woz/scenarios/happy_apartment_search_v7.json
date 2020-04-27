@@ -19,7 +19,7 @@
         "...find you a suitable apartment?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Search for a 3 bedroom apartment. The unit should be on floor 7 or higher. Your price budget is 3808 credits. You would like to have a balcony facing south."
+      "task_description": "Search for a 4 bedroom apartment. The unit should be on floor 15 or higher. Your price budget is 1616 credits. You would like to have a balcony facing west."
     },
     "Wizard": {
       "task_description": "Help the user find a specific apartment. (You can find the video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",

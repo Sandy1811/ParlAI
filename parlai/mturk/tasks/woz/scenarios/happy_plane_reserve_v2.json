@@ -12,7 +12,7 @@
         "...book your flight?",
         "...stay calm and helpful throughout the dialogue?"
       ],
-      "task_description": "Reserve flight with id 420. Your name is Angela"
+      "task_description": "Reserve flight with id 302. Your name is John"
     },
     "Wizard": {
       "task_description": "Help the user book their flight.",
