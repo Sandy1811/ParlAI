@@ -14,7 +14,7 @@
     "instructions": {
         "User": {
             "completion_requirements": ["The MTurk Assistant says you can end the conversation."],
-            "completion_questions": ["...stay calm and helpful throughout the dialogue?"],
+            "completion_questions": ["Did the assistant stay calm and helpful throughout the dialogue?"],
             "task_descriptions": ["Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot has told you to do so. "],
             "linear_guide": [
               "Imagine: Your name is `CustomerName@ride`. You are on a train to some big city, and it occurs to you that you don't know how to get to your hotel. So you take out your phone and open your new AI assistant app. \n\nSay hello to your AI assistant!",
