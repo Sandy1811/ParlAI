@@ -272,7 +272,16 @@ class ChatMessage extends React.Component {
                   );
                 }}
               >
-                {suggestion}
+                <p
+                  style={{
+                    width: '360px',
+                    margin: '0',
+                    wordBreak: 'normal',
+                    whiteSpace: 'normal',
+                  }}
+                >
+                  {suggestion}
+                </p>
               </Button>
             </div>
           ))}

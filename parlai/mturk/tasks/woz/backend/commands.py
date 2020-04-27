@@ -22,6 +22,38 @@ def all_constants():
     return __all_constants
 
 
+DOMAINS_OF_TASKS = {
+    "apartment_search": "apartment",
+    "bank_balance": "bank",
+    "bank_fraud_report": "bank",
+    "book_apartment_viewing": "apartment",
+    "book_doctor_appointment": "doctor",
+    "book_ride": "ride",
+    "followup_doctor_appointment": "doctor",
+    "hotel_reserve": "hotel",
+    "hotel_search": "hotel",
+    "hotel_service_request": "hotel",
+    "movie_search": "movie",
+    "party_plan": "party",
+    "party_rsvp": "party",
+    "plane_reserve": "plane",
+    "plane_search": "plane",
+    "restaurant_reserve": "restaurant",
+    "restaurant_search": "restaurant",
+    "ride_change": "ride",
+    "ride_status": "ride",
+    "schedule_meeting": "meeting",
+    "shopping_order_item": "shopping",
+    "shopping_order_status": "shopping",
+    "shopping_search": "shopping",
+    "spaceship_access_codes": "spaceship",
+    "spaceship_life_support": "spaceship",
+    "trip_directions": "trip",
+    "trip_traffic": "trip",
+    "weather": "weather",
+}
+
+
 class Command:
     def __init__(self, sender: Optional[Agent] = None) -> None:
         self._command_name = None
@@ -210,6 +242,8 @@ class SetupCommand(BackendCommand):
         self._command_name = all_constants()["back_to_front"]["command_setup"]
         image_not_found_url = "https://stockpictures.io/wp-content/uploads/2020/01/image-not-found-big.png"
 
+        self._wizard_capabilities = []
+
         try:
             form_description = {}
             for api_name in scenario["api_names"]:
@@ -226,8 +260,16 @@ class SetupCommand(BackendCommand):
                 with open(api_file_name, "r") as file:
                     api_description = json.load(file)
                 form_description[api_name] = api_description
-                form_description[api_name]["schema_url"] = scenario["schema_urls"].get(
-                    api_name, image_not_found_url
+                schema_url = scenario["schema_urls"].get(api_name, image_not_found_url)
+                form_description[api_name]["schema_url"] = schema_url
+
+                self._wizard_capabilities.append(
+                    {
+                        "Task": api_name,
+                        "Domain": DOMAINS_OF_TASKS.get(api_name),
+                        "SchemaURL": schema_url,
+                        # "FormDescription": api_description,
+                    }
                 )
 
             self._task_description = scenario["instructions"][role]["task_description"]
@@ -239,21 +281,31 @@ class SetupCommand(BackendCommand):
                 "completion_questions"
             ]
             self._role = role
-            self._user_linear_guide = scenario["instructions"]["User"].get("linear_guide")
+            self._user_linear_guide = scenario["instructions"]["User"].get(
+                "linear_guide"
+            )
         except KeyError as error:
             raise ImportError(f"Invalid scenario file '{scenario_file_name}': {error}.")
 
     @property
-    def completion_questions(self):
+    def capabilities(self) -> List[Dict[Text, Any]]:
+        return self._wizard_capabilities
+
+    @property
+    def completion_questions(self) -> List[Text]:
         return self._completion_questions
 
     @property
-    def task_description(self):
+    def task_description(self) -> Text:
         return self._task_description
 
     @property
     def user_linear_guide(self) -> Optional[List[Optional[Text]]]:
         return self._user_linear_guide
+
+    @property
+    def api_names(self) -> List[Text]:
+        return list(self._form_description.keys())
 
     @property
     def message(self) -> Dict[Text, Any]:
@@ -413,8 +465,15 @@ class TaskDoneCommand(WorkerCommand):
         return {"id": self._sender.id, "text": ""}
 
     @staticmethod
-    def from_message(sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs) -> Optional["Command"]:
-        answers = [value for _, value in sorted(json.loads(extracted_from_text).items(), key=(lambda item: item[0]))]
+    def from_message(
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
+        answers = [
+            value
+            for _, value in sorted(
+                json.loads(extracted_from_text).items(), key=(lambda item: item[0])
+            )
+        ]
         return TaskDoneCommand(sender=sender, answers=answers)
 
 
@@ -492,6 +551,33 @@ class SelectSecondaryCommand(WizardCommand):
             "Action": self._command_name,
             "UnixTime": int(time.time()),
         }
+
+
+class SelectTopicCommand(WizardCommand):
+    def __init__(self, sender: Agent, topic: Text) -> None:
+        super(SelectTopicCommand, self).__init__(sender)
+        self._command_name = "select_topic"
+        self._topic = topic
+        print(f"selecting: {topic}")
+
+    @property
+    def topic(self):
+        return self._topic
+
+    @property
+    def message(self) -> Dict[Text, Any]:
+        return {
+            "id": self._sender.id,
+            "text": all_constants()["front_to_back"]["select_topic_prefix"]
+            + str(self._topic),
+        }
+
+    @staticmethod
+    def from_message(
+        sender: Agent, extracted_from_text: Optional[Text] = None, **kwargs
+    ) -> Optional["Command"]:
+        topic = extracted_from_text.strip()
+        return SelectTopicCommand(sender=sender, topic=topic)
 
 
 class RequestSuggestionsCommand(WizardCommand):
@@ -602,6 +688,7 @@ def command_from_message(
         constants["front_to_back"]["query_prefix"]: QueryCommand,
         "<guide>": GuideCommand,
         "<silent>": SilentCommand,
+        constants["front_to_back"]["select_topic_prefix"]: SelectTopicCommand,
     }
 
     # Add information extracted from the `text` property (magic strings)

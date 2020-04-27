@@ -1,4 +1,12 @@
 {
     "hello": "Hello, how can I help?",
     "ask_name": "May I have your name, please?",
+    "plane_ask_departure_city": "Where are you departing from?",
+    "plane_ask_arrival_city": "Where are you going to?",
+    "plane_ask_date": "When are you travelling?",
+    "plane_request_optional": "I can also filter the results for a specific airline, class, price or duration.",
+    "plane_inform_flight_details": "Right, I found {clazz:s} flight with {airline:s} for {price:d} credits\n that takes {duration:d} to get to {arrival_city:s}.",
+    "plane_ask_more_questions": "Would you like to search for any more flights?",
+    "plane_bye": "Thank you and goodbye!",
+    "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you search for flights."
 }
