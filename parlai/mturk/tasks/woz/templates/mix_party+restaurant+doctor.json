@@ -1,0 +1,47 @@
+{
+    "title": "Multitask",
+    "name": "Arriving in town",
+    "version": 1,
+    "api_names": ["party_rsvp", "restaurant_reserve", "book_doctor_appointment"],
+    "db": "ride.json",
+    "schema_urls": {
+        "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
+        "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
+        "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
+        "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
+        "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg"
+    },
+    "instructions": {
+        "User": {
+            "completion_requirements": ["The MTurk Assistant says you can end the conversation."],
+            "completion_questions": ["Did the assistant stay calm and helpful throughout the dialogue?"],
+            "task_descriptions": ["Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot has told you to do so. "],
+            "linear_guide": [
+              "In this task you can be very creative! You can come up with any details and queries, as long as they concern the topics we provide along the way. For now, say hello to your personal AI assistant.",
+              "We'll give you some prompts along the way for inspiration. Right now, imagine you RSVP to a friend's party. Your friend's name is `HostName-1@schedule`.",
+              "Use your imagination to answer the questions by your AI assistant.",
+              null,
+              null,
+              "Come up with a reason to change topics to 'reserve a table at a restaurant'. (A phone call? Something you see? Something important that you almost forgot?)",
+              null,
+              null,
+              "You get a text from `HostName-1@schedule`: 'Hey! Have you RSVPed already?' (Of course you cannot answer to the text here, but this might change your dialogue with the AI assistant.)",
+              null,
+              null,
+              "Something happens (you have to come up with the 'what') and you suddenly need a doctor. Get your AI assistant to find you one.",
+              null,
+              null,
+              "Ok, we hope you enjoyed this task. You can now let the conversation come to a natural close."
+            ]
+        },
+        "Wizard": {
+            "task_description": "Follow the flow charts and help the user. (You can find the single-task video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",
+            "completion_requirements": ["The user has said goodbye."],
+            "completion_questions": [
+              "Did the user change his/her mind about what he/she wants at any time?",
+              "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
+              "Where you unsure about what to do at any time? If yes, send us a mail and let us know how we can improve the task."
+            ]
+        }
+    }
+}

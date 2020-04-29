@@ -1,0 +1,38 @@
+{
+    "title": "Unhappy apartment search",
+    "name": "Planning a birthday party",
+    "version": 1,
+    "api_names": ["party_plan", "weather", "restaurant_search", "restaurant_reserve"],
+    "db": "ride.json",
+    "schema_urls": {
+      "party_plan": "https://i.imgur.com/kyFnBsZ.jpg",
+      "restaurant_search": "https://i.imgur.com/wnmwuOT.jpg",
+      "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png"
+    },
+    "instructions": {
+        "User": {
+            "completion_requirements": ["The MTurk Assistant says you can end the conversation."],
+            "completion_questions": ["Did the assistant stay calm and helpful throughout the dialogue?"],
+            "task_descriptions": ["Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot (not the assistant) has told you to do so. "],
+            "linear_guide": [
+              "You finally decide it is time to buy your own apartment in the city. How exciting! You take out your phone and open you personal AI assistant app to find out what apartments are for sale. Say 'hello' to your AI Assistant.",
+              "Use the AI assistant to find an apartment that has a balcony facing `BalconySide-1@apartment` and at least `NumRooms@apartment` rooms.",
+              null,
+              "You realize that you don't want your apartment to be too close to work (gives you some distance in your free time). So make sure your apartment is not in the `Location@aparment` of town.",
+              "It occurs to you that a balcony on the `BalconySide-2@apartment` would actually be better than on the `BalconySide-1@apartment`.",
+              "Make sure the apartment is not too expensive. `Price@apartment` is your upper limit.",
+              null,
+              "Once you've found something suitable, note if it has an elevator, on which floor it is, and what the name of the housing company is. Then bring the dialogue to a natural close."
+            ]
+        },
+        "Wizard": {
+            "task_description": "Follow the flow charts and help the user. (You can find the single-task video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",
+            "completion_requirements": ["The user has said goodbye."],
+            "completion_questions": [
+              "Did the user change his/her mind about what he/she wants at any time?",
+              "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
+              "Where you unsure about what to do at any time? If yes, send us a mail and let us know how we can improve the task."
+            ]
+        }
+    }
+}
