@@ -413,7 +413,7 @@ class WOZWorld(MTurkTaskWorld):
             ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 primary_kb_item=self._primary_kb_item,
-                api_name=self._selected_api,
+                api_names=[self._selected_api, self._selected_api],
             )
             # Warn if response template of top-ranked intent could not be filled by selected KB item
             if possibly_wrong_item_selected:
