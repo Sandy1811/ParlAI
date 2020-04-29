@@ -1,5 +1,10 @@
 [
   {
+    "Name": "DoctorName",
+    "Type": "Categorical",
+    "Categories": ["Dr. Johnson", "Dr. Morgan", "Dr. Alexis"]
+  },
+  {
     "Name": "Name",
     "Type": "Categorical",
     "Categories": [
@@ -26,6 +31,15 @@
     "Categories": ["Southside Venue", "North Heights Venue", "West Bay Venue"]
   },
   {
+    "Name": "ApartmentName",
+    "Type": "Categorical",
+    "Categories": [
+      "One on Center Apartments",
+      "Shadyside Apartments",
+      "North Hill Apartments"
+    ]
+  },
+  {
     "Name": "Day",
     "Type": "Categorical",
     "Categories": [
@@ -44,12 +58,26 @@
     "Categories": ["Mark", "John", "Ben", "Angela", "Alexis"]
   },
   {
+    "Name": "PersonName",
+    "Type": "Categorical",
+    "Categories": ["Mark", "John", "Ben", "Angela", "Alexis"]
+  },
+  {
     "Name": "FoodRequest",
     "Type": "Categorical",
     "Categories": [
       "vegetarian meal",
       "three course meal, with steak and a vegan option",
       "finger foods"
+    ]
+  },
+  {
+    "Name": "ApartmentMessage",
+    "Type": "Categorical",
+    "Categories": [
+      "I am very interested in this apartment and would like to see it right away!",
+      "I am particularly interested in the two bedroom units. If not, the studio is also fine.",
+      "If possible, I would also like to see the rooftop pool during my viewing."
     ]
   },
   {
@@ -76,7 +104,16 @@
   {
     "Name": "DietaryRestriction",
     "Type": "Categorical",
-    "Categories": ["vegan", "vegetarian", "kosher/halal"]
+    "Categories": ["vegan", "vegetarian", "kosher", "halal"]
+  },
+  {
+    "Name": "Symptoms",
+    "Type": "Categorical",
+    "Categories": [
+      "runny nose, sneezing, and a general lack of energy",
+      "cough and a sore throat, ",
+      "headache, dizziness and muscle weakness"
+    ]
   },
   {
     "Name": "SizeLimit",
