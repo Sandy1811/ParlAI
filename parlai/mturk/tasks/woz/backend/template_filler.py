@@ -410,6 +410,182 @@ def fill_restaurant_inform_search_result(intent2reply, kb_item):
     )
 
 
+def fill_apartment_inform_search_criteria(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_INFORM_SEARCH_CRITERIA]
+
+
+def fill_apartment_ask_num_bedrooms(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_NUM_BEDROOMS]
+
+
+def fill_apartment_ask_price(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_PRICE]
+
+
+def fill_apartment_ask_floor(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_FLOOR]
+
+
+def fill_apartment_ask_balcony(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_BALCONY]
+
+
+def fill_apartment_ask_elevator(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_ELEVATOR]
+
+
+def fill_apartment_ask_nearby_pois(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_NEARBY_POIS]
+
+
+def fill_apartment_ask_search_more(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_SEARCH_MORE]
+
+
+def fill_apartment_bye(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_BYE]
+
+
+def fill_apartment_ask_apartment_name(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_APARTMENT_NAME]
+
+
+def fill_apartment_ask_day(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_DAY]
+
+
+def fill_apartment_ask_start_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_START_TIME]
+
+
+def fill_apartment_ask_end_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_END_TIME]
+
+
+def fill_apartment_ask_application_fee_paid(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_APPLICATION_FEE_PAID]
+
+
+def fill_apartment_ask_custom_message(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_ASK_CUSTOM_MESSAGE]
+
+
+def fill_apartment_inform_viewing_available(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_INFORM_VIEWING_AVAILABLE]
+
+
+def fill_apartment_inform_viewing_unavailable(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_INFORM_VIEWING_UNAVAILABLE]
+
+
+def fill_apartment_inform_booking_successful(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_INFORM_BOOKING_SUCCESSFUL]
+
+
+def fill_apartment_inform_search_result(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Level', 'HasBalcony', 'BalconySide', 'HasElevator', 'NumRooms',
+                                   'FloorSquareMeters', 'NearbyPOIs', 'Name', 'Price']):
+        return None
+
+    if len(kb_item['NearbyPOIs']) == 1:
+        pois = f'a {kb_item["NearbyPOIs"][0]}'
+    elif len(kb_item['NearbyPOIs']) >= 2:
+        pois = ', '.join(map(lambda x: f'a {x}', kb_item['NearbyPOIs']))
+        pois = ' and '.join(pois.rsplit(', ', 1))
+    else:
+        pois = 'nothing interesting'
+
+    if kb_item['HasBalcony']:
+        has_balcony = f'has a {kb_item["BalconySide"]} facing balcony'
+    else:
+        has_balcony = 'does not have a balcony'
+
+    if kb_item['HasElevator']:
+        has_elevator = 'has an elevator'
+    else:
+        has_elevator = 'does not have an elevator'
+
+    return intent2reply[constants.INTENT_APARTMENT_INFORM_SEARCH_RESULT].format(
+        apartment_name=kb_item['Name'], pois=pois, floor=kb_item['Level'],
+        size=kb_item['FloorSquareMeters'], num_bedrooms=kb_item['NumRooms'],
+        has_balcony=has_balcony, has_elevator=has_elevator, price=kb_item['Price']
+    )
+
+
+def fill_doctor_ask_doctor_name(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_ASK_DOCTOR_NAME]
+
+
+def fill_doctor_ask_day(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_ASK_DAY]
+
+
+def fill_doctor_ask_start_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_ASK_START_TIME]
+
+
+def fill_doctor_ask_end_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_ASK_END_TIME]
+
+
+def fill_doctor_ask_symptoms(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_ASK_SYMPTOMS]
+
+
+def fill_doctor_inform_booking_unavailable(intent2eply, *_):
+    return intent2eply[constants.INTENT_DOCTOR_INFORM_BOOKING_UNAVAILABLE]
+
+
+def fill_doctor_inform_booking_available(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_INFORM_BOOKING_AVAILABLE]
+
+
+def fill_doctor_inform_booking_successful(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_INFORM_BOOKING_SUCCESSFUL]
+
+
+def fill_doctor_inform_doctors_instructions(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Message']):
+        return None
+
+    return intent2reply[constants.INTENT_DOCTOR_INFORM_DOCTORS_INSTRUCTIONS].format(
+        instructions=kb_item['Message']
+    )
+
+
+def fill_spaceship_ask_rank(intent2reply, *_):
+    return intent2reply[constants.INTENT_SPACESHIP_ASK_RANK]
+
+
+def fill_spaceship_ask_code(intent2reply, *_):
+    return intent2reply[constants.INTENT_SPACESHIP_ASK_CODE]
+
+
+def fill_spaceship_ask_code_type(intent2reply, *_):
+    return intent2reply[constants.INTENT_SPACESHIP_ASK_CODE_TYPE]
+
+
+def fill_spaceship_inform_outcome(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Message']):
+        return None
+
+    return intent2reply[constants.INTENT_SPACESHIP_INFORM_OUTCOME].format(
+        message=kb_item['Message']
+    )
+
+
+def fill_spaceship_ask_lock_manufacturer(intent2reply, *_):
+    return intent2reply[constants.INTENT_SPACESHIP_ASK_LOCK_MANUFACTURER]
+
+
+def fill_spaceship_ask_colour_top_cable(intent2reply, *_):
+    return intent2reply[constants.INTENT_SPACESHIP_ASK_COLOUR_TOP_CABLE]
+
+
+def fill_spaceship_ask_colour_second_cable(intent2reply, *_):
+    return intent2reply[constants.INTENT_SPACESHIP_ASK_COLOUR_SECOND_CABLE]
+
+
 def check_kb_item(
     kb_item: Dict[Text, Any], required_fields: Optional[List[Text]] = None
 ) -> bool:

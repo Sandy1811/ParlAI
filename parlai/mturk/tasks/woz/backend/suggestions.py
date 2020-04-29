@@ -204,21 +204,23 @@ if __name__ == '__main__':
 
     #scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status']
     #scenarios = ['party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search']
-    scenarios = ['book_ride', 'hotel_search']
+    #scenarios = ['book_ride', 'hotel_search']
+    scenarios = ['apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
+                 'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support']
+    test_items = ['get_apartment_search_item', 'get_book_apartment_viewing_item',
+                  'get_book_doctor_appointment_item', 'get_followup_doctor_appointment_item',
+                  'get_spaceship_access_codes_item', 'get_spaceship_life_support_item']
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
                           start_nlu_servers=True)
 
-    #scens = ['get_book_ride_item', 'get_ride_change_item', 'get_hotel_search_item',
-    #             'get_ride_status_item']
-    scens = ['get_book_ride_item', 'get_hotel_search_item']
-    for sc in scens:
-        print(f'---- {sc} ----')
-        kb_item, utterances, scenario = getattr(static_test_assets, sc)()
+    for scen, ti in zip(scenarios, test_items):
+        print(f'---- {scen} ----')
+        kb_item, utterances, scenario = getattr(static_test_assets, ti)()
         ws.poll_nlu_server(scenario=scenario)
         for utterance in utterances:
             # Use rasa to get an intent label
             suggestions = ws.get_suggestions(wizard_utterance=utterance, primary_kb_item=kb_item,
-                                             api_names=['book_ride'], merge_by_confidence=True)
+                                             api_names=[scen], merge_by_confidence=True)
 
             print(f'Suggestions for "{utterance}": {suggestions}')
             print('----------------------------------------------')
