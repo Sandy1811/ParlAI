@@ -109,5 +109,11 @@ SCENARIO_PORT_MAP = {
     'plane_reserve': '5012',
     'plane_search': '5013',
     'restaurant_reserve': '5014',
-    'restaurant_search': '5015'
+    'restaurant_search': '5015',
+    'apartment_search': '5016',
+    'book_apartment_viewing': '5017',
+    'book_doctor_appointment': '5018',
+    'followup_doctor_appointment': '5019',
+    'spaceship_access_codes': '5020',
+    'spaceship_life_support': '5021'
 }
