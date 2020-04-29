@@ -1,9 +1,11 @@
 import collections
 import json
 import logging
+import operator
 import os
 import subprocess
 import time
+from functools import reduce
 from typing import Text, Dict, Any, List, Optional, Tuple
 
 import requests
@@ -76,15 +78,15 @@ class WizardSuggestion:
         else:
             logging.warning(f'Cannot kill server for scenario={scenario}, because the process was started externally!')
 
-    def get_suggestions(
-        self,
-        wizard_utterance: Text,
-        primary_kb_item: Dict[Text, Any],
-        secondary_kb_item: Dict[Text, Any] = None,
-        api_name: Optional[Text] = None,
-        comparing: bool = False,
-        return_intents: bool = False,
-    ) -> Tuple[List[Text], bool]:
+    def _suggestion_for_api_name(
+            self,
+            wizard_utterance: Text,
+            primary_kb_item: Dict[Text, Any],
+            secondary_kb_item: Dict[Text, Any] = None,
+            api_name: Text = None,
+            comparing: bool = False,
+            return_intents: bool = False
+    ) -> Tuple[List[Tuple[Text, float]], bool]:
         possibly_wrong_item_selected = (
             None  # Will be set `True` if top intent cannot be filled
         )
@@ -98,7 +100,7 @@ class WizardSuggestion:
             return intents, False
 
         suggestions = []
-        for intent in intents:
+        for intent, confidence in intents:
             if intent in self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY]:
                 fn_fill = getattr(template_filler, f'fill_{intent}')
 
@@ -110,7 +112,7 @@ class WizardSuggestion:
                     suggestion = None
 
                 if suggestion:
-                    suggestions.append(suggestion)
+                    suggestions.append((suggestion, confidence))
 
                 if possibly_wrong_item_selected is None:
                     possibly_wrong_item_selected = suggestion is None
@@ -125,6 +127,49 @@ class WizardSuggestion:
             possibly_wrong_item_selected = False
 
         return suggestions, possibly_wrong_item_selected
+
+    def get_suggestions(
+        self,
+        wizard_utterance: Text,
+        primary_kb_item: Dict[Text, Any],
+        secondary_kb_item: Dict[Text, Any] = None,
+        api_names: Optional[List[Text]] = None,
+        comparing: bool = False,
+        return_intents: bool = False,
+        merge_by_confidence: bool = False,
+        top_n_per_scenario = 2 # overrides num_suggestions
+    ) -> Tuple[List[Text], bool]:
+
+        top_suggestions = []
+        suggestions_by_scenario = {}
+        for api_name in api_names:
+            suggestions, possibly_wrong = self._suggestion_for_api_name(
+                                                        wizard_utterance=wizard_utterance,
+                                                        primary_kb_item=primary_kb_item,
+                                                        secondary_kb_item=secondary_kb_item,
+                                                        api_name=api_name, comparing=comparing,
+                                                        return_intents=return_intents)
+            if not possibly_wrong:
+                suggestions_by_scenario[api_name] = suggestions
+
+        # Merge by confidence merges all lists, then sorts and takes the top n
+        # else merges the top_n_per_scenario (i.e. takes top n) and then sorts
+        if merge_by_confidence:
+            top_suggestions = reduce(lambda a, b: a + b, suggestions_by_scenario.values(), [])
+            top_suggestions = sorted(top_suggestions, key=operator.itemgetter(1), reverse=True)[:self.num_suggestions]
+
+        else:
+            top_suggestions = reduce(lambda a, b: a + b[:top_n_per_scenario], suggestions_by_scenario.values(), [])
+            top_suggestions = sorted(top_suggestions, key=operator.itemgetter(1), reverse=True)
+
+        # Get rid of the confidence
+        top_suggestions = reduce(lambda a, b: a + [b[0]], top_suggestions, [])
+
+        possibly_wrong_item_selected = len(top_suggestions) <= 0 or len(suggestions_by_scenario) <= 0
+        if len(top_suggestions) == 0:
+            top_suggestions.append(wizard_utterance)
+
+        return top_suggestions, possibly_wrong_item_selected
 
     def query(self, text: Text, scenario: Text) -> Dict[Text, Any]:
         payload = {'text': text}
@@ -142,7 +187,7 @@ class WizardSuggestion:
         text: Text,
         scenario: Text,
         comparing: bool = False
-    ) -> Tuple[List[Text], List[Text]]:
+    ) -> Tuple[List[Tuple[Text, float]], List[Text]]:
         try:
             response = self.query(text=text, scenario=scenario)
         except ConnectionError as e:
@@ -150,7 +195,7 @@ class WizardSuggestion:
             return [], []
         response["intent_ranking"].sort(key=(lambda v: -v["confidence"]))
         suggestions = [
-            intent["name"] for intent in response["intent_ranking"]
+            (intent["name"], intent["confidence"]) for intent in response["intent_ranking"]
         ]
         return suggestions[:self.max_num_suggestions], response['entities']
 
@@ -158,14 +203,14 @@ class WizardSuggestion:
 if __name__ == '__main__':
 
     #scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status']
-    scenarios = ['party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search']
+    #scenarios = ['party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search']
+    scenarios = ['book_ride', 'hotel_search']
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
                           start_nlu_servers=True)
 
     #scens = ['get_book_ride_item', 'get_ride_change_item', 'get_hotel_search_item',
     #             'get_ride_status_item']
-    scens = ['get_party_plan_item', 'get_party_rsvp_item', 'get_plane_search_item',
-             'get_restaurant_reserve_item', 'get_restaurant_search_item']
+    scens = ['get_book_ride_item', 'get_hotel_search_item']
     for sc in scens:
         print(f'---- {sc} ----')
         kb_item, utterances, scenario = getattr(static_test_assets, sc)()
@@ -173,7 +218,7 @@ if __name__ == '__main__':
         for utterance in utterances:
             # Use rasa to get an intent label
             suggestions = ws.get_suggestions(wizard_utterance=utterance, primary_kb_item=kb_item,
-                                             api_name=scenario)
+                                             api_names=['book_ride'], merge_by_confidence=True)
 
             print(f'Suggestions for "{utterance}": {suggestions}')
             print('----------------------------------------------')
