@@ -493,7 +493,7 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
         "The venue is booked at that time. Try another meeting time or another venue."
     ]
     size_outputs = [
-        "Your event has been successfuly scheduled.",
+        "Your event has been successfully scheduled.",
         "The venue is too small for your party. Try another venue."
     ]
 
