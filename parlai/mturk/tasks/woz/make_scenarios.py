@@ -129,7 +129,7 @@ class DatabaseCollection:
         slots = re.findall(r"\`([\w\-]+)@([\w]+)\`", desc)
         for slot, db_name in slots:
             original = f"`{slot}@{db_name}`"
-            desc = desc.replace(original, self.get_value(slot, db_name))
+            desc = desc.replace(original, str(self.get_value(slot, db_name)))
         return desc
 
 

@@ -17,11 +17,11 @@
     "Type": "Categorical",
     "Categories": [
       "Pizza",
-      "Chinese",
-      "Indian",
+      "Chinese food",
+      "Indian food",
       "Burgers",
-      "Italian",
-      "Thai",
+      "Italian food",
+      "Thai food",
       "Steak"
     ]
   },
