@@ -29,7 +29,7 @@
                 null,
                 "If your assistant booked a ride for you to get around, check on the ride's status.",
                 "If you got some walking instructions from the assistant, imagine you reached your destination now, but something is not the way it's supposed to be (you have to come up with the 'what').",
-                "If you did check for the ride's status and it's more than 10 minutes away, cancel the ride and ask for walking instructions.",
+                "If you did check for the ride's status and it's more than 10 minutes away, cancel the ride and ask for walking instructions. Otherwise, change something about your ride (you have to come up with the 'what').",
                 "If you were walking and your destination wasn't the way it was supposed to be, get whatever help the assistant can give you in this situation.",
                 "Ok. In the next few turns you can bring the conversation to a natural close."
             ]

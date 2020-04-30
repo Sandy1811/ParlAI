@@ -2,12 +2,10 @@
     "title": "Unhappy apartment search",
     "name": "Planning a birthday party",
     "version": 1,
-    "api_names": ["party_plan", "weather", "restaurant_search", "restaurant_reserve"],
+    "api_names": ["apartment_search"],
     "db": "ride.json",
     "schema_urls": {
-      "party_plan": "https://i.imgur.com/kyFnBsZ.jpg",
-      "restaurant_search": "https://i.imgur.com/wnmwuOT.jpg",
-      "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png"
+      "apartment_search": "https://i.imgur.com/yICteJ1.jpg"
     },
     "instructions": {
         "User": {
