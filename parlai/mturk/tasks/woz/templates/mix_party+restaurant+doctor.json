@@ -5,11 +5,9 @@
     "api_names": ["party_rsvp", "restaurant_reserve", "book_doctor_appointment"],
     "db": "ride.json",
     "schema_urls": {
-        "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
-        "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
-        "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
-        "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
-        "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg"
+      "party_rsvp": "https://i.imgur.com/4Pz33hK.jpg",
+      "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png",
+      "book_doctor_appointment": "https://i.imgur.com/dgFAhjc.jpg"
     },
     "instructions": {
         "User": {

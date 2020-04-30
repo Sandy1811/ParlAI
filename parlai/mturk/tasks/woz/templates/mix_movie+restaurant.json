@@ -5,6 +5,7 @@
     "api_names": ["movie_search", "restaurant_reserve"],
     "db": "ride.json",
     "schema_urls": {
+        "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png"
     },
     "instructions": {
         "User": {
