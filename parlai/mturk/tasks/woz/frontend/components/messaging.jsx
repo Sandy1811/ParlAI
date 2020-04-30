@@ -404,7 +404,7 @@ export class MessageList extends React.Component {
             {...this.props}
             is_self={m.id == agent_id}
             invisible={dontRender}
-            agent_id={m.id}
+            agent_id={m.id === 'Wizard' ? 'AI Assistant' : m.id}
             message={m.text}
             command={m.command}
             task_data={m.task_data}
