@@ -283,3 +283,144 @@ def get_restaurant_search_item():
     ]
 
     return kb_item, utterances, 'restaurant_search'
+
+
+def get_apartment_search_item():
+    kb_item = {
+        "Level": 3,
+        "MaxLevel": 4,
+        "HasBalcony": True,
+        "BalconySide": "east",
+        "HasElevator": False,
+        "NumRooms": 4,
+        "FloorSquareMeters": 90,
+        "NearbyPOIs": ["Park", "School"],
+        "Name": "North Hill Apartments",
+        "Price": 1600
+    }
+
+    utterances = [
+        "Hello",
+        "Hello, I love you. Could you tell me your name.",
+        "I can search for a lot of things, including, but not limited to, price and floor.",
+        "How much money do you want to spend?",
+        "Whats your favourite level?",
+        "Need a balcony?",
+        "Want an elevator?",
+        "Looking to live near a park or the station?",
+        "Right, got a free flat at Shadyside apartments, no elevator, no windows, no balconly, 600 a month, you in?",
+        "Wanna search for more?",
+        "Cheerio and byeio"
+    ]
+
+    return kb_item, utterances, 'apartment_search'
+
+
+def get_book_apartment_viewing_item():
+    kb_item = {
+        "Name": "Shadyside Apartments",
+        "Day": "Wednesday",
+        "StartTimeHour": 8,
+        "EndTimeHour": 10,
+        "RenterName": "Jason",
+        "ApplicationFeePaid": "Yes",
+    }
+
+    utterances = [
+        "Heyo, listen what I sayo",
+        "Tell me your name.",
+        "And now the name of the apartment",
+        "Whats a good day to see the place?",
+        "And whats a good time to see it?",
+        "For how long?",
+        "Paid the fee?",
+        "Leave a message?",
+        "Sorry, there is no viewing available then.",
+        "Great, there is a viewing available then. Can I book this for you?",
+        "Alright, you're all booked in."
+    ]
+
+    return kb_item, utterances, 'book_apartment_viewing'
+
+
+def get_book_doctor_appointment_item():
+    kb_item = {
+        "Name": "Dr. Morgan",
+        "Day": "Thursday",
+        "StartTimeHour": 9,
+        "EndTimeHour": 11,
+        "PatientName": "Jenny",
+        "Symptoms": "Covid-19"
+    }
+
+    utterances = [
+        "Hey, what can I do for you today?",
+        "Your name please",
+        "Which doctor do you see typically?",
+        "Whats your favourite day for surgery?",
+        "When do you want it to start?",
+        "And when do you want it to end?",
+        "Tell me all teh symptons you have.",
+        "Sorry, the doctor is busy then.",
+        "Alright, doctor's got time. Can I book it for you?",
+        "Cool, all booked with the doc."
+    ]
+
+    return kb_item, utterances, 'book_doctor_appointment'
+
+
+def get_followup_doctor_appointment_item():
+    kb_item = {
+        "Name": "Dr. Alexis",
+        "PatientName": "Mandy",
+        "Message": "Dr. Dr. PLEEEEEASE!!! Look at the mess I'm in!"
+    }
+
+    utterances = [
+        "Hello, this is doctors follow up appointements fully automated speaking."
+        "Please give me your name.",
+        "Tell me the name of your doctor."
+        "Doctor tells you to sit still and relax."
+    ]
+
+    return kb_item, utterances, 'followup_doctor_appointment'
+
+
+def get_spaceship_access_codes_item():
+    kb_item = {
+        "UserRank": "Bartender",
+        "CodeType": "Clearance",
+        "Code": "CC 308",
+        "UserName": "Johnny",
+        "Message": "All your base are belong to us!"
+    }
+
+    utterances = [
+        "What do you want?",
+        "Whats your name?",
+        "What rank are you?",
+        "Give me the code.",
+        "Give me the type of the code",
+        "Everything failed."
+    ]
+
+    return kb_item, utterances, 'spaceship_access_codes'
+
+
+def get_spaceship_life_support_item():
+    kb_item = {
+        "LockManufacturer": "Microsoft",
+        "ColorOfTopCable": "Green",
+        "ColorOfSecondCable": "Red",
+        "Message": "Operation failed. You are doomed."
+    }
+
+    utterances = [
+        "Hey waddup",
+        "Your name, sir",
+        "I'd really appreciate if you give me the colour of the top cable.",
+        "I'd even more so appreciate you telling me the colour of the other cable.",
+        "Thats all sorted again."
+    ]
+
+    return kb_item, utterances, 'spaceship_life_support'
