@@ -660,7 +660,7 @@ class WOZWorld(MTurkTaskWorld):
             )
         ]
         return {
-            "FORMAT-VERSION": 2,
+            "FORMAT-VERSION": 3,
             "Scenario": {
                 "Domains": sorted(
                     list({c.get("Domain") for c in self._wizard_capabilities})

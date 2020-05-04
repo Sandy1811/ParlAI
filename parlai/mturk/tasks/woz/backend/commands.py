@@ -579,6 +579,15 @@ class SelectTopicCommand(WizardCommand):
         topic = extracted_from_text.strip()
         return SelectTopicCommand(sender=sender, topic=topic)
 
+    @property
+    def event(self) -> Optional[Dict[Text, Any]]:
+        return {
+            "Agent": self._sender.id,
+            "Action": self._command_name,
+            "Topic": self.topic,
+            "UnixTime": int(time.time()),
+        }
+
 
 class RequestSuggestionsCommand(WizardCommand):
     def __init__(self, sender: Agent, query_text: Text) -> None:
