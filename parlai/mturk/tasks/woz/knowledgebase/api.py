@@ -608,6 +608,8 @@ def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Tuple[Dict[Text, A
             )
 
     res, count = api_fn(api_obj, constraint_list_to_dict(constraints))
+    if res:
+        res["api_name"] = api_name  # To track where the KB item came from; not shown in front end
     if api_schema["returns_count"]:
         return res, count
     else:

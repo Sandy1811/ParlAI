@@ -245,7 +245,8 @@ class WOZWorld(MTurkTaskWorld):
 
         self._primary_kb_item = None
         self._secondary_kb_item = None
-        self._selected_api: Optional[Text] = None
+        self._selected_api: Optional[Text] = None  # The api of the selected tab
+        self._selected_kb_item_api: Optional[Text] = None  # The api of the selected knowledge base item
         self._api_names: Optional[List[Text]] = None
 
         self._user_task_description = None
@@ -373,6 +374,7 @@ class WOZWorld(MTurkTaskWorld):
             self.knowledgebase.observe(wizard_command)
             kb_message = self.knowledgebase.act()
             self._primary_kb_item = kb_message.get("example_item")
+            self._selected_kb_item_api = self._primary_kb_item.get("api_name")
             self._secondary_kb_item = None
             self.events.append(
                 {
@@ -389,6 +391,7 @@ class WOZWorld(MTurkTaskWorld):
             return 1
         elif isinstance(wizard_command, SelectPrimaryCommand):
             self._primary_kb_item = wizard_command.item
+            self._selected_kb_item_api = wizard_command.item.get("api_name")
             self._secondary_kb_item = None
             return 0
         elif isinstance(wizard_command, SelectSecondaryCommand):
@@ -406,6 +409,13 @@ class WOZWorld(MTurkTaskWorld):
                     self.wizard,
                 )
                 return 0
+
+            api_names = [self._selected_api]
+            if self._selected_kb_item_api:
+                api_names.append(self._selected_kb_item_api)
+            else:
+                api_names.append(self._selected_api)
+
             # Get suggestions from Rasa NLU server
             (
                 suggestions,
@@ -413,7 +423,7 @@ class WOZWorld(MTurkTaskWorld):
             ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 primary_kb_item=self._primary_kb_item,
-                api_names=[self._selected_api, self._selected_api],
+                api_names=api_names,
             )
             # Warn if response template of top-ranked intent could not be filled by selected KB item
             if possibly_wrong_item_selected:
