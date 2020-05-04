@@ -405,7 +405,7 @@ class WOZWorld(MTurkTaskWorld):
             # Prevent wizards from copy/pasting entire KB item
             if "\t" in wizard_command.query:
                 send_mturk_message(
-                    "Your input cannot contain tabs. Please do not just copy/paste the knowledge base item.",
+                    "Please do not just copy/paste the knowledge base item.",
                     self.wizard,
                 )
                 return 0
