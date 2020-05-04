@@ -2,7 +2,7 @@
     "title": "Multitask",
     "name": "Party, restaurant, doctor",
     "version": 1,
-    "api_names": ["party_rsvp", "restaurant_reserve", "book_doctor_appointment"],
+    "api_names": ["party_rsvp", "restaurant_search", "restaurant_reserve", "book_doctor_appointment"],
     "db": "ride.json",
     "schema_urls": {
       "party_rsvp": "https://i.imgur.com/4Pz33hK.jpg",
