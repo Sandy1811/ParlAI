@@ -15,7 +15,7 @@
             "completion_questions": ["Did the assistant stay calm and helpful throughout the dialogue?"],
             "task_descriptions": ["Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot (not the assistant) has told you to do so. "],
             "linear_guide": [
-              "You (`HostName-1@schedule`) and your friend `HostName-2@schedule` want to organize a birthday party on `Day@schedule`. You take out your laptop and open your newly-installed personal AI assistant app. Maybe it can help? Say hello and ask it if it can help you plan the party.",
+              "You (`HostName-1@schedule`) and your friend `HostName-2@schedule` want to organize a birthday party on `Day@schedule`. You take out your laptop and open your newly-installed personal AI assistant app. Maybe it can help? Say hello and ask if it can help you plan the party.",
               "`HostName-2@schedule` says: 'I think the `PartyName@schedule` is quite nice'.",
               "FYI: You expect about `SizeLimit@schedule` people to come.",
               "It occurs to you that if the weather is nice, you might just have the party outside somewhere. Ask your assistant what the weather will be like on that weekend.",

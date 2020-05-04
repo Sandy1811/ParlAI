@@ -1,6 +1,6 @@
 {
     "title": "Multitask",
-    "name": "Arriving in town",
+    "name": "Movies and Restaurants",
     "version": 1,
     "api_names": ["movie_search", "restaurant_reserve"],
     "db": "ride.json",

@@ -1,0 +1,7 @@
+[
+  {
+    "Name": "MildInjury",
+    "Type": "Categorical",
+    "Categories": ["stomped your big toe", "cut your finger on something", "feel a stinging pain in your shoulders (you've been lifting quite heavy weights last night)"]
+  }
+]
