@@ -11,6 +11,7 @@ RASA_NLU_SERVER_PROCESS_KEY = 'nlu_server_process'
 INTENT_HELLO = 'hello'
 INTENT_ASK_NAME = 'ask_name'
 INTENT_OUT_OF_SCOPE = 'out_of_scope'
+INTENT_ANYTHING_ELSE = 'anything_else'
 
 # Intent Names for book_ride, ride_status, ride_change
 INTENT_RIDE_ASK_DESTINATION = 'ride_ask_destination'

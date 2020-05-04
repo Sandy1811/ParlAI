@@ -11,6 +11,7 @@
     "hotel_inform_rating": "The '{hotel_name:s}' has an average rating of {average_rating:d}",
     "hotel_provide_search_result": "OK, I have found the '{hotel_name:s}', located {hotel_location:s}. It is in the {price_range:s} price category and has an average rating of {average_rating:d}.",
     "hotel_ask_search_more": "Would you like to search for any more hotels?",
+    "anything_else": "Is there anything else that I can do for you?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you search for hotels.",
     "hotel_bye": "Goodbye!"
 }
