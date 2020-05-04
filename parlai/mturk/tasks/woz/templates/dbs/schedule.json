@@ -5,6 +5,26 @@
     "Categories": ["Dr. Johnson", "Dr. Morgan", "Dr. Alexis"]
   },
   {
+    "Name": "GuestName",
+    "Type": "Categorical",
+    "Categories": [
+      "John",
+      "Michael",
+      "Fred",
+      "George"
+    ]
+  },
+  {
+    "Name": "MeetingReason",
+    "Type": "Categorical",
+    "Categories": [
+      "to discuss the quarterly reports",
+      "weekly scrum planning",
+      "allocate department budgets",
+      "plan project"
+    ]
+  },
+  {
     "Name": "Name",
     "Type": "Categorical",
     "Categories": [
