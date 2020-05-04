@@ -39,6 +39,6 @@
     {
         "Name": "NearbyPOIs",
         "Type": "Categorical",
-        "Categories": "!list(combinations([\"School\", \"TrainStation\", \"Park\"], 2))"
+        "Categories": "!list(combinations([\"School\", \"TrainStation\", \"Park\", \"Museum\", \"University\", \"Club\", \"User's office\", \"User's gym\"], 2))"
     }
 ]

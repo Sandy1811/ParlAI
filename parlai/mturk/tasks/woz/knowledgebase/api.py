@@ -16,6 +16,11 @@ def is_unequal_to(value):
 def contains(value):
     return lambda x: value in x
 
+def contains_not(value):
+    return lambda x: value not in x
+
+def contains_none_of(value):
+    return lambda x: not any([e in x for e in value])
 
 def is_one_of(value):
     return lambda x: x in value
@@ -41,7 +46,7 @@ def contain_all_of(value):
 
 
 def contain_at_least_one_of(value):
-    return lambda x: all([e in value for e in x])
+    return lambda x: any([e in x for e in value])
 
 
 def is_not(constraint):
@@ -188,7 +193,10 @@ def load_db(fn):
 
 def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
     row, count = api.sample(constraints or {})
-    return row._settings, count
+    if count != 0:
+        return row._settings, count
+    else:
+        raise LookupError("Nothing found for these constraints")
 
 
 def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
@@ -577,7 +585,7 @@ def constraint_list_to_dict(constraints: List[Dict[Text, Any]]) -> Dict[Text, An
     return result
 
 
-def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[Text, Any], int], Dict[Text, Any]]:
+def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Tuple[Dict[Text, Any], int]:
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "apis", api_name + ".json"
