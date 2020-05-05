@@ -362,23 +362,22 @@ def ride_change(ride_api, constraints: Dict[Text, Any]):
 
 
 def bank_balance(bank_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "BankName": constraints["BankName"],
-    }
-    row, count = bank_api.sample(new_constraints)
+    req1 = ['AccountNumber', 'FullName', 'PIN']
+    req2 = ['FullName', 'SecurityAnswer1', 'SecurityAnswer2', 'DateOfBirth']
+    if not all(e in constraints for e in req1) and not all(e in constraints for e in req2):
+      return dict(Message="You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise."), -1
+
+    row, count = bank_api.sample({})
     return row._settings, -1
 
 
 def bank_fraud_report(bank_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "BankName": constraints["BankName"],
-    }
+    req1 = ['AccountNumber', 'FullName', 'PIN']
+    req2 = ['FullName', 'SecurityAnswer1', 'SecurityAnswer2', 'DateOfBirth']
+    if not all(e in constraints for e in req1) and not all(e in constraints for e in req2):
+      return dict(Message="You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise."), -1
 
-    row, _ = bank_api.sample(new_constraints)
-    if row is not None:
-        return {"Confirmation": "Fraud report submitted successfully."}, -1
-    else:
-        return {"Confirmation": "Error finding bank account."}, -1
+    return {"Confirmation": "Fraud report submitted successfully."}, -1
 
 
 def shopping_order_item(shopping_api, constraints: Dict[Text, Any]):
@@ -409,6 +408,24 @@ def shopping_order_status(null_api, constraints: Dict[Text, Any]):
     ]
 
     return dict(Message=random.choice(outputs)), -1
+
+def movie_trivia(null_api, constraints: Dict[Text, Any]):
+    questions = [
+["A ____ atom in an atomic clock beats 9,192,631,770 times a second", "cesium"],
+["A ____ is the blue field behind the stars", "canton"],
+["A ____ takes 33 hours to crawl one mile", "snail"],
+["A ____ written to celebrate a wedding is called a epithalamium", "poem"],
+["A 'sirocco' refers to a type of ____", "wind"],
+["A 3 1/2' floppy disk measures ____ & 1/2 inches across", "three"],
+["A 300,000 pound wedding dress made of platinum was once exhibited, and in the instructions from the designer was a warning. What was it", "do not iron"],
+["A bird in the hand is worth ____", "two in the bush"],
+["A block of compressed coal dust used as fuel", "briquette"],
+["A blockage in a pipe caused by a trapped bubble of air", "airlock"],
+["A blunt thick needle for sewing with thick thread or tape", "bodkin"]
+    ]
+    q_ind = int(constraints['QuestionNum']) - 1
+    row = questions[q_ind]
+    return dict(Question=row[0], Answer=row[1]), -1
 
 
 def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):

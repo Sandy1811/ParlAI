@@ -1,0 +1,34 @@
+{
+  "title": "Bank Fraud Report",
+  "name": "Bank Fraud Report",
+  "version": 1,
+  "api_names": ["bank_fraud_report"],
+  "db": "bank.json",
+  "schema_urls": {
+    "bank_fraud_report": "https://i.imgur.com/yGMpBRV.jpg"
+  },
+  "instructions": {
+    "User": {
+      "task_descriptions": [
+        "You are @FullName-1 and would like to submit a fraud report. @Fraud-1. Your account number is @AccountNumber-1 and your PIN is @PIN-1.",
+        "You are @FullName-1 and would like to report fraud on your bank account. @Fraud-1. Unfortunately, you don't remember your account nubmer or your PIN. Your date of birth is @DOB-1. For your security questions, your mother's maiden name is @Mother-1 and your childhood pet is @Pet-1."
+      ],
+      "completion_requirements": ["You have reported fraud for your bank account."],
+      "completion_questions": [
+        "...succesfully report fraud on your account?",
+        "...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "Authenticate the user and submit a fraud report",
+      "completion_requirements": [
+        "You succesfully submitted a fraud report for the user",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}
