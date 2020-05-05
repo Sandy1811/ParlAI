@@ -130,20 +130,37 @@ function KnowledgeBaseMessage(props) {
       if (key === 'api_name') {  // This is for internal processing only, so don't show it
         return;
       }
-      let value = exampleJson[key];
-      if (typeof value === 'boolean') {
-        value = value ? 'yes' : 'no';
-      } else if (Array.isArray(value)) {
-        value = value.join(', ');
-      }
 
       // Split CamelCase string into spaced string
       let long_key = key.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
 
+      let value = exampleJson[key];
+      if (typeof value === 'boolean') {
+        value = value ? 'yes' : 'no';
+      } else if (Array.isArray(value)) {
+        if (value.length > 3) {
+          //           ab = (key === 'Walking Instructions') ? 'a' : 'b';
+          // Long lists should be shown as numbered lists
+          return (
+            <tr valign="top" key={key}>
+              <td style={{ paddingRight: 10 }}>{long_key}:</td>
+              <td width="400px">
+                <ol>
+                  { value.map((el) => (<li>{el.trim()}</li>)) }
+                </ol>
+              </td>
+            </tr>
+          );
+        } else {
+          // Short lists are comma separated
+          value = value.join(', ');
+        }
+      }
+
       return (
-        <tr key={key}>
+        <tr valign="top" key={key}>
           <td style={{ paddingRight: 10 }}>{long_key}:</td>
-          <td>{value}</td>
+          <td width="400px">{value}</td>
         </tr>
       );
     });
