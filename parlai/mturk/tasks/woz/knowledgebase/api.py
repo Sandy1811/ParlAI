@@ -71,6 +71,10 @@ class KnowledgeBaseItem:
     def __eq__(self, other: "KnowledgeBaseItem") -> bool:
         return self._id == other._id
 
+    @property
+    def properties(self) -> Dict[Text, Any]:
+        return self._settings
+
     def match(self, constraints: Dict[Text, Any]) -> bool:
         for parameter_name, constraint in constraints.items():
             row_value = self._settings.get(parameter_name)
@@ -200,23 +204,26 @@ def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
 
 
 def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
-    if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
-
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     new_constraints = {
         "Name": constraints["Name"],
         "TakesReservations": True,
         "MaxPartySize": is_greater_than(constraints["PartySize"]),
-        "OpenTimeHour": is_less_than(constraints["Time"]),
-        "CloseTimeHour": is_greater_than(constraints["Time"]),
+        "OpenTimeHour": is_at_most(constraints["Time"]),
+        "CloseTimeHour": is_at_least(constraints["Time"]),
     }
 
     row, _ = restaurant_api.sample(new_constraints)
-    if row is None:
-        return {"ReservationStatus": outputs[1]}, -1
+    if constraints["RequestType"] == "Book":
+        if row is None:
+            return {"ReservationStatus": outputs[1], "RestaurantName": row.properties.get("Name")}, -1
+        else:
+            return {"ReservationStatus": random.choice(outputs), "RestaurantName": row.properties.get("Name")}, -1
     else:
-        return {"ReservationStatus": random.choice(outputs)}, -1
+        return {
+            "Message": random.choice(["Available", "Unavailable"]),
+            "RestaurantName": row.properties.get("Name")
+        }, -1
 
 
 def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
