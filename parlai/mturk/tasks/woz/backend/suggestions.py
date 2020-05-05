@@ -121,7 +121,7 @@ class WizardSuggestion:
                 break
 
         if len(suggestions) == 0:
-            suggestions.append(wizard_utterance)
+            suggestions.append((wizard_utterance, 1.))
 
         if possibly_wrong_item_selected is None or not api_name:
             possibly_wrong_item_selected = False
@@ -211,17 +211,19 @@ if __name__ == '__main__':
     #test_items = ['get_apartment_search_item', 'get_book_apartment_viewing_item',
     #              'get_book_doctor_appointment_item', 'get_followup_doctor_appointment_item',
     #              'get_spaceship_access_codes_item', 'get_spaceship_life_support_item']
+    start_nlu_server = False
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
-                          start_nlu_servers=True)
+                          start_nlu_servers=start_nlu_server)
 
     for scen, ti in zip(scenarios, test_items):
         print(f'---- {scen} ----')
         kb_item, utterances, scenario = getattr(static_test_assets, ti)()
-        ws.poll_nlu_server(scenario=scenario)
+        if start_nlu_server:
+            ws.poll_nlu_server(scenario=scenario)
         for utterance in utterances:
             # Use rasa to get an intent label
             suggestions = ws.get_suggestions(wizard_utterance=utterance, primary_kb_item=kb_item,
-                                             api_names=[scen], merge_by_confidence=True)
+                                             api_names=[scen], merge_by_confidence=False)
 
             print(f'Suggestions for "{utterance}": {suggestions}')
             print('----------------------------------------------')

@@ -7,12 +7,13 @@ import os
 import random
 import string
 
+from parlai import PROJECT_PATH
 from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
 
-template_dir = 'templates/'
-scenario_dir = 'scenarios/'
-scenario_file = 'scenarios/all_scenarios.txt'
-db_dir = 'templates/dbs/'
+template_dir = os.path.join(PROJECT_PATH, 'parlai/mturk/tasks/woz/templates/')
+scenario_dir = os.path.join(PROJECT_PATH, 'parlai/mturk/tasks/woz/scenarios/')
+scenario_file = os.path.join(PROJECT_PATH, 'parlai/mturk/tasks/woz/scenarios/all_scenarios.txt')
+db_dir = os.path.join(PROJECT_PATH, 'parlai/mturk/tasks/woz/templates/dbs/')
 scenarios_per = 5
 
 def sample(parameter):
@@ -59,6 +60,8 @@ if __name__ == '__main__':
   for fn in os.listdir(template_dir):
     if not fn.endswith('json'):
       continue
+
+    print(f'Processing {fn}...')
 
     template = json.load(open(template_dir + fn))
     for i,desc in enumerate(template['instructions']['User']['task_descriptions']):
