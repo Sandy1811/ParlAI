@@ -121,7 +121,7 @@ class WizardSuggestion:
                 break
 
         if len(suggestions) == 0:
-            suggestions.append(wizard_utterance)
+            suggestions.append((wizard_utterance, 1.))
 
         if possibly_wrong_item_selected is None or not api_name:
             possibly_wrong_item_selected = False
