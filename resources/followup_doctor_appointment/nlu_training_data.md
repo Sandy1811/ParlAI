@@ -56,6 +56,17 @@
 - Dr. Roberts instructs you to give it another day and call back if you're still feeling ill.
 - Dr. Alexis recommends you stay home and put the heater on and drink lots of water.
 
+## intent:anything_else
+- Anything else I can help you with?
+- Is there anything else you would like me to do?
+- Can I help you with anything else today?
+- Something other I can do for you today?
+- Is there some more that you would like me to do?
+- Do you need my help for another matter?
+- Anything else?
+- Anymore I can do for you?
+- Is there anything else I can do for you?
+
 ## intent:out_of_scope
 - I'm sorry, but what?
 - I don't understand that sorry

@@ -15,6 +15,10 @@ def fill_out_of_scope(intent2reply, *_):
     return intent2reply[constants.INTENT_OUT_OF_SCOPE]
 
 
+def fill_anything_else(intent2reply, *_):
+    return intent2reply[constants.INTENT_ANYTHING_ELSE]
+
+
 def fill_ride_ask_destination(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_ASK_DESTINATION]
 

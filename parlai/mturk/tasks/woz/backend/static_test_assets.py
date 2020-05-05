@@ -20,7 +20,9 @@ def get_book_ride_item():
         'where do you like to go, sir?',
         'thats all booked for you now.',
         'Your car will arrive in 34 minutes and your driver will be Carl in some old car. He is from Uber btw.',
-        'i can filter for another service provider if you want'
+        'i can filter for another service provider if you want',
+        'What else can I help you with?',
+        'Want anything else?'
     ]
 
     return kb_item, utterances, 'book_ride'

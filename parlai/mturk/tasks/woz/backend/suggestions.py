@@ -121,7 +121,7 @@ class WizardSuggestion:
                 break
 
         if len(suggestions) == 0:
-            suggestions.append(wizard_utterance)
+            suggestions.append((wizard_utterance, 1.))
 
         if possibly_wrong_item_selected is None or not api_name:
             possibly_wrong_item_selected = False
@@ -204,12 +204,13 @@ if __name__ == '__main__':
 
     #scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status']
     #scenarios = ['party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search']
-    #scenarios = ['book_ride', 'hotel_search']
-    scenarios = ['apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
-                 'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support']
-    test_items = ['get_apartment_search_item', 'get_book_apartment_viewing_item',
-                  'get_book_doctor_appointment_item', 'get_followup_doctor_appointment_item',
-                  'get_spaceship_access_codes_item', 'get_spaceship_life_support_item']
+    scenarios = ['book_ride']
+    test_items = ['get_book_ride_item']
+    #scenarios = ['apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
+    #             'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support']
+    #test_items = ['get_apartment_search_item', 'get_book_apartment_viewing_item',
+    #              'get_book_doctor_appointment_item', 'get_followup_doctor_appointment_item',
+    #              'get_spaceship_access_codes_item', 'get_spaceship_life_support_item']
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
                           start_nlu_servers=True)
 

@@ -9,5 +9,6 @@
     "doctor_inform_booking_unavailable": "Unfortunately there is no appointment available at that time.",
     "doctor_inform_booking_available": "Alright, the doctor is available at your requested time. Can I book the appointment for you?",
     "doctor_inform_booking_successful": "Great, the appointment is booked for you!",
+    "anything_else": "Is there anything else that I can do for you?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you book an appointment with your doctor."
 }
