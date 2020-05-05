@@ -374,7 +374,7 @@ class WOZWorld(MTurkTaskWorld):
             self.knowledgebase.observe(wizard_command)
             kb_message = self.knowledgebase.act()
             self._primary_kb_item = kb_message.get("example_item")
-            self._selected_kb_item_api = self._primary_kb_item.get("api_name")
+            self._selected_kb_item_api = None if not self._primary_kb_item else self._primary_kb_item.get("api_name")
             self._secondary_kb_item = None
             self.events.append(
                 {

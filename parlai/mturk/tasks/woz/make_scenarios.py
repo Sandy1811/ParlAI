@@ -142,6 +142,7 @@ if __name__ == '__main__':
         template = json.load(open(template_dir + fn))
         for i, desc in enumerate(template['instructions']['User']['task_descriptions']):
             for j in range(scenarios_per):
+                dc = DatabaseCollection()
                 new_scenario = copy.deepcopy(template)
                 del new_scenario['instructions']['User']['task_descriptions']
                 new_scenario['instructions']['User']['task_description'] = populate(
@@ -149,11 +150,10 @@ if __name__ == '__main__':
                 )
                 new_scenario['instructions']['Wizard'][
                     'task_description'
-                ] = new_scenario['instructions']['Wizard']['task_description'].replace(
+                ] = dc.populate(new_scenario['instructions']['Wizard']['task_description'].replace(
                     "@wizard-tutorial-url", WIZARD_TUTORIAL_URL
-                )
+                ))
                 if "linear_guide" in new_scenario['instructions']['User']:
-                    dc = DatabaseCollection()
                     new_scenario['instructions']['User']["linear_guide"] = [
                         dc.populate(instruction)
                         for instruction in new_scenario['instructions']['User'][

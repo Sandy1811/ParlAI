@@ -18,5 +18,15 @@
     "Name": "SmallNumber",
     "Type": "Categorical",
     "Categories": ["one", "two", "three"]
+  },
+  {
+    "Name": "RasonEarlyArrival",
+    "Type": "Categorical",
+    "Categories": ["you could meet our new client for lunch", "you could check up on our new office over there"]
+  },
+  {
+    "Name": "MessageAtWork",
+    "Type": "Categorical",
+    "Categories": ["You get a text from your supervisor", "Your colleague walks by and says"]
   }
 ]
