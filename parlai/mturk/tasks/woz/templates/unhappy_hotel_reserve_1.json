@@ -20,8 +20,6 @@
       "linear_guide": [
         null,
         null,
-        null,
-        null,
         "You don't trust average ratings and had the experience that anything below an average of 5 is a waste of money. Make sure to only book a room if the average rating is 5.\nIf the assistant can't find a hotel with such a rating, tell the assistant you don't want to proceed with the booking."
       ],
       "completion_requirements": [

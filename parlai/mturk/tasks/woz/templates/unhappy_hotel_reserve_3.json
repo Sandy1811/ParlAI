@@ -20,8 +20,7 @@
       "linear_guide": [
         null,
         null,
-        null,
-        "You remember that 5 years ago you stayed at the Castle Inn and it was amazing. Make sure to book this hotel. If your request can't be fulfilled tell the assistant you don't want to proceed with the booking."
+        "You remember that 5 years ago, the '@Name-1' was overbooked and they cancelled your booking without notifying you. Instead you stayed at the Castle Inn, which was amazing. Make sure to book this hotel. If your request can't be fulfilled tell the assistant you don't want to proceed with the booking."
       ],
       "completion_requirements": [
         "You have reserved a hotel or found that none is available."

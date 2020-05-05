@@ -20,9 +20,9 @@
       "linear_guide": [
         null,
         null,
-        "You remember that your friend recommended the '@Name-2'. Tell the assistant you've changed your mind and want to stay at '@Name-2'.",
+        "You remember that your friend recommended the Name-2@hotel. Tell the assistant you've changed your mind and want to stay at Name-2@hotel.",
         null,
-        "Actually, you recall that your friend stayed at '@Name-2' in another town. However you've read on a blog that '@Name-4' is by long and far the most authentic one. Tell the assistant you've changed your mind and want to stay at '@Name-4'."
+        "Actually, you recall that your friend stayed at Name-2@hotel in another town. However you've read on a blog that Name-4@hotel is by long and far the most authentic one. Tell the assistant you've changed your mind and want to stay at Name-4@hotel."
       ],
       "completion_requirements": [
         "You have reserved a hotel or found that none is available."

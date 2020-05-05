@@ -20,7 +20,7 @@
       "linear_guide": [
         null,
         null,
-        "The Center is typically very noisy make sure to avoid a hotel there. If your request can't be fulfilled tell the assistant you don't want to proceed with the booking.",
+        "The Center is typically very noisy make sure to check that '@Name-1' is not in the Center. If your request can't be fulfilled tell the assistant you don't want to proceed with the booking.",
         "You don't like international chains such as the Hilton or the Hyatt, make sure to avoid them and pick a indie local one. If your request can't be fulfilled tell the assistant you don't want to proceed with the booking.",
         "Unless there is service until midnight, you don't want the hotel either. If your request can't be fulfilled tell the assistant you don't want to proceed with the booking."
       ],
