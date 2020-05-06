@@ -264,19 +264,40 @@ function CompleteButton(props) {
     );
   }
 
-  const realMessageCount = props.messages.filter(
-    msg =>
-      msg.text !== '' &&
-      msg.command == null &&
-      !msg.text.startsWith('<') &&
-      msg.id !== 'MTurk System'
-  ).length;
+  let userMessageCount;
+  if (!props.messages) {
+    userMessageCount = 0;
+  } else {
+    userMessageCount = props.messages.filter(
+      msg =>
+        msg.text !== '' &&
+        msg.command == null &&
+        !msg.text.startsWith('<') &&
+        msg.id === 'User'
+    ).length;
+  }
+
+  // Find the last setup message
+  const setupMessage = findLast(
+    props.messages,
+    msg => msg.command === 'setup' && msg.form_description != null
+  );
+  let min_user_turns;
+  if (!setupMessage) {
+    min_user_turns = 0;
+  } else {
+    if (!setupMessage.min_user_turns) {
+      min_user_turns = 0;
+    } else {
+      min_user_turns = setupMessage.min_user_turns;
+    }
+  }
 
   if (props.agent_id === 'User') {
       return (
         <Button
           className="btn btn-primary"
-          disabled={props.chat_state !== 'text_input'}
+          disabled={props.chat_state !== 'text_input' || userMessageCount < min_user_turns}
           onClick={() => {
             props.onMessageSend('<complete>', {}, () =>
               console.log('sent complete')

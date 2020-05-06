@@ -440,8 +440,8 @@ class WOZWorld(MTurkTaskWorld):
             self.wizard.observe(wizard_command.message)
             self.user.observe(wizard_command.message)
             self._num_wizard_utterances += 1
-            if "goodbye" in wizard_command.message.get("text", "").lower():
-                self._end_dialogue_by_wizard()
+            # if "goodbye" in wizard_command.message.get("text", "").lower():
+            #     self._end_dialogue_by_wizard()
             return 1
         else:
             print_and_log(

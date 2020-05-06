@@ -341,6 +341,7 @@ class SetupCommand(BackendCommand):
             "completion_requirements": self._completion_requirements,
             "completion_questions": self._completion_questions,
             "form_description": self._form_description,
+            "min_user_turns": len(self._user_linear_guide) if self._user_linear_guide else 0
         }
 
     @staticmethod
