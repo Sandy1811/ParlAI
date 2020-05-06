@@ -181,6 +181,7 @@ INTENT_TRIP_INFORM_LAST_STEP_AND_DONE = 'trip_inform_last_step_and_done'
 INTENT_TRIVIA_ASK_QUESTION_NUMBER = 'trivia_ask_question_number'
 INTENT_TRIVIA_ASK_QUESTION = 'trivia_ask_question'
 INTENT_TRIVIA_INFORM_ANSWER_ASK_NEXT = 'trivia_inform_answer_ask_next'
+INTENT_TRIVIA_INFORM_ANSWER_2_ASK_NEXT = 'trivia_inform_answer_2_ask_next'
 INTENT_TRIVIA_BYE = 'trivia_bye'
 
 # Intents for weather

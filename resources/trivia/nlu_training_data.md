@@ -52,6 +52,18 @@
 - Your answer was wrong. Do you want to move on to the next question?
 - You got it wrong. Would you like another question?
 
+## intent:trivia_inform_answer_2_ask_next
+- The correct answer would have been "blue". Would you like to proceed to the next question?
+- The answer to the question would have been "yellow". Do you want another question?
+- "abc" would have been the right answer. Do you want more?
+- OK, this was a tricky one, the answer would have been "yes". Would you like some more questions?
+- The answer to this question would have been "cesium". Would you like to proceed?
+- The right answer would have been "Johnny Bravo". Can I ask you another question?
+- The expected answer would have been "a poem". Would you like to try another question?
+- The answer would have been "not this time". More questions?
+- "123" would have answered that question. Do you want another question?
+- There was only one right answer, "the inner yard", would you like another question?
+
 ## intent:trivia_bye
 - Perfect!
 - okay good bye

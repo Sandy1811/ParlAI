@@ -668,6 +668,15 @@ def fill_trivia_inform_answer_ask_next(intent2reply, kb_item):
     )
 
 
+def fill_trivia_inform_answer_2_ask_next(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['CorrectAnswer']):
+        return None
+
+    return intent2reply[constants.INTENT_TRIVIA_INFORM_ANSWER_2_ASK_NEXT].format(
+        answer=kb_item['CorrectAnswer']
+    )
+
+
 def fill_trivia_bye(intent2reply, *_):
     return intent2reply[constants.INTENT_TRIVIA_BYE]
 
