@@ -89,13 +89,15 @@ class DatabaseCollection:
             with open(filename, "r", encoding="utf-8") as file:
                 self.databases[db_name] = json.load(file)
 
-    def _new_sample(self, db_name: Text, slot_name: Text):
+    def _new_sample(self, db_name: Text, slot_name: Text, variation: int) -> Text:
         self._load_db_if_necessary(db_name)
         db_params = {param["Name"]: param for param in self.databases[db_name]}
         candidate_sample = None
-        while not candidate_sample or candidate_sample in self.filled_slots[slot_name]:
-            candidate_sample = sample(db_params.get(slot_name))
-        self.filled_slots[slot_name].append(candidate_sample)
+        while len(self.filled_slots[db_name+slot_name]) < variation + 1:
+            while not candidate_sample or candidate_sample in self.filled_slots[db_name+slot_name]:
+                candidate_sample = sample(db_params.get(slot_name))
+            self.filled_slots[db_name+slot_name].append(candidate_sample)
+        assert candidate_sample
         return candidate_sample
 
     def _existing_sample(
@@ -103,12 +105,12 @@ class DatabaseCollection:
     ) -> Optional[Text]:
         if db_name not in self.databases:
             return None
-        elif slot_name not in self.filled_slots:
+        elif db_name+slot_name not in self.filled_slots:
             return None
-        elif len(self.filled_slots[slot_name]) < variation + 1:
+        elif len(self.filled_slots[db_name+slot_name]) < variation + 1:
             return None
         else:
-            return self.filled_slots[slot_name][variation]
+            return self.filled_slots[db_name+slot_name][variation]
 
     def get_value(self, slot: Text, db_name: Text) -> Text:
         if re.match(r".+\-\d+", slot):
@@ -120,7 +122,7 @@ class DatabaseCollection:
 
         result = self._existing_sample(db_name, name, variation)
         if not result:
-            result = self._new_sample(db_name, name)
+            result = self._new_sample(db_name, name, variation)
 
         return result
 
