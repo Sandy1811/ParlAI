@@ -28,5 +28,13 @@
     "Name": "MessageAtWork",
     "Type": "Categorical",
     "Categories": ["You get a text from your supervisor", "Your colleague walks by and says"]
+  },
+  {
+    "Name": "CommentAboutFood",
+    "Type": "Categorical",
+    "Categories": [
+      "Remember Jenny was always so fond of this Thai place? I just checked it out, but man... my stomach absolutely cannot handle Thai food. Never again!",
+      "Pedro and I just had the most delicious Indian food ever! Chicken Tikka Masala! (not sure if I spell this right) I want to eat nothing else for the rest of my days! :D"
+    ]
   }
 ]

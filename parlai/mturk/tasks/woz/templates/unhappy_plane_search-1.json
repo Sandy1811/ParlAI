@@ -9,9 +9,6 @@
     },
     "instructions": {
         "User": {
-            "completion_requirements": ["The MTurk Assistant says you can end the conversation."],
-            "completion_questions": ["Did the assistant stay calm and helpful throughout the dialogue?"],
-            "task_descriptions": ["Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot (not the assistant) has told you to do so. "],
             "linear_guide": [
               "You (`CustomerName@plane`) need to attend a conference in `City-1@plane` on `Date-1@plane` June. Ask your new personal AI assistant to help you find a flight!",
               "You'll be departing from `City-2@plane` and should look for economy class with `Airline-1@plane` Airlines (you don't want to book yet).",

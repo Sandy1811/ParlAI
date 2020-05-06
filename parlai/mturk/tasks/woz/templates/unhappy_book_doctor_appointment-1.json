@@ -4,9 +4,6 @@
     "db": "ride.json",
     "instructions": {
         "User": {
-            "completion_requirements": ["The MTurk Assistant says you can end the conversation."],
-            "completion_questions": ["Did the assistant stay calm and helpful throughout the dialogue?"],
-            "task_descriptions": ["Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot (not the assistant) has told you to do so. "],
             "linear_guide": [
               "You (`PersonName-1@schedule`) have had a `Symptoms@schedule` for two days now. Perhaps you should see a doctor? Say hello to your new personal AI assistant and ask for help.",
               "Yes, perhaps you should get an appointment. Your GP is `DoctorName@schedule` and right now it is `Day@schedule`, `StartTimeHour@schedule` o'clock. The earlier the better!",

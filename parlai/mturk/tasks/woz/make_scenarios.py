@@ -8,6 +8,7 @@ import random
 import string
 from typing import Optional, Text
 
+from parlai.mturk.tasks.woz.backend.commands import DEFAULT_USER_INSTRUCTION
 from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
 
 template_dir = 'templates/'
@@ -140,11 +141,16 @@ if __name__ == '__main__':
             continue
 
         template = json.load(open(template_dir + fn))
-        for i, desc in enumerate(template['instructions']['User']['task_descriptions']):
+        if "task_descriptions" in template['instructions']['User']:
+            task_descriptions = template['instructions']['User']['task_descriptions']
+        else:
+            task_descriptions = [DEFAULT_USER_INSTRUCTION]
+        for i, desc in enumerate(task_descriptions):
             for j in range(scenarios_per):
                 dc = DatabaseCollection()
                 new_scenario = copy.deepcopy(template)
-                del new_scenario['instructions']['User']['task_descriptions']
+                if "task_descriptions" in template['instructions']['User']:
+                    del new_scenario['instructions']['User']['task_descriptions']
                 new_scenario['instructions']['User']['task_description'] = populate(
                     desc, db_dir + template['db']
                 )
