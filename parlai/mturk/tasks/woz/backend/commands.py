@@ -32,6 +32,23 @@ DEFAULT_SCHEMA_URLS = {
     "trivia": "https://i.imgur.com/BpikQBG.jpg",
 }
 
+DEFAULT_USER_INSTRUCTION = (
+    "Follow the instructions and comments of the MTurk System bot (darker yellow boxes in the dialogue). "
+    "Do not end the dialogue before the MTurk System bot (not the assistant) has told you to do so. "
+)
+
+DEFAULT_WIZARD_INSTRUCTION = "Follow the flow chart(s) and help the user."
+
+DEFAULT_USER_COMPLETION_QUESTIONS = [
+    "Did the assistant stay calm and helpful throughout the dialogue?"
+]
+
+DEFAULT_WIZARD_COMPLETION_QUESTIONS = [
+    "Did the user change his/her mind about what he/she wants at any time?",
+    "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
+    "Where you unsure about what to do at any time? (Feel free to send us an email with details.)",
+]
+
 
 def all_constants():
     global __all_constants
@@ -282,7 +299,7 @@ class SetupCommand(BackendCommand):
                 with open(api_file_name, "r") as file:
                     api_description = json.load(file)
                 form_description[api_name] = api_description
-                schema_url = scenario["schema_urls"].get(api_name)
+                schema_url = scenario.get("schema_urls", {}).get(api_name)
                 if not schema_url:
                     schema_url = DEFAULT_SCHEMA_URLS.get(api_name, image_not_found_url)
                 form_description[api_name]["schema_url"] = schema_url
@@ -296,14 +313,22 @@ class SetupCommand(BackendCommand):
                     }
                 )
 
-            self._task_description = scenario["instructions"][role]["task_description"]
-            self._completion_requirements = scenario["instructions"][role][
-                "completion_requirements"
-            ]
+            if role == "User":
+                self._task_description = scenario["instructions"]["User"].get(
+                    "task_description", DEFAULT_USER_INSTRUCTION
+                )
+                self._completion_questions = scenario["instructions"]["User"].get(
+                    "completion_questions", DEFAULT_USER_COMPLETION_QUESTIONS
+                )
+            else:
+                self._task_description = scenario["instructions"][role].get(
+                    "task_description", DEFAULT_WIZARD_INSTRUCTION
+                )
+                self._completion_questions = scenario["instructions"][role].get(
+                    "completion_questions", DEFAULT_WIZARD_COMPLETION_QUESTIONS
+                )
             self._form_description = form_description
-            self._completion_questions = scenario["instructions"][role][
-                "completion_questions"
-            ]
+
             self._role = role
             self._user_linear_guide = scenario["instructions"]["User"].get(
                 "linear_guide"
@@ -338,10 +363,12 @@ class SetupCommand(BackendCommand):
             "text": "",
             "command": self._command_name,
             "task_description": self._task_description,
-            "completion_requirements": self._completion_requirements,
+            "completion_requirements": [],  # No longer used
             "completion_questions": self._completion_questions,
             "form_description": self._form_description,
-            "min_user_turns": len(self._user_linear_guide) if self._user_linear_guide else 0
+            "min_user_turns": len(self._user_linear_guide)
+            if self._user_linear_guide
+            else 0,
         }
 
     @staticmethod
