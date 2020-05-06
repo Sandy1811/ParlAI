@@ -5,7 +5,7 @@
   "version": 1,
   "api_names": ["weather"],
   "schema_urls": {
-    "party_rsvp": "https://i.imgur.com/yVozOzY.jpg"
+    "weather": "https://i.imgur.com/yVozOzY.jpg"
   },
   "instructions": {
     "User": {
