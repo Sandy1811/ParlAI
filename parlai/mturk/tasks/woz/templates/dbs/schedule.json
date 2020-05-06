@@ -5,6 +5,26 @@
     "Categories": ["Dr. Johnson", "Dr. Morgan", "Dr. Alexis"]
   },
   {
+    "Name": "GuestName",
+    "Type": "Categorical",
+    "Categories": [
+      "John",
+      "Michael",
+      "Fred",
+      "George"
+    ]
+  },
+  {
+    "Name": "MeetingReason",
+    "Type": "Categorical",
+    "Categories": [
+      "to discuss the quarterly reports",
+      "weekly scrum planning",
+      "allocate department budgets",
+      "plan project"
+    ]
+  },
+  {
     "Name": "Name",
     "Type": "Categorical",
     "Categories": [
@@ -29,6 +49,11 @@
     "Name": "PartyName",
     "Type": "Categorical",
     "Categories": ["Southside Venue", "North Heights Venue", "West Bay Venue"]
+  },
+  {
+    "Name": "PartyNamePieces",
+    "Type": "Categorical",
+    "Categories": ["south", "high or above", "bay"]
   },
   {
     "Name": "ApartmentName",

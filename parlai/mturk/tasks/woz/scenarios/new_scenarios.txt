@@ -1,0 +1,7 @@
+mix_trip+ride+restaurant+hotel_v0
+unhappy_apartment_search-2_v0
+mix_movie+restaurant_v1
+unhappy_apartment_search-1_v0
+mix_ride+hotel_v1
+mix_party+restaurant+weather_v0
+mix_party+restaurant+doctor_v0

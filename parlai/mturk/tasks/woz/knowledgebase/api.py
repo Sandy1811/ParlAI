@@ -16,6 +16,11 @@ def is_unequal_to(value):
 def contains(value):
     return lambda x: value in x
 
+def contains_not(value):
+    return lambda x: value not in x
+
+def contains_none_of(value):
+    return lambda x: not any([e in x for e in value])
 
 def is_one_of(value):
     return lambda x: x in value
@@ -41,7 +46,7 @@ def contain_all_of(value):
 
 
 def contain_at_least_one_of(value):
-    return lambda x: all([e in value for e in x])
+    return lambda x: any([e in x for e in value])
 
 
 def is_not(constraint):
@@ -65,6 +70,10 @@ class KnowledgeBaseItem:
 
     def __eq__(self, other: "KnowledgeBaseItem") -> bool:
         return self._id == other._id
+
+    @property
+    def properties(self) -> Dict[Text, Any]:
+        return self._settings
 
     def match(self, constraints: Dict[Text, Any]) -> bool:
         for parameter_name, constraint in constraints.items():
@@ -188,27 +197,33 @@ def load_db(fn):
 
 def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
     row, count = api.sample(constraints or {})
-    return row._settings, count
+    if count != 0:
+        return row._settings, count
+    else:
+        raise LookupError("Nothing found for these constraints")
 
 
 def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
-    if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
-
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     new_constraints = {
         "Name": constraints["Name"],
         "TakesReservations": True,
         "MaxPartySize": is_greater_than(constraints["PartySize"]),
-        "OpenTimeHour": is_less_than(constraints["Time"]),
-        "CloseTimeHour": is_greater_than(constraints["Time"]),
+        "OpenTimeHour": is_at_most(constraints["Time"]),
+        "CloseTimeHour": is_at_least(constraints["Time"]),
     }
 
     row, _ = restaurant_api.sample(new_constraints)
-    if row is None:
-        return {"ReservationStatus": outputs[1]}, -1
+    if constraints["RequestType"] == "Book":
+        if row is None:
+            return {"ReservationStatus": outputs[1], "RestaurantName": row.properties.get("Name")}, -1
+        else:
+            return {"ReservationStatus": random.choice(outputs), "RestaurantName": row.properties.get("Name")}, -1
     else:
-        return {"ReservationStatus": random.choice(outputs)}, -1
+        return {
+            "Message": random.choice(["Available", "Unavailable"]),
+            "RestaurantName": row.properties.get("Name")
+        }, -1
 
 
 def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
@@ -347,23 +362,22 @@ def ride_change(ride_api, constraints: Dict[Text, Any]):
 
 
 def bank_balance(bank_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "BankName": constraints["BankName"],
-    }
-    row, count = bank_api.sample(new_constraints)
+    req1 = ['AccountNumber', 'FullName', 'PIN']
+    req2 = ['FullName', 'SecurityAnswer1', 'SecurityAnswer2', 'DateOfBirth']
+    if not all(e in constraints for e in req1) and not all(e in constraints for e in req2):
+      return dict(Message="You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise."), -1
+
+    row, count = bank_api.sample({})
     return row._settings, -1
 
 
 def bank_fraud_report(bank_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "BankName": constraints["BankName"],
-    }
+    req1 = ['AccountNumber', 'FullName', 'PIN']
+    req2 = ['FullName', 'SecurityAnswer1', 'SecurityAnswer2', 'DateOfBirth']
+    if not all(e in constraints for e in req1) and not all(e in constraints for e in req2):
+      return dict(Message="You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise."), -1
 
-    row, _ = bank_api.sample(new_constraints)
-    if row is not None:
-        return {"Confirmation": "Fraud report submitted successfully."}, -1
-    else:
-        return {"Confirmation": "Error finding bank account."}, -1
+    return {"Confirmation": "Fraud report submitted successfully."}, -1
 
 
 def shopping_order_item(shopping_api, constraints: Dict[Text, Any]):
@@ -394,6 +408,24 @@ def shopping_order_status(null_api, constraints: Dict[Text, Any]):
     ]
 
     return dict(Message=random.choice(outputs)), -1
+
+def movie_trivia(null_api, constraints: Dict[Text, Any]):
+    questions = [
+["A ____ atom in an atomic clock beats 9,192,631,770 times a second", "cesium"],
+["A ____ is the blue field behind the stars", "canton"],
+["A ____ takes 33 hours to crawl one mile", "snail"],
+["A ____ written to celebrate a wedding is called a epithalamium", "poem"],
+["A 'sirocco' refers to a type of ____", "wind"],
+["A 3 1/2' floppy disk measures ____ & 1/2 inches across", "three"],
+["A 300,000 pound wedding dress made of platinum was once exhibited, and in the instructions from the designer was a warning. What was it", "do not iron"],
+["A bird in the hand is worth ____", "two in the bush"],
+["A block of compressed coal dust used as fuel", "briquette"],
+["A blockage in a pipe caused by a trapped bubble of air", "airlock"],
+["A blunt thick needle for sewing with thick thread or tape", "bodkin"]
+    ]
+    q_ind = int(constraints['QuestionNum']) - 1
+    row = questions[q_ind]
+    return dict(Question=row[0], Answer=row[1]), -1
 
 
 def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):
@@ -493,7 +525,7 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
         "The venue is booked at that time. Try another meeting time or another venue."
     ]
     size_outputs = [
-        "Your event has been successfuly scheduled.",
+        "Your event has been successfully scheduled.",
         "The venue is too small for your party. Try another venue."
     ]
 
@@ -577,7 +609,7 @@ def constraint_list_to_dict(constraints: List[Dict[Text, Any]]) -> Dict[Text, An
     return result
 
 
-def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[Text, Any], int], Dict[Text, Any]]:
+def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Tuple[Dict[Text, Any], int]:
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "apis", api_name + ".json"
@@ -600,6 +632,8 @@ def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[T
             )
 
     res, count = api_fn(api_obj, constraint_list_to_dict(constraints))
+    if res:
+        res["api_name"] = api_name  # To track where the KB item came from; not shown in front end
     if api_schema["returns_count"]:
         return res, count
     else:

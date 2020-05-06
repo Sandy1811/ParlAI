@@ -140,7 +140,6 @@ class WizardSuggestion:
         top_n_per_scenario = 2 # overrides num_suggestions
     ) -> Tuple[List[Text], bool]:
 
-        top_suggestions = []
         suggestions_by_scenario = {}
         for api_name in api_names:
             suggestions, possibly_wrong = self._suggestion_for_api_name(
@@ -167,7 +166,7 @@ class WizardSuggestion:
 
         possibly_wrong_item_selected = len(top_suggestions) <= 0 or len(suggestions_by_scenario) <= 0
         if len(top_suggestions) == 0:
-            top_suggestions.append(wizard_utterance)
+            top_suggestions = [wizard_utterance]
 
         return top_suggestions, possibly_wrong_item_selected
 
