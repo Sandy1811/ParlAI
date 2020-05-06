@@ -14,7 +14,7 @@ done
 RASA_VERSION_STRING=($(rasa --version))
 RASA_VERSION=${RASA_VERSION_STRING[1]}
 
-for DIR_NAME in "book_ride" "hotel_reserve" "hotel_search" "party_plan" "party_rsvp" "plane_reserve" "plane_search" "restaurant_reserve" "restaurant_search" "ride_change" "ride_status" "apartment_search" "book_apartment_viewing" "book_doctor_appointment" "followup_doctor_appointment" "spaceship_access_codes" "spaceship_life_support"; do
+for DIR_NAME in "trivia"; do #"book_ride" "hotel_reserve" "hotel_search" "party_plan" "party_rsvp" "plane_reserve" "plane_search" "restaurant_reserve" "restaurant_search" "ride_change" "ride_status" "apartment_search" "book_apartment_viewing" "book_doctor_appointment" "followup_doctor_appointment" "spaceship_access_codes" "spaceship_life_support" "bank_balance" "bank_fraud_report" "hotel_service_request" "schedule_meeting" "trip_directions" "trivia" "weather"; do
 
   TRAINED_MODEL_FILE=$RESOURCES_DIR/$DIR_NAME/"rasa-v"$RASA_VERSION"_nlu-"$DIR_NAME".tar.gz"
 

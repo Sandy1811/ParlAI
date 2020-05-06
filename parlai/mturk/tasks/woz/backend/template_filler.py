@@ -214,6 +214,31 @@ def fill_hotel_reservation_failed(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_RESERVATION_FAILED]
 
 
+def fill_hotel_ask_room_number(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_ROOM_NUMBER]
+
+
+def fill_hotel_ask_service_request(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_SERVICE_REQUEST]
+
+
+def fill_hotel_ask_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_ASK_TIME]
+
+
+def fill_hotel_inform_service_request_successful(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['RoomNumber', 'Time']):
+        return None
+
+    return intent2reply[constants.INTENT_HOTEL_INFORM_SERVICE_REQUEST_SUCCESSFUL].format(
+        room_number=kb_item['RoomNumber'], time=kb_item['Time']
+    )
+
+
+def fill_hotel_inform_service_request_failed(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_INFORM_SERVICE_REQUEST_FAILED]
+
+
 def fill_plane_ask_flight_id(intent2reply, *_):
     return intent2reply[constants.INTENT_PLANE_ASK_FLIGHT_ID]
 
@@ -315,6 +340,14 @@ def fill_party_ask_confirm_booking(intent2reply, kb_item):
         return None
     return intent2reply[constants.INTENT_PARTY_ASK_CONFIRM_BOOKING].format(venue_name=kb_item['Name'],
                                                                            day=kb_item['Day'])
+
+
+def fill_party_inform_food_drink_criteria(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_INFORM_FOOD_DRINK_CRITERIA]
+
+
+def fill_party_no_venue_available(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_NO_VENUE_AVAILABLE]
 
 
 def fill_party_booking_successful(intent2reply, *_):
@@ -588,6 +621,139 @@ def fill_spaceship_ask_colour_top_cable(intent2reply, *_):
 
 def fill_spaceship_ask_colour_second_cable(intent2reply, *_):
     return intent2reply[constants.INTENT_SPACESHIP_ASK_COLOUR_SECOND_CABLE]
+
+
+def fill_weather_ask_day(intent2reply, *_):
+    return intent2reply[constants.INTENT_WEATHER_ASK_DAY]
+
+
+def fill_weather_ask_location(intent2reply, *_):
+    return intent2reply[constants.INTENT_WEATHER_ASK_LOCATION]
+
+
+def fill_weather_inform_forecast(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Weather', 'Day', 'TemperatureCelsius', 'City']):
+        return None
+
+    return intent2reply[constants.INTENT_WEATHER_INFORM_FORECAST].format(
+        weather=kb_item['Weather'], day=kb_item['Day'], city=kb_item['City'],
+        temperature=kb_item['TemperatureCelsius']
+    )
+
+
+def fill_trivia_ask_question_number(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIVIA_ASK_QUESTION_NUMBER]
+
+
+def fill_trivia_ask_question(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Question']):
+        return None
+
+    return intent2reply[constants.INTENT_TRIVIA_ASK_QUESTION].format(
+        question=kb_item['Question']
+    )
+
+
+def fill_trivia_inform_answer_ask_next(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['CorrectAnswer', 'UserAnswer']):
+        return None
+
+    if kb_item['CorrectAnswer'].lower() == kb_item['UserAnswer'].lower():
+        answer_correct = 'correct! Good job!!'
+    else:
+        answer_correct = f'unfortunately wrong :(. The correct answer would have been "{kb_item["CorrectAnswer"]}".'
+
+    return intent2reply[constants.INTENT_TRIVIA_INFORM_ANSWER_ASK_NEXT].format(
+        answer_correct=answer_correct
+    )
+
+
+def fill_trivia_bye(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIVIA_BYE]
+
+
+def fill_meeting_ask_guest_name(intent2reply, *_):
+    return intent2reply[constants.INTENT_MEETING_ASK_GUEST_NAME]
+
+
+def fill_meeting_ask_day(intent2reply, *_):
+    return intent2reply[constants.INTENT_MEETING_ASK_DAY]
+
+
+def fill_meeting_ask_start_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_MEETING_ASK_START_TIME]
+
+
+def fill_meeting_ask_end_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_MEETING_ASK_END_TIME]
+
+
+def fill_meeting_ask_reason(intent2reply, *_):
+    return intent2reply[constants.INTENT_MEETING_ASK_REASON]
+
+
+def fill_meeting_bye(intent2reply, *_):
+    return intent2reply[constants.INTENT_MEETING_BYE]
+
+
+def fill_meeting_inform_confirmed(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Name', 'Day', 'StartTimeHour', 'EndTimeHour']):
+        return None
+
+    return intent2reply[constants.INTENT_MEETING_INFORM_CONFIRMED].format(
+        guest_name=kb_item['Name'], day=kb_item['Day'], start_time=kb_item['StartTimeHour'],
+        end_time=kb_item['EndTimeHour']
+    )
+
+
+def fill_meeting_inform_unavailable_ask_different_time(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['Name', 'Day', 'StartTimeHour']):
+        return None
+
+    return intent2reply[constants.INTENT_MEETING_INFORM_UNAVAILABLE_ASK_DIFFERENT_TIME].format(
+        guest_name=kb_item['Name'], day=kb_item['Day'], start_time=kb_item['StartTimeHour']
+    )
+
+
+def fill_bank_ask_account_number(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_ASK_ACCOUNT_NUMBER]
+
+
+def fill_bank_ask_pin(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_ASK_PIN]
+
+
+def fill_bank_ask_dob(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_ASK_DOB]
+
+
+def fill_bank_ask_mothers_maiden_name(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_ASK_MOTHERS_MAIDEN_NAME]
+
+
+def fill_bank_ask_childhood_pets_name(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_ASK_CHILDHOOD_PETS_NAME]
+
+
+def fill_bank_inform_cannot_authenticate(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_INFORM_CANNOT_AUTHENTICATE]
+
+
+def fill_bank_ask_fraud_details(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_ASK_FRAUD_DETAILS]
+
+
+def fill_bank_inform_fraud_report_submitted(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_INFORM_FRAUD_REPORT_SUBMITTED]
+
+
+def fill_bank_inform_balance(intent2reply, kb_item):
+    if not check_kb_item(kb_item, ['BankBalance']):
+        return None
+
+    return intent2reply[constants.INTENT_BANK_INFORM_BALANCE].format(
+        balance=kb_item['BankBalance']
+    )
 
 
 def check_kb_item(

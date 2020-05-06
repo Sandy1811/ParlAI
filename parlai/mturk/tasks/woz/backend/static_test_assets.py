@@ -176,7 +176,9 @@ def get_party_plan_item():
         'Sorry mate, but this is not going to work out.',
         'Right, they are happy to have you, can I book this now?',
         'Cool, all booked and all done!',
-        'Oops, something went horribly wrong.'
+        'Oops, something went horribly wrong.',
+        'Sorry, everything is fully booked on Friday night.',
+        'Do you want to optionally book any specific type of food or drink for your party?'
     ]
 
     return kb_item, utterances, 'party_plan'
@@ -426,3 +428,150 @@ def get_spaceship_life_support_item():
     ]
 
     return kb_item, utterances, 'spaceship_life_support'
+
+
+def get_bank_balance_item():
+    kb_item = {
+        'BankName': 'Wells Fargo',
+        'BankBalance': 1200
+    }
+
+    utterances = [
+        'Hi, what cna I do for you?',
+        'Whats your name?',
+        'And your account number?',
+        'I also need your PIN please.',
+        'And your date of birth.',
+        'First security question is your mother\'s maiden name',
+        'Second sec q concerns the name of some pet you had as a kid',
+        'Sorry, but I cannot authenticate you.',
+        'Your balance is 789 credits.',
+        'Do you want anything else?'
+    ]
+
+    return kb_item, utterances, 'bank_balance'
+
+
+def get_bank_fraud_report_item():
+    kb_item = {
+
+    }
+
+    utterances = [
+        'Hi, what cna I do for you?',
+        'Whats your name?',
+        'And your account number?',
+        'I also need your PIN please.',
+        'And your date of birth.',
+        'First security question is your mother\'s maiden name',
+        'Second sec q concerns the name of some pet you had as a kid',
+        'Sorry, but I cannot authenticate you.',
+        'Right, your report was submitted, we\'ll be in touch shortly!',
+        'Can you provide your fraud report now, please?',
+        'Do you want anything else?'
+    ]
+
+    return kb_item, utterances, 'bank_fraud_report'
+
+
+def get_hotel_service_request_item():
+    kb_item = {
+        'RoomNumber': 123,
+        'Time': 14
+    }
+
+    utterances = [
+        'Hey, what do you want?',
+        'Can you give me your name?',
+        'Where are you staying?',
+        'Whats your room number?',
+        'What do you want?',
+        'When do you want it?',
+        'Thats all done for you!',
+        'Sorry, but that is not going to work.',
+        'Anything else you want?'
+    ]
+
+    return kb_item, utterances, 'hotel_service_request'
+
+
+def get_schedule_meeting_item():
+    kb_item = {
+        'Day': 'Tuesday',
+        'StartTimeHour': 10,
+        'EndTimeHour': 12,
+        'Name': 'Fred'
+    }
+
+    utterances = [
+        'Howdy, whats going on?',
+        'Whats your name?',
+        'Who would you like to meet?',
+        'When do you want to meet?',
+        'When do you want to start?',
+        'When do you want to finish?',
+        'Why do you want to meet?',
+        'Your meeting with John has been successfully scheduled.',
+        'Jane does not have any time on Tuesday, do you want to pick another day?',
+        'Bye.',
+        'Anybody else you want to bother for a meeting?'
+    ]
+
+    return kb_item, utterances, 'schedule_meeting'
+
+
+def get_trip_directions_item():
+    kb_item = {
+
+    }
+
+    utterances = [
+
+    ]
+
+    return kb_item, utterances, 'trip_directions'
+
+
+def get_trivia_item():
+    kb_item_correct = {
+        'Question': 'What is the average air speed velocity of a laden swallow?',
+        'CorrectAnswer': '42',
+        'UserAnswer': '42'
+    }
+
+    kb_item_incorrect = {
+        'Question': 'What is the average air speed velocity of a laden swallow?',
+        'CorrectAnswer': '42',
+        'UserAnswer': '54'
+    }
+
+    utterances = [
+        'Hi, waddup?!',
+        'Where do you want to start?',
+        'What is the meaning of life, the universe and everything?',
+        'Thats right, well done. Want another one?',
+        'Thats wrong unfortunately. Do you want to try another question?',
+        'Right, bye.',
+        'Anything else you want?'
+    ]
+
+    return kb_item_correct, utterances, 'trivia'
+
+
+def get_weather_item():
+    kb_item = {
+        'City': 'Detroit',
+        'Weather': 'Snowing',
+        'TemperatureCelsius': -2,
+        'Day': 'Sunday'
+    }
+
+    utterances = [
+        'Hohoho, what are your hopes and dreams today?',
+        'For when would you like a weather report?',
+        'Any particular place we should guess the weather for?',
+        'Its going to be snowing with temperatures of around -2 all day.',
+        'Anything else I can help you with?'
+    ]
+
+    return kb_item, utterances, 'weather'

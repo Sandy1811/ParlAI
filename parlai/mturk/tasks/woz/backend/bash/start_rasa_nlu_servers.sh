@@ -21,5 +21,12 @@ $RESOURCES_DIR/book_doctor_appointment/start_nlu_server.sh $RESOURCES_DIR/book_d
 $RESOURCES_DIR/followup_doctor_appointment/start_nlu_server.sh $RESOURCES_DIR/followup_doctor_appointment
 $RESOURCES_DIR/spaceship_access_codes/start_nlu_server.sh $RESOURCES_DIR/spaceship_access_codes
 $RESOURCES_DIR/spaceship_life_support/start_nlu_server.sh $RESOURCES_DIR/spaceship_life_support
+$RESOURCES_DIR/bank_balance/start_nlu_server.sh $RESOURCES_DIR/bank_balance
+$RESOURCES_DIR/bank_fraud_report/start_nlu_server.sh $RESOURCES_DIR/bank_fraud_report
+$RESOURCES_DIR/trivia/start_nlu_server.sh $RESOURCES_DIR/trivia
+$RESOURCES_DIR/hotel_service_request/start_nlu_server.sh $RESOURCES_DIR/hotel_service_request
+$RESOURCES_DIR/weather/start_nlu_server.sh $RESOURCES_DIR/weather
+$RESOURCES_DIR/trip_directions/start_nlu_server.sh $RESOURCES_DIR/trip_directions
+$RESOURCES_DIR/schedule_meeting/start_nlu_server.sh $RESOURCES_DIR/schedule_meeting
 
 echo "Rasa NLU servers started!"
