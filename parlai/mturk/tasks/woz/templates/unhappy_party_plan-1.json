@@ -13,7 +13,7 @@
               null,
               "You get a text from `HostName-2@schedule` saying: '`CommentAboutFood@generic`'.",
               null,
-              "Make sure you have booked a venue. Then you can bring the conversation to a natural close."
+              "Make sure you have booked a venue. If nothing was available, change the day or reduce the number of guests until it works. Then you can bring the conversation to a natural close."
             ]
         },
         "Wizard": {

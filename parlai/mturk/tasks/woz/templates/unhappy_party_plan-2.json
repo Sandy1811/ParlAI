@@ -13,7 +13,7 @@
               "Interrupt the conversation with a little small talk",
               "You just learn that on `Day-1@schedule` `HostName-2@schedule` will be away. So you have to plan the party for a different day.",
               null,
-              "Make sure you have booked a venue. Then you can bring the conversation to a natural close."
+              "Make sure you have booked a venue. If nothing was available, change the day or reduce the number of guests until it works. Then you can bring the conversation to a natural close."
             ]
         },
         "Wizard": {
