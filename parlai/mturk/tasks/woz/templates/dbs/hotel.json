@@ -17,7 +17,7 @@
   {
     "Name": "Room",
     "Type": "Categorical",
-    "Categories": ["483", "301", "540", "351", "539"]
+    "Categories": ["483", "301", "450", "351", "359"]
   },
   {
     "Name": "Hour",
@@ -33,7 +33,12 @@
   {
     "Name": "ServiceRequest",
     "Type": "Categorical",
-    "Categories": ["I need more towels", "I'd like to order a medium-rare steak and glass of red wine.", "I'd like to order a cheeseburger, fries and two beers.", "The AC isn't working in my room. I need it fixed immediately!"]
+    "Categories": [
+      "I need more towels",
+      "I'd like to order a medium-rare steak and glass of red wine.",
+      "I'd like to order a cheeseburger, fries and two beers.",
+      "The AC isn't working in my room. I need it fixed immediately!"
+    ]
   },
   {
     "Name": "Request",

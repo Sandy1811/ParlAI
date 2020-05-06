@@ -8,9 +8,8 @@
       "ReadableName": "Question Number"
     }
   ],
-  "output": [
-  ],
-  "required": ["QuestionNumber"],
+  "output": [],
+  "required": ["QuestionNum"],
   "db": "null",
   "function": "trivia",
   "returns_count": false
