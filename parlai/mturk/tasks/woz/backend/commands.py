@@ -5,6 +5,8 @@ import time
 
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
+# DO NOT REMOVE THIS IMPORT (needed for eval):
+from parlai.mturk.tasks.woz.knowledgebase import api
 
 __all_constants = None
 
