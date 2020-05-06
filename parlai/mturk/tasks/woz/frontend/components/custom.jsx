@@ -307,8 +307,8 @@ function OnboardingView(props) {
     return (
       <div>
         You are playing the <b>{agent}</b> in this dialogue. Please follow the
-        instructions of the 'MTurk System' bot during onboarding and throughout
-        the dialogue.
+        instructions of the 'MTurk System' bot (darker yellow boxes in the dialogue)
+        during onboarding and throughout the dialogue.
       </div>
     );
   }
@@ -330,7 +330,7 @@ function OnboardingView(props) {
 
   return (
     <div id="task-description" style={{ fontSize: '16px' }}>
-      <h1>Live Chat</h1>
+      <h1>AI Dialogues</h1>
       <hr style={{ borderTop: '1px solid #555' }} />
       <div>{taskDescription}</div>
       <br />

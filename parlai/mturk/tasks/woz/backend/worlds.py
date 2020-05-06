@@ -511,6 +511,9 @@ class WOZWorld(MTurkTaskWorld):
 
         instruction = self._user_linear_guide[self._num_user_utterances]
         if instruction:
+            current_instruction_number = len([i for i in self._user_linear_guide[:self._num_user_utterances] if i is not None]) + 1
+            total_instruction_number = len([i for i in self._user_linear_guide if i is not None])
+            instruction += f" [instruction {current_instruction_number} of {total_instruction_number}]"
             self.events.append(
                 {
                     "Agent": "UserGuide",
