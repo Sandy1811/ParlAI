@@ -13,7 +13,7 @@
             "completion_questions": ["Did the assistant stay calm and helpful throughout the dialogue?"],
             "task_descriptions": ["Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot (not the assistant) has told you to do so. "],
             "linear_guide": [
-              "You (`CustomerName@plane`) need to attend a conference in `City-1@plane` on `Date-1@plane` June. Ask you new personal AI assistant to help you find a flight!",
+              "You (`CustomerName@plane`) need to attend a conference in `City-1@plane` on `Date-1@plane` June. Ask your new personal AI assistant to help you find a flight!",
               "You'll be departing from `City-2@plane` and should look for economy class with `Airline-1@plane` Airlines (you don't want to book yet).",
               null,
               null,
@@ -34,7 +34,7 @@
             "completion_questions": [
               "Did the user change his/her mind about what he/she wants at any time?",
               "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
-              "Where you unsure about what to do at any time? If yes, send us a mail and let us know how we can improve the task."
+              "Were you unsure about what to do at any time? If yes, send us a mail and let us know how we can improve the task."
             ]
         }
     }
