@@ -272,21 +272,23 @@ function CompleteButton(props) {
       msg.id !== 'MTurk System'
   ).length;
 
-  const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
-
-  return (
-    <Button
-      className="btn btn-primary"
-      disabled={props.chat_state !== 'text_input'}
-      onClick={() => {
-        props.onMessageSend('<complete>', {}, () =>
-          console.log('sent complete')
-        );
-      }}
-    >
-      The {other_agent} has said goodbye
-    </Button>
-  );
+  if (props.agent_id === 'User') {
+      return (
+        <Button
+          className="btn btn-primary"
+          disabled={props.chat_state !== 'text_input'}
+          onClick={() => {
+            props.onMessageSend('<complete>', {}, () =>
+              console.log('sent complete')
+            );
+          }}
+        >
+          Click here when you've accomplished your task(s)
+        </Button>
+      );
+  } else {
+    return null;
+  }
 }
 
 function findLast(array, predicate) {
