@@ -5,8 +5,6 @@ import time
 
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
-import parlai.mturk.tasks.woz.knowledgebase.api as api
-from parlai.mturk.tasks.woz.mock import DUMMY_FORM_DESCRIPTION
 
 __all_constants = None
 
