@@ -63,13 +63,6 @@
     }
   ],
   "required": [
-    "AccountNumber",
-    "FullName",
-    "BankName",
-    "DateOfBirth",
-    "PIN",
-    "SecurityAnswer1",
-    "SecurityAnswer2"
   ],
   "db": "bank",
   "function": "bank_balance",

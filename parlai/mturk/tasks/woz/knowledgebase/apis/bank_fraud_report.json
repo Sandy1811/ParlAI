@@ -59,13 +59,6 @@
     }
   ],
   "required": [
-    "AccountNumber",
-    "FullName",
-    "BankName",
-    "DateOfBirth",
-    "PIN",
-    "SecurityAnswer1",
-    "SecurityAnswer2",
     "FraudReport"
   ],
   "db": "bank",

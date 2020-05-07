@@ -127,17 +127,40 @@ function KnowledgeBaseMessage(props) {
   }
   if (exampleJson != null) {
     const rows = Object.keys(exampleJson).map((key, idx) => {
+      if (key === 'api_name') {  // This is for internal processing only, so don't show it
+        return;
+      }
+
+      // Split CamelCase string into spaced string
+      let long_key = key.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+
       let value = exampleJson[key];
       if (typeof value === 'boolean') {
         value = value ? 'yes' : 'no';
       } else if (Array.isArray(value)) {
-        value = value.join(', ');
+        if (value.length > 3) {
+          //           ab = (key === 'Walking Instructions') ? 'a' : 'b';
+          // Long lists should be shown as numbered lists
+          return (
+            <tr valign="top" key={key}>
+              <td style={{ paddingRight: 10 }}>{long_key}:</td>
+              <td width="400px">
+                <ol>
+                  { value.map((el) => (<li>{el.trim()}</li>)) }
+                </ol>
+              </td>
+            </tr>
+          );
+        } else {
+          // Short lists are comma separated
+          value = value.join(', ');
+        }
       }
 
       return (
-        <tr key={key}>
-          <td style={{ paddingRight: 10 }}>{key}:</td>
-          <td>{value}</td>
+        <tr valign="top" key={key}>
+          <td style={{ paddingRight: 10 }}>{long_key}:</td>
+          <td width="400px">{value}</td>
         </tr>
       );
     });
@@ -404,7 +427,7 @@ export class MessageList extends React.Component {
             {...this.props}
             is_self={m.id == agent_id}
             invisible={dontRender}
-            agent_id={m.id}
+            agent_id={m.id === 'Wizard' ? 'AI Assistant' : m.id}
             message={m.text}
             command={m.command}
             task_data={m.task_data}

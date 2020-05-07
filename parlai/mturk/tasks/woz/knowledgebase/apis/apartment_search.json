@@ -47,7 +47,7 @@
     {
       "Name": "NearbyPOIs",
       "Type": "CategoricalMultiple",
-      "Categories": ["School", "TrainStation", "Park"],
+      "Categories": ["School", "TrainStation", "Park", "Museum", "University", "Club", "User's office", "User's gym"],
       "ReadableName": "Nearby POIs"
     },
     {
@@ -58,7 +58,14 @@
         "Shadyside Apartments",
         "North Hill Apartments"
       ],
-      "ReadableName": "Name"
+      "ReadableName": "Housing company"
+    },
+    {
+      "Name": "Price",
+      "Type": "Integer",
+      "Min": 400,
+      "Max": 6000,
+      "ReadableName": "Price (monthly cold rent)"
     }
   ],
   "output": [
@@ -111,12 +118,12 @@
       "Type": "Integer",
       "Min": 400,
       "Max": 6000,
-      "ReadableName": "Monthly Price"
+      "ReadableName": "Price (monthly cold rent)"
     },
     {
       "Name": "NearbyPOIs",
       "Type": "CategoricalMultiple",
-      "Categories": ["School", "TrainStation", "Park"],
+      "Categories": ["School", "TrainStation", "Park", "Museum", "University", "Club", "User's office", "User's gym"],
       "ReadableName": "Nearby POIs"
     },
     {
