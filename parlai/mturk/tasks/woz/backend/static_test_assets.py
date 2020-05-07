@@ -200,6 +200,7 @@ def get_party_rsvp_item():
         'Where is shit going down?',
         'Who is hosting this?',
         'Whats your ETA?',
+        'Do you want a parking spot?',
         'How many of your lads will come with you?',
         'Any of you vegan or got a food allergy?',
         'Your rsvp is done.'

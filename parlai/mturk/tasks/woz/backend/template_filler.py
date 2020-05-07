@@ -331,6 +331,10 @@ def fill_party_ask_drinks(intent2reply, *_):
     return intent2reply[constants.INTENT_PARTY_ASK_DRINKS]
 
 
+def fill_party_ask_parking_needed(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_ASK_PARKING_NEEDED]
+
+
 def fill_party_venue_not_available(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name']):
         return None

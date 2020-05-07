@@ -91,6 +91,7 @@ INTENT_PARTY_ASK_DIETARY_RESTRICTIONS = 'party_ask_dietary_restrictions'
 INTENT_PARTY_CONFIRM_RSVP = 'party_confirm_rsvp'
 INTENT_PARTY_NO_VENUE_AVAILABLE = 'party_no_venue_available'
 INTENT_PARTY_INFORM_FOOD_DRINK_CRITERIA = 'party_inform_food_drink_criteria'
+INTENT_PARTY_ASK_PARKING_NEEDED = 'party_ask_parking_needed'
 
 # Intent names for restaurant_reserve, restaurant_search
 INTENT_RESTAURANT_ASK_RESTAURANT = 'restaurant_ask_restaurant'
