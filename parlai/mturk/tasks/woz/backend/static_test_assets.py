@@ -216,7 +216,7 @@ def get_plane_search_item():
         "Price": 300,
         "Date": 12,
         "Class": "Economy",
-        "Duration": 6,
+        "DurationHours": 6,
         "Airline": "Virgin"
     }
 

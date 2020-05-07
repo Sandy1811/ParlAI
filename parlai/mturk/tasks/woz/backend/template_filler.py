@@ -284,7 +284,7 @@ def fill_plane_request_optional(intent2reply, *_):
 
 
 def fill_plane_inform_flight_details(intent2reply, kb_item, *_):
-    if not check_kb_item(kb_item, ['Price', 'Class', 'Airline', 'Duration', 'ArrivalCity']):
+    if not check_kb_item(kb_item, ['Price', 'Class', 'Airline', 'DurationHours', 'ArrivalCity']):
         return None
 
     if kb_item['Class'].lower() == 'economy':
@@ -295,7 +295,7 @@ def fill_plane_inform_flight_details(intent2reply, kb_item, *_):
     return intent2reply[constants.INTENT_PLANE_INFORM_FLIGHT_DETAILS].format(clazz=classy,
                                                                              airline=kb_item['Airline'],
                                                                              price=kb_item['Price'],
-                                                                             duration=kb_item['Duration'],
+                                                                             duration=kb_item['DurationHours'],
                                                                              arrival_city=kb_item['ArrivalCity'])
 
 
