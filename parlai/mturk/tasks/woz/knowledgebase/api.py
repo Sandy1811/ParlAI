@@ -204,6 +204,9 @@ def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
 
 
 def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
+    if constraints["RequestType"] != "Book":
+        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     if random.random() > 0.5:
         return {"ReservationStatus": outputs[1]}, -1
@@ -408,7 +411,10 @@ def book_doctor_appointment(
 
         return dict(Message=outputs[0]), -1
     else:
-        return dict(Message=outputs[1]), -1
+        if constraints["RequestType"] != "Book":
+          return {"Message": outputs[1]}, -1
+
+        return dict(Message=outputs[0]), -1
 
 
 def book_apartment_viewing(
@@ -418,7 +424,7 @@ def book_apartment_viewing(
         "Your apartment viewing has been successfuly scheduled.",
         "That time is unavailable. Please try another time."
     ]
-    if random.random() > 0.5:
+    if random.random() > 0.5 or constraints["RequestType"] == "Book":
         if constraints["RequestType"] != "Book":
           return {"Message": "The time slot is available."}, -1
 
@@ -461,6 +467,9 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
         "Your event has been successfully scheduled.",
         "The venue is too small for your party. Try another venue."
     ]
+    if constraints["RequestType"] == "Book":
+      return dict(Message=size_outputs[1]), -1
+
     if random.random() < 0.1:
         return dict(Message=schedule_outputs[1]), -1
 
@@ -469,7 +478,7 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
         "SizeLimit": is_greater_than(constraints["NumberGuests"]),
     }
     row, _ = schedule_api.sample(new_constraints)
-    if random.random() < 0.8:
+    if random.random() > 0.1:
         if constraints["RequestType"] != "Book":
           return {"Message": "The venue is available."}, -1
         return dict(Message=size_outputs[0]), -1
