@@ -258,15 +258,28 @@ def plane_reserve(plane_api, constraints: Dict[Text, Any]):
 
 
 def trip_directions(trip_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "TravelMode": constraints["TravelMode"],
-    }
 
-    row, _ = trip_api.sample(new_constraints)
+    del constraints['DepartureTime']
+    del constraints['DepartureLocation']
+    del constraints['ArrivalLocation']
 
-    return row._settings, -1
+    if constraints['TravelMode'] != 'Transit':
+      del constraints['Price']
 
+    row, _ = trip_api.sample(constraints)
 
+    d = row._settings
+
+    simple_key = [k for k in d if 'Detail' not in k and 'Instruc' in k][0]
+    detail_key = [k for k in d if 'Detail' in k and 'Instruc' in k][0]
+
+    simple = [e for e in d[simple_key] if e[0] != "#"]
+    detail = [e[1:] for e in d[simple_key] if e[0] == "#"]
+
+    d[simple_key] = simple
+    d[detail_key] = detail
+
+    return d, -1
 
 
 def book_ride(ride_api, constraints: Dict[Text, Any]):
