@@ -4,7 +4,7 @@
       "Name": "Name",
       "Type": "Categorical",
       "Categories": ["Cactus Club", "Tamarind", "Legume", "Lucca", "The Porch"],
-      "ReadableName": "Name"
+      "ReadableName": "Restaurant Name"
     },
     {
       "Name": "Cost",
