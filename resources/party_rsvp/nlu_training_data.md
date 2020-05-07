@@ -62,6 +62,18 @@
 - How many +1's do you have tonight?
 - ANy guests you are bringing along?
 
+## intent:party_ask_parking_needed
+- Do you need parking?
+- Do you want to park at the venue?
+- How many parking spots do you need?
+- Are you driving there and require parking?
+- Should we reserve a parking spot for you?
+- Do you need some space in our garage?
+- Will you be making use of our parking facilities?
+- Are you planning to occupy our parking lot?
+- Do you need to park?
+- Do you require a space on the parking lot?
+
 ## intent:party_ask_dietary_restrictions
 - Do you have any dietary restrictions?
 - Any restrictions dietary wise that the host should know about?

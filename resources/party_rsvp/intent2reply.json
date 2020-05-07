@@ -5,6 +5,7 @@
     "party_ask_host": "Could you provide me with the name of the host, please?",
     "party_ask_arrival_time": "When are you planning to arrive at the party?",
     "party_ask_number_of_guests": "How many guests will you be bringing with you?",
+    "party_ask_parking_needed": "Do you require parking at the venue?",
     "party_ask_dietary_restrictions": "Do you have any dietary restrictions?",
     "party_confirm_rsvp": "Great, your reservation is all done!",
     "anything_else": "Is there anything else that I can do for you?",
