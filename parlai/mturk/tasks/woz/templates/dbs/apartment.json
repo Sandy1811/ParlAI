@@ -42,6 +42,6 @@
   {
     "Name": "POIs",
     "Type": "Categorical",
-    "Categories": ["School", "Park", "Train Station"]
+    "Categories": ["School", "Park", "Train Station", "Museum", "University", "Club", "User's office", "User's gym"]
   }
 ]

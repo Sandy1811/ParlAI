@@ -274,7 +274,7 @@ export function jsonToForm(
       id: formFieldId,
       fieldName: formFieldName,
       value: null,
-      operatorValue: null,
+      operatorValue: input.Type === 'CategoricalMultiple' ? 'contains' : null,
     };
 
     switch (input.Type) {
@@ -335,12 +335,14 @@ export function jsonToForm(
             is_equal_to: 'SingleSelect',
             is_one_of: 'MultiSelect',
             // Todo: Probably easier if the back-end provides "is_not_equal" ?
-            // is_not: "SingleSelect"
+            // is_unequal_to: 'SingleSelect',  // Johannes: These have no effect
+            // is_not: 'MultiSelect',
           },
           CategoricalMultiple: {
             contains: 'SingleSelect',
             contain_all_of: 'MultiSelect',
             contain_at_least_one_of: 'MultiSelect',
+            contains_not: 'SingleSelect',
           },
         }[input.Type];
 

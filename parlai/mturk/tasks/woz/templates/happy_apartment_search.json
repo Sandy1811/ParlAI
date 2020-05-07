@@ -15,7 +15,7 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1.",
+        "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1 credits.",
         "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1 credits. You would like to have a balcony facing @BalconySide-1.",
         "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1 credits. You would like the building to have an elevator.",
         "Search for a @NumRooms-1 bedroom apartment. The unit should be on floor @Level-1 or higher. Your price budget is @Price-1 credits. You would like the building to have a balcony and be near a @POIs-1."
