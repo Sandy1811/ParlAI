@@ -6,6 +6,7 @@ import time
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
 # DO NOT REMOVE THIS IMPORT (needed for eval):
+from parlai.mturk.core.shared_utils import print_and_log
 from parlai.mturk.tasks.woz.knowledgebase import api
 
 __all_constants = None
@@ -416,6 +417,16 @@ class ReviewCommand(BackendCommand):
         return ReviewCommand(recipient=sender)
 
 
+def safe_eval(expression: Text, default: Any = None) -> Any:
+    # noinspection PyBroadException
+    try:
+        result = eval(expression)
+    except:
+        print_and_log(100, f"Problem with parsing expression: {expression}")
+        return default
+    return result
+
+
 class QueryCommand(WizardCommand):
 
     command_name = "query"
@@ -451,15 +462,15 @@ class QueryCommand(WizardCommand):
         return self._api_name
 
     def _parse(self, text: Text) -> None:
-        data = eval(text)
+        data = safe_eval(text, dict())
         assert isinstance(data, dict)
         assert "constraints" in data
         assert "db" in data
 
         self._constraints = [
-            {name: eval(expr)}
+            {name: safe_eval(expr)}
             for constraint in data["constraints"]
-            for name, expr in constraint.items()
+            for name, expr in constraint.items() if len(expr) > 0
         ]
 
         self._constraints_raw = [
