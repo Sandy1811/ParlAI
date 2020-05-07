@@ -114,6 +114,19 @@
 - Your service request failed.
 - Service request could not be made. Sorry. 
 
+## intent:hotel_bye
+- Perfect!
+- okay good bye
+- Thank you for your time. Goodbye.
+- Good Ride
+- Great, thanks!
+- thank you, goodbye
+- goodbye
+- Thank you, goodbye
+- Thank you :o) Goodbye!
+- Thanks, goodbye.
+- OK, thanks, goodbye!
+
 ## intent:anything_else
 - Anything else I can help you with?
 - Is there anything else you would like me to do?
