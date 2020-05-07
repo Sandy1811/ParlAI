@@ -522,11 +522,14 @@ def get_schedule_meeting_item():
 
 def get_trip_directions_item():
     kb_item = {
-
     }
 
     utterances = [
-
+        'k east for 10 minutes on University Bouleva',
+        'ke the 61A until the final stop, which will be at Forbes and Craig. It will take approximately 20 minutes and 13 stops.',
+        'After 5 blocks, turn right on Castro St.',
+        'Turn right on Allison Road, right after the McD.',
+        'after 1 more block your destination will be on the right.'
     ]
 
     return kb_item, utterances, 'trip_directions'

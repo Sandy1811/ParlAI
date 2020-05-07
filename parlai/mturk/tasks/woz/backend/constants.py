@@ -3,9 +3,12 @@ RASA_NLU_SERVER_ADDRESS_TEMPLATE = "http://localhost:{port:s}/model/parse"
 RASA_NLU_SERVER_ADDRESS_KEY = 'rasa_nlu_server_address'
 INTENT_TO_REPLY_KEY = 'intent2reply'
 INTENT_TO_REPLY_FILE_NAME = 'intent2reply.json'
+INSTRUCTION_LIST_FILE_NAME = 'instructions.txt'
+SCENARIO_ADDITIONAL_RESOURCES_KEY = 'additional_resources'
 START_NLU_SERVER_SCRIPT_PATH_KEY = 'start_nlu_server_script_path'
 START_NLU_SERVER_SCRIPT_FILE_NAME = 'start_nlu_server.sh'
 RASA_NLU_SERVER_PROCESS_KEY = 'nlu_server_process'
+MIN_FUZZYWUZZY_RATIO = 80
 
 # Common Intent Names
 INTENT_HELLO = 'hello'

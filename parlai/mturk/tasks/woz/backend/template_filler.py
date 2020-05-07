@@ -1,5 +1,7 @@
 from typing import Dict, Text, Any, List, Optional
 
+from fuzzywuzzy import process
+
 from parlai.mturk.tasks.woz.backend import constants
 
 
@@ -27,7 +29,7 @@ def fill_ride_ask_departure(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_ASK_DEPARTURE]
 
 
-def fill_ride_ask_confirm_booking(intent2reply, kb_item):
+def fill_ride_ask_confirm_booking(intent2reply, kb_item, *_):
     if not check_kb_item(
         kb_item,
         [
@@ -52,7 +54,7 @@ def fill_ride_bye(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_BYE]
 
 
-def fill_ride_confirm_booking(intent2reply, kb_item):
+def fill_ride_confirm_booking(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["CarModel", "id", "LicensePlate"]):
         return None
     return intent2reply[constants.INTENT_RIDE_CONFIRM_BOOKING].format(
@@ -66,7 +68,7 @@ def fill_ride_inform_search_criteria(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_INFORM_SEARCH_CRITERIA]
 
 
-def fill_ride_provide_driver_details(intent2reply, kb_item):
+def fill_ride_provide_driver_details(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["DriverName"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_DRIVER_DETAILS].format(
@@ -90,7 +92,7 @@ def fill_ride_ask_booking_number(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_ASK_BOOKING_NUMBER]
 
 
-def fill_ride_provide_booking_status(intent2reply, kb_item):
+def fill_ride_provide_booking_status(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["RideWait"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS].format(
@@ -98,7 +100,7 @@ def fill_ride_provide_booking_status(intent2reply, kb_item):
     )
 
 
-def fill_ride_provide_booking_status_update(intent2reply, kb_item):
+def fill_ride_provide_booking_status_update(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["RideWait"]):
         return None
     return intent2reply[constants.INTENT_RIDE_PROVIDE_BOOKING_STATUS_UPDATE].format(
@@ -114,7 +116,7 @@ def fill_hotel_ask_name(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_ASK_NAME]
 
 
-def fill_hotel_inform_name(intent2reply, kb_item):
+def fill_hotel_inform_name(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Name"]):
         return None
     return intent2reply[constants.INTENT_HOTEL_INFORM_NAME].format(
@@ -126,7 +128,7 @@ def fill_hotel_ask_location(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_ASK_LOCATION]
 
 
-def fill_hotel_inform_location(intent2reply, kb_item):
+def fill_hotel_inform_location(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Location"]):
         return None
     return intent2reply[constants.INTENT_HOTEL_INFORM_LOCATION].format(
@@ -138,7 +140,7 @@ def fill_hotel_ask_price(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_ASK_PRICE]
 
 
-def fill_hotel_inform_price(intent2reply, kb_item):
+def fill_hotel_inform_price(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Name", "Cost"]):
         return None
     return intent2reply[constants.INTENT_HOTEL_INFORM_PRICE].format(
@@ -150,7 +152,7 @@ def fill_hotel_ask_rating(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_ASK_RATING]
 
 
-def fill_hotel_inform_rating(intent2reply, kb_item):
+def fill_hotel_inform_rating(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Name", "AverageRating"]):
         return None
     return intent2reply[constants.INTENT_HOTEL_INFORM_RATING].format(
@@ -158,7 +160,7 @@ def fill_hotel_inform_rating(intent2reply, kb_item):
     )
 
 
-def fill_hotel_provide_search_result(intent2reply, kb_item):
+def fill_hotel_provide_search_result(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Name", "Location", "Cost", "AverageRating"]):
         return None
 
@@ -188,19 +190,19 @@ def fill_hotel_ask_date_to(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_ASK_DATE_TO]
 
 
-def fill_hotel_ask_customer_request(intent2reply, kb_item):
+def fill_hotel_ask_customer_request(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Name"]):
         return None
     return intent2reply[constants.INTENT_HOTEL_ASK_CUSTOMER_REQUEST].format(hotel_name=kb_item['Name'])
 
 
-def fill_hotel_unavailable(intent2reply, kb_item):
+def fill_hotel_unavailable(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Name"]):
         return None
     return intent2reply[constants.INTENT_HOTEL_UNAVAILABLE].format(hotel_name=kb_item['Name'])
 
 
-def fill_hotel_ask_confirm_booking(intent2reply, kb_item):
+def fill_hotel_ask_confirm_booking(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ["Name"]):
         return None
     return intent2reply[constants.INTENT_HOTEL_ASK_CONFIRM_BOOKING].format(hotel_name=kb_item['Name'])
@@ -226,7 +228,7 @@ def fill_hotel_ask_time(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_ASK_TIME]
 
 
-def fill_hotel_inform_service_request_successful(intent2reply, kb_item):
+def fill_hotel_inform_service_request_successful(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['RoomNumber', 'Time']):
         return None
 
@@ -247,7 +249,7 @@ def fill_plane_flight_available(intent2reply, *_):
     return intent2reply[constants.INTENT_PLANE_FLIGHT_AVAILABLE]
 
 
-def fill_plane_flight_unavailable(intent2reply, kb_item):
+def fill_plane_flight_unavailable(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['id']):
         return None
     return intent2reply[constants.INTENT_PLANE_FLIGHT_UNAVAILABLE].format(flight_id=kb_item['id'])
@@ -281,7 +283,7 @@ def fill_plane_request_optional(intent2reply, *_):
     return intent2reply[constants.INTENT_PLANE_REQUEST_OPTIONAL]
 
 
-def fill_plane_inform_flight_details(intent2reply, kb_item):
+def fill_plane_inform_flight_details(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Price', 'Class', 'Airline', 'Duration', 'ArrivalCity']):
         return None
 
@@ -329,13 +331,13 @@ def fill_party_ask_drinks(intent2reply, *_):
     return intent2reply[constants.INTENT_PARTY_ASK_DRINKS]
 
 
-def fill_party_venue_not_available(intent2reply, kb_item):
+def fill_party_venue_not_available(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name']):
         return None
     return intent2reply[constants.INTENT_PARTY_VENUE_NOT_AVAILABLE].format(venue_name=kb_item['Name'])
 
 
-def fill_party_ask_confirm_booking(intent2reply, kb_item):
+def fill_party_ask_confirm_booking(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name', 'Day']):
         return None
     return intent2reply[constants.INTENT_PARTY_ASK_CONFIRM_BOOKING].format(venue_name=kb_item['Name'],
@@ -390,7 +392,7 @@ def fill_restaurant_inform_unavailable(intent2reply, *_):
     return intent2reply[constants.INTENT_RESTAURANT_INFORM_UNAVAILABLE]
 
 
-def fill_restaurant_ask_confirm_booking(intent2reply, kb_item):
+def fill_restaurant_ask_confirm_booking(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name']):
         return None
     return intent2reply[constants.INTENT_RESTAURANT_ASK_CONFIRM_BOOKING].format(
@@ -398,7 +400,7 @@ def fill_restaurant_ask_confirm_booking(intent2reply, kb_item):
     )
 
 
-def fill_restaurant_inform_booking_successful(intent2reply, kb_item):
+def fill_restaurant_inform_booking_successful(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name']):
         return None
     return intent2reply[constants.INTENT_RESTAURANT_INFORM_BOOKING_SUCCESSFUL].format(
@@ -438,7 +440,7 @@ def fill_restaurant_ask_continue_searching(intent2reply, *_):
     return intent2reply[constants.INTENT_RESTAURANT_ASK_CONTINUE_SEARCHING]
 
 
-def fill_restaurant_inform_search_result(intent2reply, kb_item):
+def fill_restaurant_inform_search_result(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name', 'Cost', 'Food', 'AverageRating', 'Location']):
         return None
     return intent2reply[constants.INTENT_RESTAURANT_INFORM_SEARCH_RESULTS].format(
@@ -519,7 +521,7 @@ def fill_apartment_inform_booking_successful(intent2reply, *_):
     return intent2reply[constants.INTENT_APARTMENT_INFORM_BOOKING_SUCCESSFUL]
 
 
-def fill_apartment_inform_search_result(intent2reply, kb_item):
+def fill_apartment_inform_search_result(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Level', 'HasBalcony', 'BalconySide', 'HasElevator', 'NumRooms',
                                    'FloorSquareMeters', 'NearbyPOIs', 'Name', 'Price']):
         return None
@@ -581,7 +583,7 @@ def fill_doctor_inform_booking_successful(intent2reply, *_):
     return intent2reply[constants.INTENT_DOCTOR_INFORM_BOOKING_SUCCESSFUL]
 
 
-def fill_doctor_inform_doctors_instructions(intent2reply, kb_item):
+def fill_doctor_inform_doctors_instructions(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Message']):
         return None
 
@@ -602,7 +604,7 @@ def fill_spaceship_ask_code_type(intent2reply, *_):
     return intent2reply[constants.INTENT_SPACESHIP_ASK_CODE_TYPE]
 
 
-def fill_spaceship_inform_outcome(intent2reply, kb_item):
+def fill_spaceship_inform_outcome(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Message']):
         return None
 
@@ -631,7 +633,7 @@ def fill_weather_ask_location(intent2reply, *_):
     return intent2reply[constants.INTENT_WEATHER_ASK_LOCATION]
 
 
-def fill_weather_inform_forecast(intent2reply, kb_item):
+def fill_weather_inform_forecast(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Weather', 'Day', 'TemperatureCelsius', 'City']):
         return None
 
@@ -645,7 +647,7 @@ def fill_trivia_ask_question_number(intent2reply, *_):
     return intent2reply[constants.INTENT_TRIVIA_ASK_QUESTION_NUMBER]
 
 
-def fill_trivia_ask_question(intent2reply, kb_item):
+def fill_trivia_ask_question(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Question']):
         return None
 
@@ -654,7 +656,7 @@ def fill_trivia_ask_question(intent2reply, kb_item):
     )
 
 
-def fill_trivia_inform_answer_ask_next(intent2reply, kb_item):
+def fill_trivia_inform_answer_ask_next(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['CorrectAnswer', 'UserAnswer']):
         return None
 
@@ -668,7 +670,7 @@ def fill_trivia_inform_answer_ask_next(intent2reply, kb_item):
     )
 
 
-def fill_trivia_inform_answer_2_ask_next(intent2reply, kb_item):
+def fill_trivia_inform_answer_2_ask_next(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['CorrectAnswer']):
         return None
 
@@ -705,7 +707,7 @@ def fill_meeting_bye(intent2reply, *_):
     return intent2reply[constants.INTENT_MEETING_BYE]
 
 
-def fill_meeting_inform_confirmed(intent2reply, kb_item):
+def fill_meeting_inform_confirmed(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name', 'Day', 'StartTimeHour', 'EndTimeHour']):
         return None
 
@@ -715,7 +717,7 @@ def fill_meeting_inform_confirmed(intent2reply, kb_item):
     )
 
 
-def fill_meeting_inform_unavailable_ask_different_time(intent2reply, kb_item):
+def fill_meeting_inform_unavailable_ask_different_time(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Name', 'Day', 'StartTimeHour']):
         return None
 
@@ -756,12 +758,61 @@ def fill_bank_inform_fraud_report_submitted(intent2reply, *_):
     return intent2reply[constants.INTENT_BANK_INFORM_FRAUD_REPORT_SUBMITTED]
 
 
-def fill_bank_inform_balance(intent2reply, kb_item):
+def fill_bank_inform_balance(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['BankBalance']):
         return None
 
     return intent2reply[constants.INTENT_BANK_INFORM_BALANCE].format(
         balance=kb_item['BankBalance']
+    )
+
+
+def fill_trip_ask_travel_mode(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIP_ASK_TRAVEL_MODE]
+
+
+def fill_trip_ask_departure_location(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIP_ASK_DEPARTURE_LOCATION]
+
+
+def fill_trip_ask_arrival_location(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIP_ASK_ARRIVAL_LOCATION]
+
+
+def fill_trip_ask_departure_time(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIP_ASK_DEPARTURE_TIME]
+
+
+def fill_trip_inform_simple_step_ask_proceed(intent2reply, kb_item, instructions, wizard_utterance):
+    # Select most similar one (based on edit distance)
+    hit, ratio = process.extractOne(wizard_utterance, instructions)
+    if ratio < constants.MIN_FUZZYWUZZY_RATIO:
+        return None
+
+    return intent2reply[constants.INTENT_TRIP_INFORM_SIMPLE_STEP_ASK_PROCEED].format(
+        simple_instruction=hit
+    )
+
+
+def fill_trip_inform_detailed_step(intent2reply, kb_item, instructions, wizard_utterance):
+    # Select most similar one (based on edit distance)
+    hit, ratio = process.extractOne(wizard_utterance, instructions)
+    if ratio < constants.MIN_FUZZYWUZZY_RATIO:
+        return None
+
+    return intent2reply[constants.INTENT_TRIP_INFORM_DETAILED_STEP].format(
+        detailed_instruction=hit
+    )
+
+
+def fill_trip_inform_last_step_and_done(intent2reply, kb_item, instructions, wizard_utterance):
+    # Select most similar one (based on edit distance)
+    hit, ratio = process.extractOne(wizard_utterance, instructions)
+    if ratio < constants.MIN_FUZZYWUZZY_RATIO:
+        return None
+
+    return intent2reply[constants.INTENT_TRIP_INFORM_LAST_STEP_AND_DONE].format(
+        simple_instruction=hit
     )
 
 

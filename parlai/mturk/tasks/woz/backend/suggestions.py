@@ -39,6 +39,13 @@ class WizardSuggestion:
                 )
                 self.scenario_resources[scenario][constants.RASA_NLU_SERVER_ADDRESS_KEY] = \
                     constants.RASA_NLU_SERVER_ADDRESS_TEMPLATE.format(port=constants.SCENARIO_PORT_MAP[scenario])
+
+                if os.path.exists(os.path.join(resources_dir, scenario, constants.INSTRUCTION_LIST_FILE_NAME)):
+                    with open(os.path.join(os.path.join(resources_dir, scenario,
+                                                        constants.INSTRUCTION_LIST_FILE_NAME)), 'r') as in_file:
+                        data = in_file.read().strip().split('\n')
+                        self.scenario_resources[scenario][constants.SCENARIO_ADDITIONAL_RESOURCES_KEY] = data
+
                 if start_nlu_servers:
                     self.start_nlu_server(scenario)
             except FileNotFoundError as e:
@@ -106,7 +113,11 @@ class WizardSuggestion:
 
                 try:
                     suggestion = fn_fill(self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY],
-                                         primary_kb_item)
+                                         primary_kb_item,
+                                         self.scenario_resources[api_name].get(
+                                             constants.SCENARIO_ADDITIONAL_RESOURCES_KEY, None),
+                                         wizard_utterance
+                                         )
                 except:
                     print_and_log(100, f"The suggestion filler for {api_name} is broken.", should_print=True)
                     suggestion = None
@@ -211,8 +222,9 @@ if __name__ == '__main__':
     #test_items = ['get_apartment_search_item', 'get_book_apartment_viewing_item',
     #              'get_book_doctor_appointment_item', 'get_followup_doctor_appointment_item',
     #              'get_spaceship_access_codes_item', 'get_spaceship_life_support_item']
-    scenarios = ['bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
-                 'trivia', 'weather']
+    #scenarios = ['bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
+    #             'trivia', 'weather']
+    scenarios = ['trip_directions']
 
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
                           start_nlu_servers=True)
