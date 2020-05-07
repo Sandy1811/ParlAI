@@ -2,12 +2,20 @@
   {
     "Name": "MildInjury",
     "Type": "Categorical",
-    "Categories": ["stomped your big toe", "cut your finger on something", "feel a stinging pain in your shoulders (you've been lifting quite heavy weights last night)"]
+    "Categories": [
+      "stomped your big toe",
+      "cut your finger on something",
+      "feel a stinging pain in your shoulders (you've been lifting quite heavy weights last night)"
+    ]
   },
   {
     "Name": "AnnoyingTrade",
     "Type": "Categorical",
-    "Categories": ["a bit annoying", "way too chatty", "constantly complaining about stuff"]
+    "Categories": [
+      "a bit annoying",
+      "way too chatty",
+      "constantly complaining about stuff"
+    ]
   },
   {
     "Name": "ReasonHotelCancel",
@@ -22,12 +30,18 @@
   {
     "Name": "RasonEarlyArrival",
     "Type": "Categorical",
-    "Categories": ["you could meet our new client for lunch", "you could check up on our new office over there"]
+    "Categories": [
+      "you could meet our new client for lunch",
+      "you could check up on our new office over there"
+    ]
   },
   {
     "Name": "MessageAtWork",
     "Type": "Categorical",
-    "Categories": ["You get a text from your supervisor", "Your colleague walks by and says"]
+    "Categories": [
+      "You get a text from your supervisor",
+      "Your colleague walks by and says"
+    ]
   },
   {
     "Name": "CommentAboutFood",
@@ -45,6 +59,9 @@
   {
     "Name": "ReasonForAreaBlock",
     "Type": "Categorical",
-    "Categories": ["A bunch of dangerous animals broke out of the local zoo.", "A truck loaded with highly toxic chemicals crashed and the whole area has to be evacuated."]
+    "Categories": [
+      "A bunch of dangerous animals broke out of the local zoo.",
+      "A truck loaded with highly toxic chemicals crashed and the whole area has to be evacuated."
+    ]
   }
 ]

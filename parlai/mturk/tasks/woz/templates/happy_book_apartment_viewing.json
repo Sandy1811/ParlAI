@@ -10,14 +10,14 @@
     "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
     "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
     "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg",
-    "book_apartment_viewing": "https://i.imgur.com/W5hziZY.jpg"
+    "book_apartment_viewing": "https://i.imgur.com/rjpZovV.jpg"
   },
   "instructions": {
     "User": {
       "task_descriptions": [
-        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1 for 2 hours. Your name is @PersonName-1. You have paid the application fee.",
-        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1 for 2 hours. Your name is @PersonName-1. You have not paid the application fee.",
-        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1 for 2 hours. Your name is @PersonName-1. You have paid the application fee. Please include the following message with your booking request: @ApartmentMessage-1"
+        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1. Your name is @PersonName-1. You have paid the application fee.",
+        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1. Your name is @PersonName-1. You have not paid the application fee.",
+        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1. Your name is @PersonName-1. You have paid the application fee. Please include the following message with your booking request: @ApartmentMessage-1"
       ],
       "completion_requirements": [
         "You have tried to book the apartment viewing. Either the booking was succesful or the time slot was unavailable."
