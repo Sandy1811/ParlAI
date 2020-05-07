@@ -11,8 +11,7 @@
               null,
               "It occurs to you that you also want to make an appointment to get your kid `PersonName-2@schedule` vaccinated. Perhaps you can schedule that together with yours?",
               null,
-              "Keep going until both yours and your kid's appointments are made (this should take a few more turns). Then say goodbye.",
-              null
+              "Keep going until both yours and your kid's appointments are made (this should take a few more turns). Then say goodbye."
             ]
         },
         "Wizard": {

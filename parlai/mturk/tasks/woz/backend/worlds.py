@@ -354,7 +354,7 @@ class WOZWorld(MTurkTaskWorld):
             return 1
         else:
             print_and_log(
-                45,
+                100,
                 f"Command {type(user_command)} not allowed for User in dialogue stage: {user_command.message}",
                 True,
             )
@@ -445,7 +445,7 @@ class WOZWorld(MTurkTaskWorld):
             return 1
         else:
             print_and_log(
-                45,
+                100,
                 f"Command {type(wizard_command)} not allowed for Wizard in dialogue stage: {wizard_command.message}",
                 True,
             )
@@ -482,7 +482,7 @@ class WOZWorld(MTurkTaskWorld):
                 time.sleep(shared_utils.THREAD_SHORT_SLEEP)
             else:
                 print_and_log(
-                    45,
+                    100,
                     f"Command {type(command)} not allowed for {agent.id} in evaluation stage: {command.message}",
                     True,
                 )
