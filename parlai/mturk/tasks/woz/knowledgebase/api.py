@@ -204,40 +204,42 @@ def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
 
 
 def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
+    name = getval(constraints, 'Name', restaurant_api)
+
     if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+        return {"Message": random.choice(["Available", "Unavailable"]), 'RestaurantName': name}, -1
 
     outputs = ["Reservation Confirmed", "Reservation Failed"]
     if random.random() > 0.5:
-        return {"ReservationStatus": outputs[1]}, -1
+        return {"ReservationStatus": outputs[1], 'RestaurantName': name}, -1
     else:
-        return {"ReservationStatus": outputs[0]}, -1
+        return {"ReservationStatus": outputs[0], 'RestaurantName': name}, -1
 
 
 def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
-    if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
-
     outputs = ["Reservation Confirmed", "Reservation Failed"]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "TakesReservations": True,
-    }
 
-    row, _ = hotel_api.sample(new_constraints)
+    name = getval(constraints, 'Name', hotel_api)
+
+    if constraints["RequestType"] != "Book":
+        return {"Message": random.choice(["Available", "Unavailable"]), 'HotelName': name}, -1
+
     if row is None:
-        return {"Message": outputs[1]}, -1
+        return {"Message": outputs[1], 'HotelName': name}, -1
     else:
-        return {"Message": random.choice(outputs)}, -1
+        return {"Message": random.choice(outputs), 'HotelName': name}, -1
 
 
 def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
     outputs = ["Request Confirmed", "Request Failed"]
 
+    room = getval(constraints, 'RoomNumber', hotel_api)
+    time = getval(constraints, 'Time', hotel_api)
+
     if random.random() < 0.2:
-        return {"RequestStatus": outputs[1]}, -1
+        return {"RequestStatus": outputs[1], 'RoomNumber': room, 'Time': time}, -1
     else:
-        return {"RequestStatus": outputs[0]}, -1
+        return {"RequestStatus": outputs[0], 'RoomNumber': room, 'Time': time}, -1
 
 
 def plane_search(plane_api, constraints: Dict[Text, Any]):
@@ -246,16 +248,13 @@ def plane_search(plane_api, constraints: Dict[Text, Any]):
 
 
 def plane_reserve(plane_api, constraints: Dict[Text, Any]):
+    plane_id = getval(constraints, 'id', plane_api)
+
     if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+        return {"Message": random.choice(["Available", "Unavailable"]), 'id': plane_id }, -1
 
     outputs = ["Reservation Confirmed", "Reservation Failed"]
-
-    del constraints['CustomerName']
-    del constraints['RequestType']
-
-    outputs = ["Reservation Confirmed", "Reservation Failed"]
-    return {"ReservationStatus": random.choice(outputs)}, -1
+    return {"ReservationStatus": random.choice(outputs), 'id': plane_id }, -1
 
 
 def trip_directions(trip_api, constraints: Dict[Text, Any]):
@@ -392,10 +391,15 @@ def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):
         "That person has a conflicting meeting at that time. Try another meeting time."
     ]
 
+    starttime = getval(constraints, 'StartTimeHour', schedule_api)
+    endtime = getval(constraints, 'EndTimeHour', schedule_api)
+    day = getval(constraints, 'Day', schedule_api)
+    name = getval(constraints, 'Name', schedule_api)
+
     if random.random() > 0.5:
-        return dict(Message=outputs[0]), -1
+        return dict(Message=outputs[0], StartTime=starttime, EndTime=endtime, Day=day, GuestName=name), -1
     else:
-        return dict(Message=outputs[1]), -1
+        return dict(Message=outputs[1], StartTime=starttime, EndTime=endtime, Day=day, GuestName=name), -1
 
 
 def book_doctor_appointment(
@@ -405,16 +409,17 @@ def book_doctor_appointment(
         "Your appointment has been successfuly scheduled.",
         "The doctor has a conflicting meeting at that time. Try another time or another doctor."
     ]
+    
+    doctor = getval(constraints, 'Name', schedule_api)
+    time = getval(constraints, 'StartTimeHour', schedule_api)
+
+    if constraints["RequestType"] != "Book":
+        return dict(Message=outputs[0], DoctorName=doctor, Time=time), -1
+
     if random.random() > 0.5:
-        if constraints["RequestType"] != "Book":
-          return {"Message": "The time slot is available."}, -1
-
-        return dict(Message=outputs[0]), -1
+        return {"Message": "The time slot is available.", "DoctorName": doctor, "Time": time}, -1
     else:
-        if constraints["RequestType"] != "Book":
-          return {"Message": outputs[1]}, -1
-
-        return dict(Message=outputs[0]), -1
+        return {"Message": outputs[1], "DoctorName": doctor, "Time": time}, -1
 
 
 def book_apartment_viewing(
@@ -458,6 +463,22 @@ def followup_doctor_appointment(
     return dict(Message=random.choice(outputs)), -1
 
 
+def getval(constraints, key, db):
+    """
+    Get the value of a constraint
+    """
+    value = constraints[key]
+    if callable(value):
+      # find param
+      param = [e for e in db.parameters if e['Name'] == key][0]
+      if 'Categories' not in param:
+        return ''
+      
+      return [e for e in param['Categories'] if value(e)][0]
+    else:
+      return value
+
+
 def party_plan(schedule_api, constraints: Dict[Text, Any]):
     schedule_outputs = [
         "ERROR",
@@ -467,23 +488,20 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
         "Your event has been successfully scheduled.",
         "The venue is too small for your party. Try another venue."
     ]
+
+    venue_name = getval(constraints, 'Name', schedule_api)
+    day = getval(constraints, 'Day', schedule_api)
+    time = getval(constraints, 'StartTimeHour', schedule_api)
+
     if constraints["RequestType"] == "Book":
-      return dict(Message=size_outputs[1]), -1
+      return dict(Message=size_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
 
     if random.random() < 0.1:
-        return dict(Message=schedule_outputs[1]), -1
-
-    new_constraints = {
-        "Name": constraints["Name"],
-        "SizeLimit": is_greater_than(constraints["NumberGuests"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if random.random() > 0.1:
-        if constraints["RequestType"] != "Book":
-          return {"Message": "The venue is available."}, -1
-        return dict(Message=size_outputs[0]), -1
+        return dict(Message=schedule_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
+    elif random.random() > 0.1:
+        return dict(Message="The venue is available.", VenueName=venue_name, Day=day, Time=time), -1
     else:
-        return dict(Message=size_outputs[1]), -1
+        return dict(Message=size_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
 
 
 def party_rsvp(schedule_api, constraints: Dict[Text, Any]):
