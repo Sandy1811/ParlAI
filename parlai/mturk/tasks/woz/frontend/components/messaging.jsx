@@ -127,12 +127,13 @@ function KnowledgeBaseMessage(props) {
   }
   if (exampleJson != null) {
     const rows = Object.keys(exampleJson).map((key, idx) => {
-      if (key === 'api_name') {  // This is for internal processing only, so don't show it
+      if (key === 'api_name') {
+        // This is for internal processing only, so don't show it
         return;
       }
 
       // Split CamelCase string into spaced string
-      let long_key = key.replace(/([a-z0-9])([A-Z])/g, '$1 $2')
+      let long_key = key.replace(/([a-z0-9])([A-Z])/g, '$1 $2');
 
       let value = exampleJson[key];
       if (typeof value === 'boolean') {
@@ -146,7 +147,9 @@ function KnowledgeBaseMessage(props) {
               <td style={{ paddingRight: 10 }}>{long_key}:</td>
               <td width="400px">
                 <ol>
-                  { value.map((el) => (<li>{el.trim()}</li>)) }
+                  {value.map(el => (
+                    <li>{el.trim()}</li>
+                  ))}
                 </ol>
               </td>
             </tr>

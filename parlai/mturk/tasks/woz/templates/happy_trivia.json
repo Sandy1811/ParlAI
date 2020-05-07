@@ -5,7 +5,7 @@
   "api_names": ["trivia"],
   "db": "trivia.json",
   "schema_urls": {
-    "trivia": "https://i.imgur.com/BpikQBG.jpg"
+    "trivia": "https://i.imgur.com/T0c2Cxw.jpg"
   },
   "instructions": {
     "User": {

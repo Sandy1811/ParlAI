@@ -10,9 +10,9 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "Your are @PersonName-1 and would like to schedule a two-hour meeting with @GuestName-1 for @Day-1 at @StartTimeHour-1 o'clock. The meeting reason is '@MeetingReason-1'. If that time does not work, you can also do @StartTimeHour-2 o'clock or @StartTimeHour-3 o'clock on the same day.",
-	"Your are @PersonName-1 and would like to schedule a two-hour meeting with @GuestName-1 for @Day-1 at @StartTimeHour-1 o'clock. The meeting reason is '@MeetingReason-1'. If that time does not work, you can also do @StartTimeHour-2 on @Day-2 o'clock.",
-        "Your are @PersonName-1 and would like to schedule a two-hour meeting with @GuestName-1 for @Day-1 at @StartTimeHour-1 o'clock. The meeting reason is '@MeetingReason-1'. If that time does not work, you can also do @StartTimeHour-2 o'clock or @StartTimeHour-3 o'clock on @Day-2."
+        "Your are @PersonName-1 and would like to schedule a two-hour meeting with @GuestName-1 for @Day-1 at @StartTimeHour-1. The meeting reason is '@MeetingReason-1'. If that time does not work, you can also do @StartTimeHour-2 or @StartTimeHour-3 the same day.",
+        "Your are @PersonName-1 and would like to schedule a two-hour meeting with @GuestName-1 for @Day-1 at @StartTimeHour-1. The meeting reason is '@MeetingReason-1'. If that time does not work, you can also do @StartTimeHour-2 on @Day-2.",
+        "Your are @PersonName-1 and would like to schedule a two-hour meeting with @GuestName-1 for @Day-1 at @StartTimeHour-1. The meeting reason is '@MeetingReason-1'. If that time does not work, you can also do @StartTimeHour-2 or @StartTimeHour-3 on @Day-2."
       ],
       "completion_requirements": [
         "You have tried to schedule a meeting. Either the meeting was scheduled at one of your available times, or the individual was busy during all of them."

@@ -9,7 +9,7 @@
         "Hyatt Hotel",
         "Old Town Inn"
       ],
-      "ReadableName": "Name"
+      "ReadableName": "Hotel Name"
     },
     {
       "Name": "RoomNumber",
@@ -20,9 +20,33 @@
     },
     {
       "Name": "Time",
-      "Type": "Integer",
-      "Min": 0,
-      "Max": 23,
+      "Type": "Categorical",
+      "Categories": [
+        "12 am",
+        "1 am",
+        "2 am",
+        "3 am",
+        "4 am",
+        "5 am",
+        "6 am",
+        "7 am",
+        "8 am",
+        "9 am",
+        "10 am",
+        "11 am",
+        "12 pm",
+        "1 pm",
+        "2 pm",
+        "3 pm",
+        "4 pm",
+        "5 pm",
+        "6 pm",
+        "7 pm",
+        "8 pm",
+        "9 pm",
+        "10 pm",
+        "11 pm"
+      ],
       "ReadableName": "Time"
     },
     {
@@ -40,20 +64,11 @@
     {
       "Name": "RequestStatus",
       "Type": "Categorical",
-      "Categories": [
-        "Request Confirmed",
-        "Request Failed"
-      ],
+      "Categories": ["Request Confirmed", "Request Failed"],
       "ReadableName": "Request Status"
     }
   ],
-  "required": [
-    "Name",
-    "RoomNumber",
-    "Time",
-    "CustomerName",
-    "CustomerRequest"
-  ],
+  "required": ["Name", "RoomNumber", "Time", "CustomerName", "CustomerRequest"],
   "db": "hotel",
   "function": "hotel_service_request",
   "returns_count": false

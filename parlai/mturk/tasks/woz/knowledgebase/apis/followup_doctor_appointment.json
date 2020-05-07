@@ -3,12 +3,8 @@
     {
       "Name": "Name",
       "Type": "Categorical",
-      "Categories": [
-        "Dr. Johnson",
-        "Dr. Morgan",
-        "Dr. Alexis"
-      ],
-      "ReadableName": "Name"
+      "Categories": ["Dr. Johnson", "Dr. Morgan", "Dr. Alexis"],
+      "ReadableName": "Doctor Name"
     },
     {
       "Name": "PatientName",
@@ -23,10 +19,7 @@
       "ReadableName": "Message"
     }
   ],
-  "required": [
-    "Name",
-    "PatientName"
-  ],
+  "required": ["Name", "PatientName"],
   "db": "null",
   "function": "followup_doctor_appointment",
   "returns_count": false
