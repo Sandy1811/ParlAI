@@ -196,19 +196,10 @@ def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
         return {"Message": random.choice(["Available", "Unavailable"])}, -1
 
     outputs = ["Reservation Confirmed", "Reservation Failed"]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "TakesReservations": True,
-        "MaxPartySize": is_greater_than(constraints["PartySize"]),
-        "OpenTimeHour": is_less_than(constraints["Time"]),
-        "CloseTimeHour": is_greater_than(constraints["Time"]),
-    }
-
-    row, _ = restaurant_api.sample(new_constraints)
-    if row is None:
+    if random.random() > 0.5:
         return {"ReservationStatus": outputs[1]}, -1
     else:
-        return {"ReservationStatus": random.choice(outputs)}, -1
+        return {"ReservationStatus": outputs[0]}, -1
 
 
 def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
@@ -231,15 +222,7 @@ def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
 def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
     outputs = ["Request Confirmed", "Request Failed"]
 
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Service": True,
-        "ServiceStartHour": is_less_than(constraints["Time"]),
-        "ServiceStopHour": is_greater_than(constraints["Time"]),
-    }
-
-    row, _ = hotel_api.sample(new_constraints)
-    if row is None:
+    if random.random() < 0.2:
         return {"RequestStatus": outputs[1]}, -1
     else:
         return {"RequestStatus": outputs[0]}, -1
@@ -268,33 +251,11 @@ def trip_directions(trip_api, constraints: Dict[Text, Any]):
         "TravelMode": constraints["TravelMode"],
     }
 
-    # Only need this logic for transit
-    if constraints["TravelMode"] == "Transit":
-        new_constraints["DepartureTime"] = is_greater_than(constraints["DepartureTime"])
-
-        rows = trip_api.get_all(new_constraints)
-        row = min(rows, key=lambda e: e._settings.get("DepartureTime"))
-    else:
-        row, _ = trip_api.sample(new_constraints)
+    row, _ = trip_api.sample(new_constraints)
 
     return row._settings, -1
 
 
-def trip_traffic(trip_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "TravelMode": constraints["TravelMode"],
-    }
-
-    # Only need this logic for transit
-    if constraints["TravelMode"] == "Transit":
-        new_constraints["DepartureTime"] = is_greater_than(constraints["DepartureTime"])
-
-        rows = trip_api.get_all(new_constraints)
-        row = min(rows, key=lambda e: e._settings.get("TripLengthMinutes"))
-    else:
-        row, _ = trip_api.sample(new_constraints)
-
-    return row._settings, -1
 
 
 def book_ride(ride_api, constraints: Dict[Text, Any]):
@@ -394,7 +355,7 @@ def shopping_order_status(null_api, constraints: Dict[Text, Any]):
 
     return dict(Message=random.choice(outputs)), -1
 
-def movie_trivia(null_api, constraints: Dict[Text, Any]):
+def trivia(null_api, constraints: Dict[Text, Any]):
     questions = [
 ["A ____ atom in an atomic clock beats 9,192,631,770 times a second", "cesium"],
 ["A ____ is the blue field behind the stars", "canton"],
@@ -419,15 +380,7 @@ def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):
         "That person has a conflicting meeting at that time. Try another meeting time."
     ]
 
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
-
-    row, _ = schedule_api.sample(new_constraints)
-    if row is None:
+    if random.random() > 0.5:
         return dict(Message=outputs[0]), -1
     else:
         return dict(Message=outputs[1]), -1
@@ -440,14 +393,7 @@ def book_doctor_appointment(
         "Your appointment has been successfuly scheduled.",
         "The doctor has a conflicting meeting at that time. Try another time or another doctor."
     ]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
+    if random.random() > 0.5:
         if constraints["RequestType"] != "Book":
           return {"Message": "The time slot is available."}, -1
 
@@ -463,14 +409,7 @@ def book_apartment_viewing(
         "Your apartment viewing has been successfuly scheduled.",
         "That time is unavailable. Please try another time."
     ]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
+    if random.random() > 0.5:
         if constraints["RequestType"] != "Book":
           return {"Message": "The time slot is available."}, -1
 
@@ -513,15 +452,7 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
         "Your event has been successfuly scheduled.",
         "The venue is too small for your party. Try another venue."
     ]
-
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
+    if random.random() < 0.1:
         return dict(Message=schedule_outputs[1]), -1
 
     new_constraints = {
@@ -529,7 +460,7 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
         "SizeLimit": is_greater_than(constraints["NumberGuests"]),
     }
     row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
+    if random.random() < 0.8:
         if constraints["RequestType"] != "Book":
           return {"Message": "The venue is available."}, -1
         return dict(Message=size_outputs[0]), -1

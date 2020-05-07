@@ -27,7 +27,22 @@
   },
   { "Name": "AverageWaitMinutes", "Type": "Integer", "Min": 0, "Max": 60 },
   { "Name": "OpenTimeHour", "Type": "Integer", "Min": 6, "Max": 10 },
-  { "Name": "Time", "Type": "Integer", "Min": 10, "Max": 18 },
+  {
+    "Name": "Time",
+    "Type": "Categorical",
+    "Categories": [
+      "10 am",
+      "11 am",
+      "12 pm",
+      "1 pm",
+      "2 pm",
+      "3 pm",
+      "4 pm",
+      "5 pm",
+      "6 pm",
+      "7 pm"
+    ]
+  },
   { "Name": "CloseTimeHour", "Type": "Integer", "Min": 15, "Max": 23 },
   { "Name": "MaxPartySize", "Type": "Integer", "Min": 2, "Max": 50 },
   {

@@ -15,9 +15,9 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1 for 2 hours. Your name is @PersonName-1. You have paid the application fee.",
-        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1 for 2 hours. Your name is @PersonName-1. You have not paid the application fee.",
-        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1 for 2 hours. Your name is @PersonName-1. You have paid the application fee. Please include the following message with your booking request: @ApartmentMessage-1"
+        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1. Your name is @PersonName-1. You have paid the application fee.",
+        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1. Your name is @PersonName-1. You have not paid the application fee.",
+        "You are interested in viewing an apartment. Please schedule a viewing at @ApartmentName-1 for @Day-1 at @StartTimeHour-1. Your name is @PersonName-1. You have paid the application fee. Please include the following message with your booking request: @ApartmentMessage-1"
       ],
       "completion_requirements": [
         "You have tried to book the apartment viewing. Either the booking was succesful or the time slot was unavailable."

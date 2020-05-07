@@ -10,7 +10,7 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "Your are @PersonName-1 and would like to make an appointment with @DoctorName-1 for @Day-1 at @StartTimeHour-1 and ending two hours later. Your symptoms are @Symptoms-1."
+        "Your are @PersonName-1 and would like to make an appointment with @DoctorName-1 for @Day-1 at @StartTimeHour-1. Your symptoms are @Symptoms-1."
       ],
       "completion_requirements": [
         "You have made a request for the appointment. Either it was succesfully scheduled or the doctor was busy at the requested time."
