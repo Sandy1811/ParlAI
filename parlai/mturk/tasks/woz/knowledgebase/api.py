@@ -407,13 +407,13 @@ def book_doctor_appointment(
 ):
     outputs = [
         "Your appointment has been successfuly scheduled.",
-        "The doctor has a conflicting meeting at that time. Try another time or another doctor."
+        "The doctor has a conflicting appointment at that time. Try another time or another doctor."
     ]
     
     doctor = getval(constraints, 'Name', schedule_api)
     time = getval(constraints, 'StartTimeHour', schedule_api)
 
-    if constraints["RequestType"] != "Book":
+    if constraints["RequestType"] == "Book":
         return dict(Message=outputs[0], DoctorName=doctor, Time=time), -1
 
     if random.random() > 0.5:
