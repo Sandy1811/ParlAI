@@ -264,29 +264,54 @@ function CompleteButton(props) {
     );
   }
 
-  const realMessageCount = props.messages.filter(
-    msg =>
-      msg.text !== '' &&
-      msg.command == null &&
-      !msg.text.startsWith('<') &&
-      msg.id !== 'MTurk System'
-  ).length;
+  let userMessageCount;
+  if (!props.messages) {
+    userMessageCount = 0;
+  } else {
+    userMessageCount = props.messages.filter(
+      msg =>
+        msg.text !== '' &&
+        msg.command == null &&
+        !msg.text.startsWith('<') &&
+        msg.id === 'User'
+    ).length;
+  }
 
-  const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
-
-  return (
-    <Button
-      className="btn btn-primary"
-      disabled={props.chat_state !== 'text_input'}
-      onClick={() => {
-        props.onMessageSend('<complete>', {}, () =>
-          console.log('sent complete')
-        );
-      }}
-    >
-      The {other_agent} has said goodbye
-    </Button>
+  // Find the last setup message
+  const setupMessage = findLast(
+    props.messages,
+    msg => msg.command === 'setup' && msg.form_description != null
   );
+  let min_user_turns;
+  if (!setupMessage) {
+    min_user_turns = 0;
+  } else {
+    if (!setupMessage.min_user_turns) {
+      min_user_turns = 0;
+    } else {
+      min_user_turns = setupMessage.min_user_turns;
+    }
+  }
+
+  if (props.agent_id === 'User') {
+    return (
+      <Button
+        className="btn btn-primary"
+        disabled={
+          props.chat_state !== 'text_input' || userMessageCount < min_user_turns
+        }
+        onClick={() => {
+          props.onMessageSend('<complete>', {}, () =>
+            console.log('sent complete')
+          );
+        }}
+      >
+        Click here when you've accomplished your task(s)
+      </Button>
+    );
+  } else {
+    return null;
+  }
 }
 
 function findLast(array, predicate) {
@@ -305,8 +330,8 @@ function OnboardingView(props) {
     return (
       <div>
         You are playing the <b>{agent}</b> in this dialogue. Please follow the
-        instructions of the 'MTurk System' bot during onboarding and throughout
-        the dialogue.
+        instructions of the 'MTurk System' bot (darker yellow boxes in the
+        dialogue) during onboarding and throughout the dialogue.
       </div>
     );
   }
@@ -328,7 +353,7 @@ function OnboardingView(props) {
 
   return (
     <div id="task-description" style={{ fontSize: '16px' }}>
-      <h1>Live Chat</h1>
+      <h1>AI Dialogues</h1>
       <hr style={{ borderTop: '1px solid #555' }} />
       <div>{taskDescription}</div>
       <br />

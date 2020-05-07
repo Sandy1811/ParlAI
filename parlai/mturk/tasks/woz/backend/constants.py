@@ -11,6 +11,7 @@ RASA_NLU_SERVER_PROCESS_KEY = 'nlu_server_process'
 INTENT_HELLO = 'hello'
 INTENT_ASK_NAME = 'ask_name'
 INTENT_OUT_OF_SCOPE = 'out_of_scope'
+INTENT_ANYTHING_ELSE = 'anything_else'
 
 # Intent Names for book_ride, ride_status, ride_change
 INTENT_RIDE_ASK_DESTINATION = 'ride_ask_destination'
@@ -98,6 +99,47 @@ INTENT_RESTAURANT_ASK_TAKES_RESERVATIONS = 'restaurant_ask_takes_reservations'
 INTENT_RESTAURANT_INFORM_SEARCH_RESULTS = 'restaurant_inform_search_results'
 INTENT_RESTAURANT_ASK_CONTINUE_SEARCHING = 'restaurant_ask_continue_searching'
 
+# Intent names for apartment_search and book_apartment_viewing
+INTENT_APARTMENT_INFORM_SEARCH_CRITERIA = 'apartment_inform_search_criteria'
+INTENT_APARTMENT_ASK_NUM_BEDROOMS = 'apartment_ask_num_bedrooms'
+INTENT_APARTMENT_ASK_PRICE = 'apartment_ask_price'
+INTENT_APARTMENT_ASK_FLOOR = 'apartment_ask_floor'
+INTENT_APARTMENT_ASK_BALCONY = 'apartment_ask_balcony'
+INTENT_APARTMENT_ASK_ELEVATOR = 'apartment_ask_elevator'
+INTENT_APARTMENT_ASK_NEARBY_POIS = 'apartment_ask_nearby_pois'
+INTENT_APARTMENT_INFORM_SEARCH_RESULT = 'apartment_inform_search_result'
+INTENT_APARTMENT_ASK_SEARCH_MORE = 'apartment_ask_search_more'
+INTENT_APARTMENT_BYE = 'apartment_bye'
+INTENT_APARTMENT_ASK_APARTMENT_NAME = 'apartment_ask_apartment_name'
+INTENT_APARTMENT_ASK_DAY = 'apartment_ask_day'
+INTENT_APARTMENT_ASK_START_TIME = 'apartment_ask_start_time'
+INTENT_APARTMENT_ASK_END_TIME = 'apartment_ask_end_time'
+INTENT_APARTMENT_ASK_APPLICATION_FEE_PAID = 'apartment_ask_application_fee_paid'
+INTENT_APARTMENT_ASK_CUSTOM_MESSAGE = 'apartment_ask_custom_message'
+INTENT_APARTMENT_INFORM_VIEWING_UNAVAILABLE = 'apartment_inform_viewing_unavailable'
+INTENT_APARTMENT_INFORM_VIEWING_AVAILABLE = 'apartment_inform_viewing_available'
+INTENT_APARTMENT_INFORM_BOOKING_SUCCESSFUL = 'apartment_inform_booking_successful'
+
+# Intents for book_doctor_appointment, followup_doctor_appointment
+INTENT_DOCTOR_ASK_DOCTOR_NAME = 'doctor_ask_doctor_name'
+INTENT_DOCTOR_ASK_DAY = 'doctor_ask_day'
+INTENT_DOCTOR_ASK_START_TIME = 'doctor_ask_start_time'
+INTENT_DOCTOR_ASK_END_TIME = 'doctor_ask_end_time'
+INTENT_DOCTOR_ASK_SYMPTOMS = 'doctor_ask_symptoms'
+INTENT_DOCTOR_INFORM_BOOKING_UNAVAILABLE = 'doctor_inform_booking_unavailable'
+INTENT_DOCTOR_INFORM_BOOKING_AVAILABLE = 'doctor_inform_booking_available'
+INTENT_DOCTOR_INFORM_BOOKING_SUCCESSFUL = 'doctor_inform_booking_successful'
+INTENT_DOCTOR_INFORM_DOCTORS_INSTRUCTIONS = 'doctor_inform_doctors_instructions'
+
+# Intents for spaceship_access_codes, spaceship_life_support
+INTENT_SPACESHIP_ASK_RANK = 'spaceship_ask_rank'
+INTENT_SPACESHIP_ASK_CODE = 'spaceship_ask_code'
+INTENT_SPACESHIP_ASK_CODE_TYPE = 'spaceship_ask_code_type'
+INTENT_SPACESHIP_INFORM_OUTCOME = 'spaceship_inform_outcome'
+INTENT_SPACESHIP_ASK_LOCK_MANUFACTURER = 'spaceship_ask_lock_manufacturer'
+INTENT_SPACESHIP_ASK_COLOUR_TOP_CABLE = 'spaceship_ask_colour_top_cable'
+INTENT_SPACESHIP_ASK_COLOUR_SECOND_CABLE = 'spaceship_ask_colour_second_cable'
+
 SCENARIO_PORT_MAP = {
     'book_ride': '5005',
     'ride_change': '5006',
@@ -109,5 +151,11 @@ SCENARIO_PORT_MAP = {
     'plane_reserve': '5012',
     'plane_search': '5013',
     'restaurant_reserve': '5014',
-    'restaurant_search': '5015'
+    'restaurant_search': '5015',
+    'apartment_search': '5016',
+    'book_apartment_viewing': '5017',
+    'book_doctor_appointment': '5018',
+    'followup_doctor_appointment': '5019',
+    'spaceship_access_codes': '5020',
+    'spaceship_life_support': '5021'
 }

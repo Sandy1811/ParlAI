@@ -1,0 +1,25 @@
+{
+  "title": "Unhappy trip directions",
+  "api_names": ["trip_directions"],
+  "db": "trip.json",
+  "instructions": {
+    "User": {
+      "linear_guide": [
+        "Not again! You took the wrong bus and got totally lost in the middle of the city. But you have to get to your `ImportantMeeting@generic` in time! Ask you personal AI assistant for help.",
+        "The `ImportantMeeting@generic` is somewhere near `Location-2@trip`. If you can get there, you should know your way again.",
+        "Follow the way-instructions of the assistant and imagine you do what it says.",
+        null,
+        "`ReasonForAreaBlock@generic` So this entire area is blocked! And this is not in the news yet, so your assistant doesn't know. Damn! You have to find a way around. A police officer nearby tells you that you should be fine if you first make your way to `Location-3@trip`. So get there and then from there to `Location-2@trip`.",
+        "Again, imagine you follow the instructions of the assistant.",
+        null,
+        null,
+        "Complain about the general situation, make a joke, or say something about the environment you imagine yourself in right now.",
+        null,
+        "Keep going until you've reached `Location-2@trip`. Then you can end the conversation."
+      ]
+    },
+    "Wizard": {
+      "task_description": "Follow the flow charts and help the user. Some facts you should be aware of: \n\n* At the beginning of the conversation, the user's location is `Location-1@trip`\n* At the beginning of the conversation it is 1pm"
+    }
+  }
+}

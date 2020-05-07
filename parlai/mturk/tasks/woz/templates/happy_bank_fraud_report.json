@@ -10,8 +10,8 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "You are @FullName-1 and would like to submit a fraud report. @Fraud-1. Your account number is @AccountNumber-1 and your PIN is @PIN-1.",
-        "You are @FullName-1 and would like to report fraud on your bank account. @Fraud-1. Unfortunately, you don't remember your account nubmer or your PIN. Your date of birth is @DOB-1. For your security questions, your mother's maiden name is @Mother-1 and your childhood pet is @Pet-1."
+        "You are @FullName-1 and would like to submit a fraud report. @Fraud-1 Your account number is @AccountNumber-1 and your PIN is @PIN-1.",
+        "You are @FullName-1 and would like to report fraud on your bank account. @Fraud-1. Unfortunately, you don't remember your account number nor your PIN. Your date of birth is @DOB-1. For your security questions, your mother's maiden name is @Mother-1 and your childhood pet is @Pet-1."
       ],
       "completion_requirements": [
         "You have reported fraud for your bank account."

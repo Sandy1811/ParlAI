@@ -46,6 +46,11 @@
     "Categories": ["Southside Venue", "North Heights Venue", "West Bay Venue"]
   },
   {
+    "Name": "PartyNamePieces",
+    "Type": "Categorical",
+    "Categories": ["south", "high or above", "bay"]
+  },
+  {
     "Name": "ApartmentName",
     "Type": "Categorical",
     "Categories": [

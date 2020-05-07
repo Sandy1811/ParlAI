@@ -1,0 +1,45 @@
+{
+  "title": "Multitask",
+  "name": "Movies and Restaurants",
+  "version": 1,
+  "api_names": ["movie_search", "restaurant_reserve"],
+  "db": "ride.json",
+  "schema_urls": {
+    "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png"
+  },
+  "instructions": {
+    "User": {
+      "completion_requirements": [
+        "The MTurk Assistant says you can end the conversation."
+      ],
+      "completion_questions": [
+        "Did the assistant stay calm and helpful throughout the dialogue?"
+      ],
+      "task_descriptions": [
+        "Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot has told you to do so. "
+      ],
+      "linear_guide": [
+        "Your name is `CustomerName-1@ride`, and you'd like to watch a movie with your friends `CustomerName-2@ride` and `CustomerName-3@ride`. Your personal AI assistant should be able to find something that you'd all enjoy. Say hello to your AI assistant!",
+        "Ask your assistant to find a movie directed by `Director-1@movie`.",
+        "`CustomerName-2@ride` says: 'I don't really like those `Director-1@movie` movies. Let's go for something by `Director-2@movie` instead!'. Ask you assistant to list some movies from either director.",
+        "Now `CustomerName-2@ride` says: 'Oh, have you guys watched `Name@movie`? We should definitely watch that!'. Improvise, and either go for `Name@movie` or one of the movies the assistant may have names so far. ",
+        null,
+        "When you've narrowed it down to a few options, ask the assistant to compare the lengths of those movies and tell you which one is shortest. This way you still have time to go to a restaurant afterwards. ",
+        null,
+        "Once you've decided on a movie to watch, ask the AI assistant to make a reservation for the three of you at the `Name-1@restaurant`. You plan to start watching at 7pm (19:00 hrs), so the booking should be made for that time + the length of the movie.",
+        null,
+        "If the reservation fails, check a different restaurant. For example, the `Name-2@restaurant` or `Name-3@restaurant`.",
+        "If none of the restaurants take reservations, you decide to cook at home. If this is the case, or if you have already made a booking, bring the dialgoue to a natural end. Well done :)"
+      ]
+    },
+    "Wizard": {
+      "task_description": "Follow the flow charts and help the user. (You can find the single-task video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",
+      "completion_requirements": ["The user has said goodbye."],
+      "completion_questions": [
+        "Did the user change his/her mind about what he/she wants at any time?",
+        "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
+        "Where you unsure about what to do at any time? If yes, send us a mail and let us know how we can improve the task."
+      ]
+    }
+  }
+}

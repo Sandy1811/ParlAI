@@ -245,7 +245,8 @@ class WOZWorld(MTurkTaskWorld):
 
         self._primary_kb_item = None
         self._secondary_kb_item = None
-        self._selected_api: Optional[Text] = None
+        self._selected_api: Optional[Text] = None  # The api of the selected tab
+        self._selected_kb_item_api: Optional[Text] = None  # The api of the selected knowledge base item
         self._api_names: Optional[List[Text]] = None
 
         self._user_task_description = None
@@ -373,6 +374,7 @@ class WOZWorld(MTurkTaskWorld):
             self.knowledgebase.observe(wizard_command)
             kb_message = self.knowledgebase.act()
             self._primary_kb_item = kb_message.get("example_item")
+            self._selected_kb_item_api = None if not self._primary_kb_item else self._primary_kb_item.get("api_name")
             self._secondary_kb_item = None
             self.events.append(
                 {
@@ -389,6 +391,7 @@ class WOZWorld(MTurkTaskWorld):
             return 1
         elif isinstance(wizard_command, SelectPrimaryCommand):
             self._primary_kb_item = wizard_command.item
+            self._selected_kb_item_api = wizard_command.item.get("api_name")
             self._secondary_kb_item = None
             return 0
         elif isinstance(wizard_command, SelectSecondaryCommand):
@@ -402,10 +405,17 @@ class WOZWorld(MTurkTaskWorld):
             # Prevent wizards from copy/pasting entire KB item
             if "\t" in wizard_command.query:
                 send_mturk_message(
-                    "Your input cannot contain tabs. Please do not just copy/paste the knowledge base item.",
+                    "Please do not just copy/paste the knowledge base item.",
                     self.wizard,
                 )
                 return 0
+
+            api_names = [self._selected_api]
+            if self._selected_kb_item_api:
+                api_names.append(self._selected_kb_item_api)
+            else:
+                api_names.append(self._selected_api)
+
             # Get suggestions from Rasa NLU server
             (
                 suggestions,
@@ -413,7 +423,7 @@ class WOZWorld(MTurkTaskWorld):
             ) = self._suggestion_module.get_suggestions(
                 wizard_utterance=wizard_command.query,
                 primary_kb_item=self._primary_kb_item,
-                api_name=self._selected_api,
+                api_names=api_names,
             )
             # Warn if response template of top-ranked intent could not be filled by selected KB item
             if possibly_wrong_item_selected:
@@ -430,8 +440,8 @@ class WOZWorld(MTurkTaskWorld):
             self.wizard.observe(wizard_command.message)
             self.user.observe(wizard_command.message)
             self._num_wizard_utterances += 1
-            if "goodbye" in wizard_command.message.get("text", "").lower():
-                self._end_dialogue_by_wizard()
+            # if "goodbye" in wizard_command.message.get("text", "").lower():
+            #     self._end_dialogue_by_wizard()
             return 1
         else:
             print_and_log(
@@ -501,6 +511,9 @@ class WOZWorld(MTurkTaskWorld):
 
         instruction = self._user_linear_guide[self._num_user_utterances]
         if instruction:
+            current_instruction_number = len([i for i in self._user_linear_guide[:self._num_user_utterances] if i is not None]) + 1
+            total_instruction_number = len([i for i in self._user_linear_guide if i is not None])
+            instruction += f" [instruction {current_instruction_number} of {total_instruction_number}]"
             self.events.append(
                 {
                     "Agent": "UserGuide",
@@ -660,7 +673,7 @@ class WOZWorld(MTurkTaskWorld):
             )
         ]
         return {
-            "FORMAT-VERSION": 2,
+            "FORMAT-VERSION": 3,
             "Scenario": {
                 "Domains": sorted(
                     list({c.get("Domain") for c in self._wizard_capabilities})
