@@ -494,7 +494,7 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
     time = getval(constraints, 'StartTimeHour', schedule_api)
 
     if constraints["RequestType"] == "Book":
-      return dict(Message=size_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
+      return dict(Message=size_outputs[0], VenueName=venue_name, Day=day, Time=time), -1
 
     if random.random() < 0.1:
         return dict(Message=schedule_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
