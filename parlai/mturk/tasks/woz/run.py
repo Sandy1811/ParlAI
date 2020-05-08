@@ -72,8 +72,6 @@ def main():
     and configuring it for the qa_data_collection task.
     """
 
-    echo.log_write("START")
-
     # Get relevant arguments
     arg_parser = ParlaiParser(False, False)
     arg_parser.add_parlai_data_path()
