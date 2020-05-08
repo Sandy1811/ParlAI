@@ -258,15 +258,28 @@ def plane_reserve(plane_api, constraints: Dict[Text, Any]):
 
 
 def trip_directions(trip_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "TravelMode": constraints["TravelMode"],
-    }
 
-    row, _ = trip_api.sample(new_constraints)
+    del constraints['DepartureTime']
+    del constraints['DepartureLocation']
+    del constraints['ArrivalLocation']
 
-    return row._settings, -1
+    if constraints['TravelMode'] != 'Transit':
+      del constraints['Price']
 
+    row, _ = trip_api.sample(constraints)
 
+    d = row._settings
+
+    simple_key = [k for k in d if 'Detail' not in k and 'Instruc' in k][0]
+    detail_key = [k for k in d if 'Detail' in k and 'Instruc' in k][0]
+
+    simple = [e for e in d[simple_key] if e[0] != "#"]
+    detail = [e[1:] for e in d[simple_key] if e[0] == "#"]
+
+    d[simple_key] = simple
+    d[detail_key] = detail
+
+    return d, -1
 
 
 def book_ride(ride_api, constraints: Dict[Text, Any]):
@@ -407,13 +420,13 @@ def book_doctor_appointment(
 ):
     outputs = [
         "Your appointment has been successfuly scheduled.",
-        "The doctor has a conflicting meeting at that time. Try another time or another doctor."
+        "The doctor has a conflicting appointment at that time. Try another time or another doctor."
     ]
     
     doctor = getval(constraints, 'Name', schedule_api)
     time = getval(constraints, 'StartTimeHour', schedule_api)
 
-    if constraints["RequestType"] != "Book":
+    if constraints["RequestType"] == "Book":
         return dict(Message=outputs[0], DoctorName=doctor, Time=time), -1
 
     if random.random() > 0.5:
@@ -494,7 +507,7 @@ def party_plan(schedule_api, constraints: Dict[Text, Any]):
     time = getval(constraints, 'StartTimeHour', schedule_api)
 
     if constraints["RequestType"] == "Book":
-      return dict(Message=size_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
+      return dict(Message=size_outputs[0], VenueName=venue_name, Day=day, Time=time), -1
 
     if random.random() < 0.1:
         return dict(Message=schedule_outputs[1], VenueName=venue_name, Day=day, Time=time), -1

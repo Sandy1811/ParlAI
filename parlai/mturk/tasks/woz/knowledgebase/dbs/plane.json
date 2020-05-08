@@ -96,7 +96,7 @@
     "Type": "Categorical",
     "Categories": ["First", "Business", "Economy"]
   },
-  { "Name": "DurationHours", "Type": "Integer", "Min": 1, "Max": 8 },
+  { "Name": "DurationHours", "Type": "Integer", "Min": 2, "Max": 8 },
   {
     "Name": "Airline",
     "Type": "Categorical",
