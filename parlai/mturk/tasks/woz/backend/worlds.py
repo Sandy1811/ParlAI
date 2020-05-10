@@ -40,7 +40,7 @@ from parlai.mturk.tasks.woz.backend.commands import (
     SilentCommand,
     SelectTopicCommand,
 )
-from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion
+from parlai.mturk.tasks.woz.backend.suggestions import WizardSuggestion, CUSTOM_INTENT
 from parlai.mturk.tasks.woz.backend.workers import (
     WorkerDatabase,
     TASK_LEVEL_SINGLE_HAPPY,
@@ -334,7 +334,7 @@ class WOZWorld(MTurkTaskWorld):
 
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
         wizard_command = command_from_message(self.wizard.act(), self.wizard)
-        self.store_wizard_event(wizard_command.event)
+        self.store_wizard_event(wizard_command)
 
         if isinstance(wizard_command, UtterCommand):
             self.user.observe(wizard_command.message)
@@ -412,6 +412,7 @@ class WOZWorld(MTurkTaskWorld):
             self.wizard.observe(
                 SupplySuggestionsCommand(self.wizard, suggestions).message
             )
+            self._recent_suggestions = suggestions
             return 0
         elif isinstance(wizard_command, PickSuggestionCommand):
             self.wizard.observe(wizard_command.message)
@@ -512,10 +513,18 @@ class WOZWorld(MTurkTaskWorld):
             )
             self.user.observe(GuideCommand(instruction).message)
 
-    def store_wizard_event(self, event):
-        _event = event
+    def store_wizard_event(self, command):
+        _event = command.event
         _event["PrimaryItem"] = self._primary_kb_item
         _event["SecondaryItem"] = self._secondary_kb_item
+
+        # Add intent (hack)
+        if isinstance(command, PickSuggestionCommand) and self._recent_suggestions:
+            _event["Intent"] = CUSTOM_INTENT
+            for intent, text in self._recent_suggestions:
+                if command.text_matches(text):
+                    _event["Intent"] = intent
+
         self.events.append(_event)
 
     @echo.echo_in(
@@ -661,7 +670,7 @@ class WOZWorld(MTurkTaskWorld):
             )
         ]
         return {
-            "FORMAT-VERSION": 3,
+            "FORMAT-VERSION": 4,
             "Scenario": {
                 "Domains": sorted(
                     list({c.get("Domain") for c in self._wizard_capabilities})

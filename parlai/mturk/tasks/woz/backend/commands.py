@@ -683,7 +683,7 @@ class RequestSuggestionsCommand(WizardCommand):
 
 
 class SupplySuggestionsCommand(BackendCommand):
-    def __init__(self, recipient: Agent, suggestions: List[Text]) -> None:
+    def __init__(self, recipient: Agent, suggestions: List[Tuple[Text, Text]]) -> None:
         super(SupplySuggestionsCommand, self).__init__()
         self._command_name = all_constants()["back_to_front"][
             "command_supply_suggestions"
@@ -696,12 +696,13 @@ class SupplySuggestionsCommand(BackendCommand):
         return {
             "id": self._recipient.id,
             "text": "",
-            "command": self._command_name + str(self._suggestions),
+            "command": self._command_name + str([text for intent, text in self._suggestions]),
+            "intents": [intent for intent, text in self._suggestions]
         }
 
     @staticmethod
     def from_message(
-        sender: Agent, suggestions: Optional[List[Text]] = None, **kwargs,
+        sender: Agent, suggestions: Optional[List[Tuple[Text, Text]]] = None, **kwargs,
     ) -> Optional["Command"]:
         return SupplySuggestionsCommand(recipient=sender, suggestions=suggestions)
 
@@ -711,6 +712,9 @@ class PickSuggestionCommand(WizardCommand):
         super(PickSuggestionCommand, self).__init__(sender)
         self._command_name = "pick_suggestion"
         self._text = chosen_text
+
+    def text_matches(self, text: Text) -> bool:
+        return text == self._text
 
     @property
     def message(self) -> Dict[Text, Any]:
