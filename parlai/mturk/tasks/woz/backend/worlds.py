@@ -515,15 +515,17 @@ class WOZWorld(MTurkTaskWorld):
 
     def store_wizard_event(self, command):
         _event = command.event
-        _event["PrimaryItem"] = self._primary_kb_item
-        _event["SecondaryItem"] = self._secondary_kb_item
 
         # Add intent (hack)
         if isinstance(command, PickSuggestionCommand) and self._recent_suggestions:
             _event["Intent"] = CUSTOM_INTENT
+            _event["IntentOptions"] = [intent for intent, text in self._recent_suggestions]
             for intent, text in self._recent_suggestions:
                 if command.text_matches(text):
                     _event["Intent"] = intent
+
+        _event["PrimaryItem"] = self._primary_kb_item
+        _event["SecondaryItem"] = self._secondary_kb_item
 
         self.events.append(_event)
 
