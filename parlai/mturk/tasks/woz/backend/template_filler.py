@@ -531,7 +531,7 @@ def fill_apartment_inform_booking_successful(intent2reply, *_):
 
 
 def fill_apartment_inform_search_result(intent2reply, kb_item, *_):
-    if not check_kb_item(kb_item, ['Level', 'HasBalcony', 'BalconySide', 'HasElevator', 'NumRooms',
+    if not check_kb_item(kb_item, ['Level', 'HasBalcony', 'HasElevator', 'NumRooms',
                                    'FloorSquareMeters', 'NearbyPOIs', 'Name', 'Price']):
         return None
 
