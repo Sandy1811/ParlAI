@@ -6,7 +6,7 @@
     "User": {
       "linear_guide": [
         "You (`HostName-1@schedule`) want to organize a surprise party for your friend `HostName-2@schedule`, who just got promoted. Talk to your personal AI assistant. Maybe it can help?",
-        "Ideally, the thing should happen on `Day-1@schedule` at the `PartyName@schedule`, `StartTimeHour-1@schedule` o'clock, and you'd expect about `SizeLimit-1@schedule` to show up.",
+        "Ideally, the thing should happen on `Day-1@schedule` at the `PartyName@schedule`, `StartTimeHour-1@schedule`, and you'd expect about `SizeLimit-1@schedule` to show up.",
         null,
         null,
         "Interrupt the conversation with a little small talk",
