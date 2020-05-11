@@ -224,10 +224,7 @@ def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
     if constraints["RequestType"] != "Book":
         return {"Message": random.choice(["Available", "Unavailable"]), 'HotelName': name}, -1
 
-    if row is None:
-        return {"Message": outputs[1], 'HotelName': name}, -1
-    else:
-        return {"Message": random.choice(outputs), 'HotelName': name}, -1
+    return {"Message": random.choice(outputs), 'HotelName': name}, -1
 
 
 def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
