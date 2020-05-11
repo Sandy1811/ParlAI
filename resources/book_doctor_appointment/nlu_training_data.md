@@ -114,7 +114,7 @@
 - slot is available
 - doctor is available
 
-## intent:doctor_inform_booking_succesful
+## intent:doctor_inform_booking_successful
 - Excellent, this is all booked for you now.
 - Great, Dr. Smith is looking forward to seeing you on Wednesday.
 - Fantastic, this is all booked for you and Doctor Johnson will be delighted to see you.
@@ -128,6 +128,13 @@
 - all done
 - all sorted for you
 - Your appointment has been successfuly scheduled.
+- scheduled
+- your appointment is scheduled
+- finished
+- appointment scheduled
+- all booked for you
+- appointment booked
+- you are scheduled to see dr alexis on sat
 
 ## intent:doctor_inform_nothing_found
 - Sorry, but I couldn't find anything
