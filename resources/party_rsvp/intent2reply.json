@@ -10,5 +10,6 @@
     "party_confirm_rsvp": "Great, your rsvp is all done and confirmed!",
     "party_bye": "Thank you and goodbye.",
     "anything_else": "Is there anything else that I can do for you?",
+    "party_inform_nothing_found": "Unfortunately there are no parties on our system that match your search. Would you like to change any of your criteria?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you to rsvp to a party."
 }

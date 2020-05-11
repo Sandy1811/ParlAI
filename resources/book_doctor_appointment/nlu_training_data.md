@@ -101,6 +101,11 @@
 - Yes, your doctor is available then. Can I book this for you?
 - Great, I can book this for you if you want.
 - That should all work fine, can I book it for you?
+- Can I make this appointment for you?
+- Make appointment?
+- arrange appointment?
+- do you want to see the doctor then?
+- make booking?
 
 ## intent:doctor_inform_booking_succesful
 - Excellent, this is all booked for you now.
@@ -110,6 +115,26 @@
 - Great thats all done and your appointment has been booked successfully.
 - Awesome, the booking is done and Dr. Roberts will welcome you on Monday.
 - Hooray, your booking went through alright and you'll see the doctor on Tuesday.
+- booking successful
+- appointment made
+- made the appointment
+- all done
+- all sorted for you
+
+## intent:doctor_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are is no doctor available that can handle your symptons.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a doctor for you.
+- Your search was not successful.
+- No doctors found
+- No doctors can deal with your symptoms!
+- There are no results for your symptoms.
+- I am really sorry, but I couldn't find a doctor that would suit your requirments.
+- There is currently no doctor available that could treat your symptoms.
+- Nothing found.
+- I didn't find a doctor.
+- no doctor matches with your symptoms.
 
 ## intent:doctor_bye
 - Perfect!

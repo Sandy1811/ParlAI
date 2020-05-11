@@ -103,6 +103,13 @@
 - Excellent, everything is available, can I make the reservation for you now?
 - Can I confirm the reservation?
 - Let me proceed with the reservation as everything is available.
+- Should i reserve this table for you?
+- make this booking?
+- reserve that table?
+- reserver for you and your guests?
+- can you confirm this?
+- do you want to proceed?
+- book this table?
 
 ## intent:restaurant_inform_booking_successful
 - Great thats all done for you now.
@@ -149,6 +156,21 @@
 - Enjoy your stay, bye
 - Have a fab holiday, bye bye.
 - Have a lovely stay, goodbye.
+
+## intent:restaurant_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no restaurants that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No restaurants found
+- No restaurants match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no restaurant available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

@@ -82,6 +82,23 @@
 - Right, attack them right back now.
 - Everything done and you can start using the big guns on them now.
 - Hooray, all weapon systems are activated.
+- Everything is done again!
+- All sorted for you again!
+
+## intent:spaceship_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no actions that I can do that match your criteria.
+- Looks like your request didn't return anything
+- Very sorry, but I didn't find an action to carry out.
+- Your search was not successful.
+- No actions found
+- No actions match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find an action that matches your search criteria.
+- There is currently no action available that matches your search criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:spaceship_bye
 - Perfect!

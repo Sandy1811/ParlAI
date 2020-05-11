@@ -10,6 +10,7 @@
     "doctor_inform_booking_available": "Alright, {doctor_name:s} is available at {time:s} o'clock. Can I book the appointment for you?",
     "doctor_inform_booking_successful": "Great, your appointment with {doctor_name:s} is booked for you!",
     "doctor_bye": "Thank you and goodbye.",
+    "doctor_inform_nothing_found": "Unfortunately there is currently no doctor available.",
     "anything_else": "Is there anything else that I can do for you?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you book an appointment with your doctor."
 }

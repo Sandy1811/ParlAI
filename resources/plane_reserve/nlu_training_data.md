@@ -34,6 +34,15 @@
 - Can I reserve that flight for you now?
 - The flight is available and I can reserve it for you now.
 - Your flight is still available. Do you want me to reserve it?
+- can i reserve this for your?
+- should i make a reservation?
+- can i reserve this plane for you?
+- do you want to get this flight?
+- want to take this flight?
+- reserve this?
+- book this?
+- do you want that flight?
+- want that seat?
 
 ## intent:plane_flight_unavailable
 - Sorry, that flight is unavailable.
@@ -110,6 +119,21 @@
 - Enjoy your flight, bye
 - Have a great journey, bye bye.
 - Have a lovely journey, goodbye.
+
+## intent:plane_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no flights that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No flights found
+- No flights match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no flight available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

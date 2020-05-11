@@ -126,6 +126,12 @@
 - Alright, I've got that ride to The Orchard booked for you. Your driver Luke will arrive in a black Mercedes with license plate 999 YYT.
 - Right, I have just booked that ride to the Royal Botanical Gardens for you. Your driver Ella will arrive in a blue Tesla with license plate X76 XX8.
 - Cool, so I've just booked that ride to the castle for you. Your driver Joanna will arrive in a dark green Volkswagen with license plate 334 55A.
+- all booked
+- your ride is booked
+- booked it
+- ride is arranged
+- all done
+- yo ride is all good
 
 ## intent:ride_inform_search_criteria
 - Right, I can also filter for the car's model if you want.
@@ -184,6 +190,21 @@
 - ok, wait while i book a rid for you
 - Alright Johnny, wait while i book a ride for 
 - Alright, Timbo, wait while i find a ride for you.
+
+## intent:ride_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no rides available that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a ride for you.
+- Your search was not successful.
+- No rides found
+- No rides that match your criteria, sorry!
+- There are no rides matching your search criteria.
+- I am really sorry, but I couldn't find a ride that matches your search criteria.
+- There is currently no ride available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

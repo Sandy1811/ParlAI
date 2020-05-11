@@ -7,5 +7,6 @@
     "trivia_inform_answer_2_ask_next": "The answer to this question would have been '{answer:s}'. Would you like to continue playing?",
     "trivia_bye": "Nice playing with you, bye!",
     "anything_else": "Is there anything else that I can do for you?",
+    "trivia_inform_nothing_found": "Unfortunately there are no questions that match your search. Would you like to change any of your criteria?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to play trivia with you."
 }

@@ -82,7 +82,31 @@
 - Should the apartment have an elevator?
 - Is an elevator one of your requirements?
 
+## intent:apartment_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no apartments that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No apartments found
+- No apartments match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no apartment on the market matching your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:apartment_inform_search_result
+- Found apartment
+- Cool, I found one for you.
+- Found one that suits your search.
+- Great, I got an apartment for you.
+- Good news is your search returned a result.
+- Yay, found an apartment for you.
+- I found a 
+- Got a
+- There is a
 - Right, I have found an apartment that matches your search criteria. Its in the Gasometer, 61 square meters, and comes at 795 per month. Its on the 9th floor, does not have a balcony, but the block has an elevator and is next to a school and train station.
 - Great, there are Dyke Road apartments that would match your criteria. Its 25 square meters and costs 525 per month. Its on the first floor and does not have a balcony or an elevator. There is a park nearby.
 - OK, I found Brunswick Place apartments, which are located next to a beautiful park. The apartment is on the first floor, 30 square meters and costs 550 a month. It doesn't have a balcony and the building doesn't feature an elevator.

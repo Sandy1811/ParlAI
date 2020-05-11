@@ -151,6 +151,14 @@
 - Are you happy to go on and send a booking order?
 - Should I send a booking request for you?
 - Cool, the venue is available and I can finalise the booking for you now.
+- can i arrange this party?
+- can i proceed?
+- should i proceed with booking?
+- can you confirm the party?
+- can you confirm this?
+- is this ok for you?
+- should i arrange this now?
+- can i book?
 
 ## intent:party_booking_successful
 - Alright, thats all booked for you now!
@@ -176,6 +184,21 @@
 - Something went wrong and the booking failed.
 - I couldn't book this for you I'm afraid.
 - Sorry, didn't work.
+
+## intent:party_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no venues that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No venues found
+- No venues match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no venue available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:ask_name
 - Hi What is your name>

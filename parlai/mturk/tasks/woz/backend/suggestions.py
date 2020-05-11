@@ -218,18 +218,9 @@ if __name__ == '__main__':
     #             'party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search',
     #             'apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
     #             'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support',
-    #
     #             'bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
     #              'trivia', 'weather'
     #             ]
-    #scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status', 'plane_reserve']
-    #scenarios = ['party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search']
-    #scenarios = ['book_ride']
-    #scenarios = ['apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
-    #             'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support']
-    #scenarios = ['bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
-    #             'trivia', 'weather']
-    #scenarios = ['trip_directions', 'party_rsvp', 'plane_search']
     scenarios = ['book_doctor_appointment']
 
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
