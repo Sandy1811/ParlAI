@@ -138,12 +138,12 @@ class DatabaseCollection:
 
 
 easy = ['happy_followup_doctor_appointment.json', 'happy_weather.json', 'happy_spaceship_life_support.json', 'happy_spaceship_access_codes.json', 'happy_ride_change.json', 'happy_ride_status.json'] #6
-medium = ['happy_party_rsvp.json', 'happy_restaurant_search.json','happy_restaurant_reserve.json','happy_apartment_search.json','happy_hotel_service_request.json','happy_book_apartment_viewing.json', 'happy_party_plan.json', 'happy_hotel_search.json','happy_hotel_reserve.json', 'happy_plane_search.json','happy_plane_reserve.json',  'happy_trip_directions.json', 'happy_book_ride.json','happy_book_doctor_appointment.json'] #14
-hard = ['happy_trivia.json','happy_bank_fraud_report.json','happy_schedule_meeting.json','happy_bank_balance.json'] # 4
+medium = ['happy_party_rsvp.json', 'happy_restaurant_search.json','happy_restaurant_reserve.json','happy_apartment_search.json','happy_hotel_service_request.json','happy_book_apartment_viewing.json', 'happy_party_plan.json', 'happy_hotel_search.json','happy_hotel_reserve.json', 'happy_plane_search.json','happy_plane_reserve.json', 'happy_book_ride.json','happy_book_doctor_appointment.json'] #13
+hard = ['happy_trivia.json','happy_bank_fraud_report.json','happy_schedule_meeting.json','happy_bank_balance.json', 'happy_trip_directions.json'] # 5
 
 counts = {}
 for e in easy:
-  counts[e] = 20
+  counts[e] = 25
 for e in medium:
   counts[e] = 30
 for e in hard:
