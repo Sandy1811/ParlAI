@@ -18,20 +18,12 @@
         "You have tried to schedule a meeting. Either the meeting was scheduled at one of your available times, or the individual was busy during all of them."
       ],
       "completion_questions": [
-        "...schedule your meeting?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant schedule your meeting?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Help the user schedule a meeting!",
-      "completion_requirements": [
-        "You have succesfully scheduled the user's meeting,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user schedule a meeting!"
     }
   }
 }

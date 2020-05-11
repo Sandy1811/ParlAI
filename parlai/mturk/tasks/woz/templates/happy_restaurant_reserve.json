@@ -15,20 +15,12 @@
       ],
       "completion_requirements": ["You have reserved a table."],
       "completion_questions": [
-        "...reserve your restaurant?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant reserve your restaurant?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Help the user make a reservation at a restaurant.",
-      "completion_requirements": [
-        "You have made a reservation for the user,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user make a reservation at a restaurant."
     }
   }
 }

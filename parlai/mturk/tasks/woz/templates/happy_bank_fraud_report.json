@@ -17,20 +17,12 @@
         "You have reported fraud for your bank account."
       ],
       "completion_questions": [
-        "...succesfully report fraud on your account?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant succesfully report fraud on your account?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Authenticate the user and submit a fraud report",
-      "completion_requirements": [
-        "You succesfully submitted a fraud report for the user",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Authenticate the user and submit a fraud report"
     }
   }
 }
