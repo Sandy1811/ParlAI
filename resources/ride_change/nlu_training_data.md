@@ -98,6 +98,7 @@
 - I have successfully changed your departure location to airport.
 - Your trip has been successfully changed.
 - Okay, your ride has been successfully cancelled.
+- Your trip has been successfully changed.
 
 ## intent:ride_ask_confirm_booking
 - Are you satisfied with this ride
@@ -130,22 +131,6 @@
 - I'm sorry I can't help you further
 - I'm sorry. We are unable to change your trip.
 - We are unable to change your trip.
-
-## intent:ride_acknowledge_booking_change
-- Alright, thank you
-- Well that sucks, thanks
-- What a shit service
-- I hate this town
-- Fucking traffic all the time
-- Thats shit but thank you
-- Well fuck you very much for nothing
-- Ok, well, thanks
-- Ok, thanks
-- Alright, I'll wait then
-- OK, I'll wait a bit longer then
-- Fuck off
-- Well, screw you
-- Well, that sucks, but thanks anyway
 
 ## intent:ride_bye
 - Perfect! Have a great ride!

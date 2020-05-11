@@ -199,9 +199,9 @@ def fill_hotel_ask_date_to(intent2reply, *_):
 
 
 def fill_hotel_ask_customer_request(intent2reply, kb_item, *_):
-    if not check_kb_item(kb_item, ["Name"]):
+    if not check_kb_item(kb_item, ["HotelName"]):
         return None
-    return intent2reply[constants.INTENT_HOTEL_ASK_CUSTOMER_REQUEST].format(hotel_name=kb_item['Name'])
+    return intent2reply[constants.INTENT_HOTEL_ASK_CUSTOMER_REQUEST].format(hotel_name=kb_item['HotelName'])
 
 
 def fill_hotel_unavailable(intent2reply, kb_item, *_):
@@ -408,6 +408,10 @@ def fill_party_bye(intent2reply, *_):
 
 def fill_restaurant_ask_restaurant(intent2reply, *_):
     return intent2reply[constants.INTENT_RESTAURANT_ASK_RESTAURANT]
+
+
+def fill_restaurant_inform_search_criteria(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_INFORM_SEARCH_CRITERIA]
 
 
 def fill_restaurant_inform_nothing_found(intent2reply, *_):
@@ -630,7 +634,7 @@ def fill_doctor_inform_booking_available(intent2reply, kb_item, *_):
 
 
 def fill_doctor_inform_booking_successful(intent2reply, kb_item, *_):
-    if not check_kb_item(kb_item, ['DoctorName', 'Time']):
+    if not check_kb_item(kb_item, ['DoctorName']):
         return None
 
     return intent2reply[constants.INTENT_DOCTOR_INFORM_BOOKING_SUCCESSFUL].format(doctor_name=kb_item['DoctorName'])

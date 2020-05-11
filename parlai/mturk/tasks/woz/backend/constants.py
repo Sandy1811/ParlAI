@@ -115,6 +115,7 @@ INTENT_RESTAURANT_ASK_TAKES_RESERVATIONS = 'restaurant_ask_takes_reservations'
 INTENT_RESTAURANT_INFORM_SEARCH_RESULTS = 'restaurant_inform_search_results'
 INTENT_RESTAURANT_ASK_CONTINUE_SEARCHING = 'restaurant_ask_continue_searching'
 INTENT_RESTAURANT_INFORM_NOTHING_FOUND = 'restaurant_inform_nothing_found'
+INTENT_RESTAURANT_INFORM_SEARCH_CRITERIA = 'restaurant_inform_search_criteria'
 
 # Intent names for apartment_search and book_apartment_viewing
 INTENT_APARTMENT_INFORM_SEARCH_CRITERIA = 'apartment_inform_search_criteria'

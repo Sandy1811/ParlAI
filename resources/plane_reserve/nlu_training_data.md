@@ -43,6 +43,7 @@
 - book this?
 - do you want that flight?
 - want that seat?
+- available
 
 ## intent:plane_flight_unavailable
 - Sorry, that flight is unavailable.
@@ -52,6 +53,7 @@
 - Hmm, looks like this flight is not available.
 - I'm sorry, but this flight is unavailable.
 - Flight not available.
+- unavailable
 
 ## intent:plane_reservation_succeeded
 - Right, thats all booked for you.
@@ -66,6 +68,7 @@
 - Your booking is confirmed and you'll receive an emails with the details shortly
 - Awesome, your reservation is confirmed, so you're all set.
 - Great, your reservation is confirmed.
+- Reservation Confirmed
 
 ## intent:plane_reservation_failed
 - I'm sorry, but something went wrong in the booking process and I couldn't complete your reservation.
@@ -82,6 +85,7 @@
 - I'm really sorry, but I couldn't complete your reservation.
 - Very sorry, but the airline couldn't process your reservation request.
 - Your reservation failed.
+- Reservation Failed
 
 ## intent:ask_name
 - Hi What is your name>

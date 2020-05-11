@@ -107,6 +107,7 @@
 - Auth failed.
 - The auth faild.
 - The auth process failed, really sorry about this.
+- You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise.
 
 ## intent:bank_inform_balance
 - Your balance is 324 in credit

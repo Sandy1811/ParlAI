@@ -92,6 +92,9 @@
 - Too bad, that time slot is unavailable.
 - Sorry, but the time is unavailable.
 - I am terribly sorry to inform you that the time you specified is unavailable.
+- The doctor has a conflicting appointment at that time. Try another time or another doctor.
+- unavailable
+- slot is not available
 
 ## intent:doctor_inform_booking_available
 - Great, that time would work. Can I book this appointment for you now?
@@ -106,6 +109,10 @@
 - arrange appointment?
 - do you want to see the doctor then?
 - make booking?
+- The time slot is available.
+- available
+- slot is available
+- doctor is available
 
 ## intent:doctor_inform_booking_succesful
 - Excellent, this is all booked for you now.
@@ -120,6 +127,7 @@
 - made the appointment
 - all done
 - all sorted for you
+- Your appointment has been successfuly scheduled.
 
 ## intent:doctor_inform_nothing_found
 - Sorry, but I couldn't find anything

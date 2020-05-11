@@ -81,6 +81,9 @@
 - It will take her 23 minutes to get to you.
 - She will pick you up in 12 minutes.
 - He will arrive in approximately 14 minutes.
+- Your driver is dropping off another passenger.
+- Your ride is on its way.
+- Your driver is arriving.
 
 ## intent:ride_bye
 - Perfect! Have a great ride!

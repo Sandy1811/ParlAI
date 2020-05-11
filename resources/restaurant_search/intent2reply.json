@@ -2,6 +2,7 @@
     "hello": "Hello, how can I help?",
     "ask_name": "May I have your name, please?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you search for restaurants.",
+    "restaurant_inform_search_criteria": "I can filter restaurants by name, location, food type, its average rating, whether or not they take reservations, and whether or not they have a delivery service.",
     "restaurant_ask_restaurant": "What restaurant would you like to go to?",
     "restaurant_ask_location": "In what part of town should the restaurant be located?",
     "restaurant_ask_food_type": "What cuisine are you looking for?",
