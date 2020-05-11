@@ -42,8 +42,8 @@ task_config[
 This task is Stage 1 of the AI Dialogue tasks and should prepare you for the remaining 3 stages.
 Higher stages offer greater payments, but you cannot enter the other stages without giving the correct answers in this test.
 The test is about the contents of this video: {TUTORIAL_URL}.
-You fail the test if you need more than 6 hints.
-Your submission may be REJECTED if you need too many hints.
+You fail the test if you need more than 5 hints.
+Your submission will be REJECTED if you need more than 8 hints.
 
 Note: The number of HITs for the various stages is limited and not all the stages will be available at all times. 
 '''

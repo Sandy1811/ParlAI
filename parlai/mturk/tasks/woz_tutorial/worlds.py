@@ -103,11 +103,11 @@ class TutorialWorld1(MTurkTaskWorld):
                 ],
             )
             self.hints_needed += self.ask(
-                question="As the user, what should you do if you need some information that was not given?",
+                question="As the user, what should you do if you need some information that was not given in the task instructions?",
                 choices=[
                     "I can just make something up.",
                     "Give up.",
-                    "I must evade the question from the assistant.",
+                    "I must avoid answering any questions about the missing information.",
                 ],
                 answer=1,
                 hints=[
@@ -169,7 +169,7 @@ class TutorialWorld1(MTurkTaskWorld):
                 ],
             )
             self.hints_needed += self.ask(
-                question="What does the \"request type\" slot mean?",
+                question="What does the \"request type\" form field mean?",
                 choices=[
                     "It is there to distinguish between checking if a booking is available or actually performing the booking",
                     "It's about the type of person I am dealing with",
@@ -238,7 +238,7 @@ class TutorialWorld1(MTurkTaskWorld):
                     is_sandbox=self.opt['is_sandbox'],
                 )
                 self.mturk_agent.accept_work()
-            elif self.hints_needed < 7:
+            elif self.hints_needed < 6:
                 self.mturk_agent.observe(
                     GuideCommand(
                         f"Done! You got your qualification for the task "
@@ -252,7 +252,7 @@ class TutorialWorld1(MTurkTaskWorld):
                     is_sandbox=self.opt['is_sandbox'],
                 )
                 self.mturk_agent.accept_work()
-            else:
+            elif self.hints_needed < 9:
                 self.mturk_agent.observe(
                     GuideCommand(
                         f"Sorry, but it took you too many hints to answer all the questions "
@@ -260,6 +260,13 @@ class TutorialWorld1(MTurkTaskWorld):
                     ).message
                 )
                 self.mturk_agent.accept_work()
+            else:
+                self.mturk_agent.observe(
+                    GuideCommand(
+                        f"Sorry, but you've used too many hints. "
+                    ).message
+                )
+                self.mturk_agent.reject_work()
         except ConnectionError:
             self.episodeDone = True
             return
