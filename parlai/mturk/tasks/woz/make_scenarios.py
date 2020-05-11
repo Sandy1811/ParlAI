@@ -153,9 +153,9 @@ if __name__ == '__main__':
                 new_scenario = copy.deepcopy(template)
                 if "task_descriptions" in template['instructions']['User']:
                     del new_scenario['instructions']['User']['task_descriptions']
-                new_scenario['instructions']['User']['task_description'] = populate(
+                new_scenario['instructions']['User']['task_description'] = dc.populate(populate(
                     desc, db_dir + template['db']
-                )
+                ))
                 new_scenario['instructions']['Wizard'][
                     'task_description'
                 ] = dc.populate(new_scenario['instructions']['Wizard']['task_description'].replace(
