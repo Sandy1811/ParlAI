@@ -294,19 +294,21 @@ function CompleteButton(props) {
   }
 
   if (props.agent_id === 'User') {
-      return (
-        <Button
-          className="btn btn-primary"
-          disabled={props.chat_state !== 'text_input' || userMessageCount < min_user_turns}
-          onClick={() => {
-            props.onMessageSend('<complete>', {}, () =>
-              console.log('sent complete')
-            );
-          }}
-        >
-          Click here when you've accomplished your task(s)
-        </Button>
-      );
+    return (
+      <Button
+        className="btn btn-primary"
+        disabled={
+          props.chat_state !== 'text_input' || userMessageCount < min_user_turns
+        }
+        onClick={() => {
+          props.onMessageSend('<complete>', {}, () =>
+            console.log('sent complete')
+          );
+        }}
+      >
+        Click here when you've accomplished your task(s)
+      </Button>
+    );
   } else {
     return null;
   }
@@ -328,8 +330,8 @@ function OnboardingView(props) {
     return (
       <div>
         You are playing the <b>{agent}</b> in this dialogue. Please follow the
-        instructions of the 'MTurk System' bot (darker yellow boxes in the dialogue)
-        during onboarding and throughout the dialogue.
+        instructions of the 'MTurk System' bot (darker yellow boxes in the
+        dialogue) during onboarding and throughout the dialogue.
       </div>
     );
   }

@@ -47,7 +47,16 @@
     {
       "Name": "NearbyPOIs",
       "Type": "CategoricalMultiple",
-      "Categories": ["School", "TrainStation", "Park", "Museum", "University", "Club", "User's office", "User's gym"],
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park",
+        "Museum",
+        "University",
+        "Club",
+        "User's office",
+        "User's gym"
+      ],
       "ReadableName": "Nearby POIs"
     },
     {
@@ -58,7 +67,7 @@
         "Shadyside Apartments",
         "North Hill Apartments"
       ],
-      "ReadableName": "Housing company"
+      "ReadableName": "Housing Company"
     },
     {
       "Name": "Price",
@@ -123,7 +132,16 @@
     {
       "Name": "NearbyPOIs",
       "Type": "CategoricalMultiple",
-      "Categories": ["School", "TrainStation", "Park", "Museum", "University", "Club", "User's office", "User's gym"],
+      "Categories": [
+        "School",
+        "TrainStation",
+        "Park",
+        "Museum",
+        "University",
+        "Club",
+        "User's office",
+        "User's gym"
+      ],
       "ReadableName": "Nearby POIs"
     },
     {
