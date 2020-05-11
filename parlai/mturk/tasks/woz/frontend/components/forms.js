@@ -268,7 +268,7 @@ export function jsonToForm(
         onRemove={removeFormField}
       />
     );
-//    console.log(controlLabelWithRemove);
+    //    console.log(controlLabelWithRemove);
 
     const formFieldDatum = formFieldData[formFieldId] || {
       id: formFieldId,
