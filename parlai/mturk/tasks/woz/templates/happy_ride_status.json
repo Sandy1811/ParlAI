@@ -20,20 +20,12 @@
       ],
       "completion_requirements": ["You have checked the status of your ride."],
       "completion_questions": [
-        "...tell you the status of your ride?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant tell you the status of your ride?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Help the user stay informed about the status of his/her ride. (You can find the video tutorial under @wizard-tutorial-url, in case you want to watch it again.)",
-      "completion_requirements": [
-        "Informed the user about the status of their ride,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user stay informed about the status of his/her ride. "
     }
   }
 }

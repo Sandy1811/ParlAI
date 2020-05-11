@@ -135,6 +135,19 @@
 - We'll handle the issue for you now, thank you.
 - We have your fraud report and will look into the issue.
 
+## intent:bank_bye
+- Perfect!
+- okay good bye
+- Thank you for your time. Goodbye.
+- Good Ride
+- Great, thanks!
+- thank you, goodbye
+- goodbye
+- Thank you, goodbye
+- Thank you :o) Goodbye!
+- Thanks, goodbye.
+- OK, thanks, goodbye!
+
 ## intent:anything_else
 - Anything else I can help you with?
 - Is there anything else you would like me to do?

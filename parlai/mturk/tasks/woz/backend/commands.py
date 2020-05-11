@@ -6,6 +6,7 @@ import time
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
 # DO NOT REMOVE THIS IMPORT (needed for eval):
+from parlai.mturk.core.shared_utils import print_and_log
 from parlai.mturk.tasks.woz.knowledgebase import api
 
 __all_constants = None
@@ -416,6 +417,16 @@ class ReviewCommand(BackendCommand):
         return ReviewCommand(recipient=sender)
 
 
+def safe_eval(expression: Text, default: Any = None) -> Any:
+    # noinspection PyBroadException
+    try:
+        result = eval(expression)
+    except:
+        print_and_log(100, f"Problem with parsing expression: {expression}")
+        return default
+    return result
+
+
 class QueryCommand(WizardCommand):
 
     command_name = "query"
@@ -451,15 +462,15 @@ class QueryCommand(WizardCommand):
         return self._api_name
 
     def _parse(self, text: Text) -> None:
-        data = eval(text)
+        data = safe_eval(text, dict())
         assert isinstance(data, dict)
         assert "constraints" in data
         assert "db" in data
 
         self._constraints = [
-            {name: eval(expr)}
+            {name: safe_eval(expr)}
             for constraint in data["constraints"]
-            for name, expr in constraint.items()
+            for name, expr in constraint.items() if len(expr) > 0
         ]
 
         self._constraints_raw = [
@@ -672,7 +683,7 @@ class RequestSuggestionsCommand(WizardCommand):
 
 
 class SupplySuggestionsCommand(BackendCommand):
-    def __init__(self, recipient: Agent, suggestions: List[Text]) -> None:
+    def __init__(self, recipient: Agent, suggestions: List[Tuple[Text, Text]]) -> None:
         super(SupplySuggestionsCommand, self).__init__()
         self._command_name = all_constants()["back_to_front"][
             "command_supply_suggestions"
@@ -685,12 +696,13 @@ class SupplySuggestionsCommand(BackendCommand):
         return {
             "id": self._recipient.id,
             "text": "",
-            "command": self._command_name + str(self._suggestions),
+            "command": self._command_name + str([text for intent, text in self._suggestions]),
+            "intents": [intent for intent, text in self._suggestions]
         }
 
     @staticmethod
     def from_message(
-        sender: Agent, suggestions: Optional[List[Text]] = None, **kwargs,
+        sender: Agent, suggestions: Optional[List[Tuple[Text, Text]]] = None, **kwargs,
     ) -> Optional["Command"]:
         return SupplySuggestionsCommand(recipient=sender, suggestions=suggestions)
 
@@ -700,6 +712,9 @@ class PickSuggestionCommand(WizardCommand):
         super(PickSuggestionCommand, self).__init__(sender)
         self._command_name = "pick_suggestion"
         self._text = chosen_text
+
+    def text_matches(self, text: Text) -> bool:
+        return text == self._text
 
     @property
     def message(self) -> Dict[Text, Any]:

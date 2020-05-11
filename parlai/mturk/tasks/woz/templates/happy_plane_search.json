@@ -15,22 +15,13 @@
         "Search for a flight between @City-1 to @City-2 for May @Date-1. Your flight should cost no more than @Price-1.",
         "Search for a flight between @City-1 to @City-2 for May @Date-1. You want an @Class-1 seat."
       ],
-      "completion_requirements": ["You have found a flight."],
       "completion_questions": [
-        "...find you a suitable flight?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant find you a suitable flight?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Help the user find a suitable flight.",
-      "completion_requirements": [
-        "You have found a flight that the user likes,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user find a suitable flight."
     }
   }
 }

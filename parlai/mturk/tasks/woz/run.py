@@ -72,8 +72,6 @@ def main():
     and configuring it for the qa_data_collection task.
     """
 
-    echo.log_write("START")
-
     # Get relevant arguments
     arg_parser = ParlaiParser(False, False)
     arg_parser.add_parlai_data_path()
@@ -256,7 +254,7 @@ def main():
             opt.get("scenario_list") + ".txt",
         )
         scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
-        random.shuffle(scenarios_list)
+        # random.shuffle(scenarios_list)
 
         # Set up the sockets and threads to receive workers
         mturk_manager.ready_to_accept_workers()

@@ -13,22 +13,14 @@
         "Please find the weather for @Day-1.",
         "Please find the weather for @Day-1 in @City-1."
       ],
-      "completion_requirements": ["You know what the weather will be like."],
       "completion_questions": [
-        "...tell you the weather?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant tell you the weather?",
+        "Did the AI Assistant say something about rain?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Tell the user the weather.",
-      "completion_requirements": [
-        "You have told the user what the weather will be,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Tell the user the weather."
     }
   }
 }

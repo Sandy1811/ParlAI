@@ -1,6 +1,5 @@
 {
-  "title": "Plane Reserve",
-  "name": "Plane Reserve",
+  "title": "Happy Plane Reserve",
   "db": "plane.json",
   "version": 1,
   "api_names": ["plane_reserve"],
@@ -12,22 +11,13 @@
       "task_descriptions": [
         "Reserve flight with id @id-1. Your name is @CustomerName-1"
       ],
-      "completion_requirements": ["You have booked a flight."],
       "completion_questions": [
-        "...book your flight?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant book your flight?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Help the user book their flight.",
-      "completion_requirements": [
-        "You have booked a flight,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user book their flight."
     }
   }
 }

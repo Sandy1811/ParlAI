@@ -43,14 +43,14 @@
     "Name": "POIs",
     "Type": "Categorical",
     "Categories": [
-      "School",
-      "Park",
-      "Train Station",
-      "Museum",
-      "University",
-      "Club",
-      "User's office",
-      "User's gym"
+      "a school",
+      "a park",
+      "a train station",
+      "a museum",
+      "the University",
+      "a club",
+      "your office",
+      "your gym"
     ]
   }
 ]

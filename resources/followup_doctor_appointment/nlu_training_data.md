@@ -56,6 +56,19 @@
 - Dr. Roberts instructs you to give it another day and call back if you're still feeling ill.
 - Dr. Alexis recommends you stay home and put the heater on and drink lots of water.
 
+## intent:doctor_bye
+- Perfect!
+- okay good bye
+- Thank you for your time. Goodbye.
+- Good Ride
+- Great, thanks!
+- thank you, goodbye
+- goodbye
+- Thank you, goodbye
+- Thank you :o) Goodbye!
+- Thanks, goodbye.
+- OK, thanks, goodbye!
+
 ## intent:anything_else
 - Anything else I can help you with?
 - Is there anything else you would like me to do?

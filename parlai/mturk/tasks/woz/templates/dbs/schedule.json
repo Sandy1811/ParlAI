@@ -156,7 +156,7 @@
   {
     "Name": "CoGuests",
     "Type": "Integer",
-    "Min": 3,
+    "Min": 2,
     "Max": 10,
     "Enabled": "!lambda p: \"Conference\" in p[\"Name\"] or \"Venue\" in p[\"Name\"]"
   }

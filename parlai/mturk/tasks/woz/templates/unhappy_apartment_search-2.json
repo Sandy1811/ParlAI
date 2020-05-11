@@ -1,27 +1,16 @@
 {
   "title": "Unhappy apartment search",
-  "name": "Planning a birthday party",
-  "version": 1,
+  "version": 2,
   "api_names": ["apartment_search"],
   "db": "ride.json",
-  "schema_urls": {
-    "apartment_search": "https://i.imgur.com/yICteJ1.jpg"
-  },
   "instructions": {
     "User": {
-      "completion_requirements": [
-        "The MTurk Assistant says you can end the conversation."
-      ],
-      "completion_questions": [
-        "Did the assistant stay calm and helpful throughout the dialogue?"
-      ],
       "task_descriptions": [
-        "Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot (not the assistant) has told you to do so. "
+        "Follow the instructions and comments of the MTurk bot. "
       ],
       "linear_guide": [
         "You are looking for your dream apartment! You take out your phone and open your personal AI assistant app to find out what apartments are available. Say 'hello' to your AI Assistant.",
         "Imagine what your ideal apartment would look like (number of rooms, balcony, elevator, etc.) and describe it to the assistant.",
-        null,
         null,
         "Think of some property of your dream apartment that it definitely should NOT have. Tell the assistant about that.",
         null,
@@ -30,8 +19,7 @@
         "Now completely change your mind about what you're looking for.",
         null,
         null,
-        "Make an impossible request, or a joke.",
-        "Great! Now bring the conversation to a natural close."
+        "Make an impossible request, or a joke. Then bring the conversation to a natural close."
       ]
     },
     "Wizard": {

@@ -7,6 +7,8 @@
       "linear_guide": [
         "`Fraud-1@bank` Quickly you contact the bank-system's AI assistant. Surely it can help?",
         "You are `FullName@bank`. Your account number is `AccountNumber-1@bank`, but you forgot your PIN. (You might need your mother's maiden name for the security questions: `Mother@bank`.)",
+        null,
+        null,
         "Now you remember you PIN again. Maybe. It was either `PIN-1@bank` or `PIN-2@bank`.",
         "Choose: Complain about your situation; make a joke; or write something else that's unexpected yet somehow fits the conversation.",
         null,

@@ -13,22 +13,13 @@
         "Your are @HostName-1 and would like to RSVP to a party. The host is @HostName-2 and the venue is @PartyName-1. You will be arriving at @StartTimeHour-1 and will bring @CoGuests-1 guests with you. You @NeedParking-1 parking. You have no dietary restrictions.",
         "Your are @HostName-1 and would like to RSVP to a party. The host is @HostName-2 and the venue is @PartyName-1. You will be arriving at @StartTimeHour-1 and will bring @CoGuests-1 guests with you. You @NeedParking-1 parking. You can only eat @DietaryRestriction food."
       ],
-      "completion_requirements": ["You have RSVPed to the party."],
       "completion_questions": [
-        "...submitted your RSVP for the party?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant submit your RSVP for the party?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Help the user RSVP for a party.",
-      "completion_requirements": [
-        "You have submitted the RSVP for the user,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user RSVP for a party."
     }
   }
 }

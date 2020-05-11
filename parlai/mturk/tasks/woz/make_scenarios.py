@@ -162,7 +162,6 @@ if __name__ == '__main__':
         else:
             task_descriptions = [DEFAULT_USER_INSTRUCTION]
 
-
         total = counts.get(fn, 10)
         for i in range(total):
           desc = random.choice(task_descriptions)
@@ -170,9 +169,9 @@ if __name__ == '__main__':
           new_scenario = copy.deepcopy(template)
           if "task_descriptions" in template['instructions']['User']:
               del new_scenario['instructions']['User']['task_descriptions']
-          new_scenario['instructions']['User']['task_description'] = populate(
+          new_scenario['instructions']['User']['task_description'] = dc.populate(populate(
               desc, db_dir + template['db']
-          )
+          ))
           new_scenario['instructions']['Wizard'][
               'task_description'
           ] = dc.populate(new_scenario['instructions']['Wizard']['task_description'].replace(
@@ -186,7 +185,7 @@ if __name__ == '__main__':
                   ]
               ]
           new_fn = "{0}/{1}_v{2}.json".format(
-              scenario_dir, fn.split('.')[0], i 
+              scenario_dir, fn.split('.')[0], i
           )
           new_name = "{0}_v{1}\n".format(fn.split('.')[0], i)
           json.dump(new_scenario, open(new_fn, 'w+'), indent=True)

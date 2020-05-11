@@ -1,18 +1,19 @@
 {
   "title": "Unhappy party RSVP",
   "api_names": ["party_rsvp"],
-  "db": "ride.json",
+  "db": "schedule.json",
   "instructions": {
     "User": {
+      "task_descriptions": [
+        "Your are `HostName-1@schedule` and would like to RSVP to `HostName-2@schedule`'s party at `PartyName@schedule`. "
+      ],
       "linear_guide": [
-        "You (`HostName-1@schedule`) want to RSVP to `HostName-2@schedule`'s party. Talk to `HostName-2@schedule`'s personal AI assistant. Maybe it can help?",
-        "Unfortunately you cannot remember the place where the party should take place. Something with '`PartyNamePieces@schedule`'?",
-        "If the assistant suggests a venue name that doesn't seem right, just go with that.",
+        "Note the instructions on the left. Maybe the AI Assistant can help?",
+        "You want to bring 11 friends with you. Whether or not you'll need parking is up to you.",
+        "Now either throw in some small talk, e.g. about `HostName-2@schedule`, something that happened today, the assistant, or anything else.",
+        "If 11 people is too many, use your imagination to deal with the situation. Keep the conversation going for a few more turns.",
         null,
-        "Now either throw in some small talk, or change(?) your mind about how many people you'll bring with you.",
-        "Make a joke or ask for something that the assistant cannot know.",
-        null,
-        "Make sure you have tried to RSVP and the conversation makes sense. Then you can bring the conversation to a natural close."
+        "Make sure you have tried to RSVP and the conversation makes sense. (It's ok if you did not get in.) Then you can bring the conversation to a natural close."
       ]
     },
     "Wizard": {

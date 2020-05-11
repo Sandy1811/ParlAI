@@ -260,7 +260,7 @@ def trip_directions(trip_api, constraints: Dict[Text, Any]):
     del constraints['DepartureLocation']
     del constraints['ArrivalLocation']
 
-    if constraints['TravelMode'] != 'Transit':
+    if constraints['TravelMode'] != 'Transit' and "Price" in constraints:
       del constraints['Price']
 
     row, _ = trip_api.sample(constraints)
@@ -534,7 +534,7 @@ def spaceship_access_codes(null_api, constraints: Dict[Text, Any]):
 
 
 def spaceship_life_support(null_api, constraints: Dict[Text, Any]):
-    outputs = ["Successful! Door opened"]
+    outputs = ["Successful! Life support was recovered."]
     return dict(Message=outputs[0]), -1
 
 

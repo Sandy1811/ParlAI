@@ -12,7 +12,7 @@
   {
     "Name": "UserRank",
     "Type": "Categorical",
-    "Categories": ["Captain", "First Officer", "Chief Engineer", "Bartender"]
+    "Categories": ["First Officer", "Chief Engineer", "Bartender"]
   },
   {
     "Name": "CodeType",
