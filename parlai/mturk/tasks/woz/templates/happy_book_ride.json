@@ -18,7 +18,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Help the user book a ride. (You can find the video tutorial under @wizard-tutorial-url, in case you want to watch it again.)"
+      "task_description": "Help the user book a ride."
     }
   }
 }
