@@ -9,8 +9,6 @@ def get_book_ride_item():
         "DriverName": "Ella",
         "CarModel": "Ford",
         "LicensePlate": "432 LSA",
-        "DepartureLocation": "Tegel Airport, International Arrivals",
-        "ArrivalLocation": "Hyatt Alexanderplatz",
     }
 
     utterances = [
@@ -108,11 +106,7 @@ def get_hotel_search_item():
 
 def get_hotel_reserve_item():
     kb_item = {
-        "Name": "Old Town Inn",
-        "StartDate": 12,
-        "EndDate": 27,
-        "CustomerName": "Ben",
-        "CustomerRequest": "vegan breakfast"
+        "HotelName": "Old Town Inn",
     }
 
     utterances = [
@@ -155,15 +149,13 @@ def get_plane_reserve_item():
 
 def get_party_plan_item():
     kb_item = {
-        "Name": "The Awesome Party Venue",
-        "HostName": "Joni",
+        "VenueName": "The Awesome Party Venue",
         "Day": "Saturday",
-        "StartTimeHour": 16,
-        "EndTimeHour": 22,
-        "NumberGuests": 12
+        "Time": 9
     }
 
     utterances = [
+        'Cool, all booked and all done!',
         'Heyho, whats up?',
         'Where do you want to get hammered?',
         'Whos hosting this?',
@@ -174,11 +166,12 @@ def get_party_plan_item():
         'Any spefific food wishes?',
         'Any drinks prefs you\'ve got?',
         'Sorry mate, but this is not going to work out.',
-        'Right, they are happy to have you, can I book this now?',
-        'Cool, all booked and all done!',
         'Oops, something went horribly wrong.',
         'Sorry, everything is fully booked on Friday night.',
-        'Do you want to optionally book any specific type of food or drink for your party?'
+        'Do you want to optionally book any specific type of food or drink for your party?',
+        'Right, they are happy to have you, can I book this now?',
+        'Cool, all booked and all done!',
+
     ]
 
     return kb_item, utterances, 'party_plan'
@@ -186,12 +179,6 @@ def get_party_plan_item():
 
 def get_party_rsvp_item():
     kb_item = {
-        "Name": "John",
-        "HostName": "Joanne",
-        "GuestName": "Mike",
-        "ArrivalTime": 20,
-        "NumberGuests": 12,
-        "NeedParking": False
     }
 
     utterances = [
@@ -237,10 +224,7 @@ def get_plane_search_item():
 
 def get_restaurant_reserve_item():
     kb_item = {
-        "Name": "Cactus Club",
-        "Time": 21,
-        "PartySize": 4,
-        "CustomerName": "Jane"
+        "RestaurantName": "Cactus Club",
     }
 
     utterances = [
@@ -323,12 +307,6 @@ def get_apartment_search_item():
 
 def get_book_apartment_viewing_item():
     kb_item = {
-        "Name": "Shadyside Apartments",
-        "Day": "Wednesday",
-        "StartTimeHour": 8,
-        "EndTimeHour": 10,
-        "RenterName": "Jason",
-        "ApplicationFeePaid": "Yes",
     }
 
     utterances = [
@@ -350,25 +328,21 @@ def get_book_apartment_viewing_item():
 
 def get_book_doctor_appointment_item():
     kb_item = {
-        "Name": "Dr. Morgan",
-        "Day": "Thursday",
-        "StartTimeHour": 9,
-        "EndTimeHour": 11,
-        "PatientName": "Jenny",
-        "Symptoms": "Covid-19"
+        'DoctorName': 'Dr. Alexis',
+        'Time': 11
     }
 
     utterances = [
+        "Sorry, the doctor is busy then.",
+        "Alright, doctor's got time. Can I book it for you?",
+        "Cool, all booked with the doc.",
         "Hey, what can I do for you today?",
         "Your name please",
         "Which doctor do you see typically?",
         "Whats your favourite day for surgery?",
         "When do you want it to start?",
         "And when do you want it to end?",
-        "Tell me all teh symptons you have.",
-        "Sorry, the doctor is busy then.",
-        "Alright, doctor's got time. Can I book it for you?",
-        "Cool, all booked with the doc."
+        "Tell me all teh symptons you have."
     ]
 
     return kb_item, utterances, 'book_doctor_appointment'
@@ -376,8 +350,6 @@ def get_book_doctor_appointment_item():
 
 def get_followup_doctor_appointment_item():
     kb_item = {
-        "Name": "Dr. Alexis",
-        "PatientName": "Mandy",
         "Message": "Dr. Dr. PLEEEEEASE!!! Look at the mess I'm in!"
     }
 
@@ -393,10 +365,6 @@ def get_followup_doctor_appointment_item():
 
 def get_spaceship_access_codes_item():
     kb_item = {
-        "UserRank": "Bartender",
-        "CodeType": "Clearance",
-        "Code": "CC 308",
-        "UserName": "Johnny",
         "Message": "All your base are belong to us!"
     }
 
@@ -414,9 +382,6 @@ def get_spaceship_access_codes_item():
 
 def get_spaceship_life_support_item():
     kb_item = {
-        "LockManufacturer": "Microsoft",
-        "ColorOfTopCable": "Green",
-        "ColorOfSecondCable": "Red",
         "Message": "Operation failed. You are doomed."
     }
 
@@ -499,9 +464,9 @@ def get_hotel_service_request_item():
 def get_schedule_meeting_item():
     kb_item = {
         'Day': 'Tuesday',
-        'StartTimeHour': 10,
-        'EndTimeHour': 12,
-        'Name': 'Fred'
+        'StartTime': 10,
+        'EndTime': 12,
+        'GuestName': 'Fred'
     }
 
     utterances = [
@@ -537,16 +502,9 @@ def get_trip_directions_item():
 
 
 def get_trivia_item():
-    kb_item_correct = {
+    kb_item = {
         'Question': 'What is the average air speed velocity of a laden swallow?',
-        'CorrectAnswer': '42',
-        'UserAnswer': '42'
-    }
-
-    kb_item_incorrect = {
-        'Question': 'What is the average air speed velocity of a laden swallow?',
-        'CorrectAnswer': '42',
-        'UserAnswer': '54'
+        'Answer': '42'
     }
 
     utterances = [
@@ -559,7 +517,7 @@ def get_trivia_item():
         'Anything else you want?'
     ]
 
-    return kb_item_correct, utterances, 'trivia'
+    return kb_item, utterances, 'trivia'
 
 
 def get_weather_item():

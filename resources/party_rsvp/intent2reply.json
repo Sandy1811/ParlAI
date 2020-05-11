@@ -7,7 +7,8 @@
     "party_ask_number_of_guests": "How many guests will you be bringing with you?",
     "party_ask_parking_needed": "Do you require parking at the venue?",
     "party_ask_dietary_restrictions": "Do you have any dietary restrictions?",
-    "party_confirm_rsvp": "Great, your reservation is all done!",
+    "party_confirm_rsvp": "Great, your rsvp is all done and confirmed!",
+    "party_bye": "Thank you and goodbye.",
     "anything_else": "Is there anything else that I can do for you?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to help you to rsvp to a party."
 }

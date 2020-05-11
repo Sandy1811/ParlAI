@@ -40,17 +40,29 @@
 - A blockage in a pipe caused by a trapped bubble of air.
 - A blunt thick needle for sewing with thick thread or tape.
 
-## intent:trivia_inform_answer_ask_next
+## intent:trivia_inform_answer_correct_ask_next
 - That was correct! Would you like to proceed?
 - Correct, well done! Do you want another question?
-- Unfortunately that was wrong. The right answer is 42. Would you like to proceed to the next question?
 - That was RIGHT! Great work! Want another question?
 - Your answer was correct! Hooray! Want more questions?
 - This was the correct answer! Do you want to move on to the next question?
+- Well done, this was the right answer! Do you want more questions?
+- Yay, this is right! Well Done! Would you like to hear another question?
+- Great job, this is right! Do you want another question?
+- Correct! Good job! Do you want another question?
+- That is right! Would you like some more questions?
+
+## intent:trivia_inform_answer_incorrect_ask_next
+- Unfortunately that was wrong. The right answer is 42. Would you like to proceed to the next question?
 - This answer was incorrect. Want to try another one?
 - WRONG! Want to try again?
 - Your answer was wrong. Do you want to move on to the next question?
 - You got it wrong. Would you like another question?
+- Sorry, but this is worng, the right answer would have been "Johnny Cash". Would you like to continue playing?
+- Nope, that is all wrong. 423 would have been right. Want another try?
+- This is wrong. The right answer would have been "Edinburgh". Wanna give it another go?
+- Oh no, this is sooo wrong. "Whisky" would have been the right answer. Want to continue playing?
+- You gave the wrong answer. "Adam Smith" would have been better. Try again?
 
 ## intent:trivia_inform_answer_2_ask_next
 - The correct answer would have been "blue". Would you like to proceed to the next question?

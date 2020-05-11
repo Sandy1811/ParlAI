@@ -51,6 +51,19 @@
 - Heavy winds expected and temperatures around the freezing point.
 - Sun, sun, sun, followed by a bit of rain and fog.
 
+## intent:weather_bye
+- Perfect!
+- okay good bye
+- Thank you for your time. Goodbye.
+- Good Ride
+- Great, thanks!
+- thank you, goodbye
+- goodbye
+- Thank you, goodbye
+- Thank you :o) Goodbye!
+- Thanks, goodbye.
+- OK, thanks, goodbye!
+
 ## intent:anything_else
 - Anything else I can help you with?
 - Is there anything else you would like me to do?

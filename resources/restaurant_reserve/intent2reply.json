@@ -5,7 +5,7 @@
     "restaurant_ask_time": "For what time should the reservation be made?",
     "restaurant_ask_size": "For how many people should the reservation be made?",
     "restaurant_inform_unavailable": "I am sorry, but it looks like the restaurant is not able to accomodate you.",
-    "restaurant_ask_confirm_booking": "Great, the {restaurant_name:s} is happy to accomodate you.\nCan I confirm your reservation with them?",
+    "restaurant_ask_confirm_booking": "Great, the {restaurant_name:s} is happy to accommodate you.\nCan I confirm your reservation with them?",
     "restaurant_inform_booking_successful": "Excellent, your reservation at the {restaurant_name:s} is confirmed!",
     "restaurant_inform_booking_failed": "I am sorry, but the reservation request was not successful.",
     "restaurant_bye": "Thank you and goodbye!",
