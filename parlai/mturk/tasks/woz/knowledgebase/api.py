@@ -192,7 +192,7 @@ def load_db(fn):
             if type(v) is str and v[0] == "!":
                 param[k] = eval(v[1:])
 
-    return KnowledgeBaseAPI(num_items=100 if 'plane' not in fn else 1000, all_parameters=parameters)
+    return KnowledgeBaseAPI(num_items=1000 if 'plane' not in fn else 1000, all_parameters=parameters)
 
 
 def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
