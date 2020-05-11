@@ -40,6 +40,7 @@ class TutorialWorld1(MTurkTaskWorld):
 
     def __init__(self, opt, mturk_agent, qualification_id) -> None:
         super(TutorialWorld1, self).__init__(opt, mturk_agent=mturk_agent)
+        self.opt = opt
         self.qualification_id = qualification_id
         self.hints_needed = 0
         self._worker_id = mturk_agent.worker_id
