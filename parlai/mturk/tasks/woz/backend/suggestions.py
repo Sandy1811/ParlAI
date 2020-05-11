@@ -171,7 +171,10 @@ class WizardSuggestion:
             top_suggestions = sorted(top_suggestions, key=operator.itemgetter(2), reverse=True)[:self.num_suggestions]
 
         else:
-            top_suggestions = reduce(lambda a, b: a + b[:top_n_per_scenario], suggestions_by_scenario.values(), [])
+            if len(api_names) > 1:
+                top_suggestions = reduce(lambda a, b: a + b[:top_n_per_scenario], suggestions_by_scenario.values(), [])
+            else:
+                top_suggestions = reduce(lambda a, b: a + b[:self.num_suggestions], suggestions_by_scenario.values(), [])
             top_suggestions = sorted(top_suggestions, key=operator.itemgetter(2), reverse=True)
 
         # Get rid of the confidence
@@ -219,9 +222,9 @@ if __name__ == '__main__':
     #             'apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
     #             'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support',
     #             'bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
-    #              'trivia', 'weather'
+    #              'trivia', 'weather', 'trip_directions'
     #             ]
-    scenarios = ['restaurant_search']
+    scenarios = ['party_plan']
 
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
                           start_nlu_servers=True)
@@ -234,7 +237,7 @@ if __name__ == '__main__':
         for utterance in utterances:
             # Use rasa to get an intent label
             suggestions = ws.get_suggestions(wizard_utterance=utterance, primary_kb_item=kb_item,
-                                             api_names=[scen], merge_by_confidence=True)
+                                             api_names=[scen], merge_by_confidence=False)
 
             print(f'Suggestions for "{utterance}": {suggestions}')
             print('----------------------------------------------')

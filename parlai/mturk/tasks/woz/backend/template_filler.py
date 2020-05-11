@@ -879,6 +879,10 @@ def fill_trip_ask_departure_time(intent2reply, *_):
     return intent2reply[constants.INTENT_TRIP_ASK_DEPARTURE_TIME]
 
 
+def fill_trip_instructions_done(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIP_INFORM_INSTRUCTIONS_DONE]
+
+
 def fill_trip_inform_simple_step_ask_proceed(intent2reply, kb_item, instructions, wizard_utterance):
     # Select most similar one (based on edit distance)
     hit, ratio = process.extractOne(wizard_utterance, instructions)

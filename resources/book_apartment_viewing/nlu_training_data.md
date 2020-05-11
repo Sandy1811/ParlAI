@@ -125,7 +125,7 @@
 - available
 - slot available
 
-## intent:apartment_inform_booking_succesful
+## intent:apartment_inform_booking_successful
 - Excellent, this is all booked for you now.
 - Great, Crooked Agents will be delighted to show you the Shadyside apartments block.
 - Fantastic, this is all booked for you and the letting agents will be delighted to show you around.

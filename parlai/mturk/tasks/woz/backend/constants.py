@@ -197,6 +197,7 @@ INTENT_TRIP_INFORM_DETAILED_STEP = 'trip_inform_detailed_step'
 INTENT_TRIP_INFORM_LAST_STEP_AND_DONE = 'trip_inform_last_step_and_done'
 INTENT_TRIP_BYE = 'trip_bye'
 INTENT_TRIP_INFORM_NOTHING_FOUND = 'trip_inform_nothing_found'
+INTENT_TRIP_INFORM_INSTRUCTIONS_DONE = 'trip_instructions_done'
 
 # Intents for trivia
 INTENT_TRIVIA_ASK_QUESTION_NUMBER = 'trivia_ask_question_number'

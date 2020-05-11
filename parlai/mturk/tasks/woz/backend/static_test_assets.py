@@ -157,10 +157,15 @@ def get_party_plan_item():
     kb_item = {
         "VenueName": "The Awesome Party Venue",
         "Day": "Saturday",
-        "Time": 9
+        "Time": '9 pm'
     }
 
     utterances = [
+        'schduled for you',
+        'you are booked in',
+        'booking failed.',
+        'sorry, that didnae work',
+        'epic fail',
         'I found one',
         'foundone',
         'found one',
@@ -352,6 +357,8 @@ def get_book_doctor_appointment_item():
     }
 
     utterances = [
+        'Appointment scheduled successfully.',
+        'your appoihntment is booked in.',
         "book",
         "Book it for you?",
         "do you need me to book this now?",
@@ -365,7 +372,7 @@ def get_book_doctor_appointment_item():
         "When do you want it to start?",
         "And when do you want it to end?",
         "Tell me all teh symptons you have.",
-        'There are no doctors for you!'
+        'There are no doctors for you!',
     ]
 
     return kb_item, utterances, 'book_doctor_appointment'
@@ -527,7 +534,10 @@ def get_trip_directions_item():
         'After 5 blocks, turn right on Castro St.',
         'Turn right on Allison Road, right after the McD.',
         'after 1 more block your destination will be on the right.',
-        'Sorry, no routes found.'
+        'Sorry, no routes found.',
+        'You should already be there',
+        'you ARE at that place now',
+        'you\'re there bro'
     ]
 
     return kb_item, utterances, 'trip_directions'
