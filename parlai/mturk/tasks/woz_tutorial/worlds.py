@@ -69,7 +69,7 @@ class TutorialWorld1(MTurkOnboardWorld):
             self.mturk_agent.observe(
                 GuideCommand(
                     f"Ok, let's start the quiz. Please answer by sending the number of the answer "
-                    f"that you think is correct. "
+                    f"that you think is most correct. "
                 ).message
             )
             hints_needed += self.ask(
@@ -98,6 +98,96 @@ class TutorialWorld1(MTurkOnboardWorld):
                 hints=[
                     "No. The length of the conversation is not as important to us as its quality. Try again.",
                     "No. The correct answer starts with 'Following the flow chart...'. Try again.",
+                ],
+            )
+            hints_needed += self.ask(
+                question="What does the request-optional box mean in the flow chart?",
+                choices=[
+                    "It represents information that I can use, but that is not absolutely required.",
+                    "I should always ask for the information in this box",
+                    "I can ignore this box if it doesn't make sense here",
+                ],
+                answer=1,
+                hints=[
+                    "No. Try again.",
+                    "No. Try again.",
+                ],
+            )
+            hints_needed += self.ask(
+                question="As an assistant, when should you use one of the suggested responses?",
+                choices=[
+                    "Whenever possible - I only use custom responses if the situation is not accounted for in the flow chart",
+                    "Only if they fit exactly what I want to say",
+                ],
+                answer=1,
+                hints=[
+                    "No. Try again.",
+                    "No. Try again.",
+                ],
+            )
+            hints_needed += self.ask(
+                question="As an assistant, what should you do if none of the suggested responses fit to what you want to say?",
+                choices=[
+                    "I give up and end the task"
+                    "I write my own custom response",
+                    "I try a different search query and also check if I have selected the knowledge base items that I am describing in my response - if not, I select them and try again",
+                ],
+                answer=3,
+                hints=[
+                    "No. Remember that the search for the suggested responses is not perfect.",
+                    "No. Try again.",
+                ],
+            )
+            hints_needed += self.ask(
+                question="What does the \"request type\" slot mean?",
+                choices=[
+                    "It is there to distinguish between checking if a booking is available or actually performing the booking",
+                    "It's about the type of person I am dealing with"
+                    "The request type describes the topic that the user is referring to.",
+                ],
+                answer=1,
+                hints=[
+                    "No. Remember that there are Query (Check) and Query (Book) boxes in the flow chart.",
+                    "No. Try again.",
+                ],
+            )
+            hints_needed += self.ask(
+                question="As an assistant, what should you do if the user does something that is clearly not accounted for in the flow chart?",
+                choices=[
+                    "Tell the user to behave.",
+                    "Improvise and say something to get the conversation back onto the flow chart."
+                    "Improvise and say something that sounds right.",
+                ],
+                answer=2,
+                hints=[
+                    "No. The assistant should always stick to the flow chart when possible, so... Try again.",
+                    "No. Try again.",
+                ],
+            )
+            hints_needed += self.ask(
+                question="How does the ideal user behave?",
+                choices=[
+                    "As a user, I should behave in a structured and consistent manner. Always friendly and concise.",
+                    "As a user, I should make the dialogue more complex and be very creative - but follow the instructions."
+                    "Just follow the instructions.",
+                ],
+                answer=2,
+                hints=[
+                    "No. Remember the end of the tutorial video.",
+                    "No. Try again.",
+                ],
+            )
+            hints_needed += self.ask(
+                question="How does the ideal AI Assistant behave?",
+                choices=[
+                    "Just follow the instructions.",
+                    "As an AI Assistant, I should make the dialogue more complex and be very creative - but follow the instructions."
+                    "As an AI Assistant, I should behave in a structured and consistent manner. Always friendly and concise.",
+                ],
+                answer=3,
+                hints=[
+                    "No. Remember the end of the tutorial video.",
+                    "No. Try again.",
                 ],
             )
             if hints_needed == 0:
