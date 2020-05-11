@@ -31,6 +31,7 @@ INTENT_RIDE_INFORM_CHANGES_SUCCESSFUL = 'ride_inform_changes_successful'
 INTENT_RIDE_INFORM_CHANGES_FAILED = 'ride_inform_changes_failed'
 INTENT_RIDE_PROVIDE_BOOKING_STATUS = 'ride_provide_booking_status'
 INTENT_RIDE_PROVIDE_BOOKING_STATUS_UPDATE = 'ride_provide_booking_status_update'
+INTENT_RIDE_INFORM_NOTHING_FOUND = 'ride_inform_nothing_found'
 
 # Intent names for hotel_reserve, hotel_search, hotel_service_request
 INTENT_HOTEL_INFORM_SEARCH_CRITERIA = 'hotel_inform_search_criteria'
@@ -58,6 +59,7 @@ INTENT_HOTEL_ASK_SERVICE_REQUEST = 'hotel_ask_service_request'
 INTENT_HOTEL_ASK_TIME = 'hotel_ask_time'
 INTENT_HOTEL_INFORM_SERVICE_REQUEST_SUCCESSFUL = 'hotel_inform_service_request_successful'
 INTENT_HOTEL_INFORM_SERVICE_REQUEST_FAILED = 'hotel_inform_service_request_failed'
+INTENT_HOTEL_INFORM_NOTHING_FOUND = 'hotel_inform_nothing_found'
 
 # Intent names for plane_search, plane_reserve
 INTENT_PLANE_ASK_FLIGHT_ID = 'plane_ask_flight_id'
@@ -72,6 +74,7 @@ INTENT_PLANE_ASK_DATE = 'plane_ask_date'
 INTENT_PLANE_REQUEST_OPTIONAL = 'plane_request_optional'
 INTENT_PLANE_INFORM_FLIGHT_DETAILS = 'plane_inform_flight_details'
 INTENT_PLANE_ASK_MORE_QUESTIONS = 'plane_ask_more_questions'
+INTENT_PLANE_INFORM_NOTHING_FOUND = 'plane_inform_nothing_found'
 
 # Intent names for party_plan, party_rsvp
 INTENT_PARTY_ASK_VENUE = 'party_ask_venue'
@@ -93,6 +96,7 @@ INTENT_PARTY_NO_VENUE_AVAILABLE = 'party_no_venue_available'
 INTENT_PARTY_INFORM_FOOD_DRINK_CRITERIA = 'party_inform_food_drink_criteria'
 INTENT_PARTY_ASK_PARKING_NEEDED = 'party_ask_parking_needed'
 INTENT_PARTY_BYE = 'party_bye'
+INTENT_PARTY_INFORM_NOTHING_FOUND = 'party_inform_nothing_found'
 
 # Intent names for restaurant_reserve, restaurant_search
 INTENT_RESTAURANT_ASK_RESTAURANT = 'restaurant_ask_restaurant'
@@ -110,6 +114,7 @@ INTENT_RESTAURANT_ASK_DELIVERY = 'restaurant_ask_delivery'
 INTENT_RESTAURANT_ASK_TAKES_RESERVATIONS = 'restaurant_ask_takes_reservations'
 INTENT_RESTAURANT_INFORM_SEARCH_RESULTS = 'restaurant_inform_search_results'
 INTENT_RESTAURANT_ASK_CONTINUE_SEARCHING = 'restaurant_ask_continue_searching'
+INTENT_RESTAURANT_INFORM_NOTHING_FOUND = 'restaurant_inform_nothing_found'
 
 # Intent names for apartment_search and book_apartment_viewing
 INTENT_APARTMENT_INFORM_SEARCH_CRITERIA = 'apartment_inform_search_criteria'
@@ -131,6 +136,7 @@ INTENT_APARTMENT_ASK_CUSTOM_MESSAGE = 'apartment_ask_custom_message'
 INTENT_APARTMENT_INFORM_VIEWING_UNAVAILABLE = 'apartment_inform_viewing_unavailable'
 INTENT_APARTMENT_INFORM_VIEWING_AVAILABLE = 'apartment_inform_viewing_available'
 INTENT_APARTMENT_INFORM_BOOKING_SUCCESSFUL = 'apartment_inform_booking_successful'
+INTENT_APARTMENT_INFORM_NOTHING_FOUND = 'apartment_inform_nothing_found'
 
 # Intents for book_doctor_appointment, followup_doctor_appointment
 INTENT_DOCTOR_ASK_DOCTOR_NAME = 'doctor_ask_doctor_name'
@@ -143,6 +149,7 @@ INTENT_DOCTOR_INFORM_BOOKING_AVAILABLE = 'doctor_inform_booking_available'
 INTENT_DOCTOR_INFORM_BOOKING_SUCCESSFUL = 'doctor_inform_booking_successful'
 INTENT_DOCTOR_INFORM_DOCTORS_INSTRUCTIONS = 'doctor_inform_doctors_instructions'
 INTENT_DOCTOR_BYE = 'doctor_bye'
+INTENT_DOCTOR_INFORM_NOTHING_FOUND = 'doctor_inform_nothing_found'
 
 # Intents for spaceship_access_codes, spaceship_life_support
 INTENT_SPACESHIP_ASK_RANK = 'spaceship_ask_rank'
@@ -153,6 +160,7 @@ INTENT_SPACESHIP_ASK_LOCK_MANUFACTURER = 'spaceship_ask_lock_manufacturer'
 INTENT_SPACESHIP_ASK_COLOUR_TOP_CABLE = 'spaceship_ask_colour_top_cable'
 INTENT_SPACESHIP_ASK_COLOUR_SECOND_CABLE = 'spaceship_ask_colour_second_cable'
 INTENT_SPACESHIP_BYE = 'spaceship_bye'
+INTENT_SPACESHIP_INFORM_NOTHING_FOUND = 'spaceship_inform_nothing_found'
 
 # Intents for bank_balance, bank_fraud_report
 INTENT_BANK_ASK_ACCOUNT_NUMBER = 'bank_ask_account_number'
@@ -165,6 +173,7 @@ INTENT_BANK_INFORM_BALANCE = 'bank_inform_balance'
 INTENT_BANK_ASK_FRAUD_DETAILS = 'bank_ask_fraud_details'
 INTENT_BANK_INFORM_FRAUD_REPORT_SUBMITTED = 'bank_inform_fraud_report_submitted'
 INTENT_BANK_BYE = 'bank_bye'
+INTENT_BANK_INFORM_NOTHING_FOUND = 'bank_inform_nothing_found'
 
 # Intents for schedule_meeting
 INTENT_MEETING_ASK_GUEST_NAME = 'meeting_ask_guest_name'
@@ -175,6 +184,7 @@ INTENT_MEETING_ASK_REASON = 'meeting_ask_reason'
 INTENT_MEETING_INFORM_CONFIRMED = 'meeting_inform_confirmed'
 INTENT_MEETING_INFORM_UNAVAILABLE_ASK_DIFFERENT_TIME = 'meeting_inform_unavailable_ask_different_time'
 INTENT_MEETING_BYE = 'meeting_bye'
+INTENT_MEETING_INFORM_NOTHING_FOUND = 'meeting_inform_nothing_found'
 
 # Intents for trip_directions
 INTENT_TRIP_ASK_TRAVEL_MODE = 'trip_ask_travel_mode'
@@ -185,6 +195,7 @@ INTENT_TRIP_INFORM_SIMPLE_STEP_ASK_PROCEED = 'trip_inform_simple_step_ask_procee
 INTENT_TRIP_INFORM_DETAILED_STEP = 'trip_inform_detailed_step'
 INTENT_TRIP_INFORM_LAST_STEP_AND_DONE = 'trip_inform_last_step_and_done'
 INTENT_TRIP_BYE = 'trip_bye'
+INTENT_TRIP_INFORM_NOTHING_FOUND = 'trip_inform_nothing_found'
 
 # Intents for trivia
 INTENT_TRIVIA_ASK_QUESTION_NUMBER = 'trivia_ask_question_number'
@@ -193,12 +204,14 @@ INTENT_TRIVIA_INFORM_ANSWER_CORRECT_ASK_NEXT = 'trivia_inform_answer_correct_ask
 INTENT_TRIVIA_INFORM_ANSWER_INCORRECT_ASK_NEXT = 'trivia_inform_answer_incorrect_ask_next'
 INTENT_TRIVIA_INFORM_ANSWER_2_ASK_NEXT = 'trivia_inform_answer_2_ask_next'
 INTENT_TRIVIA_BYE = 'trivia_bye'
+INTENT_TRIVIA_INFORM_NOTHING_FOUND = 'trivia_inform_nothing_found'
 
 # Intents for weather
 INTENT_WEATHER_ASK_DAY = 'weather_ask_day'
 INTENT_WEATHER_ASK_LOCATION = 'weather_ask_location'
 INTENT_WEATHER_INFORM_FORECAST = 'weather_inform_forecast'
 INTENT_WEATHER_BYE = 'weather_bye'
+INTENT_WEATHER_INFORM_NOTHING_FOUND = 'weather_inform_nothing_found'
 
 SCENARIO_PORT_MAP = {
     'book_ride': '5005',

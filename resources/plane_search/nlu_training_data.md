@@ -114,6 +114,21 @@
 - Anymore I can do for you?
 - Is there anything else I can do for you?
 
+## intent:plane_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no flights that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No flights found
+- No flights match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no flight available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:out_of_scope
 - I'm sorry, but what?
 - I don't understand that sorry

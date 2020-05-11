@@ -25,6 +25,10 @@ def fill_ride_ask_destination(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_ASK_DESTINATION]
 
 
+def fill_ride_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_RIDE_INFORM_NOTHING_FOUND]
+
+
 def fill_ride_ask_departure(intent2reply, *_):
     return intent2reply[constants.INTENT_RIDE_ASK_DEPARTURE]
 
@@ -110,6 +114,10 @@ def fill_ride_provide_booking_status_update(intent2reply, kb_item, *_):
 
 def fill_hotel_inform_search_criteria(intent2reply, *_):
     return intent2reply[constants.INTENT_HOTEL_INFORM_SEARCH_CRITERIA]
+
+
+def fill_hotel_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_HOTEL_INFORM_NOTHING_FOUND]
 
 
 def fill_hotel_ask_name(intent2reply, *_):
@@ -245,6 +253,10 @@ def fill_plane_ask_flight_id(intent2reply, *_):
     return intent2reply[constants.INTENT_PLANE_ASK_FLIGHT_ID]
 
 
+def fill_plane_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_PLANE_INFORM_NOTHING_FOUND]
+
+
 def fill_plane_flight_available(intent2reply, *_):
     return intent2reply[constants.INTENT_PLANE_FLIGHT_AVAILABLE]
 
@@ -305,6 +317,10 @@ def fill_plane_ask_more_questions(intent2reply, *_):
 
 def fill_party_ask_venue(intent2reply, *_):
     return intent2reply[constants.INTENT_PARTY_ASK_VENUE]
+
+
+def fill_party_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_PARTY_INFORM_NOTHING_FOUND]
 
 
 def fill_party_ask_number_of_guests(intent2reply, *_):
@@ -392,6 +408,10 @@ def fill_party_bye(intent2reply, *_):
 
 def fill_restaurant_ask_restaurant(intent2reply, *_):
     return intent2reply[constants.INTENT_RESTAURANT_ASK_RESTAURANT]
+
+
+def fill_restaurant_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_RESTAURANT_INFORM_NOTHING_FOUND]
 
 
 def fill_restaurant_ask_time(intent2reply, *_):
@@ -535,6 +555,10 @@ def fill_apartment_inform_booking_successful(intent2reply, *_):
     return intent2reply[constants.INTENT_APARTMENT_INFORM_BOOKING_SUCCESSFUL]
 
 
+def fill_apartment_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_APARTMENT_INFORM_NOTHING_FOUND]
+
+
 def fill_apartment_inform_search_result(intent2reply, kb_item, *_):
     if not check_kb_item(kb_item, ['Level', 'HasBalcony', 'BalconySide', 'HasElevator', 'NumRooms',
                                    'FloorSquareMeters', 'NearbyPOIs', 'Name', 'Price']):
@@ -571,6 +595,10 @@ def fill_doctor_ask_doctor_name(intent2reply, *_):
 
 def fill_doctor_ask_day(intent2reply, *_):
     return intent2reply[constants.INTENT_DOCTOR_ASK_DAY]
+
+
+def fill_doctor_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_DOCTOR_INFORM_NOTHING_FOUND]
 
 
 def fill_doctor_ask_start_time(intent2reply, *_):
@@ -625,6 +653,10 @@ def fill_spaceship_ask_rank(intent2reply, *_):
     return intent2reply[constants.INTENT_SPACESHIP_ASK_RANK]
 
 
+def fill_spaceship_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_SPACESHIP_INFORM_NOTHING_FOUND]
+
+
 def fill_spaceship_ask_code(intent2reply, *_):
     return intent2reply[constants.INTENT_SPACESHIP_ASK_CODE]
 
@@ -662,6 +694,10 @@ def fill_weather_ask_day(intent2reply, *_):
     return intent2reply[constants.INTENT_WEATHER_ASK_DAY]
 
 
+def fill_weather_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_WEATHER_INFORM_NOTHING_FOUND]
+
+
 def fill_weather_ask_location(intent2reply, *_):
     return intent2reply[constants.INTENT_WEATHER_ASK_LOCATION]
 
@@ -682,6 +718,10 @@ def fill_weather_bye(intent2reply, *_):
 
 def fill_trivia_ask_question_number(intent2reply, *_):
     return intent2reply[constants.INTENT_TRIVIA_ASK_QUESTION_NUMBER]
+
+
+def fill_trivia_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIVIA_INFORM_NOTHING_FOUND]
 
 
 def fill_trivia_ask_question(intent2reply, kb_item, *_):
@@ -721,6 +761,10 @@ def fill_trivia_bye(intent2reply, *_):
 
 def fill_meeting_ask_guest_name(intent2reply, *_):
     return intent2reply[constants.INTENT_MEETING_ASK_GUEST_NAME]
+
+
+def fill_meeting_inform_nothing_found(intent2replay, *_):
+    return intent2replay[constants.INTENT_MEETING_INFORM_NOTHING_FOUND]
 
 
 def fill_meeting_ask_day(intent2reply, *_):
@@ -770,6 +814,10 @@ def fill_bank_ask_pin(intent2reply, *_):
     return intent2reply[constants.INTENT_BANK_ASK_PIN]
 
 
+def fill_bank_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_BANK_INFORM_NOTHING_FOUND]
+
+
 def fill_bank_ask_dob(intent2reply, *_):
     return intent2reply[constants.INTENT_BANK_ASK_DOB]
 
@@ -809,6 +857,10 @@ def fill_bank_bye(intent2reply, *_):
 
 def fill_trip_ask_travel_mode(intent2reply, *_):
     return intent2reply[constants.INTENT_TRIP_ASK_TRAVEL_MODE]
+
+
+def fill_trip_inform_nothing_found(intent2reply, *_):
+    return intent2reply[constants.INTENT_TRIP_INFORM_NOTHING_FOUND]
 
 
 def fill_trip_ask_departure_location(intent2reply, *_):

@@ -115,6 +115,21 @@
 - Right, May i know you name please?
 - Your name
 
+## intent:party_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no venues that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No venues found
+- No venues match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no venue available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:party_bye
 - Perfect!
 - okay good bye

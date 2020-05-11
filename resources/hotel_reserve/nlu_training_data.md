@@ -158,6 +158,21 @@
 - Right, May i know you name please?
 - Your name
 
+## intent:hotel_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no hotels that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No hotels found
+- No hotels match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no hotel available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:hotel_bye
 - Perfect! Have a great stay!
 - okay good bye

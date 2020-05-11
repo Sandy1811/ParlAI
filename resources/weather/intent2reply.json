@@ -5,5 +5,6 @@
     "weather_inform_forecast": "It will be {weather:s} all day on {day:s} in {city:s}, with temperatures of around {temperature:d} degrees celsius.",
     "weather_bye": "Thank you and goodbye.",
     "anything_else": "Is there anything else that I can do for you?",
+    "weather_inform_nothing_found": "Unfortunately there are no forecasts that match your search. Would you like to change any of your criteria?",
     "out_of_scope": "I am sorry, I don't quite understand what you mean. I am only able to tell you the weather."
 }

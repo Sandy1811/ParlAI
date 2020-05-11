@@ -142,6 +142,21 @@
 - Thanks, goodbye.
 - OK, thanks, goodbye!
 
+## intent:meeting_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no people with that name.
+- Looks like your search didn't return anybodyl
+- Very sorry, but I didn't find a person.
+- Your search was not successful.
+- No guests found
+- No one matches your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anybody with that name.
+- There is currently no one with that name available.
+- Nobody found.
+- I didn't find the person you were looking for.
+- Nobody matches your search criteria.
+
 ## intent:anything_else
 - Anything else I can help you with?
 - Is there anything else you would like me to do?

@@ -122,6 +122,20 @@
 - Your account balance is 789.
 - You have 2342 in the bank.
 
+## intent:bank_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There I can't find your balance.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No balance found
+- No bank balance found for you!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:bank_bye
 - Perfect!
 - okay good bye
