@@ -215,7 +215,7 @@ class TutorialWorld1(MTurkTaskWorld):
                         f"'AI Dialogues Stage II - Single Task Dialogues' and a BONUS of $0.50."
                     ).message
                 )
-                self.mturk_agent.pay_bonus(0.50)
+                self.mturk_agent.pay_bonus(0.50, reason="You didn't need any hints!")
                 mturk_utils.give_worker_qualification(
                     self.mturk_agent.worker_id,
                     self.qualification_id,
@@ -230,7 +230,7 @@ class TutorialWorld1(MTurkTaskWorld):
                         f"'AI Dialogues Stage II - Single Task Dialogues' and a BONUS of $0.25."
                     ).message
                 )
-                self.mturk_agent.pay_bonus(0.25)
+                self.mturk_agent.pay_bonus(0.25, reason="You needed fewer than 4 hints.")
                 mturk_utils.give_worker_qualification(
                     self.mturk_agent.worker_id,
                     self.qualification_id,
@@ -266,7 +266,7 @@ class TutorialWorld1(MTurkTaskWorld):
                         f"Sorry, but you've used too many hints. "
                     ).message
                 )
-                self.mturk_agent.reject_work()
+                self.mturk_agent.reject_work(reason="You needed 9 or more hints to answer the questions.")
         except ConnectionError:
             self.episodeDone = True
             return
