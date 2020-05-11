@@ -4,14 +4,9 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
-from parlai.mturk.tasks.qa_data_collection.worlds import (
-    QADataCollectionOnboardWorld,
-    QADataCollectionWorld,
-)
 from parlai.mturk.core.mturk_manager import MTurkManager
-from parlai.mturk.tasks.qa_data_collection.task_config import task_config
+from parlai.mturk.tasks.woz_tutorial.task_config import task_config
 import os
-import importlib
 
 from parlai.mturk.tasks.woz_tutorial.worlds import TutorialWorld1
 
@@ -81,9 +76,11 @@ def main():
             while not world.episode_done():
                 world.parley()
 
+            print(f"{workers[0]} is done")
+
             # shutdown and review the work
             world.shutdown()
-            # world.review_work()
+            world.review_work()
 
             # Return the contents for saving
             return world.prep_save_data(workers)
