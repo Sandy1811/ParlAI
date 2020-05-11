@@ -223,7 +223,7 @@ class TutorialWorld1(MTurkTaskWorld):
                     value=self.hints_needed,
                     is_sandbox=self.opt['is_sandbox'],
                 )
-                self.mturk_agent.accept_work()
+                self.mturk_agent.approve_work()
             elif self.hints_needed < 4:
                 self.mturk_agent.observe(
                     GuideCommand(
@@ -238,7 +238,7 @@ class TutorialWorld1(MTurkTaskWorld):
                     value=self.hints_needed,
                     is_sandbox=self.opt['is_sandbox'],
                 )
-                self.mturk_agent.accept_work()
+                self.mturk_agent.approve_work()
             elif self.hints_needed < 6:
                 self.mturk_agent.observe(
                     GuideCommand(
@@ -252,7 +252,7 @@ class TutorialWorld1(MTurkTaskWorld):
                     value=self.hints_needed,
                     is_sandbox=self.opt['is_sandbox'],
                 )
-                self.mturk_agent.accept_work()
+                self.mturk_agent.approve_work()
             elif self.hints_needed < 9:
                 self.mturk_agent.observe(
                     GuideCommand(
@@ -260,7 +260,7 @@ class TutorialWorld1(MTurkTaskWorld):
                         f"right, so we can't give you the qualification. Thanks for trying, though!"
                     ).message
                 )
-                self.mturk_agent.accept_work()
+                self.mturk_agent.approve_work()
             else:
                 self.mturk_agent.observe(
                     GuideCommand(
