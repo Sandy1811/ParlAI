@@ -126,6 +126,12 @@
 - Alright, I've got that ride to The Orchard booked for you. Your driver Luke will arrive in a black Mercedes with license plate 999 YYT.
 - Right, I have just booked that ride to the Royal Botanical Gardens for you. Your driver Ella will arrive in a blue Tesla with license plate X76 XX8.
 - Cool, so I've just booked that ride to the castle for you. Your driver Joanna will arrive in a dark green Volkswagen with license plate 334 55A.
+- all booked
+- your ride is booked
+- booked it
+- ride is arranged
+- all done
+- yo ride is all good
 
 ## intent:ride_inform_search_criteria
 - Right, I can also filter for the car's model if you want.

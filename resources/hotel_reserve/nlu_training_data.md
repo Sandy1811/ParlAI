@@ -106,6 +106,13 @@
 - I found a room at the Marriott that accomodates your requirements. Can you confirm this booking?
 - Found what you wanted, do you want me to proceed with the booking?
 - Right, got the room that you have been looking for, can I book this now?
+- can i book this?
+- book this?
+- reserve this room?
+- should i reserve this room?
+- do you want to reserve this room?
+- can i make a reservation?
+- should i make the reservation?
 
 ## intent:hotel_reservation_succeeded
 - Right, thats all booked for you.
@@ -120,6 +127,10 @@
 - Your booking is confirmed and you'll receive an emails with the details shortly
 - Awesome, the hotel just confirmed your reservation, so you're all set.
 - Great, the hotel confirmed your booking.
+- all done
+- booking successful
+- booked the room
+- your room is booked
 
 ## intent:hotel_reservation_failed
 - I'm sorry, but something went wrong in the booking process and I couldn't complete your reservation.

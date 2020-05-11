@@ -110,6 +110,15 @@
 - Yes, there is somebody available to show you the apartment then. Can I book this for you?
 - Great, I can book this for you if you want.
 - That should all work fine, can I book it for you?
+- Can I make this appointment?
+- make appointment?
+- book appointment
+- make viewing
+- book viewing
+- go to viewing
+- available
+- arrange viewing
+- should i arrange that viewing for you?
 
 ## intent:apartment_inform_booking_succesful
 - Excellent, this is all booked for you now.
@@ -119,6 +128,12 @@
 - Great thats all done and your viewing has been booked successfully.
 - Awesome, the booking is done and the Dodgy Letting Company will welcome you at the Dumpster apartments.
 - Hooray, your booking went through alright and you'll see the construction site on Sunday. Bring wellies!
+- successful
+- done
+- all done
+- booking made
+- i booked that
+- thats all booked
 
 ## intent:apartment_bye
 - Perfect!

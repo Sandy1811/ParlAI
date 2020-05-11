@@ -104,6 +104,9 @@
 - Great, I got an apartment for you.
 - Good news is your search returned a result.
 - Yay, found an apartment for you.
+- I found a 
+- Got a
+- There is a
 - Right, I have found an apartment that matches your search criteria. Its in the Gasometer, 61 square meters, and comes at 795 per month. Its on the 9th floor, does not have a balcony, but the block has an elevator and is next to a school and train station.
 - Great, there are Dyke Road apartments that would match your criteria. Its 25 square meters and costs 525 per month. Its on the first floor and does not have a balcony or an elevator. There is a park nearby.
 - OK, I found Brunswick Place apartments, which are located next to a beautiful park. The apartment is on the first floor, 30 square meters and costs 550 a month. It doesn't have a balcony and the building doesn't feature an elevator.

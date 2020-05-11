@@ -34,6 +34,15 @@
 - Can I reserve that flight for you now?
 - The flight is available and I can reserve it for you now.
 - Your flight is still available. Do you want me to reserve it?
+- can i reserve this for your?
+- should i make a reservation?
+- can i reserve this plane for you?
+- do you want to get this flight?
+- want to take this flight?
+- reserve this?
+- book this?
+- do you want that flight?
+- want that seat?
 
 ## intent:plane_flight_unavailable
 - Sorry, that flight is unavailable.

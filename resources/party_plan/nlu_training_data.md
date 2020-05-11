@@ -151,6 +151,14 @@
 - Are you happy to go on and send a booking order?
 - Should I send a booking request for you?
 - Cool, the venue is available and I can finalise the booking for you now.
+- can i arrange this party?
+- can i proceed?
+- should i proceed with booking?
+- can you confirm the party?
+- can you confirm this?
+- is this ok for you?
+- should i arrange this now?
+- can i book?
 
 ## intent:party_booking_successful
 - Alright, thats all booked for you now!

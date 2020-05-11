@@ -348,6 +348,9 @@ def get_book_doctor_appointment_item():
     }
 
     utterances = [
+        "book",
+        "Book it for you?",
+        "do you need me to book this now?",
         "Sorry, the doctor is busy then.",
         "Alright, doctor's got time. Can I book it for you?",
         "Cool, all booked with the doc.",
