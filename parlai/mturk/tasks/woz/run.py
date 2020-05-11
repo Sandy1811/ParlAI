@@ -141,6 +141,12 @@ def main():
         task_directory_path=os.path.dirname(os.path.abspath(__file__))
     )
 
+    has_passed_tutorial_1 = mturk_utils.find_or_create_qualification(
+        "PassedAIDialoguesTutorial1",
+        "If owned, the worker has passed the AI Dialogues Tutorial 1. The value corresponds to the number of hints that the worker used.",
+        opt['is_sandbox']
+    )
+
     # has_passed_wizard_tutorial_20200320_qualification = mturk_utils.find_or_create_qualification(
     #     "WOZ-HasPassedWizardTutorial-20200320",
     #     "Workers with this qualification have passed the wizard tutorial in its state from 2020-03-20.",
@@ -164,11 +170,11 @@ def main():
     #     "Workers with this qualification have failed the wizard tutorial in its state from 2020-03-24.",
     #     opt["is_sandbox"],
     # )
-    has_passed_wizard_tutorial_20200406_qualification = mturk_utils.find_or_create_qualification(
-        "WOZ-HasPassedWizardTutorial-20200406",
-        "Workers with this qualification have passed the second wizard video tutorial (state from 2020-04-06).",
-        opt["is_sandbox"],
-    )
+    # has_passed_wizard_tutorial_20200406_qualification = mturk_utils.find_or_create_qualification(
+    #     "WOZ-HasPassedWizardTutorial-20200406",
+    #     "Workers with this qualification have passed the second wizard video tutorial (state from 2020-04-06).",
+    #     opt["is_sandbox"],
+    # )
 
     # opt["block_qualification"] = "WOZ-HasFailedWizardTutorial-20200324"
 
@@ -176,7 +182,8 @@ def main():
     # if opt["wizard_intro"]:
     qualification_manager.require_locales(["US"])
     qualification_manager.require_min_approved_hits(10000)
-    qualification_manager.require_min_approval_rate(98)
+    # qualification_manager.require_min_approval_rate(98)
+    qualification_manager.require_existence(has_passed_tutorial_1)
     #     qualification_manager.require_existence(
     #         has_passed_wizard_tutorial_20200320_qualification,
     #         exists=False,
@@ -211,12 +218,6 @@ def main():
         if role == "Wizard":
             worker.update_agent_id("Wizard")
             world = WizardOnboardingWorld(opt=opt, mturk_agent=worker, worker_id=original_id)
-            if worker.passed_onboarding and isinstance(worker, MTurkAgent):
-                mturk_utils.give_worker_qualification(
-                    original_id,
-                    has_passed_wizard_tutorial_20200406_qualification,
-                    is_sandbox=opt["is_sandbox"],
-                )
         elif role == "User":
             worker.update_agent_id("User")
             world = UserOnboardingWorld(opt=opt, mturk_agent=worker, worker_id=original_id)

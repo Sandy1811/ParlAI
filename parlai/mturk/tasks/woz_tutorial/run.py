@@ -6,6 +6,7 @@
 from parlai.core.params import ParlaiParser
 from parlai.mturk.core import mturk_utils
 from parlai.mturk.core.mturk_manager import MTurkManager
+from parlai.mturk.tasks.woz.qualify import MTurkQualificationManager
 from parlai.mturk.tasks.woz_tutorial.task_config import task_config
 import os
 
@@ -42,8 +43,15 @@ def main():
     mturk_manager.set_onboard_function(onboard_function=None)
 
     qualification_id = mturk_utils.find_or_create_qualification(
-        "PassedAIDialoguesTutorial1", "If owned, the worker has passed the AI Dialogues Tutorial 1. The value corresponds to the number of hints that the worker used.", opt['is_sandbox']
+        "PassedAIDialoguesTutorial1",
+        "If owned, the worker has passed the AI Dialogues Tutorial 1. The value corresponds to the number of hints that the worker used.",
+        opt['is_sandbox']
     )
+    qualification_manager = MTurkQualificationManager()
+    # if opt["wizard_intro"]:
+    qualification_manager.require_locales(["US"])
+    qualification_manager.require_min_approved_hits(10000)
+    qualification_manager.require_min_approval_rate(98)
 
     try:
         # Initialize run information
@@ -53,7 +61,7 @@ def main():
         mturk_manager.ready_to_accept_workers()
 
         # Create the hits as specified by command line arguments
-        mturk_manager.create_hits()
+        mturk_manager.create_hits(qualifications=qualification_manager.qualifications)
 
         # Check workers eligiblity acts as a filter, and should return
         # the list of all workers currently eligible to work on the task
