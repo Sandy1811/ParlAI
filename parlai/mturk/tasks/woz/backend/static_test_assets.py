@@ -299,7 +299,9 @@ def get_apartment_search_item():
         "Looking to live near a park or the station?",
         "Right, got a free flat at Shadyside apartments, no elevator, no windows, no balconly, 600 a month, you in?",
         "Wanna search for more?",
-        "Cheerio and byeio"
+        "Cheerio and byeio",
+        'I found one for you',
+        'I found an apartment!'
     ]
 
     return kb_item, utterances, 'apartment_search'
