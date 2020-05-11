@@ -1,6 +1,6 @@
 {
     "hello": "Hello, how can I help?",
-    "trip_ask_travel_mode": "How are you planning to get there?",
+    "trip_ask_travel_mode": "Do you want to drive, walk, or use public transit?",
     "trip_ask_departure_location": "Where are you departing from?",
     "trip_ask_arrival_location": "Where do you need to go?",
     "trip_ask_departure_time": "When are you going to start your trip?",
