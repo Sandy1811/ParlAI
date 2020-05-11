@@ -15,22 +15,13 @@
         "You want directions from '@Location-1' to '@Location-2' at @DepartureTime-1 by @TravelMode-1. When the wizard gives the 1st and 4th step, indicate that you do not understand until you are given more detail. Keep going until you've reached your destination.",
         "You want directions from '@Location-1' to '@Location-2' at @DepartureTime-1 by @TravelMode-1. When the wizard gives the 2nd and 4th step, indicate that you do not understand until you are given more detail. Keep going until you've reached your destination."
       ],
-      "completion_requirements": ["You have been given directions."],
       "completion_questions": [
-        "...give you suitable directions?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant give you suitable directions?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Tell the user the directions from their departure location to their arrival location",
-      "completion_requirements": [
-        "You have given the user directions,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Tell the user the directions from their departure location to their arrival location"
     }
   }
 }
