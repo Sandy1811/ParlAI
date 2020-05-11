@@ -12,7 +12,7 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = "[Prototype] Chat as an AI assistant or user"
+task_config['hit_title'] = "AI Dialogues - Stage II (Single Task Dialogues)"
 
 
 """A description includes detailed information about the kind of task the HIT contains.
@@ -34,12 +34,10 @@ and on the left side of the chat page. Supports HTML formatting.
 #     task_config['task_description'] = file.read()
 task_config['frontend_version'] = 1
 
-intro_test = f"""In this task you will take one of two roles: You could be a 'user' who wants to achieve some goal, 
-or, alternatively, you could take the role of an 'AI assistant' that helps the user achieve his/her goal. The 
-first time you do this task as the assistant, you have to watch and understand a tutorial video: {WIZARD_TUTORIAL_URL} . 
-\n\nNote: In this task it is important that you follow instructions 
-precisely. In particular, in the assistant's role you will not be paid if you don't follow the flow chart whenever 
-possible. """
+intro_test = f"""To enter this task, you need a qualification from the 'AI Dialogues - Stage I' task.
+
+In this task you will take one of two roles: You could be a 'user' who wants to achieve some goal, 
+or, alternatively, you could take the role of an 'AI assistant' that helps the user achieve his/her goal."""
 
 task_config['task_description'] = intro_test
 task_config['hit_description'] = intro_test

@@ -212,7 +212,7 @@ class TutorialWorld1(MTurkTaskWorld):
                 self.mturk_agent.observe(
                     GuideCommand(
                         f"Perfect Score! Well done! You got your qualification for the task "
-                        f"'AI Dialogues Stage II - Single Task Dialogues' and a BONUS of $0.50."
+                        f"'AI Dialogues - Stage II (Single Task Dialogues)' and a BONUS of $0.50."
                     ).message
                 )
                 self.mturk_agent.pay_bonus(0.50, reason="You didn't need any hints!")
@@ -227,7 +227,7 @@ class TutorialWorld1(MTurkTaskWorld):
                 self.mturk_agent.observe(
                     GuideCommand(
                         f"Nicely done! You got your qualification for the task "
-                        f"'AI Dialogues Stage II - Single Task Dialogues' and a BONUS of $0.25."
+                        f"'AI Dialogues - Stage II (Single Task Dialogues)' and a BONUS of $0.25."
                     ).message
                 )
                 self.mturk_agent.pay_bonus(0.25, reason="You needed fewer than 4 hints.")
