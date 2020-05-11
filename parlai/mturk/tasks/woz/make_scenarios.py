@@ -141,6 +141,10 @@ easy = ['happy_followup_doctor_appointment.json', 'happy_weather.json', 'happy_s
 medium = ['happy_party_rsvp.json', 'happy_restaurant_search.json','happy_restaurant_reserve.json','happy_apartment_search.json','happy_hotel_service_request.json','happy_book_apartment_viewing.json', 'happy_party_plan.json', 'happy_hotel_search.json','happy_hotel_reserve.json', 'happy_plane_search.json','happy_plane_reserve.json', 'happy_book_ride.json','happy_book_doctor_appointment.json'] #13
 hard = ['happy_trivia.json','happy_bank_fraud_report.json','happy_schedule_meeting.json','happy_bank_balance.json', 'happy_trip_directions.json'] # 5
 
+easy_unhappy = []
+medium_unhappy = []
+hard_unhappy = []
+
 counts = {}
 for e in easy:
   counts[e] = 25
@@ -148,6 +152,12 @@ for e in medium:
   counts[e] = 30
 for e in hard:
   counts[e] = 45
+for e in easy_unhappy:
+  counts[e] = 45
+for e in medium_unhappy:
+  counts[e] = 60
+for e in hard_unhappy:
+  counts[e] = 75
 
 
 if __name__ == '__main__':
