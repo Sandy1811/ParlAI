@@ -342,7 +342,7 @@ def fill_party_venue_not_available(intent2reply, kb_item, *_):
 
 
 def fill_party_ask_confirm_booking(intent2reply, kb_item, *_):
-    if not check_kb_item(kb_item, ['VenuName', 'Day', 'Time']):
+    if not check_kb_item(kb_item, ['VenueName', 'Day', 'Time']):
         return None
     return intent2reply[constants.INTENT_PARTY_ASK_CONFIRM_BOOKING].format(venue_name=kb_item['VenueName'],
                                                                            day=kb_item['Day'],
@@ -357,8 +357,13 @@ def fill_party_no_venue_available(intent2reply, *_):
     return intent2reply[constants.INTENT_PARTY_NO_VENUE_AVAILABLE]
 
 
-def fill_party_booking_successful(intent2reply, *_):
-    return intent2reply[constants.INTENT_PARTY_BOOKING_SUCCESSFUL]
+def fill_party_booking_successful(intent2reply, kb_item, *_):
+    if not check_kb_item(kb_item, ['VenueName', 'Day', 'Time']):
+        return None
+
+    return intent2reply[constants.INTENT_PARTY_BOOKING_SUCCESSFUL].format(
+        venue_name=kb_item['VenueName'], day=kb_item['Day'], time=kb_item['Time']
+    )
 
 
 def fill_party_booking_failed(intent2reply, *_):

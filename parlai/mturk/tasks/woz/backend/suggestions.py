@@ -228,7 +228,7 @@ if __name__ == '__main__':
     #scenarios = ['bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
     #             'trivia', 'weather']
     #scenarios = ['trip_directions', 'party_rsvp', 'plane_search']
-    scenarios = ['book_doctor_appointment']
+    scenarios = ['party_plan']
 
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
                           start_nlu_servers=True)

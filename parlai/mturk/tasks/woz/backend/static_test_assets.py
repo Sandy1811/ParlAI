@@ -155,6 +155,7 @@ def get_party_plan_item():
     }
 
     utterances = [
+        'Cool, all booked and all done!',
         'Heyho, whats up?',
         'Where do you want to get hammered?',
         'Whos hosting this?',
@@ -165,11 +166,12 @@ def get_party_plan_item():
         'Any spefific food wishes?',
         'Any drinks prefs you\'ve got?',
         'Sorry mate, but this is not going to work out.',
-        'Right, they are happy to have you, can I book this now?',
-        'Cool, all booked and all done!',
         'Oops, something went horribly wrong.',
         'Sorry, everything is fully booked on Friday night.',
-        'Do you want to optionally book any specific type of food or drink for your party?'
+        'Do you want to optionally book any specific type of food or drink for your party?',
+        'Right, they are happy to have you, can I book this now?',
+        'Cool, all booked and all done!',
+
     ]
 
     return kb_item, utterances, 'party_plan'
