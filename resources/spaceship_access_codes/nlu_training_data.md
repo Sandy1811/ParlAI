@@ -84,6 +84,16 @@
 - Hooray, all weapon systems are activated.
 - Everything is done again!
 - All sorted for you again!
+- door unlocked
+- unlocked it
+- the door is unlocked
+- i have unlocked that door again for you
+- unlocked
+- the door is open again
+- opened that door for you
+- door open again
+- The door is now unlocked.
+- Sorry, you are not authorized to unlock the door. Please obtain a clearance code from the Captain.
 
 ## intent:spaceship_inform_nothing_found
 - Sorry, but I couldn't find anything

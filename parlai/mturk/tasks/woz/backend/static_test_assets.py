@@ -161,6 +161,9 @@ def get_party_plan_item():
     }
 
     utterances = [
+        'I found one',
+        'foundone',
+        'found one',
         'Cool, all booked and all done!',
         'Heyho, whats up?',
         'Where do you want to get hammered?',
@@ -269,6 +272,7 @@ def get_restaurant_search_item():
     }
 
     utterances = [
+        'I can apply a bunch o fother filters',
         'Hello my friend, what can I do for you today?',
         'Whats your name?',
         'Any restaurant you have in mind?',

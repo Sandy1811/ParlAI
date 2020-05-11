@@ -101,6 +101,9 @@
 - Too bad, that time slot is unavailable.
 - Sorry, but the time is unavailable.
 - I am terribly sorry to inform you that the time you specified is unavailable.
+- That time is unavailable. Please try another time.
+- unavailable
+- slot is not available
 
 ## intent:apartment_inform_viewing_available
 - Great, that time would work. Can I book this viewing for you now?
@@ -119,6 +122,8 @@
 - available
 - arrange viewing
 - should i arrange that viewing for you?
+- available
+- slot available
 
 ## intent:apartment_inform_booking_succesful
 - Excellent, this is all booked for you now.
@@ -134,6 +139,7 @@
 - booking made
 - i booked that
 - thats all booked
+- Your apartment viewing has been successfuly scheduled.
 
 ## intent:apartment_bye
 - Perfect!

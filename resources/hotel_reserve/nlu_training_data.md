@@ -79,6 +79,11 @@
 - Any wishes regarding your room or other services the hotel offers?
 - Do you need anything in particular roomwise?
 - Any other requests?
+- Customer requests?
+- any requests?
+- any other requests?
+- special wishes?
+- anything else?
 
 ## intent:hotel_unavailable
 - I'm sorry but the requested hotel is not available for your given dates.
@@ -93,6 +98,7 @@
 - The hotel does not offer any vegan options, sorry.
 - The hotel does not serve breakfast that long, sorry.
 - I can't complete your booking request as the hotel is completely booked out.
+- unavailable
 
 ## intent:hotel_ask_confirm_booking
 - Alright, I found a room at the Youth Hostel that matches your preferences, can I perform this booking for you?
@@ -113,6 +119,7 @@
 - do you want to reserve this room?
 - can i make a reservation?
 - should i make the reservation?
+- available
 
 ## intent:hotel_reservation_succeeded
 - Right, thats all booked for you.
@@ -131,6 +138,7 @@
 - booking successful
 - booked the room
 - your room is booked
+- Reservation Confirmed
 
 ## intent:hotel_reservation_failed
 - I'm sorry, but something went wrong in the booking process and I couldn't complete your reservation.
@@ -147,6 +155,7 @@
 - I'm really sorry, but I couldn't complete your booking.
 - Very sorry, but the hotel couldn't process your booking request.
 - Your booking failed.
+- Reservation failed
 
 ## intent:ask_name
 - Hi What is your name>

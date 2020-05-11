@@ -98,6 +98,18 @@
 - Should I narrow the search down by places that do online table bookings?
 - Do you want me to search for restaurants that offer a table reservation?
 
+## intent:restaurant_inform_search_criteria
+- I can narrow down the search
+- I can also filter for cost, food type and location
+- I can furthermore search for cuising and other stuff
+- Would you like to further narrow down the search?
+- Do you want to filter the results by
+- I can also search for rating, cost, location, delivery
+- I can apply one or more of the following filters: cost, location, reservations
+- Do you want to apply any other filters?
+- Want to search for other things?
+- Want more filters?
+
 ## intent:restaurant_inform_search_result
 - OK, I found the Burger Brothers in North Laine, that do Burgers, are in the moderate price range and are open until late.
 - Right, there is the Hove Kitchen on Western Road, just around the corner from Brunswick place, offer British and French cuisine, in the expensive price range and they close at midnight.
@@ -106,6 +118,31 @@
 - Cool, so I found Very Italian Pizzas at the Old Steine that offer Italian cuisine in the moderate price range and are open until midnight.
 - Great, I found the Terre a Terre on East St. They have European cuisine in the expensive price range and close at 11.30pm.
 - Excellent, there is the Herringbone on Ferry Rd, offering British food at expensive prices, and they close at 11pm.
+- can i arrange this booking?
+- can i proceed?
+- should i proceed with booking?
+- can you confirm the party?
+- can you confirm this?
+- is this ok for you?
+- should i arrange this now?
+- can i book?
+- I found a table
+- found a restaurant
+- great, i found a restaurant
+- i got a table for your party
+- got a table for you
+- there is a table at the xxx
+- there is a restaurant for you
+- this one is available
+- table available
+- restaurant is available
+- there is one available
+- found an available one
+- there is a free one
+- found a free
+- found a free table for you
+- they got a free table at the
+- the xxx has a free table for you
 
 ## intent:restaurant_ask_continue_searching
 - Do you want me to look for anythign else?

@@ -91,6 +91,7 @@
 - I am extremely sorry, but the restaurant is unavailable for a party of that size.
 - The restaurant is unavailable then.
 - Looks like there is no free table, sorry.
+- unavailable
 
 ## intent:restaurant_ask_confirm_booking
 - Great, the restaurant has a table available for you, can you confirm the booking?
@@ -110,6 +111,7 @@
 - can you confirm this?
 - do you want to proceed?
 - book this table?
+- available
 
 ## intent:restaurant_inform_booking_successful
 - Great thats all done for you now.
@@ -125,6 +127,7 @@
 - The restaurant confirmed the booking so you're all set.
 - Great, everything is ready and the restaurant is looking forward to have you.
 - Yes, the reservation was successful.
+- Reservation Confirmed
 
 ## intent:restaurant_inform_booking_failed
 - Sorry, but something went wrong with the booking.
@@ -140,6 +143,7 @@
 - Your reservation failed, sorry.
 - I could not book that table for you for some reason.
 - Sorry, but I was unable to book that table for you.
+- Reservation failed
 
 ## intent:retaurant_bye
 - Perfect! Have a great stay!

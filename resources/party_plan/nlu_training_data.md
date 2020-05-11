@@ -140,6 +140,8 @@
 - Everything is sold out on Thursday unfortunately.
 - Well, it seems that all venues are already fully booked on Friday.
 - I am really sorry, but no venue will be able to accomodate your party on Tuesday.
+- The venue is booked at that time. Try another meeting time or another venue.
+- The venue is too small for your party. Try another venue.
 
 ## intent:party_ask_confirm_booking
 - Right, the venue is available then, can I book it for you?
@@ -159,6 +161,21 @@
 - is this ok for you?
 - should i arrange this now?
 - can i book?
+- I found one
+- found a venue
+- great, i found a venue
+- i got a place for your party
+- got a venue for you
+- there is the xxx venue
+- there is a venue for you
+- this on is available
+- venue available
+- venue is available
+- there is one available
+- found an available one
+- there is a free one
+- found a free
+- found a venue for you
 
 ## intent:party_booking_successful
 - Alright, thats all booked for you now!
@@ -172,6 +189,7 @@
 - The booking request was successful.
 - Booking succeeded, your party can start.
 - Alright, I was able to book everything for you.
+- Your event has been successfully scheduled.
 
 ## intent:party_booking_failed
 - Sorry, but the booking was unsuccessful.

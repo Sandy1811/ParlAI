@@ -101,6 +101,7 @@
 - We have successuflly noted down your service request.
 - Thank you for your request.
 - We will deliver the requested service in due course.
+- Request Confirmed
 
 ## intent:hotel_inform_service_request_failed
 - I am sorry, but your service request was not successful.
@@ -113,6 +114,7 @@
 - We are sorry, but we can't process your request.
 - Your service request failed.
 - Service request could not be made. Sorry. 
+- Request Failed
 
 ## intent:hotel_bye
 - Perfect!
