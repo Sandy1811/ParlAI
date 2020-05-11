@@ -5,11 +5,10 @@
 # LICENSE file in the root directory of this source tree.
 from typing import Optional, Text, List
 
+from parlai.mturk.core import mturk_utils
 from parlai.mturk.core.agents import MTURK_DISCONNECT_MESSAGE, RETURN_MESSAGE, TIMEOUT_MESSAGE
-from parlai.mturk.core.worlds import MTurkOnboardWorld
-
-
-TUTORIAL_URL = "https://youtu.be/L7QpscLPTFM"
+from parlai.mturk.core.worlds import MTurkTaskWorld
+from parlai.mturk.tasks.woz_tutorial.task_config import TUTORIAL_URL
 
 
 class TutorialFailedError(ValueError):
@@ -34,13 +33,14 @@ def is_disconnected(act):
     ]
 
 
-class TutorialWorld1(MTurkOnboardWorld):
+class TutorialWorld1(MTurkTaskWorld):
     """
     Tutorial I
     """
 
-    def __init__(self, opt, mturk_agent) -> None:
+    def __init__(self, opt, mturk_agent, qualification_id) -> None:
         super(TutorialWorld1, self).__init__(opt, mturk_agent=mturk_agent)
+        self.qualification_id = qualification_id
         self.hints_needed = 0
         self._worker_id = mturk_agent.worker_id
         self._assignment_id = mturk_agent.assignment_id
@@ -215,7 +215,14 @@ class TutorialWorld1(MTurkOnboardWorld):
                         f"'AI Dialogues Stage II - Single Task Dialogues' and a BONUS of $0.50."
                     ).message
                 )
-                self.mturk_agent.pay_bonus(1)
+                self.mturk_agent.pay_bonus(0.50)
+                mturk_utils.give_worker_qualification(
+                    self.mturk_agent.worker_id,
+                    self.qualification_id,
+                    value=self.hints_needed,
+                    is_sandbox=self.opt['is_sandbox'],
+                )
+                self.mturk_agent.accept_work()
             elif self.hints_needed < 4:
                 self.mturk_agent.observe(
                     GuideCommand(
@@ -223,13 +230,28 @@ class TutorialWorld1(MTurkOnboardWorld):
                         f"'AI Dialogues Stage II - Single Task Dialogues' and a BONUS of $0.25."
                     ).message
                 )
-            elif self.hints_needed < 10:
+                self.mturk_agent.pay_bonus(0.25)
+                mturk_utils.give_worker_qualification(
+                    self.mturk_agent.worker_id,
+                    self.qualification_id,
+                    value=self.hints_needed,
+                    is_sandbox=self.opt['is_sandbox'],
+                )
+                self.mturk_agent.accept_work()
+            elif self.hints_needed < 7:
                 self.mturk_agent.observe(
                     GuideCommand(
                         f"Done! You got your qualification for the task "
                         f"'AI Dialogues - Stage II (Single Task Dialogues)'."
                     ).message
                 )
+                mturk_utils.give_worker_qualification(
+                    self.mturk_agent.worker_id,
+                    self.qualification_id,
+                    value=self.hints_needed,
+                    is_sandbox=self.opt['is_sandbox'],
+                )
+                self.mturk_agent.accept_work()
             else:
                 self.mturk_agent.observe(
                     GuideCommand(
@@ -237,6 +259,7 @@ class TutorialWorld1(MTurkOnboardWorld):
                         f"right, so we can't give you the qualification. Thanks for trying, though!"
                     ).message
                 )
+                self.mturk_agent.accept_work()
         except ConnectionError:
             self.episodeDone = True
             return
@@ -246,6 +269,7 @@ class TutorialWorld1(MTurkOnboardWorld):
                     f"Sorry, but the correct answer was choice {e}. Thank you for trying, though!"
                 ).message
             )
+            self.episodeDone = True
             return
         self.mturk_agent.observe(GuideCommand(f"All done!").message)
 

@@ -4,6 +4,7 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 from parlai.core.params import ParlaiParser
+from parlai.mturk.core import mturk_utils
 from parlai.mturk.core.mturk_manager import MTurkManager
 from parlai.mturk.tasks.woz_tutorial.task_config import task_config
 import os
@@ -40,6 +41,10 @@ def main():
     # with set_onboard_function(onboard_function=run_onboard)
     mturk_manager.set_onboard_function(onboard_function=None)
 
+    qualification_id = mturk_utils.find_or_create_qualification(
+        "PassedAIDialoguesTutorial1", "If owned, the worker has passed the AI Dialogues Tutorial 1. The value corresponds to the number of hints that the worker used.", opt['is_sandbox']
+    )
+
     try:
         # Initialize run information
         mturk_manager.start_new_run()
@@ -71,7 +76,7 @@ def main():
 
         def run_conversation(mturk_manager, opt, workers):
             # Create the task world
-            world = TutorialWorld1(opt=opt, mturk_agent=workers[0])
+            world = TutorialWorld1(opt=opt, mturk_agent=workers[0], qualification_id=qualification_id)
             # run the world to completion
             while not world.episode_done():
                 world.parley()

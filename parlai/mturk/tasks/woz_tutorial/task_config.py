@@ -6,6 +6,8 @@
 
 from typing import Dict, Any
 
+TUTORIAL_URL = "https://youtu.be/L7QpscLPTFM"
+
 task_config: Dict[str, Any] = {}
 
 
@@ -36,11 +38,12 @@ and on the left side of the chat page. Supports HTML formatting.
 """
 task_config[
     'task_description'
-] = '''
+] = f'''
 This task is Stage 1 of the AI Dialogue tasks and should prepare you for the remaining 3 stages.
 Higher stages offer greater payments, but you cannot enter the other stages without giving the correct answers in this test.
-You fail the test if you need more than 9 hints.
-Your submission will be REJECTED if you need too many hints.
+The test is about the contents of this video: {TUTORIAL_URL}.
+You fail the test if you need more than 6 hints.
+Your submission may be REJECTED if you need too many hints.
 
 Note: The number of HITs for the various stages is limited and not all the stages will be available at all times. 
 '''
