@@ -5,7 +5,7 @@
   "instructions": {
     "User": {
       "linear_guide": [
-        "Talk to your AI assistant to see what the weather will be like tomorrow. (Today is `Day-1@schedule` and you are in `City-1@weather`)",
+        "Talk to your AI assistant to see what the weather will be like tomorrow. (Today is `Day-1@weather` and you are in `City-1@weather`)",
         "If the weather is 'bad', figure out when it'll be nice again, and vice versa.",
         "If you've figured it out already, try to engage the assistant in some small talk.",
         "Now compare tomorrow's weather in `City-1@weather` to the weather in `City-2@weather`.",
