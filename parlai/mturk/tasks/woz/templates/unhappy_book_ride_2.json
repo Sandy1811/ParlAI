@@ -14,16 +14,17 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "You want a ride from '@Location-1' to '@Location-2'. Your name is @CustomerName-1.",
-        "You are @CustomerName-1 and urgently need to find a ride from '@Location-1' to '@Location-2'. You want to avoid taking a @ServiceProvider-1 though.",
-        "You are @CustomerName-1. You want to grab your usual @ServiceProvider-1 ride to '@Location-2', but you don't want @DriverName as your driver. Right now you are at @Location-1.",
-        "You are @CustomerName-1 and would like to travel to @Location-1 from @Location-2 (in a @CarModel-1 car if possible). Please provide one piece of information at a time."
+        "You want a ride from '`Location-1@ride`' to '`Location-2@ride`'. Your name is `CustomerName-1@ride`.",
+        "You are `CustomerName-1@ride` and urgently need to find a ride from '`Location-1@ride`' to '`Location-2@ride`'. You want to avoid taking a `ServiceProvider-1@ride` though.",
+        "You are `CustomerName-1@ride`. You want to grab your usual `ServiceProvider-1@ride` ride to '`Location-2@ride`', but you don't want `DriverName-1@ride` as your driver. Right now you are at `Location-1@ride`.",
+        "You are `CustomerName-1@ride` and would like to travel to `Location-1@ride` from `Location-2@ride` (in a `CarModel-1@ride` car if possible). Please provide one piece of information at a time."
       ],
       "linear_guide": [
         null,
         null,
-        null,
-        "You notice a stand with electric scooters on the other side of the road and decide to take one them. Tell the assistant you have changed your mind and don't require a ride anymore."
+        "You remember, last time your driver was `DriverName-2@ride` and he got lost and you ended up missing an important appointment. Make sure you get another driver this time.",
+        "You forgot that your friend told you to meet at the BrewLab cafe at `Location-3@ride` not `Location-2@ride`. Tell the assistant you want a ride to `Location-3@ride`.",
+        "You are a big fan of classy European cars. Ask for the car to be a BMW. If your request isn't possible, tell the assistant you've changed your mind and don't want a ride anymore."
       ],
       "completion_requirements": ["You have booked a ride."],
       "completion_questions": [

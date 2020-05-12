@@ -23,7 +23,7 @@
         null,
         null,
         null,
-        "You realise that you've already exceeded your credit card limit and don't have any cash. Tell the assistant you can't make a booking."
+        "You notice a stand with electric scooters on the other side of the road and decide to take one them. Tell the assistant you have changed your mind and don't require a ride anymore."
       ],
       "completion_requirements": ["You have booked a ride."],
       "completion_questions": [
