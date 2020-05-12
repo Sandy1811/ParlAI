@@ -101,6 +101,9 @@
 - Too bad, that time slot is unavailable.
 - Sorry, but the time is unavailable.
 - I am terribly sorry to inform you that the time you specified is unavailable.
+- That time is unavailable. Please try another time.
+- unavailable
+- slot is not available
 
 ## intent:apartment_inform_viewing_available
 - Great, that time would work. Can I book this viewing for you now?
@@ -110,8 +113,19 @@
 - Yes, there is somebody available to show you the apartment then. Can I book this for you?
 - Great, I can book this for you if you want.
 - That should all work fine, can I book it for you?
+- Can I make this appointment?
+- make appointment?
+- book appointment
+- make viewing
+- book viewing
+- go to viewing
+- available
+- arrange viewing
+- should i arrange that viewing for you?
+- available
+- slot available
 
-## intent:apartment_inform_booking_succesful
+## intent:apartment_inform_booking_successful
 - Excellent, this is all booked for you now.
 - Great, Crooked Agents will be delighted to show you the Shadyside apartments block.
 - Fantastic, this is all booked for you and the letting agents will be delighted to show you around.
@@ -119,6 +133,13 @@
 - Great thats all done and your viewing has been booked successfully.
 - Awesome, the booking is done and the Dodgy Letting Company will welcome you at the Dumpster apartments.
 - Hooray, your booking went through alright and you'll see the construction site on Sunday. Bring wellies!
+- successful
+- done
+- all done
+- booking made
+- i booked that
+- thats all booked
+- Your apartment viewing has been successfuly scheduled.
 
 ## intent:apartment_bye
 - Perfect!
@@ -132,6 +153,21 @@
 - Thank you :o) Goodbye!
 - Thanks, goodbye.
 - OK, thanks, goodbye!
+
+## intent:apartment_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no apartments that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No apartments found
+- No apartments match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no apartment on the market matching your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

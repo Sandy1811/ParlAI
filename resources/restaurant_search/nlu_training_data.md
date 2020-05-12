@@ -63,6 +63,21 @@
 - What ratings are acceptable for you?
 - Are you looking at restaurants above a certain threshold?
 
+## intent:restaurant_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no restaurants that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No restaurants found
+- No restaurants match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no restaurant available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:restaurant_ask_delivery
 - Should the place offer deliveries?
 - Eating in or taking out?
@@ -83,6 +98,18 @@
 - Should I narrow the search down by places that do online table bookings?
 - Do you want me to search for restaurants that offer a table reservation?
 
+## intent:restaurant_inform_search_criteria
+- I can narrow down the search
+- I can also filter for cost, food type and location
+- I can furthermore search for cuising and other stuff
+- Would you like to further narrow down the search?
+- Do you want to filter the results by
+- I can also search for rating, cost, location, delivery
+- I can apply one or more of the following filters: cost, location, reservations
+- Do you want to apply any other filters?
+- Want to search for other things?
+- Want more filters?
+
 ## intent:restaurant_inform_search_result
 - OK, I found the Burger Brothers in North Laine, that do Burgers, are in the moderate price range and are open until late.
 - Right, there is the Hove Kitchen on Western Road, just around the corner from Brunswick place, offer British and French cuisine, in the expensive price range and they close at midnight.
@@ -91,6 +118,31 @@
 - Cool, so I found Very Italian Pizzas at the Old Steine that offer Italian cuisine in the moderate price range and are open until midnight.
 - Great, I found the Terre a Terre on East St. They have European cuisine in the expensive price range and close at 11.30pm.
 - Excellent, there is the Herringbone on Ferry Rd, offering British food at expensive prices, and they close at 11pm.
+- can i arrange this booking?
+- can i proceed?
+- should i proceed with booking?
+- can you confirm the party?
+- can you confirm this?
+- is this ok for you?
+- should i arrange this now?
+- can i book?
+- I found a table
+- found a restaurant
+- great, i found a restaurant
+- i got a table for your party
+- got a table for you
+- there is a table at the xxx
+- there is a restaurant for you
+- this one is available
+- table available
+- restaurant is available
+- there is one available
+- found an available one
+- there is a free one
+- found a free
+- found a free table for you
+- they got a free table at the
+- the xxx has a free table for you
 
 ## intent:restaurant_ask_continue_searching
 - Do you want me to look for anythign else?

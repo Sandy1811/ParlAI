@@ -9,18 +9,18 @@
   },
   "instructions": {
     "User": {
+      "task_descriptions": [
+        "You (`CustomerName@plane`) need to attend a conference in `City-1@plane` on `Date-1@plane` June and should arrive at least a day before that. Ask the AI assistant to help you find a flight!"
+      ],
       "linear_guide": [
-        "You (`CustomerName@plane`) need to attend a conference in `City-1@plane` on `Date-1@plane` June. Ask your new personal AI assistant to help you find a flight!",
-        "You'll be departing from `City-2@plane` and should look for economy class with `Airline-1@plane` Airlines (you don't want to book yet).",
+        "Read the instructions on the left. You'll be departing from `City-2@plane` and should look for economy class with `Airline-1@plane` Airlines (you don't want to book yet).",
         null,
         null,
-        "`MessageAtWork@generic`: 'Hey `CustomerName@plane`, could you maybe arrive a day early for the conference? Then `RasonEarlyArrival@generic`.'",
+        "Interrupt the conversation with some smalltalk, e.g. about `Airline-1@plane` Airlines, the conference, or something that happened to you today.",
         null,
-        "You get an email from the finance division: 'We just made a special deal with `Airline-2@plane` Airlines! So, if you like, you may upgrade your flight to first class if its an `Airline-2@plane` Airlines flight'. You have to decide if you want to do this. Alternatively, you may want spend the extra money on carbon offsets.",
+        "You get an email from the finance division: 'We just made a special deal with `Airline-2@plane` Airlines! So you may upgrade your flight to first class if its an `Airline-2@plane` Airlines flight'. You have to decide if you want to do this. Alternatively, you may want spend the extra money on carbon offsets.",
         null,
-        "Please write something that refers to the beginning of the conversation, or initiate some small talk.",
-        null,
-        "You get an email saying that some things will change in your schedule. When you fly out for the conference, you won't be departing from `City-2@plane`, but from `City-3@plane`. Make the necessary arrangements.",
+        "You get a message saying that some things will change in your schedule. When you fly out for the conference, you won't be departing from `City-2@plane`, but from `City-3@plane`. Make the necessary arrangements and find the flight (you still don't want to book yet).",
         null,
         "Ok. Make sure you have found a flight from `City-3@plane` to `City-1@plane` that gets you to your conference in time. Then bring the conversation to a natural close."
       ]

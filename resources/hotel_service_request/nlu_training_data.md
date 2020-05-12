@@ -101,6 +101,7 @@
 - We have successuflly noted down your service request.
 - Thank you for your request.
 - We will deliver the requested service in due course.
+- Request Confirmed
 
 ## intent:hotel_inform_service_request_failed
 - I am sorry, but your service request was not successful.
@@ -113,6 +114,7 @@
 - We are sorry, but we can't process your request.
 - Your service request failed.
 - Service request could not be made. Sorry. 
+- Request Failed
 
 ## intent:hotel_bye
 - Perfect!
@@ -126,6 +128,21 @@
 - Thank you :o) Goodbye!
 - Thanks, goodbye.
 - OK, thanks, goodbye!
+
+## intent:hotel_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There is no service available that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No service found
+- No available service match your criteria, sorry!
+- There are no results for your service criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no service available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

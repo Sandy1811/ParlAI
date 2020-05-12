@@ -107,6 +107,7 @@
 - Auth failed.
 - The auth faild.
 - The auth process failed, really sorry about this.
+- You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise.
 
 ## intent:bank_inform_balance
 - Your balance is 324 in credit
@@ -121,6 +122,20 @@
 - You are in debit, a lot.
 - Your account balance is 789.
 - You have 2342 in the bank.
+
+## intent:bank_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There I can't find your balance.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No balance found
+- No bank balance found for you!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:bank_bye
 - Perfect!

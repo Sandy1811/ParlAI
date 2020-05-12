@@ -16,20 +16,12 @@
       ],
       "completion_requirements": ["You have planned your party.."],
       "completion_questions": [
-        "...reserve your venue for the party?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the AI Assistant reserve your venue for the party?",
+        "Did the AI Assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {
-      "task_description": "Help the user plan a party!",
-      "completion_requirements": [
-        "You have made a reservation for the user,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user plan a party!"
     }
   }
 }

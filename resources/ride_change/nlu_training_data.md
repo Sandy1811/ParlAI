@@ -98,6 +98,7 @@
 - I have successfully changed your departure location to airport.
 - Your trip has been successfully changed.
 - Okay, your ride has been successfully cancelled.
+- Your trip has been successfully changed.
 
 ## intent:ride_ask_confirm_booking
 - Are you satisfied with this ride
@@ -131,22 +132,6 @@
 - I'm sorry. We are unable to change your trip.
 - We are unable to change your trip.
 
-## intent:ride_acknowledge_booking_change
-- Alright, thank you
-- Well that sucks, thanks
-- What a shit service
-- I hate this town
-- Fucking traffic all the time
-- Thats shit but thank you
-- Well fuck you very much for nothing
-- Ok, well, thanks
-- Ok, thanks
-- Alright, I'll wait then
-- OK, I'll wait a bit longer then
-- Fuck off
-- Well, screw you
-- Well, that sucks, but thanks anyway
-
 ## intent:ride_bye
 - Perfect! Have a great ride!
 - okay good bye
@@ -159,6 +144,21 @@
 - Thank you :o) Goodbye!
 - Thanks, goodbye.
 - OK, thanks, goodbye!
+
+## intent:ride_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no rides available that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a ride for you.
+- Your search was not successful.
+- No rides found
+- No rides that match your criteria, sorry!
+- There are no rides matching your search criteria.
+- I am really sorry, but I couldn't find a ride that matches your search criteria.
+- There is currently no ride available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

@@ -113,6 +113,7 @@
 - Your meeting with John has been setup successfully.
 - Great, your meeting with Alexis has been confirmed in her calendar.
 - Alright, there was a free slot in John's diary and your meeting has been scheduled.
+- Your meeting has been successfuly scheduled.
 
 ## intent:meeting_inform_unavailable_ask_different_time
 - Hmm, looks like John is not free at that time, would you like to propose another time?
@@ -128,6 +129,7 @@
 - Unfortunately the meeting can't be confirmed for that time. Please try a different day or time.
 - Fred does not have time on Friday, could you provide another date/time, please?
 - Mike has no time that day. Try another day or time.
+- That person has a conflicting meeting at that time. Try another meeting time.
 
 ## intent:meeting_bye
 - Perfect!
@@ -141,6 +143,21 @@
 - Thank you :o) Goodbye!
 - Thanks, goodbye.
 - OK, thanks, goodbye!
+
+## intent:meeting_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no people with that name.
+- Looks like your search didn't return anybodyl
+- Very sorry, but I didn't find a person.
+- Your search was not successful.
+- No guests found
+- No one matches your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anybody with that name.
+- There is currently no one with that name available.
+- Nobody found.
+- I didn't find the person you were looking for.
+- Nobody matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

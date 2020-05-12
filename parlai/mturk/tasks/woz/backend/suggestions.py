@@ -16,6 +16,8 @@ from parlai.mturk.tasks.woz.backend import constants
 from parlai.mturk.tasks.woz.backend import static_test_assets
 from parlai.mturk.tasks.woz.backend import template_filler
 
+CUSTOM_INTENT = "custom"
+
 
 class WizardSuggestion:
     def __init__(
@@ -93,7 +95,7 @@ class WizardSuggestion:
             api_name: Text = None,
             comparing: bool = False,
             return_intents: bool = False
-    ) -> Tuple[List[Tuple[Text, float]], bool]:
+    ) -> Tuple[List[Tuple[Text, Text, float]], bool]:
         possibly_wrong_item_selected = (
             None  # Will be set `True` if top intent cannot be filled
         )
@@ -104,7 +106,7 @@ class WizardSuggestion:
             comparing=comparing,
         )
         if return_intents:
-            return intents, False
+            return [(i, i, v) for i, v in intents], False
 
         suggestions = []
         for intent, confidence in intents:
@@ -123,7 +125,7 @@ class WizardSuggestion:
                     suggestion = None
 
                 if suggestion:
-                    suggestions.append((suggestion, confidence))
+                    suggestions.append((intent, suggestion, confidence))
 
                 if possibly_wrong_item_selected is None:
                     possibly_wrong_item_selected = suggestion is None
@@ -132,7 +134,7 @@ class WizardSuggestion:
                 break
 
         if len(suggestions) == 0:
-            suggestions.append((wizard_utterance, 1.))
+            suggestions.append((CUSTOM_INTENT, wizard_utterance, 1.))
 
         if possibly_wrong_item_selected is None or not api_name:
             possibly_wrong_item_selected = False
@@ -149,7 +151,7 @@ class WizardSuggestion:
         return_intents: bool = False,
         merge_by_confidence: bool = False,
         top_n_per_scenario = 2 # overrides num_suggestions
-    ) -> Tuple[List[Text], bool]:
+    ) -> Tuple[List[Tuple[Text, Text]], bool]:
 
         suggestions_by_scenario = {}
         for api_name in api_names:
@@ -166,18 +168,21 @@ class WizardSuggestion:
         # else merges the top_n_per_scenario (i.e. takes top n) and then sorts
         if merge_by_confidence:
             top_suggestions = reduce(lambda a, b: a + b, suggestions_by_scenario.values(), [])
-            top_suggestions = sorted(top_suggestions, key=operator.itemgetter(1), reverse=True)[:self.num_suggestions]
+            top_suggestions = sorted(top_suggestions, key=operator.itemgetter(2), reverse=True)[:self.num_suggestions]
 
         else:
-            top_suggestions = reduce(lambda a, b: a + b[:top_n_per_scenario], suggestions_by_scenario.values(), [])
-            top_suggestions = sorted(top_suggestions, key=operator.itemgetter(1), reverse=True)
+            if len(api_names) > 1:
+                top_suggestions = reduce(lambda a, b: a + b[:top_n_per_scenario], suggestions_by_scenario.values(), [])
+            else:
+                top_suggestions = reduce(lambda a, b: a + b[:self.num_suggestions], suggestions_by_scenario.values(), [])
+            top_suggestions = sorted(top_suggestions, key=operator.itemgetter(2), reverse=True)
 
         # Get rid of the confidence
-        top_suggestions = reduce(lambda a, b: a + [b[0]], top_suggestions, [])
+        top_suggestions = reduce(lambda a, b: a + [(b[0], b[1])], top_suggestions, [])
 
         possibly_wrong_item_selected = len(top_suggestions) <= 0 or len(suggestions_by_scenario) <= 0
         if len(top_suggestions) == 0:
-            top_suggestions = [wizard_utterance]
+            top_suggestions = [(CUSTOM_INTENT, wizard_utterance)]
 
         return top_suggestions, possibly_wrong_item_selected
 
@@ -216,18 +221,9 @@ if __name__ == '__main__':
     #             'party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search',
     #             'apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
     #             'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support',
-    #
     #             'bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
-    #              'trivia', 'weather'
+    #              'trivia', 'weather', 'trip_directions'
     #             ]
-    #scenarios = ['book_ride', 'ride_change', 'hotel_search', 'ride_status', 'plane_reserve']
-    #scenarios = ['party_plan', 'party_rsvp', 'plane_search', 'restaurant_reserve', 'restaurant_search']
-    #scenarios = ['book_ride']
-    #scenarios = ['apartment_search', 'book_apartment_viewing', 'book_doctor_appointment',
-    #             'followup_doctor_appointment', 'spaceship_access_codes', 'spaceship_life_support']
-    #scenarios = ['bank_balance', 'bank_fraud_report', 'hotel_service_request', 'schedule_meeting',
-    #             'trivia', 'weather']
-    #scenarios = ['trip_directions', 'party_rsvp', 'plane_search']
     scenarios = ['party_plan']
 
     ws = WizardSuggestion(scenario_list=scenarios, resources_dir=os.path.join(PROJECT_PATH, 'resources'),
@@ -241,7 +237,7 @@ if __name__ == '__main__':
         for utterance in utterances:
             # Use rasa to get an intent label
             suggestions = ws.get_suggestions(wizard_utterance=utterance, primary_kb_item=kb_item,
-                                             api_names=[scen], merge_by_confidence=True)
+                                             api_names=[scen], merge_by_confidence=False)
 
             print(f'Suggestions for "{utterance}": {suggestions}')
             print('----------------------------------------------')

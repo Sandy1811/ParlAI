@@ -192,7 +192,7 @@ def load_db(fn):
             if type(v) is str and v[0] == "!":
                 param[k] = eval(v[1:])
 
-    return KnowledgeBaseAPI(num_items=100 if 'plane' not in fn else 1000, all_parameters=parameters)
+    return KnowledgeBaseAPI(num_items=1000 if 'plane' not in fn else 1000, all_parameters=parameters)
 
 
 def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
@@ -224,10 +224,7 @@ def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
     if constraints["RequestType"] != "Book":
         return {"Message": random.choice(["Available", "Unavailable"]), 'HotelName': name}, -1
 
-    if row is None:
-        return {"Message": outputs[1], 'HotelName': name}, -1
-    else:
-        return {"Message": random.choice(outputs), 'HotelName': name}, -1
+    return {"Message": random.choice(outputs), 'HotelName': name}, -1
 
 
 def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
@@ -263,7 +260,7 @@ def trip_directions(trip_api, constraints: Dict[Text, Any]):
     del constraints['DepartureLocation']
     del constraints['ArrivalLocation']
 
-    if constraints['TravelMode'] != 'Transit':
+    if constraints['TravelMode'] != 'Transit' and "Price" in constraints:
       del constraints['Price']
 
     row, _ = trip_api.sample(constraints)
@@ -537,7 +534,7 @@ def spaceship_access_codes(null_api, constraints: Dict[Text, Any]):
 
 
 def spaceship_life_support(null_api, constraints: Dict[Text, Any]):
-    outputs = ["Successful! Door opened"]
+    outputs = ["Successful! Life support was recovered."]
     return dict(Message=outputs[0]), -1
 
 

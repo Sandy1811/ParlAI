@@ -10,7 +10,7 @@
     {
       "Name": "TravelMode",
       "Type": "Categorical",
-      "Categories": ["Transit", "Driving", "Walking"],
+      "Categories": ["Driving", "Transit", "Walking"],
       "ReadableName": "Travel Mode"
     },
     {

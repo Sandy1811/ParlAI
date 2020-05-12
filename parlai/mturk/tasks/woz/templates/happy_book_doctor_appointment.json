@@ -1,6 +1,5 @@
 {
-  "title": "Book Doctor Appointment",
-  "name": "Book Doctor Appointment",
+  "title": "Happy Book Doctor Appointment",
   "db": "schedule.json",
   "version": 1,
   "api_names": ["book_doctor_appointment"],
@@ -10,26 +9,11 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "Your are @PersonName-1 and would like to make an appointment with @DoctorName-1 for @Day-1 at @StartTimeHour-1. Your symptoms are @Symptoms-1."
-      ],
-      "completion_requirements": [
-        "You have made a request for the appointment. Either it was succesfully scheduled or the doctor was busy at the requested time."
-      ],
-      "completion_questions": [
-        "...book your appointment?",
-        "...stay calm and helpful throughout the dialogue?"
+        "You are @PersonName-1 and would like to make an appointment with @DoctorName-1 for @Day-1 at @StartTimeHour-1. Your symptoms are @Symptoms-1. If no appointment can be made, just say goodbye."
       ]
     },
     "Wizard": {
-      "task_description": "Help the user book a doctor appointment!",
-      "completion_requirements": [
-        "You have booked an appointment for the user,",
-        "or the user says goodbye."
-      ],
-      "completion_questions": [
-        "...change his/her mind about what he/she wants at any time?",
-        "...become aggressive or annoyed during the dialogue?"
-      ]
+      "task_description": "Help the user book a doctor appointment!"
     }
   }
 }

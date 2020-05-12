@@ -55,6 +55,23 @@
 - Alright, Dr. Alexis recommends to drink lots of tea and water during the day and call back if the symptoms get any worse again.
 - Dr. Roberts instructs you to give it another day and call back if you're still feeling ill.
 - Dr. Alexis recommends you stay home and put the heater on and drink lots of water.
+- You must take your medicine 2 times a day before meals.
+- Take your medicine before you go to sleep. If you experience nausea, please contact your doctor immediately.
+
+## intent:doctor_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are is no doctor available that can handle your symptons.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a doctor for you.
+- Your search was not successful.
+- No doctors found
+- No doctors can deal with your symptoms!
+- There are no results for your symptoms.
+- I am really sorry, but I couldn't find a doctor that would suit your requirments.
+- There is currently no doctor available that could treat your symptoms.
+- Nothing found.
+- I didn't find a doctor.
+- no doctor matches with your symptoms.
 
 ## intent:doctor_bye
 - Perfect!

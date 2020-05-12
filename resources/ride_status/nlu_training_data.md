@@ -81,6 +81,9 @@
 - It will take her 23 minutes to get to you.
 - She will pick you up in 12 minutes.
 - He will arrive in approximately 14 minutes.
+- Your driver is dropping off another passenger.
+- Your ride is on its way.
+- Your driver is arriving.
 
 ## intent:ride_bye
 - Perfect! Have a great ride!
@@ -94,6 +97,21 @@
 - Thank you :o) Goodbye!
 - Thanks, goodbye.
 - OK, thanks, goodbye!
+
+## intent:ride_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no rides available that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a ride for you.
+- Your search was not successful.
+- No rides found
+- No rides that match your criteria, sorry!
+- There are no rides matching your search criteria.
+- I am really sorry, but I couldn't find a ride that matches your search criteria.
+- There is currently no ride available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

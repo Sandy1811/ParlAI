@@ -76,6 +76,21 @@
 - "123" would have answered that question. Do you want another question?
 - There was only one right answer, "the inner yard", would you like another question?
 
+## intent:trivia_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no questions that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No questions found
+- No questions match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no question available that matches your search criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:trivia_bye
 - Perfect!
 - okay good bye

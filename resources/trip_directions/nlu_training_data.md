@@ -136,6 +136,28 @@
 - Turn left after the park and your destination will be on the left next to the grey apartment building.
 - Your destination will be on the left besides the ice cream store.
 
+## intent:trip_instructions_done
+- You are done.
+- There are no more instructions.
+- Ran out of directions for you.
+- You should have reached your destination.
+- Are you not at your destination yet?
+- You should have arrived
+- Finished
+- Done
+- All done and good
+- All's well that ends well
+- You are at your specified destination
+- You're there
+- arrived at endpoint
+- destination reached
+- You have reached your destination
+- You are so done
+- You are at the end of your route
+- Should be there already
+- We're finished
+- We're done
+
 ## intent:trip_bye
 - Perfect!
 - okay good bye
@@ -148,6 +170,21 @@
 - Thank you :o) Goodbye!
 - Thanks, goodbye.
 - OK, thanks, goodbye!
+
+## intent:trip_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no trips that match your criteria.
+- Looks like your search didn't return any directions
+- Very sorry, but I didn't find a route.
+- Your search was not successful.
+- No routes found
+- No routes match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find a route that matches your search criteria.
+- There is currently no route on the system that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:anything_else
 - Anything else I can help you with?

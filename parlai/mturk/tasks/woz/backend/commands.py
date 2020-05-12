@@ -6,30 +6,36 @@ import time
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
 # DO NOT REMOVE THIS IMPORT (needed for eval):
+from parlai.mturk.core.shared_utils import print_and_log
 from parlai.mturk.tasks.woz.knowledgebase import api
 
 __all_constants = None
 
 DEFAULT_SCHEMA_URLS = {
-    "book_doctor_appointment": "https://i.imgur.com/dgFAhjc.jpg",
-    "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
-    "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
-    "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
-    "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
-    "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg",
-    "apartment_search": "https://i.imgur.com/yICteJ1.jpg",
-    "bank_balance": "https://i.imgur.com/71cZyxI.jpg",
-    "bank_fraud_report": "https://i.imgur.com/yGMpBRV.jpg",
-    "book_apartment_viewing": "https://i.imgur.com/W5hziZY.jpg",
     "followup_doctor_appointment": "https://i.imgur.com/OdjFGll.jpg",
-    "party_plan": "https://i.imgur.com/kyFnBsZ.jpg",
+    "weather": "https://i.imgur.com/yVozOzY.jpg",
     "party_rsvp": "https://i.imgur.com/4Pz33hK.jpg",
+    "spaceship_life_support": "https://i.imgur.com/41KMo2W.jpg",
+    "spaceship_access_codes": "https://i.imgur.com/FmuNL4M.jpg",
+    "book_doctor_appointment": "https://i.imgur.com/J5zxJmO.jpg",
+    "restaurant_search": "https://i.imgur.com/wnmwuOT.jpg",
+    "ride_change": "https://i.imgur.com/eFNOMNJ.jpg",
+    "trivia": "https://i.imgur.com/T0c2Cxw.jpg",
+    "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png",
+    "book_apartment_viewing": "https://i.imgur.com/rjpZovV.jpg",
+    "ride_status": "https://i.imgur.com/yjjqvuM.jpg",
+    "bank_fraud_report": "https://i.imgur.com/CRJFvkk.jpg",
     "hotel_service_request": "https://i.imgur.com/bOxmgLz.jpg",
-    "plane_reserve": "https://i.imgur.com/QlpRuAX.jpg",
-    "plane_search": "https://i.imgur.com/F9p6MBi.jpg",
+    "party_plan": "https://i.imgur.com/HMsuGxR.jpg",
     "schedule_meeting": "https://i.imgur.com/6pIfKIz.jpg",
+    "hotel_search": "https://i.imgur.com/BkUBBg7.jpg",
+    "plane_reserve": "https://i.imgur.com/QlpRuAX.jpg",
+    "hotel_reserve": "https://i.imgur.com/tgOz4pz.jpg",
+    "plane_search": "https://i.imgur.com/F9p6MBi.jpg",
     "trip_directions": "https://i.imgur.com/V4O0yaw.jpg",
-    "trivia": "https://i.imgur.com/BpikQBG.jpg",
+    "book_ride": "https://drive.google.com/uc?id=1zYWS2H0XMuJEoy6QRWKr51weyVztMZai",
+    "apartment_search": "https://i.imgur.com/yICteJ1.jpg",
+    "bank_balance": "https://i.imgur.com/71cZyxI.jpg"
 }
 
 DEFAULT_USER_INSTRUCTION = (
@@ -416,6 +422,16 @@ class ReviewCommand(BackendCommand):
         return ReviewCommand(recipient=sender)
 
 
+def safe_eval(expression: Text, default: Any = None) -> Any:
+    # noinspection PyBroadException
+    try:
+        result = eval(expression)
+    except:
+        print_and_log(100, f"Problem with parsing expression: {expression}")
+        return default
+    return result
+
+
 class QueryCommand(WizardCommand):
 
     command_name = "query"
@@ -451,15 +467,15 @@ class QueryCommand(WizardCommand):
         return self._api_name
 
     def _parse(self, text: Text) -> None:
-        data = eval(text)
+        data = safe_eval(text, dict())
         assert isinstance(data, dict)
         assert "constraints" in data
         assert "db" in data
 
         self._constraints = [
-            {name: eval(expr)}
+            {name: safe_eval(expr)}
             for constraint in data["constraints"]
-            for name, expr in constraint.items()
+            for name, expr in constraint.items() if len(expr) > 0
         ]
 
         self._constraints_raw = [
@@ -672,7 +688,7 @@ class RequestSuggestionsCommand(WizardCommand):
 
 
 class SupplySuggestionsCommand(BackendCommand):
-    def __init__(self, recipient: Agent, suggestions: List[Text]) -> None:
+    def __init__(self, recipient: Agent, suggestions: List[Tuple[Text, Text]]) -> None:
         super(SupplySuggestionsCommand, self).__init__()
         self._command_name = all_constants()["back_to_front"][
             "command_supply_suggestions"
@@ -685,12 +701,13 @@ class SupplySuggestionsCommand(BackendCommand):
         return {
             "id": self._recipient.id,
             "text": "",
-            "command": self._command_name + str(self._suggestions),
+            "command": self._command_name + str([text for intent, text in self._suggestions]),
+            "intents": [intent for intent, text in self._suggestions]
         }
 
     @staticmethod
     def from_message(
-        sender: Agent, suggestions: Optional[List[Text]] = None, **kwargs,
+        sender: Agent, suggestions: Optional[List[Tuple[Text, Text]]] = None, **kwargs,
     ) -> Optional["Command"]:
         return SupplySuggestionsCommand(recipient=sender, suggestions=suggestions)
 
@@ -700,6 +717,9 @@ class PickSuggestionCommand(WizardCommand):
         super(PickSuggestionCommand, self).__init__(sender)
         self._command_name = "pick_suggestion"
         self._text = chosen_text
+
+    def text_matches(self, text: Text) -> bool:
+        return text == self._text
 
     @property
     def message(self) -> Dict[Text, Any]:

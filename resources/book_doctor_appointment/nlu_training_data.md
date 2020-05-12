@@ -92,6 +92,9 @@
 - Too bad, that time slot is unavailable.
 - Sorry, but the time is unavailable.
 - I am terribly sorry to inform you that the time you specified is unavailable.
+- The doctor has a conflicting appointment at that time. Try another time or another doctor.
+- unavailable
+- slot is not available
 
 ## intent:doctor_inform_booking_available
 - Great, that time would work. Can I book this appointment for you now?
@@ -101,8 +104,17 @@
 - Yes, your doctor is available then. Can I book this for you?
 - Great, I can book this for you if you want.
 - That should all work fine, can I book it for you?
+- Can I make this appointment for you?
+- Make appointment?
+- arrange appointment?
+- do you want to see the doctor then?
+- make booking?
+- The time slot is available.
+- available
+- slot is available
+- doctor is available
 
-## intent:doctor_inform_booking_succesful
+## intent:doctor_inform_booking_successful
 - Excellent, this is all booked for you now.
 - Great, Dr. Smith is looking forward to seeing you on Wednesday.
 - Fantastic, this is all booked for you and Doctor Johnson will be delighted to see you.
@@ -110,6 +122,34 @@
 - Great thats all done and your appointment has been booked successfully.
 - Awesome, the booking is done and Dr. Roberts will welcome you on Monday.
 - Hooray, your booking went through alright and you'll see the doctor on Tuesday.
+- booking successful
+- appointment made
+- made the appointment
+- all done
+- all sorted for you
+- Your appointment has been successfuly scheduled.
+- scheduled
+- your appointment is scheduled
+- finished
+- appointment scheduled
+- all booked for you
+- appointment booked
+- you are scheduled to see dr alexis on sat
+
+## intent:doctor_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are is no doctor available that can handle your symptons.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a doctor for you.
+- Your search was not successful.
+- No doctors found
+- No doctors can deal with your symptoms!
+- There are no results for your symptoms.
+- I am really sorry, but I couldn't find a doctor that would suit your requirments.
+- There is currently no doctor available that could treat your symptoms.
+- Nothing found.
+- I didn't find a doctor.
+- no doctor matches with your symptoms.
 
 ## intent:doctor_bye
 - Perfect!

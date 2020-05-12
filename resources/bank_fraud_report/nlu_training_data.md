@@ -121,6 +121,7 @@
 - Auth failed.
 - The auth faild.
 - The auth process failed, really sorry about this.
+- You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise.
 
 ## intent:bank_inform_fraud_report_submitted
 - Your report was successfully submitted.
@@ -134,6 +135,20 @@
 - Rest assured, we have received your report and will take care of everything.
 - We'll handle the issue for you now, thank you.
 - We have your fraud report and will look into the issue.
+- Fraud report submitted successfully.
+
+## intent:bank_inform_nothing_found
+- Sorry, but I couldn't find anything
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a thing.
+- Your search was not successful.
+- No results found
+- No results match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
 
 ## intent:bank_bye
 - Perfect!

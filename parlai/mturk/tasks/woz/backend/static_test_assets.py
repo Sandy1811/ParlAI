@@ -20,7 +20,8 @@ def get_book_ride_item():
         'Your car will arrive in 34 minutes and your driver will be Carl in some old car. He is from Uber btw.',
         'i can filter for another service provider if you want',
         'What else can I help you with?',
-        'Want anything else?'
+        'Want anything else?',
+        'There is no ride for your, sorry'
     ]
 
     return kb_item, utterances, 'book_ride'
@@ -38,7 +39,8 @@ def get_ride_status_item():
         "Can I have your name?",
         "Whats your booking id?",
         "hi",
-        "Bye"
+        "Bye",
+        'There is no ride for your, sorry'
     ]
 
     return kb_item, utterances, 'ride_status'
@@ -56,7 +58,8 @@ def get_ride_change_item():
         "You need to to tell me your name",
         "Yes, successfully changed the ride for you",
         "Sorry, changes are not possible",
-        "cya"
+        "cya",
+        'There is no ride for your, sorry'
     ]
 
     return kb_item, utterances, 'ride_change'
@@ -98,7 +101,8 @@ def get_hotel_search_item():
         "The hotel has an average rating of 3.3",
         "Great, I found a hotel in the south that matches your search criterea.",
         "Anything else you want to search for?",
-        "bybo"
+        "bybo",
+        'There are no rooms that match your search, sorry'
     ]
 
     return kb_item_2, utterances, 'hotel_search'
@@ -121,7 +125,8 @@ def get_hotel_reserve_item():
         "Great, I found a hotel that matches your criteria, can I book this for you now?",
         "Yay, booking completed successfully!",
         "Sorry, but the booking request failed.",
-        "Bye"
+        "Bye",
+        'There are no rooms that match your search, sorry'
     ]
 
     return kb_item, utterances, 'hotel_reserve'
@@ -141,7 +146,8 @@ def get_plane_reserve_item():
         "Got that, can i reserve that for you?",
         "Alright, your reservation is done!",
         "Sorry, but your reservation failed for some reason",
-        "cheers and bye"
+        "cheers and bye",
+        'There are no flights that match your search, sorry'
     ]
 
     return kb_item, utterances, 'plane_reserve'
@@ -151,10 +157,18 @@ def get_party_plan_item():
     kb_item = {
         "VenueName": "The Awesome Party Venue",
         "Day": "Saturday",
-        "Time": 9
+        "Time": '9 pm'
     }
 
     utterances = [
+        'schduled for you',
+        'you are booked in',
+        'booking failed.',
+        'sorry, that didnae work',
+        'epic fail',
+        'I found one',
+        'foundone',
+        'found one',
         'Cool, all booked and all done!',
         'Heyho, whats up?',
         'Where do you want to get hammered?',
@@ -171,6 +185,7 @@ def get_party_plan_item():
         'Do you want to optionally book any specific type of food or drink for your party?',
         'Right, they are happy to have you, can I book this now?',
         'Cool, all booked and all done!',
+        'There are no venues that match your search, sorry'
 
     ]
 
@@ -190,7 +205,8 @@ def get_party_rsvp_item():
         'Do you want a parking spot?',
         'How many of your lads will come with you?',
         'Any of you vegan or got a food allergy?',
-        'Your rsvp is done.'
+        'Your rsvp is done.',
+        'There are no venues that match your search, sorry'
     ]
 
     return kb_item, utterances, 'party_rsvp'
@@ -217,6 +233,7 @@ def get_plane_search_item():
         'Great, I found an American flight in business class for 500 bucks. Takes 8 hours though.',
         'Want to search for anything else?',
         'Cheers and see you.',
+        'There are no flights that match your search, sorry'
     ]
 
     return kb_item, utterances, 'plane_search'
@@ -237,7 +254,8 @@ def get_restaurant_reserve_item():
         'Great, the Cactus Club is delighted to take your booking.',
         'Booking successful',
         'Booking failed!',
-        'Bye'
+        'Bye',
+        'There are no diners that match your search, sorry'
     ]
 
     return kb_item, utterances, 'restaurant_reserve'
@@ -259,6 +277,7 @@ def get_restaurant_search_item():
     }
 
     utterances = [
+        'I can apply a bunch o fother filters',
         'Hello my friend, what can I do for you today?',
         'Whats your name?',
         'Any restaurant you have in mind?',
@@ -268,7 +287,8 @@ def get_restaurant_search_item():
         'Do you need a delivery service?',
         'Do you need a place where you can reserve a table?',
         'Right, there is the Hove Kitchen that serves great food and its in the West part of town. Its average rating is 4 and its in the Expensive price category.',
-        'Do you want to search for any more eateries?'
+        'Do you want to search for any more eateries?',
+        'There are no eateries that match your search, sorry'
     ]
 
     return kb_item, utterances, 'restaurant_search'
@@ -299,7 +319,10 @@ def get_apartment_search_item():
         "Looking to live near a park or the station?",
         "Right, got a free flat at Shadyside apartments, no elevator, no windows, no balconly, 600 a month, you in?",
         "Wanna search for more?",
-        "Cheerio and byeio"
+        "Cheerio and byeio",
+        'I found one for you',
+        'I found an apartment!',
+        'There is no apartment for you at the moment, sorry!'
     ]
 
     return kb_item, utterances, 'apartment_search'
@@ -320,7 +343,8 @@ def get_book_apartment_viewing_item():
         "Leave a message?",
         "Sorry, there is no viewing available then.",
         "Great, there is a viewing available then. Can I book this for you?",
-        "Alright, you're all booked in."
+        "Alright, you're all booked in.",
+        'There is no apartment for you at the moment, sorry!'
     ]
 
     return kb_item, utterances, 'book_apartment_viewing'
@@ -333,6 +357,11 @@ def get_book_doctor_appointment_item():
     }
 
     utterances = [
+        'Appointment scheduled successfully.',
+        'your appoihntment is booked in.',
+        "book",
+        "Book it for you?",
+        "do you need me to book this now?",
         "Sorry, the doctor is busy then.",
         "Alright, doctor's got time. Can I book it for you?",
         "Cool, all booked with the doc.",
@@ -342,7 +371,8 @@ def get_book_doctor_appointment_item():
         "Whats your favourite day for surgery?",
         "When do you want it to start?",
         "And when do you want it to end?",
-        "Tell me all teh symptons you have."
+        "Tell me all teh symptons you have.",
+        'There are no doctors for you!',
     ]
 
     return kb_item, utterances, 'book_doctor_appointment'
@@ -354,10 +384,11 @@ def get_followup_doctor_appointment_item():
     }
 
     utterances = [
-        "Hello, this is doctors follow up appointements fully automated speaking."
+        "Hello, this is doctors follow up appointements fully automated speaking.",
         "Please give me your name.",
-        "Tell me the name of your doctor."
-        "Doctor tells you to sit still and relax."
+        "Tell me the name of your doctor.",
+        "Doctor tells you to sit still and relax.",
+        'There are no doctors for you!'
     ]
 
     return kb_item, utterances, 'followup_doctor_appointment'
@@ -369,12 +400,13 @@ def get_spaceship_access_codes_item():
     }
 
     utterances = [
+        'no actions available',
         "What do you want?",
         "Whats your name?",
         "What rank are you?",
         "Give me the code.",
         "Give me the type of the code",
-        "Everything failed."
+        "Everything failed.",
     ]
 
     return kb_item, utterances, 'spaceship_access_codes'
@@ -386,11 +418,13 @@ def get_spaceship_life_support_item():
     }
 
     utterances = [
+        "Thats all sorted again.",
+        'no actions available',
         "Hey waddup",
         "Your name, sir",
         "I'd really appreciate if you give me the colour of the top cable.",
         "I'd even more so appreciate you telling me the colour of the other cable.",
-        "Thats all sorted again."
+        "unlocked da door"
     ]
 
     return kb_item, utterances, 'spaceship_life_support'
@@ -412,7 +446,8 @@ def get_bank_balance_item():
         'Second sec q concerns the name of some pet you had as a kid',
         'Sorry, but I cannot authenticate you.',
         'Your balance is 789 credits.',
-        'Do you want anything else?'
+        'Do you want anything else?',
+        'Dinna find yae account.'
     ]
 
     return kb_item, utterances, 'bank_balance'
@@ -434,7 +469,8 @@ def get_bank_fraud_report_item():
         'Sorry, but I cannot authenticate you.',
         'Right, your report was submitted, we\'ll be in touch shortly!',
         'Can you provide your fraud report now, please?',
-        'Do you want anything else?'
+        'Do you want anything else?',
+        'Dinna find yae account.'
     ]
 
     return kb_item, utterances, 'bank_fraud_report'
@@ -455,7 +491,8 @@ def get_hotel_service_request_item():
         'When do you want it?',
         'Thats all done for you!',
         'Sorry, but that is not going to work.',
-        'Anything else you want?'
+        'Anything else you want?',
+        'Cant find a service for you.'
     ]
 
     return kb_item, utterances, 'hotel_service_request'
@@ -480,7 +517,8 @@ def get_schedule_meeting_item():
         'Your meeting with John has been successfully scheduled.',
         'Jane does not have any time on Tuesday, do you want to pick another day?',
         'Bye.',
-        'Anybody else you want to bother for a meeting?'
+        'Anybody else you want to bother for a meeting?',
+        'I dont know anybody with that name'
     ]
 
     return kb_item, utterances, 'schedule_meeting'
@@ -495,7 +533,11 @@ def get_trip_directions_item():
         'ke the 61A until the final stop, which will be at Forbes and Craig. It will take approximately 20 minutes and 13 stops.',
         'After 5 blocks, turn right on Castro St.',
         'Turn right on Allison Road, right after the McD.',
-        'after 1 more block your destination will be on the right.'
+        'after 1 more block your destination will be on the right.',
+        'Sorry, no routes found.',
+        'You should already be there',
+        'you ARE at that place now',
+        'you\'re there bro'
     ]
 
     return kb_item, utterances, 'trip_directions'
@@ -514,7 +556,8 @@ def get_trivia_item():
         'Thats right, well done. Want another one?',
         'Thats wrong unfortunately. Do you want to try another question?',
         'Right, bye.',
-        'Anything else you want?'
+        'Anything else you want?',
+        'No questions found!'
     ]
 
     return kb_item, utterances, 'trivia'
@@ -533,7 +576,9 @@ def get_weather_item():
         'For when would you like a weather report?',
         'Any particular place we should guess the weather for?',
         'Its going to be snowing with temperatures of around -2 all day.',
-        'Anything else I can help you with?'
+        'Anything else I can help you with?',
+        'There are no weather predictions for that place',
+        'There are no weather predictions for hell',
     ]
 
     return kb_item, utterances, 'weather'

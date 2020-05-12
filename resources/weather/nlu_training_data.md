@@ -64,6 +64,21 @@
 - Thanks, goodbye.
 - OK, thanks, goodbye!
 
+## intent:weather_inform_nothing_found
+- Sorry, but I couldn't find anything
+- There are no forecasts that match your criteria.
+- Looks like your search didn't return anything
+- Very sorry, but I didn't find a forecast.
+- Your search was not successful.
+- No forecasts found
+- No forecasts match your criteria, sorry!
+- There are no results for your search criteria.
+- I am really sorry, but I couldn't find anything that matches your search criteria.
+- There is currently no forecast available that matches your criteria.
+- Nothing found.
+- I didn't find anything.
+- Nothing matches your search criteria.
+
 ## intent:anything_else
 - Anything else I can help you with?
 - Is there anything else you would like me to do?
