@@ -16,6 +16,11 @@ def is_unequal_to(value):
 def contains(value):
     return lambda x: value in x
 
+def contains_not(value):
+    return lambda x: value not in x
+
+def contains_none_of(value):
+    return lambda x: not any([e in x for e in value])
 
 def is_one_of(value):
     return lambda x: x in value
@@ -41,7 +46,7 @@ def contain_all_of(value):
 
 
 def contain_at_least_one_of(value):
-    return lambda x: all([e in value for e in x])
+    return lambda x: any([e in x for e in value])
 
 
 def is_not(constraint):
@@ -65,6 +70,10 @@ class KnowledgeBaseItem:
 
     def __eq__(self, other: "KnowledgeBaseItem") -> bool:
         return self._id == other._id
+
+    @property
+    def properties(self) -> Dict[Text, Any]:
+        return self._settings
 
     def match(self, constraints: Dict[Text, Any]) -> bool:
         for parameter_name, constraint in constraints.items():
@@ -188,61 +197,49 @@ def load_db(fn):
 
 def generic_sample(api, constraints: Optional[Dict[Text, Any]] = None):
     row, count = api.sample(constraints or {})
-    return row._settings, count
+    if count != 0:
+        return row._settings, count
+    else:
+        raise LookupError("Nothing found for these constraints")
 
 
 def restaurant_reserve(restaurant_api, constraints: Dict[Text, Any]):
+    name = getval(constraints, 'Name', restaurant_api)
+
     if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+        return {"Message": random.choice(["Available", "Unavailable"]), 'RestaurantName': name}, -1
 
     outputs = ["Reservation Confirmed", "Reservation Failed"]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "TakesReservations": True,
-        "MaxPartySize": is_greater_than(constraints["PartySize"]),
-        "OpenTimeHour": is_less_than(constraints["Time"]),
-        "CloseTimeHour": is_greater_than(constraints["Time"]),
-    }
-
-    row, _ = restaurant_api.sample(new_constraints)
-    if row is None:
-        return {"ReservationStatus": outputs[1]}, -1
+    if random.random() > 0.5:
+        return {"ReservationStatus": outputs[1], 'RestaurantName': name}, -1
     else:
-        return {"ReservationStatus": random.choice(outputs)}, -1
+        return {"ReservationStatus": outputs[0], 'RestaurantName': name}, -1
 
 
 def hotel_reserve(hotel_api, constraints: Dict[Text, Any]):
-    if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
-
     outputs = ["Reservation Confirmed", "Reservation Failed"]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "TakesReservations": True,
-    }
 
-    row, _ = hotel_api.sample(new_constraints)
+    name = getval(constraints, 'Name', hotel_api)
+
+    if constraints["RequestType"] != "Book":
+        return {"Message": random.choice(["Available", "Unavailable"]), 'HotelName': name}, -1
+
     if row is None:
-        return {"Message": outputs[1]}, -1
+        return {"Message": outputs[1], 'HotelName': name}, -1
     else:
-        return {"Message": random.choice(outputs)}, -1
+        return {"Message": random.choice(outputs), 'HotelName': name}, -1
 
 
 def hotel_service_request(hotel_api, constraints: Dict[Text, Any]):
     outputs = ["Request Confirmed", "Request Failed"]
 
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Service": True,
-        "ServiceStartHour": is_less_than(constraints["Time"]),
-        "ServiceStopHour": is_greater_than(constraints["Time"]),
-    }
+    room = getval(constraints, 'RoomNumber', hotel_api)
+    time = getval(constraints, 'Time', hotel_api)
 
-    row, _ = hotel_api.sample(new_constraints)
-    if row is None:
-        return {"RequestStatus": outputs[1]}, -1
+    if random.random() < 0.2:
+        return {"RequestStatus": outputs[1], 'RoomNumber': room, 'Time': time}, -1
     else:
-        return {"RequestStatus": outputs[0]}, -1
+        return {"RequestStatus": outputs[0], 'RoomNumber': room, 'Time': time}, -1
 
 
 def plane_search(plane_api, constraints: Dict[Text, Any]):
@@ -251,50 +248,38 @@ def plane_search(plane_api, constraints: Dict[Text, Any]):
 
 
 def plane_reserve(plane_api, constraints: Dict[Text, Any]):
+    plane_id = getval(constraints, 'id', plane_api)
+
     if constraints["RequestType"] != "Book":
-        return {"Message": random.choice(["Available", "Unavailable"])}, -1
+        return {"Message": random.choice(["Available", "Unavailable"]), 'id': plane_id }, -1
 
     outputs = ["Reservation Confirmed", "Reservation Failed"]
-
-    del constraints['CustomerName']
-    del constraints['RequestType']
-
-    outputs = ["Reservation Confirmed", "Reservation Failed"]
-    return {"ReservationStatus": random.choice(outputs)}, -1
+    return {"ReservationStatus": random.choice(outputs), 'id': plane_id }, -1
 
 
 def trip_directions(trip_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "TravelMode": constraints["TravelMode"],
-    }
 
-    # Only need this logic for transit
-    if constraints["TravelMode"] == "Transit":
-        new_constraints["DepartureTime"] = is_greater_than(constraints["DepartureTime"])
+    del constraints['DepartureTime']
+    del constraints['DepartureLocation']
+    del constraints['ArrivalLocation']
 
-        rows = trip_api.get_all(new_constraints)
-        row = min(rows, key=lambda e: e._settings.get("DepartureTime"))
-    else:
-        row, _ = trip_api.sample(new_constraints)
+    if constraints['TravelMode'] != 'Transit':
+      del constraints['Price']
 
-    return row._settings, -1
+    row, _ = trip_api.sample(constraints)
 
+    d = row._settings
 
-def trip_traffic(trip_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "TravelMode": constraints["TravelMode"],
-    }
+    simple_key = [k for k in d if 'Detail' not in k and 'Instruc' in k][0]
+    detail_key = [k for k in d if 'Detail' in k and 'Instruc' in k][0]
 
-    # Only need this logic for transit
-    if constraints["TravelMode"] == "Transit":
-        new_constraints["DepartureTime"] = is_greater_than(constraints["DepartureTime"])
+    simple = [e for e in d[simple_key] if e[0] != "#"]
+    detail = [e[1:] for e in d[simple_key] if e[0] == "#"]
 
-        rows = trip_api.get_all(new_constraints)
-        row = min(rows, key=lambda e: e._settings.get("TripLengthMinutes"))
-    else:
-        row, _ = trip_api.sample(new_constraints)
+    d[simple_key] = simple
+    d[detail_key] = detail
 
-    return row._settings, -1
+    return d, -1
 
 
 def book_ride(ride_api, constraints: Dict[Text, Any]):
@@ -347,23 +332,22 @@ def ride_change(ride_api, constraints: Dict[Text, Any]):
 
 
 def bank_balance(bank_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "BankName": constraints["BankName"],
-    }
-    row, count = bank_api.sample(new_constraints)
+    req1 = ['AccountNumber', 'FullName', 'PIN']
+    req2 = ['FullName', 'SecurityAnswer1', 'SecurityAnswer2', 'DateOfBirth']
+    if not all(e in constraints for e in req1) and not all(e in constraints for e in req2):
+      return dict(Message="You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise."), -1
+
+    row, count = bank_api.sample({})
     return row._settings, -1
 
 
 def bank_fraud_report(bank_api, constraints: Dict[Text, Any]):
-    new_constraints = {
-        "BankName": constraints["BankName"],
-    }
+    req1 = ['AccountNumber', 'FullName', 'PIN']
+    req2 = ['FullName', 'SecurityAnswer1', 'SecurityAnswer2', 'DateOfBirth']
+    if not all(e in constraints for e in req1) and not all(e in constraints for e in req2):
+      return dict(Message="You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise."), -1
 
-    row, _ = bank_api.sample(new_constraints)
-    if row is not None:
-        return {"Confirmation": "Fraud report submitted successfully."}, -1
-    else:
-        return {"Confirmation": "Error finding bank account."}, -1
+    return {"Confirmation": "Fraud report submitted successfully."}, -1
 
 
 def shopping_order_item(shopping_api, constraints: Dict[Text, Any]):
@@ -395,6 +379,24 @@ def shopping_order_status(null_api, constraints: Dict[Text, Any]):
 
     return dict(Message=random.choice(outputs)), -1
 
+def trivia(null_api, constraints: Dict[Text, Any]):
+    questions = [
+["A ____ atom in an atomic clock beats 9,192,631,770 times a second", "cesium"],
+["A ____ is the blue field behind the stars", "canton"],
+["A ____ takes 33 hours to crawl one mile", "snail"],
+["A ____ written to celebrate a wedding is called a epithalamium", "poem"],
+["A 'sirocco' refers to a type of ____", "wind"],
+["A 3 1/2' floppy disk measures ____ & 1/2 inches across", "three"],
+["A 300,000 pound wedding dress made of platinum was once exhibited, and in the instructions from the designer was a warning. What was it", "do not iron"],
+["A bird in the hand is worth ____", "two in the bush"],
+["A block of compressed coal dust used as fuel", "briquette"],
+["A blockage in a pipe caused by a trapped bubble of air", "airlock"],
+["A blunt thick needle for sewing with thick thread or tape", "bodkin"]
+    ]
+    q_ind = int(constraints['QuestionNum']) - 1
+    row = questions[q_ind]
+    return dict(Question=row[0], Answer=row[1]), -1
+
 
 def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):
     outputs = [
@@ -402,18 +404,15 @@ def schedule_meeting(schedule_api, constraints: Dict[Text, Any]):
         "That person has a conflicting meeting at that time. Try another meeting time."
     ]
 
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
+    starttime = getval(constraints, 'StartTimeHour', schedule_api)
+    endtime = getval(constraints, 'EndTimeHour', schedule_api)
+    day = getval(constraints, 'Day', schedule_api)
+    name = getval(constraints, 'Name', schedule_api)
 
-    row, _ = schedule_api.sample(new_constraints)
-    if row is None:
-        return dict(Message=outputs[0]), -1
+    if random.random() > 0.5:
+        return dict(Message=outputs[0], StartTime=starttime, EndTime=endtime, Day=day, GuestName=name), -1
     else:
-        return dict(Message=outputs[1]), -1
+        return dict(Message=outputs[1], StartTime=starttime, EndTime=endtime, Day=day, GuestName=name), -1
 
 
 def book_doctor_appointment(
@@ -421,22 +420,19 @@ def book_doctor_appointment(
 ):
     outputs = [
         "Your appointment has been successfuly scheduled.",
-        "The doctor has a conflicting meeting at that time. Try another time or another doctor."
+        "The doctor has a conflicting appointment at that time. Try another time or another doctor."
     ]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
-        if constraints["RequestType"] != "Book":
-          return {"Message": "The time slot is available."}, -1
+    
+    doctor = getval(constraints, 'Name', schedule_api)
+    time = getval(constraints, 'StartTimeHour', schedule_api)
 
-        return dict(Message=outputs[0]), -1
+    if constraints["RequestType"] == "Book":
+        return dict(Message=outputs[0], DoctorName=doctor, Time=time), -1
+
+    if random.random() > 0.5:
+        return {"Message": "The time slot is available.", "DoctorName": doctor, "Time": time}, -1
     else:
-        return dict(Message=outputs[1]), -1
+        return {"Message": outputs[1], "DoctorName": doctor, "Time": time}, -1
 
 
 def book_apartment_viewing(
@@ -446,14 +442,7 @@ def book_apartment_viewing(
         "Your apartment viewing has been successfuly scheduled.",
         "That time is unavailable. Please try another time."
     ]
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
+    if random.random() > 0.5 or constraints["RequestType"] == "Book":
         if constraints["RequestType"] != "Book":
           return {"Message": "The time slot is available."}, -1
 
@@ -487,37 +476,45 @@ def followup_doctor_appointment(
     return dict(Message=random.choice(outputs)), -1
 
 
+def getval(constraints, key, db):
+    """
+    Get the value of a constraint
+    """
+    value = constraints[key]
+    if callable(value):
+      # find param
+      param = [e for e in db.parameters if e['Name'] == key][0]
+      if 'Categories' not in param:
+        return ''
+      
+      return [e for e in param['Categories'] if value(e)][0]
+    else:
+      return value
+
+
 def party_plan(schedule_api, constraints: Dict[Text, Any]):
     schedule_outputs = [
         "ERROR",
         "The venue is booked at that time. Try another meeting time or another venue."
     ]
     size_outputs = [
-        "Your event has been successfuly scheduled.",
+        "Your event has been successfully scheduled.",
         "The venue is too small for your party. Try another venue."
     ]
 
-    new_constraints = {
-        "Name": constraints["Name"],
-        "Day": constraints["Day"],
-        "StartTimeHour": is_greater_than(constraints["StartTimeHour"]),
-        "EndTimeHour": is_greater_than(constraints["EndTimeHour"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
-        return dict(Message=schedule_outputs[1]), -1
+    venue_name = getval(constraints, 'Name', schedule_api)
+    day = getval(constraints, 'Day', schedule_api)
+    time = getval(constraints, 'StartTimeHour', schedule_api)
 
-    new_constraints = {
-        "Name": constraints["Name"],
-        "SizeLimit": is_greater_than(constraints["NumberGuests"]),
-    }
-    row, _ = schedule_api.sample(new_constraints)
-    if row is not None:
-        if constraints["RequestType"] != "Book":
-          return {"Message": "The venue is available."}, -1
-        return dict(Message=size_outputs[0]), -1
+    if constraints["RequestType"] == "Book":
+      return dict(Message=size_outputs[0], VenueName=venue_name, Day=day, Time=time), -1
+
+    if random.random() < 0.1:
+        return dict(Message=schedule_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
+    elif random.random() > 0.1:
+        return dict(Message="The venue is available.", VenueName=venue_name, Day=day, Time=time), -1
     else:
-        return dict(Message=size_outputs[1]), -1
+        return dict(Message=size_outputs[1], VenueName=venue_name, Day=day, Time=time), -1
 
 
 def party_rsvp(schedule_api, constraints: Dict[Text, Any]):
@@ -577,7 +574,7 @@ def constraint_list_to_dict(constraints: List[Dict[Text, Any]]) -> Dict[Text, An
     return result
 
 
-def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[Text, Any], int], Dict[Text, Any]]:
+def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Tuple[Dict[Text, Any], int]:
     with open(
         os.path.join(
             os.path.dirname(os.path.abspath(__file__)), "apis", api_name + ".json"
@@ -600,6 +597,8 @@ def call_api(api_name, constraints: List[Dict[Text, Any]]) -> Union[Tuple[Dict[T
             )
 
     res, count = api_fn(api_obj, constraint_list_to_dict(constraints))
+    if res:
+        res["api_name"] = api_name  # To track where the KB item came from; not shown in front end
     if api_schema["returns_count"]:
         return res, count
     else:

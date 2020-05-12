@@ -4,7 +4,7 @@ pipeline:
   - name: "ConveRTTokenizer"
   - name: "ConveRTFeaturizer"
   - name: "DIETClassifier"
-    num_transformer_layers: 1
+    number_of_transformer_layers: 1
     epochs: 100
     use_masked_language_model: False
     intent_classification: True

@@ -256,6 +256,7 @@ def main():
             opt.get("scenario_list") + ".txt",
         )
         scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
+        random.shuffle(scenarios_list)
 
         # Set up the sockets and threads to receive workers
         mturk_manager.ready_to_accept_workers()
@@ -292,6 +293,7 @@ def main():
         # Define the task function, which will be run with workers that are
         # as the main task.
         global run_conversation
+        scenario_index: int = 0
 
         def run_conversation(mturk_manager, opt, workers):
 
@@ -308,7 +310,9 @@ def main():
                     dummy_user = WOZDummyAgent(opt, "User")
                 workers += [dummy_user]
 
-            scenario = random.choice(scenarios_list)
+            nonlocal scenario_index
+            scenario = scenarios_list[scenario_index % len(scenarios_list)]
+            scenario_index += 1
 
             # Create the task world
             # if opt["wizard_intro"]:

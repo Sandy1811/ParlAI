@@ -1,0 +1,33 @@
+{
+  "title": "Hotel Service Request",
+  "name": "Hotel Service Request",
+  "db": "hotel.json",
+  "version": 1,
+  "api_names": ["hotel_service_request"],
+  "schema_urls": {
+    "hotel_service_request": "https://i.imgur.com/bOxmgLz.jpg"
+  },
+  "instructions": {
+    "User": {
+      "task_descriptions": [
+        "You are @CustomerName-1 and you are staying in room @Room-1 of the @Name-1. You would like to make a service request for @Hour-1. Your request is: @ServiceRequest-1."
+      ],
+      "completion_requirements": ["You have made a service request."],
+      "completion_questions": [
+        "...succesfully submit your service request?",
+        "...stay calm and helpful throughout the dialogue?"
+      ]
+    },
+    "Wizard": {
+      "task_description": "Help the user make a service request",
+      "completion_requirements": [
+        "You have submitted a hotel service request,",
+        "or the user says goodbye."
+      ],
+      "completion_questions": [
+        "...change his/her mind about what he/she wants at any time?",
+        "...become aggressive or annoyed during the dialogue?"
+      ]
+    }
+  }
+}

@@ -107,6 +107,18 @@
 - What kind of drinks should be on offer?
 - Would you like to order any particular kinds of drink that should be offered your guests?
 
+## intent:party_inform_food_drink_criteria
+- I can also add any specific kinds of food or drinks if you like.
+- Would you like to order any specific kinds of food or drinks for your party?
+- Its also possible to select specific foods or drinks for your party if you wish.
+- It would also be possible to book any specific kinds of food or drinks for your party.
+- You can optionally order specific kinds of foods or drinks for your party.
+- Do you want any specific kinds of food or drinks for your party?
+- I could optionally order any specific type of food or drinks if you prefer.
+- Any specific kinds of food or types of drink that you want to serve your guests?
+- Do you have any preferences wrt the kind of food or drinks that are being served?
+- I am furthermore able to add specific kinds of food or drinks for your party.
+
 ## intent:party_venue_not_available
 - Sorry, but the venue is not available then.
 - I'm sorry, but the venue is already taken that day.
@@ -116,6 +128,18 @@
 - The venue is already in use for another party that day.
 - There is already a party going on at that venue then.
 - Sorry, but the venue is already taken.
+
+## intent:party_no_venue_available
+- I'm sorry, but all venues are booked on Saturday.
+- Oh dear, it looks like all venues are sold out.
+- Hmm, neither of the venues has a free slot for your party unfortunately.
+- I am really sorry, but all venues are fully booked on Sunday.
+- Unfortunately there are no free slots at any of the venues for the whole day.
+- Well, thats a bummer, everything is fully booked on Tuesday night.
+- There is not a single venue that still has a free slot for your party on Wednesday.
+- Everything is sold out on Thursday unfortunately.
+- Well, it seems that all venues are already fully booked on Friday.
+- I am really sorry, but no venue will be able to accomodate your party on Tuesday.
 
 ## intent:party_ask_confirm_booking
 - Right, the venue is available then, can I book it for you?
@@ -173,6 +197,19 @@
 - your name
 - Right, May i know you name please?
 - Your name
+
+## intent:party_bye
+- Perfect!
+- okay good bye
+- Thank you for your time. Goodbye.
+- Good Ride
+- Great, thanks!
+- thank you, goodbye
+- goodbye
+- Thank you, goodbye
+- Thank you :o) Goodbye!
+- Thanks, goodbye.
+- OK, thanks, goodbye!
 
 ## intent:anything_else
 - Anything else I can help you with?
