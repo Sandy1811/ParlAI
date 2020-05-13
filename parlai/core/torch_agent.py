@@ -19,7 +19,7 @@ Contains the following main utilities:
 See below for documentation on each specific tool.
 """
 
-from typing import Dict, Any, Union, List, Tuple
+from typing import Dict, Any, Union, List, Tuple, Optional
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from collections import deque
@@ -35,6 +35,7 @@ from parlai.utils.thread import SharedTable
 from parlai.core.dict import DictionaryAgent
 from parlai.nn.lr_scheduler import ParlAILRScheduler
 from parlai.core.message import Message
+from parlai.utils.distributed import is_distributed
 from parlai.utils.misc import AttrDict, warn_once
 from parlai.utils.fp16 import (
     fp16_apex_available,
@@ -43,9 +44,15 @@ from parlai.utils.fp16 import (
     MemoryEfficientFP16Adam,
     Adafactor,
 )
-from parlai.core.metrics import Metrics, Metric, AverageMetric, SumMetric, FixedMetric
+from parlai.core.metrics import (
+    Metrics,
+    Metric,
+    GlobalAverageMetric,
+    GlobalSumMetric,
+    GlobalFixedMetric,
+)
 from parlai.utils.distributed import is_primary_worker
-from parlai.utils.torch import argsort, padded_tensor
+from parlai.utils.torch import argsort, compute_grad_norm, padded_tensor
 
 
 class Batch(AttrDict):
@@ -188,6 +195,9 @@ class History(object):
         self.delimiter_tok = self.parse(self.delimiter)
         self.size = size
         self.split_on_newln = opt.get('split_lines', False)
+        self._global_end_token = opt.get('history_add_global_end_token', None)
+        if self._global_end_token is not None:
+            self._global_end_token = self.dict[self.dict.end_token]
 
         # set up history objects
         if vec_type != 'deque' and vec_type != 'list':
@@ -198,6 +208,7 @@ class History(object):
         self.history_strings = []
         self.history_raw_strings = []
         self.history_vecs = []
+        self.temp_history = None
 
         # person token args
         self.add_person_tokens = opt.get('person_tokens', False)
@@ -249,9 +260,14 @@ class History(object):
         # update history vecs
         self._update_vecs(text)
 
-    def update_history(self, obs):
+    def update_history(self, obs, temp_history=None):
         """
         Update the history with the given observation.
+
+        param obs:     Observation used to update the history. param temp_history:
+        Optional temporary string. If it is not None,     this string will be appended
+        to the end of the     history. It will not be in the history on the     next
+        dialogue turn. Set to None to stop adding     to the history.
         """
         if self.field in obs and obs[self.field] is not None:
             if self.split_on_newln:
@@ -269,12 +285,18 @@ class History(object):
                 # update history vecs
                 self._update_vecs(text)
 
+        self.temp_history = temp_history
+
     def get_history_str(self):
         """
         Return the string version of the history.
         """
         if len(self.history_strings) > 0:
-            return self.delimiter.join(self.history_strings)
+            history = self.delimiter.join(self.history_strings)
+            if self.temp_history is not None:
+                history += self.temp_history
+            return history
+
         return None
 
     def get_history_vec(self):
@@ -290,6 +312,10 @@ class History(object):
                 history.extend(vec)
                 history.extend(self.delimiter_tok)
             history.extend(self.history_vecs[-1])
+            if self.temp_history is not None:
+                history.extend(self.parse(self.temp_history))
+            if self._global_end_token is not None:
+                history.extend([self._global_end_token])
         else:
             # vec type is a list
             history = []
@@ -297,6 +323,10 @@ class History(object):
                 history += vec
                 history += self.delimiter_tok
             history += self.history_vecs[-1]
+            if self.temp_history is not None:
+                history.extend(self.parse(self.temp_history))
+            if self._global_end_token is not None:
+                history += [self._global_end_token]
 
         return history
 
@@ -605,6 +635,14 @@ class TorchAgent(ABC, Agent):
             default='\n',
             help='Join history lines with this token, defaults to newline',
         )
+        agent.add_argument(
+            '--history-add-global-end-token',
+            type='nonestr',
+            default=None,
+            hidden=True,
+            choices=[None, 'end'],
+            help='Add special token to the end of history encoding.',
+        )
         # GPU arguments
         # these gpu options are all mutually exclusive, and should error if the
         # user tries to present multiple of them
@@ -649,6 +687,16 @@ class TorchAgent(ABC, Agent):
                 print('[ Using CUDA ]')
             if not shared and opt['gpu'] != -1:
                 torch.cuda.set_device(opt['gpu'])
+
+        # whether we're using multi-gpu, a few different ways. these are not
+        # supported by all models, but we can still keep track of the options
+        self.model_parallel = opt.get('model_parallel', False) and self.use_cuda
+        self.data_parallel = opt.get('data_parallel', False) and self.use_cuda
+        if self.data_parallel and is_distributed():
+            raise RuntimeError('Cannot combine --data-parallel and distributed mode.')
+        if self.model_parallel and self.data_parallel:
+            raise RuntimeError('Cannot combine --data-parallel and --model-parallel.')
+
         # indicate whether using fp16
         self.fp16 = self.use_cuda and self.opt.get('fp16', False)
         if self.fp16:
@@ -720,7 +768,7 @@ class TorchAgent(ABC, Agent):
         self.rank_candidates = opt['rank_candidates']
         self.add_person_tokens = opt.get('person_tokens', False)
         # set interactive mode or not according to options.
-        self.set_interactive_mode(opt['interactive_mode'], shared)
+        self.set_interactive_mode(opt.get('interactive_mode', False), shared)
 
     def build_history(self):
         """
@@ -793,6 +841,18 @@ class TorchAgent(ABC, Agent):
         Construct the model and return it.
         """
         raise NotImplementedError('not implemented for this class')
+
+    def _should_initialize_optimizer(self) -> bool:
+        """
+        Used to indicate whether we should initialize an optimizer.
+
+        When this is off, we can save memory and use larger batches.
+        """
+        if self.opt.get('interactive_mode'):
+            return False
+        datatype = self.opt.get('datatype', '')
+        is_train = 'train' in datatype and 'evalmode' not in datatype
+        return is_train or self.opt.get('numthreads', 1) > 1
 
     def init_optim(self, params, optim_states=None, saved_optim_type=None):
         """
@@ -911,7 +971,12 @@ class TorchAgent(ABC, Agent):
             elif not optimstate_fp16 and self.fp16:
                 # old optimizer was fp32, but now we're doing fp16.
                 # this is a bit clunky, but alternatives are worse
-                self.optimizer.optimizer.load_state_dict(optim_states)
+                try:
+                    self.optimizer.optimizer.load_state_dict(optim_states)
+                except ValueError:
+                    warn_once(
+                        'WARNING: not loading optim state since model params changed.'
+                    )
                 return
             else:
                 # previously trained in fp32, loading in fp32.
@@ -921,8 +986,10 @@ class TorchAgent(ABC, Agent):
             # finally, try to actually load the optimizer state
             try:
                 self.optimizer.load_state_dict(optim_states)
-            except ValueError:
-                print('WARNING: not loading optim state since model params changed.')
+            except (ValueError, KeyError):
+                warn_once(
+                    'WARNING: not loading optim state since model params changed.'
+                )
 
     def build_lr_scheduler(self, states=None, hard_reset=False):
         """
@@ -996,15 +1063,17 @@ class TorchAgent(ABC, Agent):
 
         # only report LR if we have a scheduler
         if hasattr(self, 'scheduler') and self.scheduler is not None:
-            report['lr'] = AverageMetric(self.optimizer.param_groups[0]['lr'])
+            report['lr'] = GlobalAverageMetric(self.optimizer.param_groups[0]['lr'])
 
         if self.use_cuda:
-            report['gpu_mem_percent'] = AverageMetric(self._gpu_usage())
+            report['gpu_mem'] = GlobalAverageMetric(self._gpu_usage())
 
         if is_primary_worker() and self._number_training_updates:
             # number train updates doesn't work in hogwild sadly, and should only
             # be done on the primary worker
-            report['total_train_updates'] = FixedMetric(self._number_training_updates)
+            report['total_train_updates'] = GlobalFixedMetric(
+                self._number_training_updates
+            )
 
         return report
 
@@ -1382,6 +1451,7 @@ class TorchAgent(ABC, Agent):
             pad_idx=self.NULL_IDX,
             use_cuda=self.use_cuda,
             fp16friendly=self.fp16,
+            device=self.opt['gpu'],
         )
 
     def is_valid(self, obs):
@@ -1522,6 +1592,15 @@ class TorchAgent(ABC, Agent):
 
         return batch_reply
 
+    def get_temp_history(self, observation) -> Optional[str]:
+        """
+        Return a string to temporarily insert into history.
+
+        Intentionally overrideable so more complex models can insert temporary history
+        strings, i.e. strings that are removed from the history after a single turn.
+        """
+        return None
+
     def observe(self, observation):
         """
         Process incoming message in preparation for producing a response.
@@ -1543,8 +1622,13 @@ class TorchAgent(ABC, Agent):
             self.__expecting_to_reply = True
 
         self.observation = observation
-        # update the history using the observation
-        self.history.update_history(observation)
+        # Update the history using the observation.
+        # We may also consider adding a temporary string to the history
+        # using the `get_temp_history()` function: this string will
+        # persist until it is updated.
+        self.history.update_history(
+            observation, temp_history=self.get_temp_history(observation)
+        )
         return self.vectorize(
             observation,
             self.history,
@@ -1834,12 +1918,11 @@ class TorchAgent(ABC, Agent):
             # tokens per batch
             # we divide by the binary is_primary_worker() so that the numerator is
             # num_tokens in all workers, and the denominator is 1.
-            tbp = AverageMetric(
-                (batch.label_vec != self.NULL_IDX).sum().item()
-                + (batch.text_vec != self.NULL_IDX).sum().item(),
+            tpb = GlobalAverageMetric(
+                (batch.label_vec != self.NULL_IDX).sum().item(),
                 float(is_primary_worker()),
             )
-            self.global_metrics.add('tokens_per_batch', tbp)
+            self.global_metrics.add('tpb', tpb)
 
         if self.is_training:
             output = self.train_step(batch)
@@ -1899,9 +1982,23 @@ class TorchAgent(ABC, Agent):
         It is recommended you use this instead of loss.backward(), for integration with
         distributed training and FP16 training.
         """
-        if self.opt.get('update_freq', 1) > 1:
+        update_freq = self.opt.get('update_freq', 1)
+
+        if update_freq > 1:
             # gradient accumulation, but still need to average across the minibatches
-            loss = loss / self.opt['update_freq']
+            loss = loss / update_freq
+            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+
+            # we're doing gradient accumulation, so we don't need to sync gradients
+            # amoung GPUs
+            if self._number_grad_accum != 0 and is_distributed():
+                # accumulate without syncing
+                with self.model.no_sync():
+                    if self.fp16:
+                        self.optimizer.backward(loss, update_master_grads=False)
+                    else:
+                        loss.backward()
+                return
 
         if self.fp16:
             self.optimizer.backward(loss, update_master_grads=False)
@@ -1922,7 +2019,7 @@ class TorchAgent(ABC, Agent):
         if update_freq > 1:
             # we're doing gradient accumulation, so we don't only want to step
             # every N updates instead
-            self._number_grad_accum = (self._number_grad_accum + 1) % update_freq
+            # self._number_grad_accum is updated in backward function
             if self._number_grad_accum != 0:
                 return
 
@@ -1938,19 +2035,30 @@ class TorchAgent(ABC, Agent):
                 grad_norm = torch.nn.utils.clip_grad_norm_(
                     self.model.parameters(), self.opt['gradient_clip']
                 )
-            self.global_metrics.add('gnorm', AverageMetric(grad_norm))
+            self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
             self.global_metrics.add(
-                'clip', AverageMetric(float(grad_norm > self.opt['gradient_clip']))
+                'clip',
+                GlobalAverageMetric(float(grad_norm > self.opt['gradient_clip'])),
+            )
+        else:
+            parameters = self.model.parameters()
+            grad_norm = compute_grad_norm(parameters)
+            self.global_metrics.add('gnorm', GlobalAverageMetric(grad_norm))
+
+        if self.fp16:
+            self.global_metrics.add(
+                'fp16_loss_scalar', GlobalAverageMetric(self.optimizer.loss_scale)
             )
 
         self.optimizer.step()
 
         # keep track up number of steps, compute warmup factor
         self._number_training_updates += 1
+
+        # in distributed mode, all workers step together, but we need to only
+        # count it once. Only the primary worker gets to make the count
         if is_primary_worker():
-            # in distributed mode, all workers step together, but we need to only
-            # count it once. Only the primary worker gets to make the count
-            self.global_metrics.add('updates', SumMetric(1))
+            self.global_metrics.add('updates', GlobalSumMetric(1))
 
         if getattr(self, 'scheduler', None):
             self.scheduler.step(self._number_training_updates)
@@ -1967,21 +2075,3 @@ class TorchAgent(ABC, Agent):
             return
 
         self.optimizer.zero_grad()
-
-    def _total_parameters(self):
-        """
-        Compute the total number of parameters in the model.
-
-        :return:
-            total number of parameters in the model.
-        """
-        return sum(p.numel() for p in self.model.parameters())
-
-    def _trainable_parameters(self):
-        """
-        Compute the total number of trainable parameters in the model.
-
-        :return:
-            total number of trainable parameters in the model.
-        """
-        return sum(p.numel() for p in self.model.parameters() if p.requires_grad)

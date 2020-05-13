@@ -45,7 +45,6 @@ import copy
 import random
 import time
 
-from functools import lru_cache
 from typing import List, Dict, Any, Union
 
 try:
@@ -57,7 +56,7 @@ from parlai.core.agents import create_agents_from_shared
 from parlai.core.loader import load_task_module, load_world_module
 from parlai.core.metrics import aggregate_named_reports
 from parlai.core.opt import Opt
-from parlai.core.teachers import create_task_agent_from_taskname
+from parlai.core.teachers import Teacher, create_task_agent_from_taskname
 from parlai.utils.misc import Timer, display_messages
 from parlai.tasks.tasks import ids_to_tasks
 
@@ -123,6 +122,7 @@ class World(object):
             ignore_fields=self.opt.get('display_ignore_fields', ''),
             prettify=self.opt.get('display_prettify', False),
             max_len=self.opt.get('max_display_len', 1000),
+            verbose=self.opt.get('display_verbose', False),
         )
 
     def episode_done(self):
@@ -149,6 +149,12 @@ class World(object):
         shared_data['opt'] = self.opt
         shared_data['agents'] = self._share_agents()
         return shared_data
+
+    def clone(self):
+        """
+        Create a duplicate of the world.
+        """
+        return type(self)(opt=copy.deepcopy(self.opt), agents=None, shared=self.share())
 
     def _share_agents(self):
         """
@@ -309,9 +315,7 @@ class DialogPartnerWorld(World):
             self.agents = create_agents_from_shared(shared['agents'])
         else:
             if len(agents) != 2:
-                raise RuntimeError(
-                    'There must be exactly two agents for this ' 'world.'
-                )
+                raise RuntimeError('There must be exactly two agents for this world.')
             # Add passed in agents directly.
             self.agents = agents
         self.acts = [None] * len(self.agents)
@@ -381,7 +385,6 @@ class DialogPartnerWorld(World):
             self.total_exs += metrics['exs'].value()
         return metrics
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return number of examples.
@@ -615,6 +618,20 @@ class MultiWorld(World):
                 weight = 1
             self.cum_task_weights[i] = weight + sum
             sum += weight
+        task_ids: Dict[str, Teacher] = {}
+        # Having overlap in teacher ids will cause issues for metrics aggregation.
+        for each_world in self.worlds:
+            world_id = each_world.getID()
+            if world_id in task_ids:
+                raise AssertionError(
+                    '{} and {} teachers have overlap in id {}.'.format(
+                        task_ids[world_id],
+                        each_world.get_agents()[0].__class__,
+                        world_id,
+                    )
+                )
+            else:
+                task_ids[world_id] = each_world.get_task_agent()
 
     def num_examples(self):
         """
@@ -736,7 +753,10 @@ class MultiWorld(World):
         """
         Report aggregate metrics across all subworlds.
         """
-        metrics = aggregate_named_reports({w.getID(): w.report() for w in self.worlds})
+        metrics = aggregate_named_reports(
+            {w.getID(): w.report() for w in self.worlds},
+            micro_average=self.opt.get('aggregate_micro', False),
+        )
         if 'exs' in metrics:
             self.total_exs += metrics['exs'].value()
         return metrics
@@ -1068,15 +1088,12 @@ class DynamicBatchWorld(World):
             self.max_batch_size = opt['batchsize']
 
         # TODO: check to ensure the agent has self_observe
-        shared = world.share()
         self.world = world
         # TODO: maybe generalize this
         self.max_words = (self.l_truncate + self.truncate) * opt['batchsize']
 
         # buffer worlds
-        self.worlds = [
-            shared['world_class'](opt, shared=shared) for _ in range(self._BUFFER_SIZE)
-        ]
+        self.worlds = [world.clone() for _ in range(self._BUFFER_SIZE)]
 
         self.reset()
 
@@ -1233,6 +1250,9 @@ class DynamicBatchWorld(World):
         # update metrics
         self.total_parleys += 1
         self.total_exs += len(batch)
+
+    def get_total_exs(self):
+        return self.total_exs
 
     def get_total_epochs(self):
         return self.total_exs / self.num_examples()
@@ -1420,12 +1440,14 @@ class HogwildWorld(World):
         """
         return self.inner_world.getID()
 
-    @lru_cache(maxsize=1)
     def num_examples(self):
         """
         Return the number of examples.
         """
-        return self.inner_world.num_examples()
+        if hasattr(self, '_num_examples'):
+            return self._num_examples_cache
+        self._num_examples_cache = self.inner_world.num_examples()
+        return self._num_examples_cache
 
     def num_episodes(self):
         """
@@ -1538,12 +1560,15 @@ def _create_task_agents(opt: Opt):
     defined by the task name directly.  (This saves the task creator bothering to define
     the create_agents function when it is not needed.)
     """
-    my_module = load_task_module(opt['task'])
+    if opt.get('interactive_task', False) or opt.get('selfchat_task', False):
+        # do not need task agents in interactive or self chat settings
+        return []
+
     try:
         # Tries to call the create_agent function in agents.py
+        my_module = load_task_module(opt['task'])
         task_agents = my_module.create_agents(opt)  # type: ignore
-
-    except AttributeError:
+    except (ModuleNotFoundError, AttributeError):
         # Create_agent not found, so try to create the teacher directly.
         return create_task_agent_from_taskname(opt)
     if type(task_agents) != list:
@@ -1560,8 +1585,9 @@ def create_task_world(opt: Opt, user_agents, default_world=None):
     task_agents = _create_task_agents(opt)
     world_class = load_world_module(
         opt['task'],
-        opt.get('interactive_task', False),
-        len(user_agents + task_agents),
+        interactive_task=opt.get('interactive_task', False),
+        selfchat_task=opt.get('selfchat_task', False),
+        num_agents=len(user_agents + task_agents),
         default_world=default_world,
     )
 

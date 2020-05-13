@@ -14,7 +14,7 @@ We use this to split up tests into different circleci runs.
 import os
 import pathlib
 import random
-import pytest
+from pytest import ExitCode
 
 
 # TODO: rename the folders nicer so they make more sense, maybe even have
@@ -39,6 +39,8 @@ def pytest_collection_modifyitems(config, items):
         rel_path = str(pathlib.Path(item.fspath).relative_to(rootdir))
         if not parallel:
             deselected.append(item)
+        elif "parlai_internal" in rel_path:
+            item.add_marker("internal")
         elif "nightly/gpu/" in rel_path:
             item.add_marker("nightly_gpu")
         elif "nightly/cpu/" in rel_path:
@@ -56,3 +58,14 @@ def pytest_collection_modifyitems(config, items):
     config.hook.pytest_deselected(items=deselected)
     for d in deselected:
         items.remove(d)
+
+
+def pytest_sessionfinish(session, exitstatus):
+    """
+    Ensure that pytest doesn't report failure when no tests are collected.
+
+    This can sometimes happen due to the way we distribute tests across multiple circle
+    nodes.
+    """
+    if exitstatus == ExitCode.NO_TESTS_COLLECTED:
+        session.exitstatus = ExitCode.OK
