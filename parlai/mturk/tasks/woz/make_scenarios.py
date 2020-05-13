@@ -175,13 +175,13 @@ hard = [
     'unhappy_hotel_search-1.json',
 ]  # 7
 
-easy_unhappy = ['unhappy_weather-1.json']
+easy_unhappy = ['unhappy_weather-1.json', 'unhappy_book_ride-1.json', 'unhappy_book_ride-2.json', 'unhappy_book_ride-3.json']
 medium_unhappy = [
     'unhappy_followup_doctor_appointment-1.json',
     'unhappy_plane_reserve-1.json',
     'unhappy_party_plan-1.json',
 ]
-hard_unhappy = ['unhappy_trip_directions-1.json']
+hard_unhappy = ['unhappy_trip_directions-1.json', 'unhappy_hotel_reserve-1.json', 'unhappy_hotel_search-1.json' ]
 
 counts = {}
 for e in easy:
