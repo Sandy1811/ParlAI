@@ -11,7 +11,7 @@ from typing import Text, Dict, Any, List, Optional, Tuple
 import requests
 
 from parlai import PROJECT_PATH
-from parlai.chat_service.core.shared_utils import print_and_log
+from parlai.mturk.core.shared_utils import print_and_log
 from parlai.mturk.tasks.woz.backend import constants
 from parlai.mturk.tasks.woz.backend import static_test_assets
 from parlai.mturk.tasks.woz.backend import template_filler
