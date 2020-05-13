@@ -7,12 +7,13 @@
 WIZARD_TUTORIAL_URL = "https://youtu.be/USrWF1ZyNWw"
 
 task_config = {}
+version = "v2"
 
 """A short and descriptive title about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = "AI Dialogues - Stage II (Single Task Dialogues) [v2]"
+task_config['hit_title'] = f"AI Dialogues - Stage II (Single Task Dialogues) [{version}]"
 
 
 """A description includes detailed information about the kind of task the HIT contains.
