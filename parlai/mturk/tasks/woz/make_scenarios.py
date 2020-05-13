@@ -145,7 +145,6 @@ easy = [
     'happy_spaceship_access_codes.json',
     'happy_ride_change.json',
     'happy_ride_status.json',
-    'unhappy_book_ride-2.json',
 ]  # 6
 medium = [
     'happy_party_rsvp.json',
@@ -161,10 +160,6 @@ medium = [
     'happy_plane_reserve.json',
     'happy_book_ride.json',
     'happy_book_doctor_appointment.json',
-    'unhappy_book_ride-3.json',
-    'unhappy_hotel_reserve-1.json',
-    'unhappy_apartment_search-1.json',
-    'unhappy_book_apartment_viewing-1.json'
 ]  # 15
 hard = [
     'happy_trivia.json',
@@ -172,16 +167,24 @@ hard = [
     'happy_schedule_meeting.json',
     'happy_bank_balance.json',
     'happy_trip_directions.json',
-    'unhappy_hotel_search-1.json',
 ]  # 7
 
-easy_unhappy = ['unhappy_weather-1.json', 'unhappy_book_ride-1.json', 'unhappy_book_ride-2.json', 'unhappy_book_ride-3.json']
+easy_unhappy = [
+    'unhappy_weather-1.json',
+    'unhappy_book_ride-1.json',
+    'unhappy_book_ride-2.json',
+    'unhappy_book_ride-3.json'
+]
 medium_unhappy = [
     'unhappy_followup_doctor_appointment-1.json',
     'unhappy_plane_reserve-1.json',
     'unhappy_party_plan-1.json',
 ]
-hard_unhappy = ['unhappy_trip_directions-1.json', 'unhappy_hotel_reserve-1.json', 'unhappy_hotel_search-1.json' ]
+hard_unhappy = [
+    'unhappy_trip_directions-1.json',
+    'unhappy_hotel_reserve-1.json',
+    'unhappy_hotel_search-1.json'
+]
 
 counts = {}
 for e in easy:
