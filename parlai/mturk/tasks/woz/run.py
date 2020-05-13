@@ -255,7 +255,7 @@ def main():
             opt.get("scenario_list") + ".txt",
         )
         scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
-        random.shuffle(scenarios_list)
+        # random.shuffle(scenarios_list)
 
         # Set up the sockets and threads to receive workers
         mturk_manager.ready_to_accept_workers()

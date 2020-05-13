@@ -12,7 +12,7 @@ task_config = {}
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
 and everywhere the HIT is mentioned.
 """
-task_config['hit_title'] = "AI Dialogues - Stage II (Single Task Dialogues)"
+task_config['hit_title'] = "AI Dialogues - Stage II (Single Task Dialogues) [v2]"
 
 
 """A description includes detailed information about the kind of task the HIT contains.

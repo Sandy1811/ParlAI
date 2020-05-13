@@ -93,10 +93,13 @@ class DatabaseCollection:
         self._load_db_if_necessary(db_name)
         db_params = {param["Name"]: param for param in self.databases[db_name]}
         candidate_sample = None
-        while len(self.filled_slots[db_name+slot_name]) < variation + 1:
-            while not candidate_sample or candidate_sample in self.filled_slots[db_name+slot_name]:
+        while len(self.filled_slots[db_name + slot_name]) < variation + 1:
+            while (
+                not candidate_sample
+                or candidate_sample in self.filled_slots[db_name + slot_name]
+            ):
                 candidate_sample = sample(db_params.get(slot_name))
-            self.filled_slots[db_name+slot_name].append(candidate_sample)
+            self.filled_slots[db_name + slot_name].append(candidate_sample)
         assert candidate_sample
         return candidate_sample
 
@@ -105,12 +108,12 @@ class DatabaseCollection:
     ) -> Optional[Text]:
         if db_name not in self.databases:
             return None
-        elif db_name+slot_name not in self.filled_slots:
+        elif db_name + slot_name not in self.filled_slots:
             return None
-        elif len(self.filled_slots[db_name+slot_name]) < variation + 1:
+        elif len(self.filled_slots[db_name + slot_name]) < variation + 1:
             return None
         else:
-            return self.filled_slots[db_name+slot_name][variation]
+            return self.filled_slots[db_name + slot_name][variation]
 
     def get_value(self, slot: Text, db_name: Text) -> Text:
         if re.match(r".+\-\d+", slot):
@@ -136,28 +139,63 @@ class DatabaseCollection:
         return desc
 
 
+easy = [
+    'happy_followup_doctor_appointment.json',
+    'happy_weather.json',
+    'happy_spaceship_access_codes.json',
+    'happy_ride_change.json',
+    'happy_ride_status.json',
+    'unhappy_book_ride-2.json',
+]  # 6
+medium = [
+    'happy_party_rsvp.json',
+    'happy_restaurant_search.json',
+    'happy_restaurant_reserve.json',
+    'happy_apartment_search.json',
+    'happy_hotel_service_request.json',
+    'happy_book_apartment_viewing.json',
+    'happy_party_plan.json',
+    'happy_hotel_search.json',
+    'happy_hotel_reserve.json',
+    'happy_plane_search.json',
+    'happy_plane_reserve.json',
+    'happy_book_ride.json',
+    'happy_book_doctor_appointment.json',
+    'unhappy_book_ride-3.json',
+    'unhappy_hotel_reserve-1.json',
+    'unhappy_apartment_search-1.json',
+    'unhappy_book_apartment_viewing-1.json'
+]  # 15
+hard = [
+    'happy_trivia.json',
+    'happy_bank_fraud_report.json',
+    'happy_schedule_meeting.json',
+    'happy_bank_balance.json',
+    'happy_trip_directions.json',
+    'unhappy_hotel_search-1.json',
+]  # 7
 
-easy = ['happy_followup_doctor_appointment.json', 'happy_weather.json', 'happy_spaceship_access_codes.json', 'happy_ride_change.json', 'happy_ride_status.json'] # 5
-medium = ['happy_party_rsvp.json', 'happy_restaurant_search.json','happy_restaurant_reserve.json','happy_apartment_search.json','happy_hotel_service_request.json','happy_book_apartment_viewing.json', 'happy_party_plan.json', 'happy_hotel_search.json','happy_hotel_reserve.json', 'happy_plane_search.json','happy_plane_reserve.json', 'happy_book_ride.json','happy_book_doctor_appointment.json','unhappy_book_ride-2.json','unhappy_book_ride-3.json'] # 15
-hard = ['happy_trivia.json','happy_bank_fraud_report.json','happy_schedule_meeting.json','happy_bank_balance.json', 'happy_trip_directions.json'] # 5
-
-easy_unhappy = [ 'unhappy_weather-1.json'  ]
-medium_unhappy = [ 'unhappy_followup_doctor_appointment-1.json', 'unhappy_plane_reserve-1.json', 'unhappy_party_plan-1.json']
-hard_unhappy = [ 'unhappy_trip_directions-1.json' ]
+easy_unhappy = ['unhappy_weather-1.json']
+medium_unhappy = [
+    'unhappy_followup_doctor_appointment-1.json',
+    'unhappy_plane_reserve-1.json',
+    'unhappy_party_plan-1.json',
+]
+hard_unhappy = ['unhappy_trip_directions-1.json']
 
 counts = {}
 for e in easy:
-  counts[e] = 25
+    counts[e] = 25
 for e in medium:
-  counts[e] = 30
+    counts[e] = 30
 for e in hard:
-  counts[e] = 45
+    counts[e] = 45
 for e in easy_unhappy:
-  counts[e] = 40
+    counts[e] = 40
 for e in medium_unhappy:
-  counts[e] = 60
+    counts[e] = 60
 for e in hard_unhappy:
-  counts[e] = 80
+    counts[e] = 80
 
 
 if __name__ == '__main__':
@@ -174,29 +212,27 @@ if __name__ == '__main__':
 
         total = counts.get(fn, 0)
         for i in range(total):
-          desc = random.choice(task_descriptions)
-          dc = DatabaseCollection()
-          new_scenario = copy.deepcopy(template)
-          if "task_descriptions" in template['instructions']['User']:
-              del new_scenario['instructions']['User']['task_descriptions']
-          new_scenario['instructions']['User']['task_description'] = dc.populate(populate(
-              desc, db_dir + template['db']
-          ))
-          new_scenario['instructions']['Wizard'][
-              'task_description'
-          ] = dc.populate(new_scenario['instructions']['Wizard']['task_description'].replace(
-              "@wizard-tutorial-url", WIZARD_TUTORIAL_URL
-          ))
-          if "linear_guide" in new_scenario['instructions']['User']:
-              new_scenario['instructions']['User']["linear_guide"] = [
-                  dc.populate(instruction)
-                  for instruction in new_scenario['instructions']['User'][
-                      "linear_guide"
-                  ]
-              ]
-          new_fn = "{0}/{1}_v{2}.json".format(
-              scenario_dir, fn.split('.')[0], i
-          )
-          new_name = "{0}_v{1}\n".format(fn.split('.')[0], i)
-          json.dump(new_scenario, open(new_fn, 'w+'), indent=True)
-          open(scenario_file, 'a+').write(new_name)
+            desc = random.choice(task_descriptions)
+            dc = DatabaseCollection()
+            new_scenario = copy.deepcopy(template)
+            if "task_descriptions" in template['instructions']['User']:
+                del new_scenario['instructions']['User']['task_descriptions']
+            new_scenario['instructions']['User']['task_description'] = dc.populate(
+                populate(desc, db_dir + template['db'])
+            )
+            new_scenario['instructions']['Wizard']['task_description'] = dc.populate(
+                new_scenario['instructions']['Wizard']['task_description'].replace(
+                    "@wizard-tutorial-url", WIZARD_TUTORIAL_URL
+                )
+            )
+            if "linear_guide" in new_scenario['instructions']['User']:
+                new_scenario['instructions']['User']["linear_guide"] = [
+                    dc.populate(instruction)
+                    for instruction in new_scenario['instructions']['User'][
+                        "linear_guide"
+                    ]
+                ]
+            new_fn = "{0}/{1}_v{2}.json".format(scenario_dir, fn.split('.')[0], i)
+            new_name = "{0}_v{1}\n".format(fn.split('.')[0], i)
+            json.dump(new_scenario, open(new_fn, 'w+'), indent=True)
+            open(scenario_file, 'a+').write(new_name)
