@@ -47,6 +47,15 @@
 - Where can we drive you?
 - Where are you going?
 - Whats your desired destination?
+- where do you wanna go?
+- whats the dropoff location?
+- where are you going to?
+- going to?
+- arrival location
+- whats your destination?
+- whats your arrival location
+- destination
+- arriving at?
 
 ## intent:ride_ask_departure
 - Where are you located
@@ -66,11 +75,6 @@
 - Where would you like to be picked up from?
 - I am looking for a ride from Forbes and Murray
 - OK, and where are you departing from?
-
-## intent:ride_ask_confirm_details
-- Ok so you need picked up at east entrance of central station and going to main street 42 correct?
-- Please, confirm this follow informations, your name is Johnny, yout currenty location is the east entrance to central station and you want to go main street 42, do you confirm?
-- Can you confirm the ride details please? Picking up at main station and going to university.
 
 ## intent:confirm
 - ya
@@ -109,6 +113,14 @@
 - I just found a Lyft ride for 24 credits. The driver is just completing a drop-off and would pick you up at Brandon's of Canonmills straight afterwards. He could be here in 6 minutes. Can I book that ride for your?
 - Would you like to book?
 - I found a Uber ride for you from 'Forbes and Murray ' to 'hospital' for 7 credits that could pick you up in 14 minutes. Should I book that for you?
+- found a ride for you
+- I found a taxi ride to the station for you
+- I found the following ride for you
+- Got the following ride for you
+- i got the following for you
+- i have found something that matches your search
+- i have found a ride for you
+- found something for you
 
 ## intent:ride_confirm_booking
 - Ok Navi I have booked the ride.
@@ -166,12 +178,6 @@
 - Your Lyft ride in a Tesla will arrive shortly.
 - Your driver will be Dave.
 
-## intent:ride_provide_time
-- 17 minutes
-- in 29 minutes
-- Not long, the ride will arrive in 11 minutes.
-- Your car will arrive in about 20 minutes!
-
 ## intent:ride_bye
 - Perfect! Have a great ride!
 - okay good bye
@@ -185,11 +191,6 @@
 - Thanks, goodbye.
 - OK, thanks, goodbye!
 - Thank YOU! Enjoy your ride! Bye!
-
-## intent:ride_search_ride
-- ok, wait while i book a rid for you
-- Alright Johnny, wait while i book a ride for 
-- Alright, Timbo, wait while i find a ride for you.
 
 ## intent:ride_inform_nothing_found
 - Sorry, but I couldn't find anything

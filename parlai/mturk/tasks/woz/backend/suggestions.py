@@ -108,6 +108,8 @@ class WizardSuggestion:
         if return_intents:
             return [(i, i, v) for i, v in intents], False
 
+        print_and_log(100, f'intents={intents}', should_print=True)
+
         suggestions = []
         for intent, confidence in intents:
             if intent in self.scenario_resources[api_name][constants.INTENT_TO_REPLY_KEY]:
@@ -152,6 +154,9 @@ class WizardSuggestion:
         merge_by_confidence: bool = False,
         top_n_per_scenario = 2 # overrides num_suggestions
     ) -> Tuple[List[Tuple[Text, Text]], bool]:
+
+        print_and_log(100, f'wizard_utterance={wizard_utterance}, primary_kb_item={primary_kb_item}, secondary_kb_item={secondary_kb_item}, '
+                           f'api_names={api_names}', should_print=True)
 
         suggestions_by_scenario = {}
         for api_name in api_names:
