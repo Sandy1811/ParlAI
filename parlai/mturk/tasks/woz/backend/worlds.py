@@ -48,6 +48,11 @@ from parlai.mturk.tasks.woz.backend.workers import (
 from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
 
 
+TURN_TIME_LIMIT = (
+    18 * 60
+)  # Maximum allowed time in seconds for one turn (user or wizard)
+
+
 def is_disconnected(act):
     return 'text' in act and act['text'] in [
         MTURK_DISCONNECT_MESSAGE,
@@ -334,7 +339,9 @@ class WOZWorld(MTurkTaskWorld):
                 self.wizard.observe(message_to_wizard)
 
     def _parley_dialogue_user(self) -> int:
-        user_command = command_from_message(self.user.act(), self.user)
+        user_command = command_from_message(
+            self.user.act(timeout=TURN_TIME_LIMIT), self.user
+        )
         self.events.append(user_command.event)
         if isinstance(user_command, UtterCommand):
             self.wizard.observe(user_command.message)
@@ -367,7 +374,9 @@ class WOZWorld(MTurkTaskWorld):
             )
 
     def _parley_dialogue_wizard_and_knowledgebase(self) -> int:
-        wizard_command = command_from_message(self.wizard.act(), self.wizard)
+        wizard_command = command_from_message(
+            self.wizard.act(timeout=TURN_TIME_LIMIT), self.wizard
+        )
         self.store_wizard_event(wizard_command)
 
         if isinstance(wizard_command, UtterCommand):
@@ -468,7 +477,9 @@ class WOZWorld(MTurkTaskWorld):
             return
 
         while True:
-            command = command_from_message(agent.act(blocking=False), agent)
+            command = command_from_message(
+                agent.act(timeout=TURN_TIME_LIMIT, blocking=False), agent
+            )
 
             if isinstance(command, UtterCommand):
                 agent.observe(
@@ -614,23 +625,7 @@ class WOZWorld(MTurkTaskWorld):
 
     def review_work(self):
         # Can review the work here to accept or reject it
-        # self.mturk_agent.approve_work()
-        # self.mturk_agent.reject_work()
-        # self.mturk_agent.pay_bonus(1000) # Pay $1000 as bonus
-        # self.mturk_agent.block_worker() # Block this worker from future HITs
-
-        wdb = WorkerDatabase()
-
         if self.review_user():
-            wdb.store_work(
-                self.user.worker_id,
-                self.user.hit_id,
-                self._is_sandbox,
-                "User",
-                "",
-                TASK_LEVEL_SINGLE_HAPPY,
-                self._num_user_utterances,
-            )
             print(
                 f"User {self.user.worker_id}'s work was approved (HIT {self.user.hit_id})"
             )
@@ -640,15 +635,6 @@ class WOZWorld(MTurkTaskWorld):
             )
 
         if self.review_wizard():
-            wdb.store_work(
-                self.wizard.worker_id,
-                self.wizard.hit_id,
-                self._is_sandbox,
-                "Wizard",
-                "",
-                TASK_LEVEL_SINGLE_HAPPY,
-                self._num_wizard_utterances,
-            )
             print(
                 f"Wizard {self.wizard.worker_id}'s work was approved (HIT {self.wizard.hit_id})"
             )
@@ -661,16 +647,6 @@ class WOZWorld(MTurkTaskWorld):
         if self._num_user_utterances < 2:
             self.user.reject_work("You wrote fewer than 2 messages")
             return False
-
-        # if (
-        #     self._user_linear_guide
-        #     and self._num_user_utterances < len(self._user_linear_guide)
-        #     and self._user_has_ended_dialogue
-        # ):
-        #     self.user.reject_work(
-        #         "You ended the dialogue before being instructed to do so"
-        #     )
-        #     return False
 
         self.user.approve_work()
         return True
