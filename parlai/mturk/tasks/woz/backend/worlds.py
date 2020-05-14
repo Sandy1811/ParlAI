@@ -280,7 +280,12 @@ class WOZWorld(MTurkTaskWorld):
     def parley(self):
         try:
             if self._stage == SETUP_STAGE:
-                setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
+                try:
+                    setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
+                except FileNotFoundError as e:
+                    print_and_log(100, f"ERROR: Missing scenario file: {e}", True)
+                    self._scenario = "happy_trivia_v0"
+                    setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
                 self._wizard_task_description = setup_command.task_description
                 self._wizard_capabilities = setup_command.capabilities
                 assert self._wizard_capabilities
