@@ -278,56 +278,61 @@ class WOZWorld(MTurkTaskWorld):
         self._wizard_has_ended_dialogue = False
 
     def parley(self):
-        if self._stage == SETUP_STAGE:
-            setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
-            self._wizard_task_description = setup_command.task_description
-            self._wizard_capabilities = setup_command.capabilities
-            assert self._wizard_capabilities
-            self._questions_to_wizard = setup_command.completion_questions
-            self._api_names = setup_command.api_names
-            self._selected_api = self._api_names[0]
+        try:
+            if self._stage == SETUP_STAGE:
+                setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
+                self._wizard_task_description = setup_command.task_description
+                self._wizard_capabilities = setup_command.capabilities
+                assert self._wizard_capabilities
+                self._questions_to_wizard = setup_command.completion_questions
+                self._api_names = setup_command.api_names
+                self._selected_api = self._api_names[0]
 
-            base_dir = os.path.join(PROJECT_PATH, "resources")
-            self._suggestion_module = WizardSuggestion(
-                scenario_list=self._api_names, resources_dir=base_dir
-            )
+                base_dir = os.path.join(PROJECT_PATH, "resources")
+                self._suggestion_module = WizardSuggestion(
+                    scenario_list=self._api_names, resources_dir=base_dir
+                )
 
-            self.wizard.observe(setup_command.message)
-            send_mturk_message(
-                f"Your task: {setup_command.message.get('task_description')}",
-                self.wizard,
-            )
-
-            if len(self._api_names) > 1:
+                self.wizard.observe(setup_command.message)
                 send_mturk_message(
-                    f"This is a special task, where you (the AI assistant) have more capabilities. "
-                    f"You can select different task-interfaces with the tabs on the left. "
-                    f"Still try to stick to at least one of the flow charts whenever possible. ",
+                    f"Your task: {setup_command.message.get('task_description')}",
                     self.wizard,
                 )
 
-            setup_command = SetupCommand(scenario=self._scenario, role="User")
-            self._questions_to_user = setup_command.completion_questions
-            self._user_task_description = setup_command.task_description
-            self._user_linear_guide = setup_command.user_linear_guide
-            self.user.observe(setup_command.message)
+                if len(self._api_names) > 1:
+                    send_mturk_message(
+                        f"This is a special task, where you (the AI assistant) have more capabilities. "
+                        f"You can select different task-interfaces with the tabs on the left. "
+                        f"Still try to stick to at least one of the flow charts whenever possible. ",
+                        self.wizard,
+                    )
 
-            self.tell_workers_to_start()
-            self.num_turns = 0
-            self._stage = DIALOGUE_STAGE
-        elif self._stage == DIALOGUE_STAGE:
-            self._parley_observers()
-            if self.num_turns % 2 == 0:
-                self.num_turns += self._parley_dialogue_user()
-            else:
-                self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
-        elif self._stage == EVALUATION_STAGE:
-            self._parley_evaluation(self.user)
-            self._parley_evaluation(self.wizard)
-            self._stage = END_STAGE
-        elif self._stage == END_STAGE:
-            if self._received_evaluations >= 2:
-                self._episode_done = True
+                setup_command = SetupCommand(scenario=self._scenario, role="User")
+                self._questions_to_user = setup_command.completion_questions
+                self._user_task_description = setup_command.task_description
+                self._user_linear_guide = setup_command.user_linear_guide
+                self.user.observe(setup_command.message)
+
+                self.tell_workers_to_start()
+                self.num_turns = 0
+                self._stage = DIALOGUE_STAGE
+            elif self._stage == DIALOGUE_STAGE:
+                self._parley_observers()
+                if self.num_turns % 2 == 0:
+                    self.num_turns += self._parley_dialogue_user()
+                else:
+                    self.num_turns += self._parley_dialogue_wizard_and_knowledgebase()
+            elif self._stage == EVALUATION_STAGE:
+                self._parley_evaluation(self.user)
+                self._parley_evaluation(self.wizard)
+                self._stage = END_STAGE
+            elif self._stage == END_STAGE:
+                if self._received_evaluations >= 2:
+                    self._episode_done = True
+        except RuntimeError as e:
+            # Somebody disconnected
+            print_and_log(100, f"Unexpected DISCONNECT: {e}", True)
+            self._episode_done = True
 
     def _parley_observers(self) -> None:
         for observer in self.observers:

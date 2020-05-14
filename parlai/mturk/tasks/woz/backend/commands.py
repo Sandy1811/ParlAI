@@ -6,6 +6,7 @@ import time
 from parlai import PROJECT_PATH
 from parlai.core.agents import Agent
 # DO NOT REMOVE THIS IMPORT (needed for eval):
+from parlai.mturk.core.agents import MTurkAgent, MTURK_DISCONNECT_MESSAGE, RETURN_MESSAGE, TIMEOUT_MESSAGE
 from parlai.mturk.core.shared_utils import print_and_log
 from parlai.mturk.tasks.woz.knowledgebase import api
 
@@ -54,6 +55,14 @@ DEFAULT_WIZARD_COMPLETION_QUESTIONS = [
     "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
     "Where you unsure about what to do at any time? (Feel free to send us an email with details.)",
 ]
+
+
+def is_disconnected(act):
+    return 'text' in act and act['text'] in [
+        MTURK_DISCONNECT_MESSAGE,
+        RETURN_MESSAGE,
+        TIMEOUT_MESSAGE,
+    ]
 
 
 def all_constants():
@@ -748,6 +757,11 @@ def command_from_message(
 ) -> Optional[Command]:
     if not message:
         return None
+
+    if is_disconnected(message):
+        if isinstance(sender, MTurkAgent):
+            sender.reject_work(reason="It looks like you disconnected without finishing the task.")
+        raise RuntimeError("Disconnected")
 
     text = message.get("text", "")
 
