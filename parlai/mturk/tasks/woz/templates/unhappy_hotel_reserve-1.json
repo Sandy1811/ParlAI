@@ -21,7 +21,7 @@
         null,
         "You remember that your friend recommended the `Name-2@hotel`. Tell the assistant you've changed your mind and want to stay at `Name-2@hotel`.",
         null,
-        "Actually, you recall that your friend stayed at `Name-2@hotel` in another town. However you've read on a blog that `Name-4@hotel` is by long and far the most authentic one. Tell the assistant you've changed your mind and want to stay at `Name-4@hotel`.",
+        "Actually, you recall that your friend stayed at `Name-2@hotel` in another town. However you've read on a blog that the `Name-4@hotel` is by long and far the most authentic one. Tell the assistant you've changed your mind and want to stay at `Name-4@hotel`.",
         "Talk to the assistant about this great travel blog that you rely on and that its never let you down on your journeys. Be creative!",
         "You just received a text from your partner saying: 'Hey, my brother invited us to his wedding in London on the `EndDate-1@hotel` and I already booked us a flight for the `StartDate-1@hotel`!' Tell the assistant you would like to change your reservation to `StartDate-2@hotel`-`EndDate-2@hotel` the following month.",
         "Tell the assistant you don't really want to go to London because your partner's brother is a bit of a show-off, but obviously you'll be going to the wedding. Finish the booking and bring the conversation to an end."

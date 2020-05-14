@@ -122,6 +122,9 @@
 - You are in debit, a lot.
 - Your account balance is 789.
 - You have 2342 in the bank.
+- balance is
+- the balance on your account is
+- balance currently is
 
 ## intent:bank_inform_nothing_found
 - Sorry, but I couldn't find anything
