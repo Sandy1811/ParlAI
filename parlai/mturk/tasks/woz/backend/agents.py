@@ -67,7 +67,7 @@ class WOZKnowledgeBaseAgent(NonMTurkAgent):
     def __init__(self, options: Opt):
         super().__init__(options)
         self.role = "KnowledgeBase"
-        self.demo_role = "KnowledgeBase"
+        self.id = "KnowledgeBase"
         self._messages = []
 
     def observe(self, message: Union[Dict[Text, Any], QueryCommand]) -> None:
@@ -134,7 +134,7 @@ class WOZDummyAgent(NonMTurkAgent):
         super().__init__(opt)
         self.id = "User"
         self.role = role
-        self.demo_role = role
+        self.id = role
         self._num_messages_sent = 0
         self._messages = []
         if opt.get("dummy_responses"):

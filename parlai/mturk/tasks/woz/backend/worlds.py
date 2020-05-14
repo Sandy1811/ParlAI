@@ -161,6 +161,35 @@ class UserOnboardingWorld(MTurkOnboardWorld):
         return self.mturk_agent
 
 
+class RoleOnboardWorld(MTurkOnboardWorld):
+    """
+    A world that provides the appropriate instructions during onboarding.
+    """
+
+    def __init__(self, opt, mturk_agent, role):
+        self.task_type = 'sandbox' if opt['is_sandbox'] else 'live'
+        self.max_onboard_time = opt['max_onboard_time']
+        self.role = role
+        super().__init__(opt, mturk_agent)
+
+    def parley(self):
+        onboard_msg = {
+            "id": "MTurk System",
+            "text": f"Hello {self.mturk_agent.worker_id}. Please send any message to get paired with a co-worker (this might take some time).",
+        }
+        self.mturk_agent.observe(onboard_msg)
+        act = self.mturk_agent.act(timeout=self.max_onboard_time)
+        # timeout
+        if act['episode_done'] or ('text' in act and act['text'] == TIMEOUT_MESSAGE):
+            self.episodeDone = True
+            return
+
+        if 'text' not in act:
+            control_msg = {'id': 'SYSTEM', 'text': "something is wrong"}
+            self.mturk_agent.observe(control_msg)
+            self.episodeDone = True
+
+
 SETUP_STAGE = 0
 DIALOGUE_STAGE = 1
 EVALUATION_STAGE = 2
@@ -179,6 +208,11 @@ class WOZWorld(MTurkTaskWorld):
         agents: List[MTurkAgent],
         observers: Optional[List[Agent]] = None,
     ) -> None:
+        print_and_log(
+            100,
+            f"Creating new world for workers {[(w.id, w.worker_id) for w in agents]}",
+            True,
+        )
         super(WOZWorld, self).__init__(opt, mturk_agent=None)
         self._is_sandbox = opt["is_sandbox"] or False
         self.observers = observers or []
@@ -187,12 +221,12 @@ class WOZWorld(MTurkTaskWorld):
         self.wizard = None
 
         for agent in agents:
-            assert hasattr(agent, "demo_role")
-            if agent.demo_role == "User":
+            assert hasattr(agent, "id")
+            if agent.id == "User":
                 self.user = agent
-            elif agent.demo_role == "Wizard":
+            elif agent.id == "Wizard":
                 self.wizard = agent
-            elif agent.demo_role == "KnowledgeBase":
+            elif agent.id == "KnowledgeBase":
                 self.knowledgebase = agent
 
         # ToDo: Adjust as NLU module gets better
@@ -378,7 +412,6 @@ class WOZWorld(MTurkTaskWorld):
             self._selected_api = self._api_names[int(wizard_command.topic)]
             return 0
         elif isinstance(wizard_command, RequestSuggestionsCommand):
-            print(self._selected_api)
             # Prevent wizards from copy/pasting entire KB item
             if "\t" in wizard_command.query:
                 send_mturk_message(
@@ -519,7 +552,9 @@ class WOZWorld(MTurkTaskWorld):
         # Add intent (hack)
         if isinstance(command, PickSuggestionCommand) and self._recent_suggestions:
             _event["Intent"] = CUSTOM_INTENT
-            _event["IntentOptions"] = [intent for intent, text in self._recent_suggestions]
+            _event["IntentOptions"] = [
+                intent for intent, text in self._recent_suggestions
+            ]
             for intent, text in self._recent_suggestions:
                 if command.text_matches(text):
                     _event["Intent"] = intent
