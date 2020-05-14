@@ -179,8 +179,14 @@ medium_unhappy = [
     'unhappy_followup_doctor_appointment-1.json',
     'unhappy_plane_reserve-1.json',
     'unhappy_party_plan-1.json',
+    'unhappy_party_plan-2.json',
+    'unhappy_book_apartment_viewing-1.json',
+    'unhappy_book_doctor_appointment-1.json',
+    'unhappy_trivia-1.json'
 ]
 hard_unhappy = [
+    'unhappy_fraud_report-1.json',
+    'unhappy_fraud_report-2.json',
     'unhappy_trip_directions-1.json',
     'unhappy_hotel_reserve-1.json',
     'unhappy_hotel_search-1.json'

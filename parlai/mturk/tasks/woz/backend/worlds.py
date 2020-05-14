@@ -677,7 +677,7 @@ class WOZWorld(MTurkTaskWorld):
             for i in range(
                 min(len(self._questions_to_user), len(self._answers_by_user))
             )
-        ]
+        ] if self._questions_to_user and self._answers_by_user else []
         wizard_questionaire_data = [
             {
                 "Question": self._questions_to_wizard[i],
@@ -686,7 +686,7 @@ class WOZWorld(MTurkTaskWorld):
             for i in range(
                 min(len(self._questions_to_wizard), len(self._answers_by_wizard))
             )
-        ]
+        ] if self._questions_to_wizard and self._answers_by_wizard else []
         return {
             "FORMAT-VERSION": 4,
             "Scenario": {
