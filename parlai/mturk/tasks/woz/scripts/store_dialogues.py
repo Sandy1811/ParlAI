@@ -47,6 +47,9 @@ if __name__ == '__main__':
     print(f"Domains: {domains}")
     print(f"Workers: {workers}")
 
+    # In case a domain was not defined
+    domains = [d or "UNDEFINED" for d in domains]
+
     with open(os.path.join(destination, "README.md"), "w+", encoding="utf-8") as file:
         file.write(f"# {run_name}\n\n")
         file.write(f"## Metadata\n\n")
