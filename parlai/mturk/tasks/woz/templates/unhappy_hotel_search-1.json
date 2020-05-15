@@ -30,8 +30,8 @@
         "You have reserved a hotel or found that none is available."
       ],
       "completion_questions": [
-        "...reserve your hotel?",
-        "...stay calm and helpful throughout the dialogue?"
+        "Did the assistant reserve your hotel?",
+        "Did the assistant stay calm and helpful throughout the dialogue?"
       ]
     },
     "Wizard": {

@@ -173,7 +173,9 @@ easy_unhappy = [
     'unhappy_weather-1.json',
     'unhappy_book_ride-1.json',
     'unhappy_book_ride-2.json',
-    'unhappy_book_ride-3.json'
+    'unhappy_book_ride-3.json',
+    'unhappy_spaceship_life_support-1',
+    'unhappy_spaceship_access_codes-1.json'
 ]
 medium_unhappy = [
     'unhappy_followup_doctor_appointment-1.json',

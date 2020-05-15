@@ -7,7 +7,7 @@
 WIZARD_TUTORIAL_URL = "https://youtu.be/USrWF1ZyNWw"
 
 task_config = {}
-version = "v3"
+version = "v4"
 
 """A short and descriptive title about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
