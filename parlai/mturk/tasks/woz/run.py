@@ -30,6 +30,9 @@ def main():
     opt["task"] = os.path.basename(os.path.dirname(os.path.abspath(__file__)))
     opt.update(task_config)
 
+    # On disconnect, use STATUS_PARTNER_DISCONNECT_EARLY if fewer messages than this
+    opt["min_messages"] = 5
+
     mturk_agent_ids = ["Wizard", "User"]
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids, use_db=True)
 
@@ -49,9 +52,6 @@ def main():
 
     worker_roles = {}
     connect_counter = 0
-
-    # On disconnect, use STATUS_PARTNER_DISCONNECT_EARLY if fewer messages than this
-    opt["min_messages"] = 7
 
     try:
         mturk_manager.start_new_run()
@@ -123,9 +123,10 @@ def main():
             scenario = scenarios_list[scenario_index % len(scenarios_list)]
             scenario_index += 1
 
-            print_and_log(
-                100, f"run_conversation for t_{mturk_manager.conversation_index}", True
-            )
+            if hasattr(mturk_manager, "conversation_index"):
+                print_and_log(
+                    100, f"run_conversation for t_{mturk_manager.conversation_index}", True
+                )
 
             agents = workers[:]
             if not opt['is_sandbox']:
