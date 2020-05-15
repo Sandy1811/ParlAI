@@ -152,7 +152,7 @@ class WizardSuggestion:
         comparing: bool = False,
         return_intents: bool = False,
         merge_by_confidence: bool = False,
-        top_n_per_scenario = 2 # overrides num_suggestions
+        top_n_per_scenario = 3 # overrides num_suggestions
     ) -> Tuple[List[Tuple[Text, Text]], bool]:
 
         # print_and_log(100, f'wizard_utterance={wizard_utterance}, primary_kb_item={primary_kb_item}, secondary_kb_item={secondary_kb_item}, '

@@ -641,7 +641,7 @@ class WOZWorld(MTurkTaskWorld):
             )
         else:
             print(
-                f"User {self.user.worker_id}'s work was rejected (HIT {self.user.hit_id})"
+                f"User {self.user.worker_id}'s work remains unrated (HIT {self.user.hit_id})"
             )
 
         if self.review_wizard():
@@ -650,7 +650,7 @@ class WOZWorld(MTurkTaskWorld):
             )
         else:
             print(
-                f"Wizard {self.wizard.worker_id}'s work was rejected (HIT {self.wizard.hit_id})"
+                f"Wizard {self.wizard.worker_id}'s work remains unrated (HIT {self.wizard.hit_id})"
             )
 
     def review_user(self) -> bool:
