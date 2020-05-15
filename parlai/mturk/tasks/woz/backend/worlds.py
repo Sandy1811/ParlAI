@@ -654,20 +654,17 @@ class WOZWorld(MTurkTaskWorld):
             )
 
     def review_user(self) -> bool:
-        if self._num_user_utterances < 2:
-            self.user.reject_work("You wrote fewer than 2 messages")
+        if not self._answers_by_user:
             return False
 
         self.user.approve_work()
         return True
 
     def review_wizard(self) -> bool:
-        if self._num_wizard_utterances < 2:
-            self.wizard.reject_work("You wrote fewer than 2 messages")
+        if not self._answers_by_wizard:
             return False
 
         if not self._wizard_has_used_kb:
-            self.wizard.reject_work("You did not use the knowledge base interface")
             return False
 
         self.wizard.approve_work()

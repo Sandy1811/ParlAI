@@ -50,6 +50,9 @@ def main():
     worker_roles = {}
     connect_counter = 0
 
+    # On disconnect, use STATUS_PARTNER_DISCONNECT_EARLY if fewer messages than this
+    opt["min_messages"] = 7
+
     try:
         mturk_manager.start_new_run()
 

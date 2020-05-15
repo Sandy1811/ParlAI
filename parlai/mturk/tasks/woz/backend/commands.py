@@ -759,8 +759,8 @@ def command_from_message(
         return None
 
     if is_disconnected(message):
-        if isinstance(sender, MTurkAgent):
-            sender.reject_work(reason="It looks like you disconnected without finishing the task.")
+        # if isinstance(sender, MTurkAgent):
+        #     sender.reject_work(reason="It looks like you disconnected without finishing the task.")
         raise RuntimeError("Disconnected")
 
     text = message.get("text", "")
