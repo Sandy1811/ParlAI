@@ -16,7 +16,7 @@ DEFAULT_SCHEMA_URLS = {
     "followup_doctor_appointment": "https://i.imgur.com/OdjFGll.jpg",
     "weather": "https://i.imgur.com/yVozOzY.jpg",
     "party_rsvp": "https://i.imgur.com/4Pz33hK.jpg",
-    "spaceship_life_support": "https://i.imgur.com/41KMo2W.jpg",
+    "spaceship_life_support": "https://i.imgur.com/Ts0fkey.jpg",
     "spaceship_access_codes": "https://i.imgur.com/FmuNL4M.jpg",
     "book_doctor_appointment": "https://i.imgur.com/J5zxJmO.jpg",
     "restaurant_search": "https://i.imgur.com/wnmwuOT.jpg",
