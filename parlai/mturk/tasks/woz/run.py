@@ -31,7 +31,7 @@ def main():
     opt.update(task_config)
 
     # On disconnect, use STATUS_PARTNER_DISCONNECT_EARLY if fewer messages than this
-    opt["min_messages"] = 5
+    opt["min_messages"] = 20
 
     mturk_agent_ids = ["Wizard", "User"]
     mturk_manager = MTurkManager(opt=opt, mturk_agent_ids=mturk_agent_ids, use_db=True)
