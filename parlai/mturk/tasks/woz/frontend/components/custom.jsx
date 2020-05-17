@@ -355,7 +355,7 @@ function OnboardingView(props) {
     <div id="task-description" style={{ fontSize: '16px' }}>
       <h1>AI Dialogues</h1>
       <hr style={{ borderTop: '1px solid #555' }} />
-      <div>{taskDescription}</div>
+      <div style={{ whiteSpace: 'pre-wrap' }}>{taskDescription}</div>
       <br />
       <div>
         At the end of this dialogue, you will have to judge if the {other_agent}
