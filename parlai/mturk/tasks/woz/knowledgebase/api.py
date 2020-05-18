@@ -334,7 +334,10 @@ def bank_balance(bank_api, constraints: Dict[Text, Any]):
     if not all(e in constraints for e in req1) and not all(e in constraints for e in req2):
       return dict(Message="You must provide either AccountNumber/FullName/PIN or FullName/DateOfBirth/SecurityAnswer1/SecurityAnswer2. We cannot authenticate the user otherwise."), -1
 
-    row, count = bank_api.sample({})
+    if "BankName" in constraints:
+        row, count = bank_api.sample({"BankName": constraints["BankName"]})
+    else:
+        row, count = bank_api.sample({})
     return row._settings, -1
 
 

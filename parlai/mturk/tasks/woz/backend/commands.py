@@ -104,6 +104,7 @@ DOMAINS_OF_TASKS = {
     "spaceship_life_support": "spaceship",
     "trip_directions": "trip",
     "trip_traffic": "trip",
+    "trivia": "trivia",
     "weather": "weather",
 }
 
@@ -323,7 +324,7 @@ class SetupCommand(BackendCommand):
                 self._wizard_capabilities.append(
                     {
                         "Task": api_name,
-                        "Domain": DOMAINS_OF_TASKS.get(api_name),
+                        "Domain": DOMAINS_OF_TASKS.get(api_name, "UNDEFINED"),
                         "SchemaURL": schema_url,
                         # "FormDescription": api_description,
                     }
