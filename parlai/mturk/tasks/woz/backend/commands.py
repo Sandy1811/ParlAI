@@ -296,6 +296,7 @@ class SetupCommand(BackendCommand):
         self._command_name = all_constants()["back_to_front"]["command_setup"]
         image_not_found_url = "https://stockpictures.io/wp-content/uploads/2020/01/image-not-found-big.png"
 
+        self._is_happy = os.path.basename(scenario_file_name).startswith("happy")
         self._wizard_capabilities = []
 
         try:
@@ -370,6 +371,10 @@ class SetupCommand(BackendCommand):
     @property
     def api_names(self) -> List[Text]:
         return list(self._form_description.keys())
+
+    @property
+    def is_happy(self):
+        return self._is_happy
 
     @property
     def message(self) -> Dict[Text, Any]:

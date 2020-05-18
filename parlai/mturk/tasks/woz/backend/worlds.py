@@ -260,6 +260,7 @@ class WOZWorld(MTurkTaskWorld):
             Text
         ] = None  # The api of the selected knowledge base item
         self._api_names: Optional[List[Text]] = None
+        self._scenario_is_happy: bool = False
 
         self._user_task_description = None
         self._questions_to_user = None
@@ -292,6 +293,7 @@ class WOZWorld(MTurkTaskWorld):
                 self._questions_to_wizard = setup_command.completion_questions
                 self._api_names = setup_command.api_names
                 self._selected_api = self._api_names[0]
+                self._scenario_is_happy = setup_command.is_happy
 
                 base_dir = os.path.join(PROJECT_PATH, "resources")
                 self._suggestion_module = WizardSuggestion(
@@ -690,7 +692,7 @@ class WOZWorld(MTurkTaskWorld):
             )
         ] if self._questions_to_wizard and self._answers_by_wizard else []
         return {
-            "FORMAT-VERSION": 4,
+            "FORMAT-VERSION": 5,
             "Scenario": {
                 "Domains": sorted(
                     list({c.get("Domain") for c in self._wizard_capabilities})
@@ -698,6 +700,7 @@ class WOZWorld(MTurkTaskWorld):
                 "UserTask": self._user_task_description,
                 "WizardTask": self._wizard_task_description,
                 "WizardCapabilities": self._wizard_capabilities,
+                "Happy": self._scenario_is_happy
             },
             "Events": self.events,
             "WizardWorkerID": (
