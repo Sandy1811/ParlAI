@@ -7,7 +7,7 @@
 TUTORIAL_URL = "https://youtu.be/L7QpscLPTFM"
 
 task_config = {}
-version = "v5"
+version = "v5.1"
 
 """A short and descriptive title about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
