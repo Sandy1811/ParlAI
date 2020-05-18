@@ -9,7 +9,7 @@ import string
 from typing import Optional, Text
 
 from parlai.mturk.tasks.woz.backend.commands import DEFAULT_USER_INSTRUCTION
-from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
+from parlai.mturk.tasks.woz.task_config import TUTORIAL_URL
 
 template_dir = 'templates/'
 scenario_dir = 'scenarios/'
@@ -261,7 +261,7 @@ if __name__ == '__main__':
             )
             new_scenario['instructions']['Wizard']['task_description'] = dc.populate(
                 new_scenario['instructions']['Wizard']['task_description'].replace(
-                    "@wizard-tutorial-url", WIZARD_TUTORIAL_URL
+                    "@wizard-tutorial-url", TUTORIAL_URL
                 )
             )
             if "linear_guide" in new_scenario['instructions']['User']:

@@ -45,7 +45,7 @@ from parlai.mturk.tasks.woz.backend.workers import (
     WorkerDatabase,
     TASK_LEVEL_SINGLE_HAPPY,
 )
-from parlai.mturk.tasks.woz.task_config import WIZARD_TUTORIAL_URL
+from parlai.mturk.tasks.woz.task_config import TUTORIAL_URL
 
 
 TURN_TIME_LIMIT = (
@@ -180,7 +180,10 @@ class RoleOnboardWorld(MTurkOnboardWorld):
     def parley(self):
         onboard_msg = {
             "id": "MTurk System",
-            "text": f"Hello {self.mturk_agent.worker_id}. Please send any message to get paired with a co-worker (this might take some time).",
+            "text": f"Hello {self.mturk_agent.worker_id}. If you want to refresh your memory about this task, here is the tutorial video: {TUTORIAL_URL} . "
+                    f"Please send any message to get paired with a co-worker (this might take some time)."
+                    f""
+                    f"P.S.: We're very pleased with the dialogues we've seen so far. Great job everyone! ",
         }
         self.mturk_agent.observe(onboard_msg)
         act = self.mturk_agent.act(timeout=self.max_onboard_time)

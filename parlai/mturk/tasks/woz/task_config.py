@@ -4,10 +4,10 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-WIZARD_TUTORIAL_URL = "https://youtu.be/USrWF1ZyNWw"
+TUTORIAL_URL = "https://youtu.be/L7QpscLPTFM"
 
 task_config = {}
-version = "v4"
+version = "v5"
 
 """A short and descriptive title about the kind of task the HIT contains.
 On the Amazon Mechanical Turk web site, the HIT title appears in search results,
@@ -38,7 +38,9 @@ task_config['frontend_version'] = 1
 intro_test = f"""To enter this task, you need a qualification from the 'AI Dialogues - Stage I' task.
 
 In this task you will take one of two roles: You could be a 'user' who wants to achieve some goal, 
-or, alternatively, you could take the role of an 'AI assistant' that helps the user achieve his/her goal."""
+or, alternatively, you could take the role of an 'AI assistant' that helps the user achieve his/her goal.
+
+In case you want to re-watch the video tutorial: {TUTORIAL_URL}"""
 
 task_config['task_description'] = intro_test
 task_config['hit_description'] = intro_test
