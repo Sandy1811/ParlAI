@@ -1,0 +1,42 @@
+{
+  "title": "Free Multitask",
+  "version": 1,
+  "api_names": [
+    "restaurant_search",
+    "restaurant_reserve",
+    "party_rsvp",
+    "trivia"
+  ],
+  "db": "ride.json",
+  "instructions": {
+    "User": {
+      "task_descriptions": [
+        "Come up with your own scenario!\n\nAbout you:\n- Your name: `CustomerName@restaurant`\n- Your friend (?) `HostName@schedule`'s party takes place at `PartyName@schedule`\n- Today is `Day@schedule` the `Date@plane` of June, `Time@restaurant`\n\n The AI Assistant can handle:\n- Restaurant search and reservation\n- Party RSVP messages\n- Trivia game"
+      ],
+      "linear_guide": [
+        "Use your imagination to generate a conversation about the topics 'Restaurant' and 'Party RSVP' (in any order), as shown on the left. You may also play up to two rounds of trivia with the assistant - just don't start with that. ",
+        null,
+        null,
+        "You may attempt to do some smalltalk with the AI Assistant at any time.",
+        null,
+        null,
+        "If you haven't yet, it's time to change topic. You can also go back and forth between topics.",
+        "If it makes sense, use some negations ('I don't want', or 'anything but ...', etc.)",
+        null,
+        "Keep going until you've covered all the topics (restaurant and party RSVP). The conversation should continue at least until the last instruction is given.",
+        "If you like, you can ask for a game of trivia at any point. But don't play more than two rounds.",
+        null,
+        "Keep going :) - don't forget some smalltalk. Perhaps say something related to the first topic you talked about.",
+        null,
+        null,
+        "Almost there. A few more turns.",
+        null,
+        null,
+        "Ok, once you've touched on all the topics ('restaurant' and 'party') and engaged in some smalltalk, you can bring the conversation to a natural close."
+      ]
+    },
+    "Wizard": {
+      "task_description": "Follow the flow charts and help the user. Assume:\n\n- Today is `Day@schedule` the `Date@plane` of June, `Time@restaurant`"
+    }
+  }
+}

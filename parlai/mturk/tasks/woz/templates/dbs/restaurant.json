@@ -48,7 +48,7 @@
   {
     "Name": "CustomerName",
     "Type": "Categorical",
-    "Categories": ["Mark", "John", "Ben", "Angela", "Alexis"]
+    "Categories": ["Mark", "John", "Ben", "Angela", "Alexa", "Susan"]
   },
   {
     "Name": "Location",

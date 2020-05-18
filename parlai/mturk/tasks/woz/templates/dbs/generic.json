@@ -63,5 +63,15 @@
       "A bunch of dangerous animals broke out of the local zoo.",
       "A truck loaded with highly toxic chemicals crashed and the whole area has to be evacuated."
     ]
+  },
+  {
+    "Name": "Situation",
+    "Type": "Categorical",
+    "Categories": [
+      "You are in a cafe with a friend, making plans.",
+      "You are at the Hospital, either to visit someone, to work there, or as a patient.",
+      "You are on a train.",
+      "You are at home."
+    ]
   }
 ]

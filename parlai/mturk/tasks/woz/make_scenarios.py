@@ -145,7 +145,7 @@ easy = [
     'happy_spaceship_access_codes.json',
     'happy_ride_change.json',
     'happy_ride_status.json',
-]  # 6
+]
 medium = [
     'happy_party_rsvp.json',
     'happy_restaurant_search.json',
@@ -160,14 +160,14 @@ medium = [
     'happy_plane_reserve.json',
     'happy_book_ride.json',
     'happy_book_doctor_appointment.json',
-]  # 15
+]
 hard = [
     'happy_trivia.json',
     'happy_bank_fraud_report.json',
     'happy_schedule_meeting.json',
     'happy_bank_balance.json',
     'happy_trip_directions.json',
-]  # 7
+]
 
 easy_unhappy = [
     'unhappy_weather-1.json',
@@ -194,19 +194,47 @@ hard_unhappy = [
     'unhappy_hotel_search-1.json'
 ]
 
-counts = {}
-for e in easy:
-    counts[e] = 25
-for e in medium:
-    counts[e] = 30
-for e in hard:
-    counts[e] = 45
-for e in easy_unhappy:
-    counts[e] = 40
-for e in medium_unhappy:
-    counts[e] = 60
-for e in hard_unhappy:
-    counts[e] = 80
+MIXED = False
+
+if not MIXED:
+    counts = {}
+    for e in easy:
+        counts[e] = 25
+    for e in medium:
+        counts[e] = 30
+    for e in hard:
+        counts[e] = 45
+    for e in easy_unhappy:
+        counts[e] = 40
+    for e in medium_unhappy:
+        counts[e] = 60
+    for e in hard_unhappy:
+        counts[e] = 80
+
+    # counts = {
+    #     "happy_ride_change.json": 10,
+    #     "happy_ride_status.json": 10,
+    #     "happy_apartment_search.json": 10,
+    #     "happy_schedule_meeting.json": 10,
+    #     "happy_restaurant_search.json": 10,
+    #     "happy_followup_doctor_appointment.json": 10,
+    #     "happy_restaurant_reserve.json": 1,
+    #     "happy_plane_search.json": 1,
+    #     "happy_bank_balance.json": 1,
+    #     "happy_hotel_service_request.json": 1,
+    #     "happy_spaceship_access_codes.json": 1,
+    #     "happy_spaceship_life_support.json": 1,
+    #     "happy_hotel_search.json": 1,
+    # }
+else:
+    counts = {
+        "mix_party+restaurant+weather.json": 1,
+        "mix_free-1.json": 1,
+        "mix_free-2.json": 1,
+        "mix_free-3.json": 1,
+        "mix_free-4.json": 1,
+        "mix_free-5.json": 1
+    }
 
 
 if __name__ == '__main__':
