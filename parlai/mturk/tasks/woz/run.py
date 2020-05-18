@@ -1,4 +1,5 @@
 import os
+import random
 
 from parlai import PROJECT_PATH
 from parlai.core.params import ParlaiParser
@@ -116,6 +117,8 @@ def main():
             opt.get("scenario_list") + ".txt",
         )
         scenarios_list = [e.strip() for e in open(scenarios_list_fn).readlines()]
+        if not opt["is_sandbox"]:
+            random.shuffle(scenarios_list)
         scenario_index: int = 0
 
         def run_conversation(mturk_manager, opt, workers):
