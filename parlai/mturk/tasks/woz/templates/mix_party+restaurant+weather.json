@@ -9,29 +9,18 @@
     "restaurant_reserve"
   ],
   "db": "ride.json",
-  "schema_urls": {
-    "party_plan": "https://i.imgur.com/kyFnBsZ.jpg",
-    "restaurant_search": "https://i.imgur.com/wnmwuOT.jpg",
-    "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png"
-  },
   "instructions": {
     "User": {
-      "completion_requirements": [
-        "The MTurk Assistant says you can end the conversation."
-      ],
-      "completion_questions": [
-        "Did the assistant stay calm and helpful throughout the dialogue?"
-      ],
       "task_descriptions": [
-        "Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot (not the assistant) has told you to do so. "
+        "You (`HostName-1@schedule`) and your friend `HostName-2@schedule` want to organize a birthday party on `Day@schedule`. You expect `SizeLimit@schedule` guests to come."
       ],
       "linear_guide": [
-        "You (`HostName-1@schedule`) and your friend `HostName-2@schedule` want to organize a birthday party on `Day@schedule`. You take out your laptop and open your newly-installed personal AI assistant app. Maybe it can help? Say hello and ask if it can help you plan the party.",
+        "Maybe the AI Assistant can help? Say hello and ask if it can help you plan the party.",
         "`HostName-2@schedule` says: 'I think the `PartyName@schedule` is quite nice'.",
-        "FYI: You expect about `SizeLimit@schedule` people to come.",
-        "It occurs to you that if the weather is nice, you might just have the party outside somewhere. Ask your assistant what the weather will be like on that weekend.",
-        "`HostName-2@schedule` says: 'Yeah, actually, if the weather is good, we could just go out to the park and book a restaurant for the evening'. You agree. So depending on the weather, either continue searching / booking the venue, or ask your assistant to help you find and book a restaurant for `Day@schedule` evening.",
         null,
+        "It occurs to you that if the weather is nice, you might just have the party outside somewhere. Ask your assistant what the weather will be like on `Day@schedule`.",
+        "`HostName-2@schedule` says: 'Yeah, actually, if the weather is good, we could just go out to the park and book a restaurant for the evening'. You agree. So depending on the weather, either continue searching / booking the venue, or ask your assistant to help you find and book a restaurant for `Day@schedule` evening.",
+        "Note: You are located in the `Location@restaurant` of town, which you may or may not take into account if you search for a restaurant.",
         "When the question comes up: you both like `Food-1@restaurant` and `Food-2@restaurant`, but no `Food-3@restaurant`.",
         null,
         null,
@@ -39,13 +28,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Follow the flow charts and help the user. (You can find the single-task video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",
-      "completion_requirements": ["The user has said goodbye."],
-      "completion_questions": [
-        "Did the user change his/her mind about what he/she wants at any time?",
-        "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
-        "Where you unsure about what to do at any time? If yes, send us a mail and let us know how we can improve the task."
-      ]
+      "task_description": "Follow the flow charts and help the user. Note: If the user already knows a restaurant name, use 'restaurant reserve', otherwise use 'restaurant search'."
     }
   }
 }
