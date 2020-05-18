@@ -11,17 +11,10 @@
   "db": "ride.json",
   "schema_urls": {
     "party_rsvp": "https://i.imgur.com/4Pz33hK.jpg",
-    "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png",
-    "book_doctor_appointment": "https://i.imgur.com/dgFAhjc.jpg"
+    "restaurant_reserve": "https://i.imgur.com/1YDWRLf.png"
   },
   "instructions": {
     "User": {
-      "completion_requirements": [
-        "The MTurk Assistant says you can end the conversation."
-      ],
-      "completion_questions": [
-        "Did the assistant stay calm and helpful throughout the dialogue?"
-      ],
       "task_descriptions": [
         "Follow the instructions and comments of the MTurk bot. Do not end the dialogue before the MTurk bot has told you to do so. "
       ],
@@ -45,13 +38,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Follow the flow charts and help the user. (You can find the single-task video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",
-      "completion_requirements": ["The user has said goodbye."],
-      "completion_questions": [
-        "Did the user change his/her mind about what he/she wants at any time?",
-        "Did the user become aggressive or annoyed during the dialogue? (Note: some users may be instructed to be annoying.)",
-        "Where you unsure about what to do at any time? If yes, send us a mail and let us know how we can improve the task."
-      ]
+      "task_description": "Follow the flow charts and help the user. (You can find the single-task video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)"
     }
   }
 }

@@ -3,9 +3,6 @@
   "db": "spaceship.json",
   "version": 1,
   "api_names": ["spaceship_life_support"],
-  "schema_urls": {
-    "spaceship_life_support": "https://i.imgur.com/41KMo2W.jpg"
-  },
   "instructions": {
     "User": {
       "task_descriptions": [

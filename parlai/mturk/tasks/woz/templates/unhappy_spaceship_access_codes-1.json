@@ -4,7 +4,6 @@
   "version": 1,
   "api_names": ["spaceship_access_codes"],
   "schema_urls": {
-    "spaceship_life_support": "https://i.imgur.com/41KMo2W.jpg",
     "spaceship_access_codes": "https://i.imgur.com/FmuNL4M.jpg"
   },
   "instructions": {
