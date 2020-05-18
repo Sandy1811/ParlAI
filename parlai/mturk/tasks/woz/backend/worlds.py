@@ -285,31 +285,31 @@ class WOZWorld(MTurkTaskWorld):
         try:
             if self._stage == SETUP_STAGE:
                 try:
-                    setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
+                    wizard_setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
                 except FileNotFoundError as e:
                     print_and_log(100, f"ERROR: Missing scenario file: {e}", True)
                     self._scenario = "happy_trivia_v0"
-                    setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
-                self._wizard_task_description = setup_command.task_description
-                self._wizard_capabilities = setup_command.capabilities
+                    wizard_setup_command = SetupCommand(scenario=self._scenario, role="Wizard")
+                self._wizard_task_description = wizard_setup_command.task_description
+                self._wizard_capabilities = wizard_setup_command.capabilities
                 assert self._wizard_capabilities
-                self._questions_to_wizard = setup_command.completion_questions
-                self._api_names = setup_command.api_names
+                self._questions_to_wizard = wizard_setup_command.completion_questions
+                self._api_names = wizard_setup_command.api_names
                 self._selected_api = self._api_names[0]
-                self._scenario_is_happy = setup_command.is_happy
+                self._scenario_is_happy = wizard_setup_command.is_happy
 
                 base_dir = os.path.join(PROJECT_PATH, "resources")
                 self._suggestion_module = WizardSuggestion(
                     scenario_list=self._api_names, resources_dir=base_dir
                 )
 
-                self.wizard.observe(setup_command.message)
+                self.wizard.observe(wizard_setup_command.message)
 
-                setup_command = SetupCommand(scenario=self._scenario, role="User")
-                self._questions_to_user = setup_command.completion_questions
-                self._user_task_description = setup_command.task_description
-                self._user_linear_guide = setup_command.user_linear_guide
-                self.user.observe(setup_command.message)
+                user_setup_command = SetupCommand(scenario=self._scenario, role="User")
+                self._questions_to_user = user_setup_command.completion_questions
+                self._user_task_description = user_setup_command.task_description
+                self._user_linear_guide = user_setup_command.user_linear_guide
+                self.user.observe(user_setup_command.message)
 
                 if self.overtime_bonus(preview=True) > 0.:
                     send_mturk_message(
@@ -322,7 +322,7 @@ class WOZWorld(MTurkTaskWorld):
                     )
 
                 send_mturk_message(
-                    f"Your task: {setup_command.message.get('task_description')}",
+                    f"Your task: {wizard_setup_command.message.get('task_description')}",
                     self.wizard,
                 )
 
