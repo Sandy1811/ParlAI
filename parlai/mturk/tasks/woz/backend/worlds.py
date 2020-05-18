@@ -301,24 +301,27 @@ class WOZWorld(MTurkTaskWorld):
                 )
 
                 self.wizard.observe(setup_command.message)
-                send_mturk_message(
-                    f"Your task: {setup_command.message.get('task_description')}",
-                    self.wizard,
-                )
-
-                if len(self._api_names) > 1:
-                    send_mturk_message(
-                        f"This is a special task, where you (the AI assistant) have more capabilities. "
-                        f"You can select different task-interfaces with the tabs on the left. "
-                        f"Still try to stick to at least one of the flow charts whenever possible. ",
-                        self.wizard,
-                    )
 
                 setup_command = SetupCommand(scenario=self._scenario, role="User")
                 self._questions_to_user = setup_command.completion_questions
                 self._user_task_description = setup_command.task_description
                 self._user_linear_guide = setup_command.user_linear_guide
                 self.user.observe(setup_command.message)
+
+                if self.overtime_bonus(preview=True) > 0.:
+                    send_mturk_message(
+                        f"This instruction set is particularly long, so if you complete it we'll pay a bonus of {self.overtime_bonus(preview=True)}. (For technical reasons, this automatic bonus will not work if you or your partner disconnects early.)",
+                        self.user,
+                    )
+                    send_mturk_message(
+                        f"This instruction set is particularly long, so if you complete it we'll pay a bonus of {self.overtime_bonus(preview=True)}. (For technical reasons, this automatic bonus will not work if you or your partner disconnects early.)",
+                        self.wizard,
+                    )
+
+                send_mturk_message(
+                    f"Your task: {setup_command.message.get('task_description')}",
+                    self.wizard,
+                )
 
                 self.tell_workers_to_start()
                 self.num_turns = 0
@@ -655,9 +658,23 @@ class WOZWorld(MTurkTaskWorld):
                 f"Wizard {self.wizard.worker_id}'s work remains unrated (HIT {self.wizard.hit_id})"
             )
 
+    def overtime_bonus(self, preview: bool = False) -> float:
+        if self._user_linear_guide and len(self._user_linear_guide) > 10 and (self._num_user_utterances >= len(self._user_linear_guide) or preview):
+            minutes_per_turn = 0.6
+            hourly_salary = 10.00
+            bonus = (len(self._user_linear_guide) - 10) * minutes_per_turn * hourly_salary / 60.
+            return round(bonus, ndigits=2)
+        else:
+            return 0.00
+
     def review_user(self) -> bool:
         if not self._answers_by_user:
             return False
+
+        bonus = self.overtime_bonus()
+        if bonus > 0:
+            print_and_log(100, f"Paying overtime bonus of ${bonus} to {self.user.worker_id}.", True)
+            self.user.pay_bonus(bonus, reason="This instruction set was particularly long, so we pay you overtime.")
 
         self.user.approve_work()
         return True
@@ -668,6 +685,11 @@ class WOZWorld(MTurkTaskWorld):
 
         if not self._wizard_has_used_kb:
             return False
+
+        bonus = self.overtime_bonus()
+        if bonus > 0:
+            print_and_log(100, f"Paying overtime bonus of ${bonus} to {self.user.worker_id}.")
+            self.user.pay_bonus(bonus, reason="This instruction set was particularly long, so we pay you overtime.")
 
         self.wizard.approve_work()
         return True
