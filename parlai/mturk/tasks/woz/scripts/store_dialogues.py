@@ -53,9 +53,9 @@ if __name__ == '__main__':
     with open(os.path.join(destination, "README.md"), "w+", encoding="utf-8") as file:
         file.write(f"# {run_name}\n\n")
         file.write(f"## Metadata\n\n")
-        file.write("Domains:\n")
+        file.write("\nDomains:\n")
         file.writelines([f"* {t}\n" for t in sorted(list(domains))])
-        file.write("Tasks:\n")
+        file.write("\nTasks:\n")
         file.writelines([f"* {t}\n" for t in sorted(list(tasks))])
-        file.write("Workers:\n")
+        file.write("\nWorkers:\n")
         file.writelines([f"* {t}\n" for t in sorted(list(workers))])
