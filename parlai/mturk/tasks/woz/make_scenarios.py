@@ -194,7 +194,7 @@ hard_unhappy = [
     'unhappy_hotel_search-1.json'
 ]
 
-MIXED = False
+MIXED = True
 
 if not MIXED:
     counts = {}

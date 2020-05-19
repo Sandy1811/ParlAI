@@ -11,10 +11,10 @@
   "instructions": {
     "User": {
       "task_descriptions": [
-        "Come up with your own scenario!\n\nAbout you:\n- Your name: `FullName@bank`\n- Your bank account: `AccountNumber@bank` at `BankName@bank`, but you don't know your PIN\n- Your date of birth is `DOB@bank`\n- Your mother's maiden name is `Mother@bank`\n- Your childhood pet is `Pet@bank`\n- Today is `Day@schedule` the `Date@plane` of June, `Time@restaurant`\n\n The AI Assistant can handle:\n- Checking bank balance\n- Filing a bank fraud report\n- Reserving a table at a restaurant (e.g. `Name-1@restaurant` or `Name-2@restaurant`)\n- A game of trivia"
+        "Come up with your own scenario!\n\nAbout you:\n- Your name: `FullName@bank`\n- Your bank account: `AccountNumber@bank` at `BankName@bank`, but you don't know your PIN\n- Your date of birth is `DOB@bank`\n- Your mother's maiden name is `Mother@bank`\n- Your childhood pet is `Pet@bank`\n- Today is `Day@schedule` the `Date@plane` of June, `Time@restaurant`\n\n The AI Assistant can handle:\n- Checking bank balance\n- Filing a bank fraud report\n- Reserving a table at a restaurant (e.g. `Name-1@restaurant` or `Name-2@restaurant`) for today\n- A game of trivia"
       ],
       "linear_guide": [
-        "Use your imagination to generate a conversation about the topics 'Restaurant', 'Bank balance checking' and 'Filing a bank fraud report' (in any order), as shown on the left. You may also play up to two rounds of trivia with the assistant - just don't start with that. ",
+        "Use your imagination to generate a conversation about the topics 'Restaurant', 'Bank balance checking' and 'Filing a bank fraud report' (in any order), as shown on the left. You may also play up to two rounds of trivia with the assistant. ",
         null,
         null,
         "You may attempt to do some smalltalk with the AI Assistant at any time.",
