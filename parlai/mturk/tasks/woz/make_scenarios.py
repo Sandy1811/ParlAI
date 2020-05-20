@@ -229,11 +229,9 @@ if not MIXED:
 else:
     counts = {
         "mix_party+restaurant+weather.json": 1,
-        "mix_free-1.json": 1,
-        "mix_free-2.json": 1,
-        "mix_free-3.json": 1,
-        "mix_free-4.json": 1,
-        "mix_free-5.json": 1
+        "mix_free-restaurant_reserve+bank_balance+fraud+weather-1.json": 1,
+        "mix_free-restaurant_reserve+bank_balance+fraud+weather-2.json": 1,
+        "mix_free-restaurant_reserve+bank_balance+weather.json": 1
     }
 
 
