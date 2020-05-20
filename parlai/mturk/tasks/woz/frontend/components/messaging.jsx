@@ -139,7 +139,7 @@ function KnowledgeBaseMessage(props) {
       if (typeof value === 'boolean') {
         value = value ? 'yes' : 'no';
       } else if (Array.isArray(value)) {
-        if (value.length > 3) {
+        if (value.length > 2 || key === 'Walking Instructions') {
           //           ab = (key === 'Walking Instructions') ? 'a' : 'b';
           // Long lists should be shown as numbered lists
           return (
