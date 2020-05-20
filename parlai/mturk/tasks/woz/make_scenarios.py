@@ -228,6 +228,7 @@ if not MIXED:
     # }
 else:
     counts = {
+        "mix_free-ride_change+status+party_rsvp.json": 1,
         "mix_free-hotel_search+reserve+weather.json": 1,
         "mix_party+restaurant+weather.json": 1,
         "mix_free-restaurant_reserve+bank_balance+fraud+weather-1.json": 1,
