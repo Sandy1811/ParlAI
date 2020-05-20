@@ -42,16 +42,18 @@ def main():
     # with set_onboard_function(onboard_function=run_onboard)
     mturk_manager.set_onboard_function(onboard_function=None)
 
+    required_qualification_id = mturk_utils.find_or_create_qualification(
+        "ReadyForAIDialoguesTutorial2",
+        "If owned, the worker can enter Stage III of the AI Dialogues tasks.",
+        opt['is_sandbox']
+    )
     qualification_id = mturk_utils.find_or_create_qualification(
-        "PassedAIDialoguesTutorial1",
-        "If owned, the worker has passed the AI Dialogues Tutorial 1. The value corresponds to the number of hints that the worker used.",
+        "PassedAIDialoguesTutorial2",
+        "If owned, the worker has passed the AI Dialogues Tutorial 2. The value corresponds to the number of hints that the worker used.",
         opt['is_sandbox']
     )
     qualification_manager = MTurkQualificationManager()
-    # if opt["wizard_intro"]:
-    qualification_manager.require_locales(["US"])
-    qualification_manager.require_min_approved_hits(10000)
-    qualification_manager.require_min_approval_rate(98)
+    qualification_manager.require_existence(required_qualification_id)
 
     try:
         # Initialize run information
