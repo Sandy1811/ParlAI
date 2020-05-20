@@ -47,3 +47,5 @@ Your submission will be REJECTED if you need more than 8 hints.
 
 Note: The number of HITs for the various stages is limited and not all the stages will be available at all times. 
 '''
+
+task_config["assignment_duration_in_seconds"] = 240 * 60
