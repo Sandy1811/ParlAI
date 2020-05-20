@@ -27,7 +27,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Let the user play a trivia game. Query for and ask the questions until the user wants to stop."
+      "task_description": "Let the user play a trivia game. Query for and ask the questions until the user wants to stop. Note: Please DO NOT CHANGE THE COMPARATOR for the question number, i.e. leave it as 'is_equal_to'. "
     }
   }
 }
