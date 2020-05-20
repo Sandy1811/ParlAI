@@ -228,14 +228,14 @@ if not MIXED:
     # }
 else:
     counts = {
-        "mix_free-plane_search+reserve+weather.json": 1,
-        "mix-trip_directions+trivia.json": 1,
-        "mix_free-ride_change+status+party_rsvp.json": 1,
-        "mix_free-hotel_search+reserve+weather.json": 1,
-        "mix_party+restaurant+weather.json": 1,
-        "mix_free-restaurant_reserve+bank_balance+fraud+weather-1.json": 1,
-        "mix_free-restaurant_reserve+bank_balance+fraud+weather-2.json": 1,
-        "mix_free-restaurant_reserve+bank_balance+weather.json": 1
+        "mix_free-plane_search+reserve+weather.json": 20,
+        "mix-trip_directions+trivia.json": 20,
+        "mix_free-ride_change+status+party_rsvp.json": 10,
+        "mix_free-hotel_search+reserve+weather.json": 20,
+        "mix_party+restaurant+weather.json": 20,
+        "mix_free-restaurant_reserve+bank_balance+fraud+weather-1.json": 20,
+        "mix_free-restaurant_reserve+bank_balance+fraud+weather-2.json": 20,
+        "mix_free-restaurant_reserve+bank_balance+weather.json": 20
     }
 
 

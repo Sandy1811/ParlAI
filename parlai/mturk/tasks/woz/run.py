@@ -45,8 +45,13 @@ def main():
         "If owned, the worker has passed the AI Dialogues Tutorial 1. The value corresponds to the number of hints that the worker used.",
         opt['is_sandbox'],
     )
+    has_passed_tutorial_2 = mturk_utils.find_or_create_qualification(
+        "PassedAIDialoguesTutorial2",
+        "If owned, the worker has passed the AI Dialogues Tutorial 2. The value corresponds to the number of hints that the worker used.",
+        opt['is_sandbox']
+    )
     qualification_manager = MTurkQualificationManager()
-    qualification_manager.require_existence(has_passed_tutorial_1)
+    qualification_manager.require_existence(has_passed_tutorial_2)    # ToDo: Make this an arg switch
     print("Required qualifications:")
     for q in qualification_manager.qualifications:
         print(f" * {q}")
