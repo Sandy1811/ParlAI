@@ -181,9 +181,7 @@ class RoleOnboardWorld(MTurkOnboardWorld):
         onboard_msg = {
             "id": "MTurk System",
             "text": f"Hello {self.mturk_agent.worker_id}. If you want to refresh your memory about this task, here is the tutorial video: {TUTORIAL_URL} . "
-                    f"Please send any message to get paired with a co-worker (this might take some time)."
-                    f" \n \n"
-                    f"P.S.: We're very pleased with the dialogues we've seen so far. Great job everyone! ",
+                    f"Please send any message to get paired with a co-worker (this might take some time).",
         }
         self.mturk_agent.observe(onboard_msg)
         act = self.mturk_agent.act(timeout=self.max_onboard_time)
