@@ -213,6 +213,8 @@ function ReviewForm(props) {
   const completionQuestions = setupMessage.completion_questions;
   const other_agent = props.agent_id === 'User' ? 'assistant ' : 'user ';
 
+  const grumpy_note = props.agent_id === 'User' ? '' : 'Please note that users are sometimes INSTRUCTED to be annoying or angry.'
+
   return (
     <form
       onSubmit={event => {
@@ -237,7 +239,7 @@ function ReviewForm(props) {
       <br />
       <div>
         Please answer the following questions (it might depend on your answers
-        if your partner's work gets accepted).
+        if your partner's work gets accepted). {grumpy_note}
         <br />
         <div style={{ marginLeft: 20 }}>
           {completionQuestions.map((q, i) => {
