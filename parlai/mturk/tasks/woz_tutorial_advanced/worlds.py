@@ -45,6 +45,8 @@ class TutorialWorld1(MTurkTaskWorld):
         self.hints_needed = 0
         self._worker_id = mturk_agent.worker_id
         self._assignment_id = mturk_agent.assignment_id
+        self._bonus = 0.0
+        self._reason = None
 
     def parley(self) -> None:
         self.mturk_agent.observe(
@@ -220,7 +222,9 @@ class TutorialWorld1(MTurkTaskWorld):
                         f"'AI Dialogues - Stage II (Single Task Dialogues)' and a BONUS of $0.50."
                     ).message
                 )
-                self.mturk_agent.pay_bonus(0.50, reason="You didn't need any hints!")
+                # self.mturk_agent.pay_bonus(0.50, reason="You didn't need any hints!")
+                self._bonus = 0.50
+                self._reason = "You didn't need any hints!"
                 mturk_utils.give_worker_qualification(
                     self.mturk_agent.worker_id,
                     self.qualification_id,
@@ -235,7 +239,9 @@ class TutorialWorld1(MTurkTaskWorld):
                         f"'AI Dialogues - Stage II (Single Task Dialogues)' and a BONUS of $0.25."
                     ).message
                 )
-                self.mturk_agent.pay_bonus(0.25, reason="You needed fewer than 4 hints.")
+                # self.mturk_agent.pay_bonus(0.25, reason="You needed fewer than 4 hints.")
+                self._bonus = 0.25
+                self._reason = "You needed fewer than 4 hints."
                 mturk_utils.give_worker_qualification(
                     self.mturk_agent.worker_id,
                     self.qualification_id,
@@ -323,7 +329,8 @@ class TutorialWorld1(MTurkTaskWorld):
 
     def review_work(self):
         # Can review the work here to accept or reject it
-        pass
+        if self._bonus > 0.00:
+            self.mturk_agent.pay_bonus(self._bonus, reason=self._reason)
 
     def get_custom_task_data(self):
         return {
