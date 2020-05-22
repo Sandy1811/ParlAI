@@ -673,7 +673,7 @@ class WOZWorld(MTurkTaskWorld):
             return False
 
         bonus = self.overtime_bonus()
-        if bonus > 0 and not self._is_sandbox:
+        if bonus > 0:
             print_and_log(100, f"Paying overtime bonus of ${bonus} to {self.user.worker_id}.", True)
             self.user.pay_bonus(bonus, reason="This instruction set was particularly long, so we pay you overtime.")
 
@@ -688,8 +688,8 @@ class WOZWorld(MTurkTaskWorld):
             return False
 
         bonus = self.overtime_bonus()
-        if bonus > 0 and not self._is_sandbox:
-            print_and_log(100, f"Paying overtime bonus of ${bonus} to {self.user.worker_id}.")
+        if bonus > 0:
+            print_and_log(100, f"Paying overtime bonus of ${bonus} to {self.wizard.worker_id}.", True)
             self.wizard.pay_bonus(bonus, reason="This instruction set was particularly long, so we pay you overtime.")
 
         self.wizard.approve_work()

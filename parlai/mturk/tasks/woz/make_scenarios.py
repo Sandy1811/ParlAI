@@ -235,7 +235,9 @@ else:
         "mix_party+restaurant+weather.json": 20,
         "mix_free-restaurant_reserve+bank_balance+fraud+weather-1.json": 20,
         "mix_free-restaurant_reserve+bank_balance+fraud+weather-2.json": 20,
-        "mix_free-restaurant_reserve+bank_balance+weather.json": 20
+        "mix_free-restaurant_reserve+bank_balance+weather.json": 20,
+        "mix_free-apartment+book_ride+weather.json": 30,
+        "mix_free-restaurant_search+followup_doctor+ride_change.json": 15
     }
 
 
