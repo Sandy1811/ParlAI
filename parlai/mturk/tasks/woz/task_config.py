@@ -11,7 +11,7 @@ if STAGE3:
     TUTORIAL_URL = "https://youtu.be/dd0s2Sqox6g"
 
     task_config = {}
-    version = "v2"
+    version = "v3"
 
     """A short and descriptive title about the kind of task the HIT contains.
     On the Amazon Mechanical Turk web site, the HIT title appears in search results,
