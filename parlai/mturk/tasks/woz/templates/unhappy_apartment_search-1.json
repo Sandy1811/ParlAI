@@ -20,7 +20,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Follow the flow charts and help the user. (You can find the single-task video tutorial under https://youtu.be/USrWF1ZyNWw, in case you want to watch it again.)",
+      "task_description": "Follow the flow charts and help the user. NOTE: When users give PRICE limits, you usually have to use the 'is at most' comparator, not 'is equal to'.",
       "completion_requirements": ["The user has said goodbye."],
       "completion_questions": [
         "Did the user change his/her mind about what he/she wants at any time?",

@@ -13,7 +13,7 @@
       ]
     },
     "Wizard": {
-      "task_description": "Help the user find a specific apartment."
+      "task_description": "Help the user find a specific apartment. NOTE: When users give PRICE limits, you usually have to use the 'is at most' comparator, not 'is equal to'."
     }
   }
 }
