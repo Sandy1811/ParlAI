@@ -237,7 +237,10 @@ else:
         "mix_free-restaurant_reserve+bank_balance+fraud+weather-2.json": 20,
         "mix_free-restaurant_reserve+bank_balance+weather.json": 20,
         "mix_free-apartment+book_ride+weather.json": 30,
-        "mix_free-restaurant_search+followup_doctor+ride_change.json": 15
+        "mix_free-restaurant_search+followup_doctor+ride_change.json": 15,
+        "mix_free-doctor_appointment+plane_reserve+restaurant_reserve+hotel_service.json": 40,
+        "mix_free-plane_search+schedule_meeting+party_rsvp+restaurant_reserve+hotel_service_request.json": 40,
+        "mix_free-ride_status+trip_directions+schedule_meeting+weather.json": 40
     }
 
 
