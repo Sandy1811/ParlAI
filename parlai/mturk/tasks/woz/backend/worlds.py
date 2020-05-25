@@ -309,18 +309,19 @@ class WOZWorld(MTurkTaskWorld):
                 self._user_linear_guide = user_setup_command.user_linear_guide
                 self.user.observe(user_setup_command.message)
 
-                if self.overtime_bonus(preview=True) > 0.:
-                    send_mturk_message(
-                        f"This instruction set is particularly long, so if you complete it we'll pay a bonus of ${self.overtime_bonus(preview=True):.2f}. (For technical reasons, this automatic bonus will not work if you or your partner disconnects early.)",
-                        self.user,
-                    )
-                    send_mturk_message(
-                        f"This instruction set is particularly long, so if you complete it we'll pay a bonus of {self.overtime_bonus(preview=True):.2f}. (For technical reasons, this automatic bonus will not work if you or your partner disconnects early.)",
-                        self.wizard,
-                    )
+                # if self.overtime_bonus(preview=True) > 0.:
+                #     send_mturk_message(
+                #         f"This instruction set is particularly long, so if you complete it we'll pay a bonus of ${self.overtime_bonus(preview=True):.2f}. (For technical reasons, this automatic bonus will not work if you or your partner disconnects early.)",
+                #         self.user,
+                #     )
+                #     send_mturk_message(
+                #         f"This instruction set is particularly long, so if you complete it we'll pay a bonus of {self.overtime_bonus(preview=True):.2f}. (For technical reasons, this automatic bonus will not work if you or your partner disconnects early.)",
+                #         self.wizard,
+                #     )
 
                 send_mturk_message(
-                    f"Your task: {wizard_setup_command.message.get('task_description')}",
+                    f"Your task: {wizard_setup_command.message.get('task_description')} "
+                    f"Note: It may happen that the auto-responses don't work and the only suggestion is your search query. In this case, please write a full sentence as a custom response.",
                     self.wizard,
                 )
 
@@ -660,13 +661,14 @@ class WOZWorld(MTurkTaskWorld):
             )
 
     def overtime_bonus(self, preview: bool = False) -> float:
-        if self._user_linear_guide and len(self._user_linear_guide) > 10 and (self._num_user_utterances >= len(self._user_linear_guide) or preview):
-            minutes_per_turn = 0.6
-            hourly_salary = 10.00
-            bonus = (len(self._user_linear_guide) - 10) * minutes_per_turn * hourly_salary / 60.
-            return round(bonus, ndigits=2)
-        else:
-            return 0.00
+        return 0.0
+        # if self._user_linear_guide and len(self._user_linear_guide) > 10 and (self._num_user_utterances >= len(self._user_linear_guide) or preview):
+        #     minutes_per_turn = 0.6
+        #     hourly_salary = 10.00
+        #     bonus = (len(self._user_linear_guide) - 10) * minutes_per_turn * hourly_salary / 60.
+        #     return round(bonus, ndigits=2)
+        # else:
+        #     return 0.00
 
     def review_user(self) -> bool:
         if not self._answers_by_user:

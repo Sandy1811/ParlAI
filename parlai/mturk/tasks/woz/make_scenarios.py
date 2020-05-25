@@ -194,16 +194,16 @@ hard_unhappy = [
     'unhappy_hotel_search-1.json'
 ]
 
-MIXED = True
+MIXED = False
 
 if not MIXED:
     counts = {}
-    for e in easy:
-        counts[e] = 25
-    for e in medium:
-        counts[e] = 30
-    for e in hard:
-        counts[e] = 45
+    # for e in easy:
+    #     counts[e] = 25
+    # for e in medium:
+    #     counts[e] = 30
+    # for e in hard:
+    #     counts[e] = 45
     for e in easy_unhappy:
         counts[e] = 40
     for e in medium_unhappy:
