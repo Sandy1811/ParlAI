@@ -194,16 +194,16 @@ hard_unhappy = [
     'unhappy_hotel_search-1.json'
 ]
 
-MIXED = False
+MIXED = True
 
 if not MIXED:
     counts = {}
-    # for e in easy:
-    #     counts[e] = 25
-    # for e in medium:
-    #     counts[e] = 30
-    # for e in hard:
-    #     counts[e] = 45
+    for e in easy:
+        counts[e] = 25
+    for e in medium:
+        counts[e] = 30
+    for e in hard:
+        counts[e] = 45
     for e in easy_unhappy:
         counts[e] = 40
     for e in medium_unhappy:
@@ -238,9 +238,9 @@ else:
         "mix_free-restaurant_reserve+bank_balance+weather.json": 20,
         "mix_free-apartment+book_ride+weather.json": 30,
         "mix_free-restaurant_search+followup_doctor+ride_change.json": 15,
-        "mix_free-doctor_appointment+plane_reserve+restaurant_reserve+hotel_service.json": 40,
-        "mix_free-plane_search+schedule_meeting+party_rsvp+restaurant_reserve+hotel_service_request.json": 40,
-        "mix_free-ride_status+trip_directions+schedule_meeting+weather.json": 40
+        "mix_free-doctor_appointment+plane_reserve+restaurant_reserve+hotel_service.json": 20,
+        "mix_free-plane_search+schedule_meeting+party_rsvp+restaurant_reserve+hotel_service_request.json": 20,
+        "mix_free-ride_status+trip_directions+schedule_meeting+weather.json": 20
     }
 
 

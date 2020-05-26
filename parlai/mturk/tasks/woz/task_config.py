@@ -4,14 +4,14 @@
 # This source code is licensed under the MIT license found in the
 # LICENSE file in the root directory of this source tree.
 
-STAGE3 = False
+STAGE4 = True
 
-if STAGE3:
+if STAGE4:
 
     TUTORIAL_URL = "https://youtu.be/dd0s2Sqox6g"
 
     task_config = {}
-    version = "v3"
+    version = "v4"
 
     """A short and descriptive title about the kind of task the HIT contains.
     On the Amazon Mechanical Turk web site, the HIT title appears in search results,
@@ -56,7 +56,7 @@ else:
     TUTORIAL_URL = "https://youtu.be/L7QpscLPTFM"
 
     task_config = {}
-    version = "v6"
+    version = "v5.1"
 
     """A short and descriptive title about the kind of task the HIT contains.
     On the Amazon Mechanical Turk web site, the HIT title appears in search results,
