@@ -321,7 +321,7 @@ class WOZWorld(MTurkTaskWorld):
 
                 send_mturk_message(
                     f"Your task: {wizard_setup_command.message.get('task_description')} "
-                    f"Note: It may happen that the auto-responses don't work and the only suggestion is your search query. In this case, please write a full sentence as a custom response.",
+                    f"\n\nNote: It may happen that the auto-responses don't work and the only suggestion is your search query. In this case, please write a full sentence as a custom response.",
                     self.wizard,
                 )
 
